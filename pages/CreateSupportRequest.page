@@ -1,0 +1,122 @@
+<!-- 
+/**********************************************************
+* Page Name: CreateSupportRequest
+* Author: Accenture
+* Date: 12-June-2012 
+* Requirement # Request Id :
+* Description: UI to raise support request, base on BG, category & sub type
+***********************************************************/
+-->
+<apex:page standardController="Support_Request__c" extensions="CreateSupportRequestController" id="page">
+    <apex:form id="frm" >
+        <apex:sectionHeader title="Support Request" subtitle="New Support Request"/>
+         <apex:inputHidden id="managedBy" value="{!managedBy}" rendered="{!IF(managedBy == null, false, true)}"/>
+         <apex:inputHidden id="opptyId" value="{!opptyId}" rendered="{!IF(opptyId== null, false, true)}"/>
+         <apex:inputHidden id="renewalType" value="{!renewalType}" rendered="{!IF(renewalType== null, false, true)}"/>
+         <apex:inputHidden id="opptyType" value="{!opptyType}" rendered="{!IF(opptyType== null, false, true)}"/>
+         <apex:inputHidden id="route" value="{!route}" rendered="{!IF(route== null, false, true)}"/>
+                    
+      <!--  Page block for adding Support Request Type -->
+        <apex:pageblock id="pgBlk">
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton value="Next" onclick="return validate();" action="{!nextPage}" disabled="{!isDisabled}" id="btn"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <!-- Page block section for adding Support Team & Sub Type-->
+            <apex:pageBlockSection id="pgBlkSec" title="Select Type" columns="1" collapsible="false" >
+                      <apex:pageBlockSectionItem id="pgBlkSecItem1" >
+                      <apex:outputlabel value="{!SupportCategoryLabel}" for="team"/>
+                      <apex:actionRegion >
+                      <apex:selectList value="{!selectedRequestType}" size="1" id="team" >
+                          <apex:actionSupport event="onchange" reRender="subType,btn,detail" status="status" oncomplete="validateSubType()" />                          
+                          <apex:selectOptions value="{!SupportRequestTypes}"/>
+                      </apex:selectList>
+                      <apex:actionStatus id="status" startText="Wait..." ></apex:actionStatus></apex:actionRegion>
+                  </apex:pageblocksectionItem>                                        
+                  <apex:pageblocksectionItem id="pgBlkSecItem2" >
+                    <apex:outputlabel value="{!SupportSubTypeLabel}" for="subType" />
+                    <apex:selectList value="{!selectedSubType}" size="1" id="subType" onchange="validateSubType()">
+                        <apex:selectOptions value="{!SupportRequestSubTypes}"/>
+                    </apex:selectList>
+                    </apex:pageBlockSectionItem>      
+            </apex:pageblocksection>
+        </apex:pageblock>
+         <!--Commented by Devi Sudhakaran HPIT ON 05/06/2013 as per request-->
+       <apex:pageBlock id="pgBlks">
+        <apex:pageblocksection id="pgBlkSection">
+         <!--Commented by DeviSudhakaran HPIT ON 05/07/2013 as per request-->
+        <!--<apex:outputLink target="_blank" value="{!$Label.Reference_to_Win}" id="refLinkId">{!$Label.Reference_to_Win_Label}</apex:outputLink><br></br>-->
+                <apex:outputLink target="_blank" style="color:red" value="{!$Label.Apttus_NDA_Legalform_URL}" id="refLinkIds">{!$Label.Apttus_NDA_Legalform_Description}</apex:outputLink><br></br>               
+        </apex:pageblocksection>
+        </apex:pageBlock> 
+        <apex:pageBlock mode="maindetail"  >
+        <apex:pageBlockTable style="width:100%" id="detail" value="{!mainDetails}" var="detail">
+            <apex:column headerValue="{!mainDetailHeader}" value="{!detail}"/>
+            <apex:column headerValue="Description" value="{!mainDetails[detail]}"/>
+        </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+       document.getElementById('page:frm:pgBlks:pgBlkSection:refLinkIds').style.visibility ="hidden";
+       
+       /*Apttus R5 -Req-5801: In this function we are checking two conditions.
+        * 1. If legal support managedby HP and Indirect only we are allowing salesrep to create SR through agreement.
+        * 2. We are Displaying confirmation box if Opportunity as renewal and renewal type as TS renewal.
+        */                    
+           function validate(){                
+            var category = document.getElementById('page:frm:pgBlk:pgBlkSec:pgBlkSecItem1:team');
+            var subtype = document.getElementById('page:frm:pgBlk:pgBlkSec:pgBlkSecItem2:subType');
+            var managedByValue='{!managedBy}';
+            var opptyIdValue='{!opptyId}';
+            var renewalTypeValue='{!renewalType}';
+            var opptyTypeValue='{!opptyType}';
+            var routeValue='{!route}';
+                       
+            if(category.value==''){
+                alert('Please select Category first');
+                category.focus();
+                return false;
+            }
+            if(subtype.value==''){
+                alert('Please select Sub-Type first');
+                subtype.focus();
+                return false;
+            }
+          
+            if(opptyIdValue!=''){
+         
+           if(category.value =='Functional Support' && subtype.value =='Legal' && managedByValue !='HP')
+           {
+             alert("Please confirm on your opportunity that the 'Go to MarketRoute' is populated as 'Direct' and/or that the 'Managed by' field is populated as 'HP'. Partner Opportunities should not use this Legal Support Request and should use existing processes. Thank you.")
+             return false;
+           }           
+          else if(category.value =='Functional Support' && subtype.value =='Legal' && opptyTypeValue =='Renewal' && renewalTypeValue =='TS Renewal')
+           {
+               if(confirm('Standard TS Support Renewal Opportunities should use TS Support Operations resources to assist with renewal activities. Please only proceed with this request if you expect Legal Department involvement will be required to negotiate non-standard terms for this renewal. Thank you.')){
+                 return true;
+                }
+               else
+               {
+                 return false;
+               }
+           }
+          }          
+        }
+        
+        <!--Apttus R5 -Req-5801: IF support category as functional support and support Sub-Type as Legal we will show “Direct sales legal/Contract Request From” url link.-->
+        function validateSubType(){
+            var category = document.getElementById('page:frm:pgBlk:pgBlkSec:pgBlkSecItem1:team');
+            var subtype = document.getElementById('page:frm:pgBlk:pgBlkSec:pgBlkSecItem2:subType');
+
+            if(category.value =='Functional Support' && subtype.value =='Legal'){
+               document.getElementById('page:frm:pgBlks:pgBlkSection:refLinkIds').style.visibility ="visible"; 
+               }
+            else
+               {
+               document.getElementById('page:frm:pgBlks:pgBlkSection:refLinkIds').style.visibility ="hidden"; 
+              }
+        }
+       
+    </script>
+</apex:page>

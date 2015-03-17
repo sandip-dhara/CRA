@@ -1,0 +1,1381 @@
+<apex:page controller="SLP_GlobalSearch" showheader="false" standardstylesheets="false" action="{!SaveRecentSearch}" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+
+    <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+    <!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+    <!--[if !IE]><!-->
+    <html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+        <meta charset="utf-8" />
+        <title>Search</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="hp" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/icomoon/iconMoon.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+        <apex:includescript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}" />
+        <apex:includescript value="{!URLFOR($Resource.OpenFile)}" />
+        <apex:includescript value="{!URLFOR($Resource.Jquery_Migrate)}" />
+        <script type="text/javascript">
+
+            function GetOSName(data) {
+
+                if (data.indexOf('Windows 95') != -1) return 'Windows 95';
+
+                else if (data.indexOf('Windows 98') != -1) return 'Windows 98';
+
+                else if (data.indexOf('Windows NT 5.0') != -1 || data.indexOf('Windows 2000') != -1) return 'Windows 2000';
+
+                else if (data.indexOf('Windows NT 5.1') != -1 || data.indexOf('Windows XP') != -1) return 'Windows XP';
+
+                else if (data.indexOf('Windows NT 5.2') != -1) return 'Windows Server 2003';
+
+                else if (data.indexOf('Windows NT 6.0') != -1) return 'Windows Vista';
+
+                else if (data.indexOf('Windows NT 6.1') != -1) return 'Windows 7';
+                else if (data.indexOf('Windows NT 6.2') != -1) return 'Windows 8';
+
+                else if (data.indexOf('Windows NT 4.0') != -1 || data.indexOf('WinNT4.0') != -1 || data.indexOf('WinNT') != -1) return 'Windows NT 4.0';
+
+                else if (data.indexOf('Windows ME') != -1) return 'Windows ME';
+
+                else if (data.indexOf('OpenBSD') != -1) return 'Open BSD';
+
+                else if (data.indexOf('SunOS') != -1) return 'Sun OS';
+
+                else if (data.indexOf('Linux') != -1 || data.indexOf('X11') != -1) return 'Linux';
+
+                else if (data.indexOf('Mac_PowerPC') != -1 || data.indexOf('Macintosh') != -1) return 'Mac OS';
+
+                else if (data.indexOf('QNX') != -1) return 'QNX';
+
+                else if (data.indexOf('BeOS') != -1) return 'BeOS';
+
+                else if (data.indexOf('OS/2') != -1) return 'OS/2';
+                else return navigator.userAgent;
+
+            }
+            function getCookie(cname) {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+                }
+                return "";
+            }
+
+            //Array for Borad Ids
+            var listBoardIds = new Array();
+
+            //Array for Topic Ids
+            var listTopicIds = new Array();
+
+            //Array for Community Ids
+            var listCommunityIds = new Array();
+
+            // Array for Collateral Ids
+            var listCollateralIds = new Array();
+
+            $(document).ready(function () {
+                ShowActive();
+            });
+
+        </script>
+    </head>
+    <!-- END HEAD -->
+    <!-- BEGIN BODY -->
+    <body>
+
+        <!-- BEGIN HEADER -->
+        <header>
+            <input type="hidden" id="hdnHost" value="{!getSfInstance}" />
+            <apex:form id="redirectform">
+                <apex:inputhidden id="hdnRedirectUrl" value="{!RedirectUrl}" />
+                <apex:commandbutton action="{!RedirectToPage}" id="btnRedirectUrl" style="display:none;" />
+            </apex:form>
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="HpLogo">
+                            <!--<apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/insight_web_logo.png')}" style="width:220px" alt="HP Logo"/></a>    -->
+                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo" />
+                        </a>
+                        <div class="nav mtop20">
+                            <h1 class="h1fontS">insight</h1>
+                            <h3>Information - on your terms</h3>
+                        </div>
+                        <ul class="nav pull-right top-menu">
+                            <!-- BEGIN USER LOGIN DROPDOWN -->
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span>
+                                        <apex:image value="{!LoggedinUserDtls.SmallPhotoUrl}" styleclass="userImage" alt="no_username" />
+                                    </span>
+                                    <!--<b class="caret"></b>-->
+                                </a>
+                                <ul class="dropdown-menu extended logout">
+                                    <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a></li>
+                                    <li><a href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!LoggedinUserDtls.id}">Edit Profile</a></li>
+                                    <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+                                </ul>
+                            </li>
+                            <!-- END USER LOGIN DROPDOWN -->
+                        </ul>
+
+                        <!--<apex:form id="SubmitDataForm">
+                        <apex:inputhidden id="searchInput" value="{!searchInput}" />
+                        <apex:actionFunction name="passStringToController" action="{!SetSearchInput}" rerender="searchInput"/>
+                        </apex:form>-->
+                        <c:SLP_SearchCustomComponent inputstring="Search Page" />
+                        <div class="alert alert-error topSearchEr" style="display:none;" id="err_msg"> </div>
+                        <!-- Commented By Komala <apex:form id="UPform">
+                        <div class="nav notify-row"> <span class="add-on icon-search topSearchIcon topSearch"></span>
+                          <apex:inputText id="searchText" styleClass="typeahead-devs" size="20" value="{!strSearchValue}" html-Placeholder="Please Enter Search Text" onkeydown="SubmitSearchForm(event);"/>
+                          <apex:commandButton action="{!doSearch}" value="Search" id="searchButton" title="Click to Search for Learning Board" style="display:none;"/>
+                        </div>
+                        </apex:form>-->
+                    </div>
+                </div>
+            </div>
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container-fluid menunavBar">
+                        <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/slp_activity" title="Home"></a> <a class="icon-book topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Library"></a>
+                        <apex:outputpanel rendered="{!IsLearningBoardCreator}"> <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus"></span></a> <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/SLP_createcommunity" title="Create Community"><span class="icon-plus NaviconPlus"></span></a> </apex:outputpanel>
+                        <apex:outputpanel rendered="{!IsUserRoleMappingVisible}"> <a class="topNavRoll topNavIconCom" href="https://{!getSfInstance}/apex/SLP_UserRoleAndExpertiseMapping" title="User Role & Expert Mapping"><span class="NaviconPlus"></span></a> </apex:outputpanel>
+                        <!--        <a class="icon-question-sign topNavIcon pull-right" href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank" title="Help"></a> commented by komala -->
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- END HEADER -->
+        <!--<span class="err_msg hpit_error" id="err_msg"></span>-->
+        <!-- BEGIN CONTAINER -->
+        <div id="container" class="row-fluid">
+            <!-- BEGIN PAGE -->
+            <div id="main-content">
+                <!-- BEGIN PAGE CONTAINER-->
+                <div class="container-fluid">
+                    <!-- SEARCH BTN -->
+                    <div class="row-fluid">
+                        <div class="span9 mtop20">
+                            <div class="TABclass profileTab" id="dvSearchResult">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li id="Communityli" class="active" style="{!IF((ShowCommunity)," display:block","display:none")}"><a data-toggle="tab" href="#Communities" onclick="return LogTabMetrics('Communities');">Communities ({!IF((CommunityResultCount==null),0,CommunityResultCount)})</a></li>
+                                    <li id="Boardli" style="{!IF((ShowBoards)," display:block","display:none")}"><a data-toggle="tab" href="#LearningBoards" onclick="return LogTabMetrics('Learning Board');">Boards ({!IF((LBResultCount==null),0,LBResultCount)})</a></li>
+                                    <li id="Topicli" style="{!IF((ShowTopics)," display:block","display:none")}"><a data-toggle="tab" href="#Content" onclick="return LogTabMetrics('Content');">Content ({!IF((TopicResultCount==null),0,TopicResultCount)}) </a></li>
+                                    <li id="Peopleli" style="{!IF((ShowPeople)," display:block","display:none")}"><a data-toggle="tab" href="#NewPeople" onclick="return LogTabMetrics('People');">People ({!IF((PeopleResultCount==null),0,PeopleResultCount) }) </a></li>
+                                    <!-- Commented By Komala                <li id="Expertli" style="{!IF((ShowPeopleExpert),"display:block","display:none")}"><a data-toggle="tab" href="#ExpertFinder" onclick="return LogTabMetrics('Expert Finder');">Expert Finder  ({!IF((ExpertResultCount==null),0,ExpertResultCount)}) </a></li> -->
+
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <!-- Community Search -->
+                                    <div id="Communities" class="tab-pane fade active in">
+                                        <div class="searchResult" style="{!IF((CommunityResultCount == 0 || CommunityResultCount == null), 'display:block','display:none')}">
+                                            <h2>{!IF((CommunityResultCount == 0 || CommunityResultCount == null), 'No Results Found','')}</h2>
+                                        </div>
+                                        <div>
+                                            <apex:repeat value="{!CommunityResult}" var="commRslt">
+                                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                                    <div class="hpit_athena_ca-item-main">
+                                                        <div class="hpit_athena_ca-item-firstHalf">
+                                                            <div class="hpit_athena_ca-item-topBar hpit_athena_ca-item-topBarG">
+                                                                <div class="hpit_athena_ca-item-topBarDateComStar">
+                                                                    <!--<apex:OutputText >
+                                                                            <apex:param value="{!commRslt.LBCrtDate}"/>
+                                                                         </apex:outputtext>-->
+                                                                    {!commRslt.LBCrtDate}
+                                                                </div>
+                                                                <div class='ratingDispalyL' id='ratingCommunity_{!commRslt.LBid}' style="display:none;"></div>
+                                                                <div class="hpit_athena_ca-item-topBarChat">
+                                                                    <div class="hpit_athena_ca-item-topBarChatImg">
+                                                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon" />
+                                                                    </div>
+                                                                    <div class="hpit_athena_ca-item-topBarChatValue"> {!commRslt.LBNoOfComments} </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/SLP_ViewCommunity?id={!commRslt.Id}" id="anchorCommunity_{!commRslt.LBid}" data-boardLBid = 'ratingCommunity_{!commRslt.LBid}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>-->
+                                                            <div class="ca-icon">
+                                                                <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!commRslt.Id}','{!commRslt.LBName}','/apex/SLP_ViewCommunity?id={!commRslt.Id}','Communities Image Click');" id="anchorCommunity_{!commRslt.LBid}" data-boardlbid='ratingCommunity_{!commRslt.LBid}' onmouseover='ShowBoardRating(this)' onmouseleave='HideBoardRating(this)'>
+                                                                    <apex:outputpanel rendered="{!!commRslt.StaticImage}">
+                                                                        <apex:image url="{!URLFOR($Action.Attachment.Download, commRslt.AttachmentId)}" />
+                                                                    </apex:outputpanel>
+                                                                    <apex:outputpanel rendered="{!commRslt.StaticImage}"> <img src='{!commRslt.DefaultImageName}' /> </apex:outputpanel>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div class='starred starredY'></div>
+                                                        <a class="a_underNone">
+                                                            <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA"  href="/apex/SLP_ViewCommunity?id={!commRslt.Id}"> -->
+                                                            <div class="hpit_athena_ca-item-BottomBar">
+                                                                <a class="hpit_athena_ca_itemA" onclick="LogMetrics('{!commRslt.Id}','{!commRslt.LBName}','/apex/SLP_ViewCommunity?id={!commRslt.Id}','Communities Tab');">
+                                                                    <!--  <a class="hpit_athena_ca_itemA"  data-CommunityId="{!commRslt.Id}" onclick="CreateMetric(this)" > -->
+                                                                    <h3>{!commRslt.LBName}</h3>
+                                                                </a>
+                                                            </div>
+                                                        </a>
+                                                        <div class="hpit_athena_ca-item-SecondHalf">
+                                                            <div class="hpit_athena_ca-item-person cf">
+                                                                <div class="hpit_athena_ca-item-personPhoto">
+                                                                    <apex:image value="{!commRslt.LBOwnerURL}" width="35" height="35" alt="no_username_small" />
+                                                                </div>
+                                                                <a class="a_underNone">
+                                                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!commRslt.LBOwnerID}"> {!commRslt.LBOwnerName} </a> </div>-->
+                                                                    <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!commRslt.LBOwnerID}','{!commRslt.LBOwnerName}','/apex/AthenaUserProfile?id={!commRslt.LBOwnerID}','Communities Tab');"> {!commRslt.LBOwnerName} </a> </div>
+                                                                </a>
+                                                                <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'>{!IF((commRslt.LBOwnerTitle==null),'',commRslt.LBOwnerTitle)}</div>
+                                                            </div>
+                                                            <div class="hpit_athena_ca-item-PersonPost">
+                                                                <p>{!commRslt.LBDescription}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </apex:repeat>
+                                        </div>
+                                    </div>
+
+                                    <!-- Board Search -->
+                                    <div id="LearningBoards" class="tab-pane fade">
+                                        <div class="searchResult" style="{!IF((LBResultCount == 0 || LBResultCount == null), 'display:block','display:none')}">
+                                            <h2>{!IF((LBResultCount == 0 || LBResultCount == null), 'No Results Found','')}</h2>
+                                        </div>
+                                        <div>
+                                            <apex:repeat value="{!BoardResult}" var="brdRslt">
+                                                <script>
+                                                    var Id = '{!brdRslt.LBid}';
+                                                    var RatingNbr = '{!brdRslt.AvgRating}';
+                                                    listBoardIds.push({ "ID": Id, "RatingNbr": RatingNbr });
+                                                </script>
+                                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                                    <div class="hpit_athena_ca-item-main">
+                                                        <div class="hpit_athena_ca-item-firstHalf">
+                                                            <div class="hpit_athena_ca-item-topBar">
+                                                                <div class="hpit_athena_ca-item-topBarDate">
+                                                                    <!--<apex:OutputText value="{0,date,MMM dd}">
+                                                                            <apex:param value="{!brdRslt.LBCrtDate}"/>
+                                                                         </apex:outputtext>-->
+                                                                    {!brdRslt.LBCrtDate}
+                                                                </div>
+                                                                <div class='ratingDispalyL' id='ratingBoard_{!brdRslt.Id}' style="display:none;"></div>
+                                                                <div class="hpit_athena_ca-item-topBarChat">
+                                                                    <div class="hpit_athena_ca-item-topBarChatImg">
+                                                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon" />
+                                                                    </div>
+                                                                    <div class="hpit_athena_ca-item-topBarChatValue"> {!brdRslt.LBNoOfComments} </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/AthenaLearningBoardDtls?id={!brdRslt.Id}" id="anchorBoard_{!brdRslt.LBid}" data-boardLBid = 'ratingBoard_{!brdRslt.LBid}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>-->
+                                                            <div class="ca-icon">
+                                                                <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!brdRslt.Id}','{!brdRslt.LBName}','/apex/AthenaLearningBoardDtls?id={!brdRslt.Id}','Learning Board Image Click');" id="anchorBoard_{!brdRslt.LBid}" data-boardlbid='ratingBoard_{!brdRslt.LBid}' onmouseover='ShowBoardRating(this)' onmouseleave='HideBoardRating(this)'>
+                                                                    <apex:outputpanel rendered="{!!brdRslt.StaticImage}">
+                                                                        <apex:image url="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" />
+                                                                    </apex:outputpanel>
+                                                                    <apex:outputpanel rendered="{!brdRslt.StaticImage}"> <img src='{!brdRslt.DefaultImageName}' /> </apex:outputpanel>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <a class="a_underNone">
+                                                            <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" href="/apex/AthenaLearningBoardDtls?id={!brdRslt.Id}"> -->
+                                                            <div class="hpit_athena_ca-item-BottomBar">
+                                                                <a class="hpit_athena_ca_itemA" onclick="LogMetrics('{!brdRslt.Id}','{!brdRslt.LBName}','/apex/AthenaLearningBoardDtls?id={!brdRslt.Id}','Learning Board Tab');">
+                                                                    <!--  <a class="hpit_athena_ca_itemA" data-BoardId="{!brdRslt.Id}" onclick="CreateBoardMetric(this)" > -->
+                                                                    <h3>{!brdRslt.LBName}</h3>
+                                                                </a>
+                                                            </div>
+                                                        </a>
+                                                        <div class="hpit_athena_ca-item-SecondHalf">
+                                                            <div class="hpit_athena_ca-item-person cf">
+                                                                <div class="hpit_athena_ca-item-personPhoto">
+                                                                    <apex:image value="{!brdRslt.LBOwnerURL}" width="35" height="35" alt="no_username_small" />
+                                                                </div>
+                                                                <a class="a_underNone">
+                                                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!brdRslt.LBOwnerID}"> {!brdRslt.LBOwnerName} </a> </div>-->
+                                                                    <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!brdRslt.LBOwnerID}','{!brdRslt.LBOwnerName}','/apex/AthenaUserProfile?id={!brdRslt.LBOwnerID}','Learning Board Tab');"> {!brdRslt.LBOwnerName} </a> </div>
+                                                                </a>
+                                                                <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'>{!IF((brdRslt.LBOwnerTitle==null),'',brdRslt.LBOwnerTitle)}</div>
+                                                            </div>
+                                                            <div class="hpit_athena_ca-item-PersonPost">
+                                                                <p>{!brdRslt.LBDescription}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </apex:repeat>
+                                        </div>
+                                    </div>
+                                    <!-- Topics Search -->
+
+                                    <div id="Content" class="tab-pane fade">
+                                        <div class="searchResult" style="{!IF((TopicResultCount == 0 || TopicResultCount == null), 'display:block','display:none')}">
+                                            <h2>{!IF((TopicResultCount == 0 || TopicResultCount == null), 'No Results Found','')}</h2>
+                                        </div>
+                                        <apex:repeat value="{!TopicsResult}" var="topicRslt">
+                                            <script>
+                                                var Id = '{!topicRslt.LBid}';
+                                                var RatingNbr = '{!topicRslt.AvgRating}';
+                                                listTopicIds.push({ "ID": Id, "RatingNbr": RatingNbr });
+                                            </script>
+                                            <div class="clearB mbot10 clearfix">
+                                                <div class="STsearch">
+                                                    <div class="pull-left w100">
+                                                        <h1>
+                                                            <!-- START: Commented By Komala <apex:outputPanel rendered="{!!topicRslt.IsIdolSearch}"> <a style="text-decoration: underline;" href="{!topicRslt.BoardCommunityIdolTopicstype}"> {!topicRslt.LBName} </a> </apex:outputPanel>
+                                                            <apex:outputPanel rendered="{!IF(topicRslt.IsIdolSearch,(!PreviewRequired),false)}"> <a href="{!topicRslt.TopicURL}" target="_blank"  style="text-decoration: underline;"> {!topicRslt.LBName} </a> </apex:outputPanel>
+                                                            END-->
+                                                            <!-- <apex:outputPanel rendered="{!!topicRslt.IsIdolSearch}"> <a style="text-decoration: underline;"  href="{!topicRslt.BoardCommunityIdolTopicstype}"> {!topicRslt.LBName} </a> </apex:outputPanel>
+                                                            <apex:outputPanel rendered="{!IF(topicRslt.IsIdolSearch,(PreviewRequired),false)}"> <a href="javascript:void(0);" style="text-decoration: underline;" onClick="OpenPopUp('{!topicRslt.TopicURL}')"> {!topicRslt.LBName} </a> </apex:outputPanel>
+                                                            <apex:outputPanel rendered="{!IF(topicRslt.IsIdolSearch,(!PreviewRequired),false)}"> <a href="javascript:void(0);" style="text-decoration: underline;"> {!topicRslt.LBName} </a> </apex:outputPanel> -->
+                                                            <!-- Commented By Komala <apex:outputPanel rendered="{!!topicRslt.IsIdolSearch}"> <a style="text-decoration: underline;"  href="{!topicRslt.BoardCommunityNm}"> {!topicRslt.TopicName} </a> </apex:outputPanel>-->
+                                                            <apex:outputpanel rendered="{!!topicRslt.IsIdolSearch}"> <a style="text-decoration: underline;" onclick="LogMetrics('{!topicRslt.TopicId}','{!topicRslt.TopicName}','{!topicRslt.BoardCommunityNm}','Content Tab');"> {!topicRslt.TopicName} </a> </apex:outputpanel>
+                                                            <apex:outputpanel rendered="{!IF(topicRslt.IsIdolSearch,(PreviewRequired),false)}"> <a href="javascript:void(0);" style="text-decoration: underline;" onclick="OpenPopUp('{!topicRslt.TopicURL}')"> {!topicRslt.LBName} </a> </apex:outputpanel>
+                                                            <!-- Commented By Komala <apex:outputPanel rendered="{!IF(topicRslt.IsIdolSearch,(!PreviewRequired),false)}"> <a href="{!topicRslt.TopicURL}" target="_blank" style="text-decoration: underline;"> {!topicRslt.LBName} </a> </apex:outputPanel>-->
+                                                            <apex:outputpanel rendered="{!IF(topicRslt.IsIdolSearch,(!PreviewRequired),false)}"> <a href="javascript:void(0);" onclick="LogIdolSearchMetrics('{!topicRslt.TopicURL}');" style="text-decoration: underline;"> {!topicRslt.LBName} </a> </apex:outputpanel>
+                                                            <!-- <label>{!topicRslt.TopicType} {!topicRslt.TopicId} {!topicRslt.LBId} {!topicRslt.LBName}{!topicRslt.TopicDocType} {!topicRslt.TopicURL}</label> -->
+                                                            <!--<apex:outputPanel rendered="{!IF(topicRslt.IsIdolSearch,(PreviewRequired),false)}"> <a href="javascript:void(0);" style="text-decoration: underline;" onclick="OpenPopUp('{!topicRslt.TopicURL}')"> {!topicRslt.LBName} </a> </apex:outputPanel> -->
+
+                                                        </h1>
+                                                        <div class="conSearch clearfix">
+                                                            <div class="conSearchImg">
+                                                                <apex:outputpanel rendered="{!IF(topicRslt.IsVideo,(!PreviewRequired),false)}">
+                                                                    <a href="{!topicRslt.TopicURL}" target="_blank">
+                                                                        <!-- <apex:image url="{!topicRslt.BoardOrCommunityVideo}"  width="25" height="25"/> -->
+                                                                        <span class="icon-video-camera conBottomBtn conBottomBtn_B" title='Play Video' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(topicRslt.IsVideo,(PreviewRequired),false)}">
+                                                                    <a href="#" id="linkDoc_{!topicRslt.TopicId}" data-positionid="linkDoc_{!topicRslt.TopicId}" data-url="{!topicRslt.TopicURL}" data-name="{!topicRslt.TopicName}" onclick="functionOpenVideo(this)">
+                                                                        <!-- <apex:image url="{!topicRslt.BoardOrCommunityVideo}"  width="25" height="25"/> -->
+                                                                        <span class="icon-video-camera conBottomBtn conBottomBtn_B" title='Play Video' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'PDF'),(PreviewRequired),false)),false)}">
+
+                                                                    <!--<a href="#" id= "A1" data-PositionID = "linkDoc_{!topicRslt.TopicId}" data-url ="{!topicRslt.TopicURL}" data-name="{!topicRslt.TopicName}" onClick="ShowPDF(this)"> -->
+                                                                    <!--<a href="javascript:void(0);" onclick="OpenPopUp('{!topicRslt.TopicURL}')">-->
+                                                                    <a href="javascript:void(0);" onclick="OpenPopUp('{!topicRslt.TopicURL}')">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/filePDFUpload.png')}" title="Download" width="25" height="25"/> -->
+                                                                        <span class="icon-dload-pdf conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'PDF'),(!PreviewRequired),false)),false)}">
+                                                                    <!-- Commented By Komala <div class="conSearchImg"><a href="{!topicRslt.TopicURL}" target="_blank">-->
+                                                                    <a href="javascript:void(0);" onclick="LogDownloadMetrics('{!topicRslt.TopicURL}','PDF');">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/filePDFUpload.png')}" title="Download" width="25" height="25"/> -->
+                                                                        <span class="icon-dload-pdf conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document')  || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'PPT'),(PreviewRequired), false)),false)}">
+
+                                                                    <!-- Commented by komala <a href="#" data-url ="{!topicRslt.TopicURL}" data-name="{!topicRslt.TopicName}" onClick="ShowPPTX(this)"> -->
+                                                                    <a href="javascript:void(0);" onclick="OpenPopUp('{!topicRslt.TopicURL}')">
+                                                                        <!--<apex:image url="{!URLFOR($Resource.athena_images, 'images/filePPTUpload.png')}" title="Download"  width="25" height="25"/>--> <span class="icon-dload-powerpoint conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'PPT'),(!PreviewRequired),false)),false)}">
+                                                                    <a href="javascript:void(0);" onclick="LogDownloadMetrics('{!topicRslt.TopicURL}','PPT');">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/filePPTUpload.png')}" title="Download"  width="25" height="25"/> --> <span class="icon-dload-powerpoint conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'DOC'),(PreviewRequired), false)),false)}">
+
+                                                                    <!-- Commented by komala <a href="#"  data-url ="{!topicRslt.TopicURL}" data-name="{!topicRslt.TopicName}" onClick="ShowDOCX(this)"> -->
+                                                                    <a href="javascript:void(0);" onclick="OpenPopUp('{!topicRslt.TopicURL}')">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileWordUpload.png')}" title="Download"  width="25" height="25"/> -->
+                                                                        <span class="icon-dload-word conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'DOC'),(!PreviewRequired), false)),false)}">
+                                                                    <a href="javascript:void(0);" onclick="LogDownloadMetrics('{!topicRslt.TopicURL}','DOC');">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileWordUpload.png')}" title="Download"  width="25" height="25"/> -->
+                                                                        <span class="icon-dload-word conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'XLS'),(PreviewRequired), false)),false)}">
+
+                                                                    <!-- Commented by komala <a href="#" data-url ="{!topicRslt.TopicURL}" data-name="{!topicRslt.TopicName}" onClick="ShowXLSX(this)"> -->
+                                                                    <a href="javascript:void(0);" onclick="OpenPopUp('{!topicRslt.TopicURL}')">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileExcelUpload.png')}" title="Download"  width="25" height="25"/> -->
+                                                                        <span class="icon-dload-excel conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'XLS'),(!PreviewRequired), false)),false)}">
+                                                                    <a href="javascript:void(0);" onclick="LogDownloadMetrics('{!topicRslt.TopicURL}','XLS');">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileExcelUpload.png')}" title="Download"  width="25" height="25"/> -->
+                                                                        <span class="icon-dload-excel conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'TXT') || CONTAINS(topicRslt.TopicDocType,'txt'),(PreviewRequired), false)),false)}">
+
+                                                                    <!-- Commented by komala <a href="#" data-url ="{!topicRslt.TopicURL}" id= 'linkDoc_"{!topicRslt.TopicId}"' data-PositionID = 'linkDoc_"{!topicRslt.TopicId}"' data-name="{!topicRslt.TopicName}" onClick="ShowTXT(this)"> -->
+                                                                    <a href="javascript:void(0);" onclick="OpenPopUp('{!topicRslt.TopicURL}')">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileTextUpload.png')}" title="Download"  width="25" height="25"/> -->
+                                                                        <span class="icon-dload-text conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Upload Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'TXT') || CONTAINS(topicRslt.TopicDocType,'txt'),(!PreviewRequired), false)),false)}">
+                                                                    <a href="javascript:void(0);" onclick="LogDownloadMetrics('{!topicRslt.TopicURL}','TXT');">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileTextUpload.png')}" title="Download"  width="25" height="25"/> -->
+                                                                        <span class="icon-dload-text conBottomBtn" title='Download File' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Link or Document') || CONTAINS(topicRslt.TopicType,'Link or Document'),(IF(CONTAINS(topicRslt.TopicDocType,'OTHER'),(PreviewRequired),false)),false)}">
+                                                                    <a href="#" id="anchor_{!topicRslt.TopicId}" data-positionid="linkDoc_{!topicRslt.TopicId}" data-url="{!topicRslt.TopicURL}" data-name="{!topicRslt.TopicName}" onclick="return ShowHTML(this)">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileURLUpload.png')}" title="Download"  width="25" height="25"/> -->
+                                                                        <span class="icon-link conBottomBtn conBottomBtn_B" title='Visit Page' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel rendered="{!IF(CONTAINS(topicRslt.TopicType,'Link or Document') || CONTAINS(topicRslt.TopicType,'Upload Document'),(IF(CONTAINS(topicRslt.TopicDocType,'OTHER'),(!PreviewRequired),false)),false)}">
+                                                                    <a href="javascript:void(0);" onclick="LogDownloadMetrics('{!topicRslt.TopicURL}','URL');">
+                                                                        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileURLUpload.png')}" title="Download"  width="25" height="25"/> -->
+                                                                        <span class="icon-link conBottomBtn conBottomBtn_B" title='Visit Page' />
+                                                                    </a>
+                                                                </apex:outputpanel>
+                                                            </div>
+                                                            <div class="conSearchDetail">
+                                                                <!-- Commented By Komala <apex:outputPanel rendered="{!!topicRslt.IsIdolSearch}"><div class="conSearchH"> <a style="text-decoration: underline;"  href="{!topicRslt.BoardCommunityIdolTopicstype}"> {!topicRslt.LBName} </a></div> </apex:outputPanel>-->
+                                                                <apex:outputpanel rendered="{!!topicRslt.IsIdolSearch}">
+                                                                    <div class="conSearchH"> <a style="text-decoration: underline;" onclick="LogMetrics('{!topicRslt.LBId}','{!topicRslt.LBName}','{!topicRslt.BoardCommunityIdolTopicstype}','Content Tab');"> {!topicRslt.LBName} </a></div>
+                                                                </apex:outputpanel>
+                                                                <!-- <div class="conSearchH"><a href="{!topicRslt.BoardCommunityIdolTopicstype}"> {!topicRslt.TopicName}</a></div> -->
+                                                                <div class="conSearchRating">
+                                                                    <div class="pull-left" id='ratingTopic_{!topicRslt.LBid}_{!topicRslt.TopicCount}'></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="conSearchCon clearB">
+                                                                <p>
+                                                                    <apex:outputpanel rendered="{!!(topicRslt.IsVideo)}">
+                                                                        <apex:outputpanel rendered="{!(topicRslt.StaticImage)}"> <img src="{!topicRslt.DefaultImageName}" width="147" height="95" class="pull-right" /> </apex:outputpanel>
+                                                                        <apex:outputpanel rendered="{!!topicRslt.StaticImage}">
+                                                                            <apex:outputpanel rendered="{!topicRslt.IsContentAttchment}">
+                                                                                <apex:image url="{!URLFOR($Action.Attachment.Download, topicRslt.AttachmentId)}" width="147" height="95" styleclass="pull-right" />
+                                                                            </apex:outputpanel>
+                                                                        </apex:outputpanel>
+                                                                        <apex:outputtext value=" {!topicRslt.LBDescription}" escape="false" />
+                                                                    </apex:outputpanel>
+                                                                </p>
+                                                            </div>
+                                                            <apex:outputpanel rendered="{!IF(topicRslt.LBOwnerName=='',false,true)}">
+                                                                <div class="f14 clearfix">
+                                                                    <div class="label hpit_athenaListPersonImg pull-left"> <img src="{!topicRslt.LBOwnerURL}" /> </div>
+                                                                    <!-- Commented By Komala <div class="conSearchName"> <a href="/apex/AthenaUserProfile?id={!topicRslt.LBOwnerID}"  target="_top">{!topicRslt.LBOwnerName}</a> </div>-->
+                                                                    <div class="conSearchName"> <a onclick="LogMetrics('{!topicRslt.LBOwnerID}','{!topicRslt.LBOwnerName}','/apex/AthenaUserProfile?id={!topicRslt.LBOwnerID}','Content Tab');" target="_top">{!topicRslt.LBOwnerName}</a> </div>
+                                                                </div>
+                                                            </apex:outputpanel>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                        </apex:repeat>
+                                    </div>
+
+                                    <!-- People Search -->
+
+                                    <div id="People" class="tab-pane fade" style="display:none">
+                                        <p class="searchResult">
+                                            <h2>{!IF((PeopleResultCount == 0 || PeopleResultCount == null), 'No Results Found','')}</h2>
+                                        </p>
+                                        <div>
+                                            <div class="row-fluid">
+                                                <div class="span12">
+                                                    <apex:repeat value="{!PeopleResult}" var="peopleRslt">
+                                                        <div class="span4 PFspaceEX">
+                                                            <div class="span2 PFimg" style="min-width:50px"> <img src='{!peopleRslt.FullImageName}' /> </div>
+                                                            <div class="span9">
+                                                                <!--<li class="mtop10">{!fol.Name}</li>-->
+                                                                <li class="mtop5"><a style="text-decoration: underline;" href="/apex/AthenaUserProfile?id={!peopleRslt.id}"> {!peopleRslt.Name} </a></li>
+                                                            </div>
+                                                            <div class="STpersonS">
+                                                                <!--                                  {!peopleRslt.TitleDepartment} -->
+                                                                {!peopleRslt.Title}
+                                                            </div>
+                                                            <div class="STpersonsEx">
+                                                                <apex:outputpanel rendered="{!peopleRslt.IsSecondaryIndImg}">
+                                                                    <apex:image url="{!peopleRslt.SecondaryIndImage}" alt="Expertise" title="{!peopleRslt.lstExperts}" />
+                                                                    <!-- <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/bulbIcon.png')}" alt="Expertise" title="Expertise"/> -->
+                                                                    <!-- <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/roleIcon.png')}" alt="User Role" title="User Role"/> -->
+                                                                    <!--<span> <apex:outputText value="{!peopleRslt.ExpertUserRole}" title="{!peopleRslt.ExpertUserRole}"></apex:outputText> </span>-->
+                                                                    <span>
+                                                                        <apex:outputtext value="{!peopleRslt.ShortExpertUserRole}" title="{!peopleRslt.ExpertUserRole}"></apex:outputtext>
+                                                                    </span>
+                                                                </apex:outputpanel>
+                                                            </div>
+                                                        </div>
+                                                    </apex:repeat>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- new Expert Finder Bita Search -->
+                                    <!-- Commented By Komala <div id="ExpertFinder" class="tab-pane fade">
+                                      <p class="searchResult">
+                                      <h2>{!IF((ExpertResultCount == 0 || ExpertResultCount == null), 'No Results Found','')}</h2>
+
+                                      </p>
+                                      <div>
+                                        <div class="row-fluid">
+                                          <div class="span9">
+                                            <apex:repeat value="{!ExpertResult}" var="ExpertRslt">
+                                              <ul class="item-list scroller padding" data-always-visible="1">
+                                                <div id="divContMember">
+                                                  <!-- Commented By Komala <li class="f14"> <span class="label hpit_athenaListPersonImg"> <img src='{!ExpertRslt.FullImageName}' /> </span> <span class="itemLMdes itemLM"> <span> <a href="/apex/AthenaUserProfile?id={!ExpertRslt.id}" target="_top">{!ExpertRslt.Name}</a> </span> <span class="bold">{!ExpertRslt.RoleName}</span>-->
+                                    <!-- <li class="f14"> <span class="label hpit_athenaListPersonImg"> <img src='{!ExpertRslt.FullImageName}' /> </span> <span class="itemLMdes itemLM"> <span> <a onclick="LogMetrics('{!ExpertRslt.id}','{!ExpertRslt.Name}','/apex/AthenaUserProfile?id={!ExpertRslt.id}','Expert Finder Tab');" target="_top">{!ExpertRslt.Name}</a> </span> <span class="bold">{!ExpertRslt.RoleName}</span>
+                                                    <apex:outputPanel rendered="{!ExpertRslt.IsExperts}"> <span class="DivEx">Expert</span> </apex:outputPanel>
+                                                    </span>
+                                                    <div class="itemLM colorGrey"> <span>{!ExpertRslt.Region}</span>{!IF((ExpertRslt.Region == null || ExpertRslt.BusinessGroup == null), '','|')}<span>{!ExpertRslt.BusinessGroup}</span> </div>
+                                                  </li>
+                                                </div>
+                                              </ul>
+                                            </apex:repeat>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    -->
+                                    <!-- new People Search -->
+                                    <div id="NewPeople" class="tab-pane fade">
+                                        <!-- Commented By Komala <p class="searchResult">
+                                        <h2>{!IF((PeopleResultCount == 0 || PeopleResultCount == null), 'No Results Found','')}</h2>
+                                        </p> -->
+                                        <div>
+                                            <div class="TABclass profileTab profileTabInner">
+                                                <ul class="nav nav-tabs searchPeople" id="Ul1">
+                                                    <li class="active" style="{!IF((ShowPeople)," display:block","display:none")}"><a data-toggle="tab" href="#allPeople" class="showPeople_a" onclick="return LogTabMetrics('All People');"> <span class="icon-reorder fs12"></span> Show all ({!IF((PeopleResultCount==null),0,PeopleResultCount)}) </a></li>
+                                                    <li class="ml_2" style="{!IF((ShowPeopleExpert)," display:block","display:none")}"><a data-toggle="tab" href="#showExperts" class="showPeopleEx_a" onclick="return LogTabMetrics('Show Experts');"> <span class="icon-certificate fs12"></span> Show only experts ({!IF((ExpertResultCount==null),0,ExpertResultCount)}) </a></li>
+                                                </ul>
+                                                <div class="tab-content" id="Div1">
+                                                    <div id="allPeople" class="tab-pane fade active in">
+                                                        <div class="searchResult" style="{!IF((PeopleResultCount == 0 || PeopleResultCount == null)," display:block","display:none")}">
+                                                            <h2 style="{!IF((PeopleResultCount == 0 || PeopleResultCount == null)," display:block","display:none")}">{!IF((PeopleResultCount == 0 || PeopleResultCount == null), 'No Results Found','')}</h2>
+                                                        </div>
+                                                        <div>
+                                                            <div class="row-fluid">
+                                                                <div class="span12">
+                                                                    <apex:repeat value="{!PeopleResult}" var="peopleRslt">
+                                                                        <ul class="item-list scroller padding" data-always-visible="1">
+                                                                            <div id="divContMember">
+                                                                                <!-- Commented By Komala <li class="f14"> <span class="label hpit_athenaListPersonImg"> <img src='{!peopleRslt.FullImageName}' /> </span> <span class="itemLMdes itemLM"> <span> <a href="/apex/AthenaUserProfile?id={!peopleRslt.id}" target="_top">{!peopleRslt.Name}</a> </span> <span class="bold">{!peopleRslt.RoleName}</span>-->
+                                                                                <!-- <li class="f14" style="padding-bottom:20px"> -->
+                                                                                <li class="f14" style="padding-bottom:auto">
+                                                                                    <span class="label hpit_athenaListPersonImg"> <img src='{!peopleRslt.FullImageName}' /> </span> <span class="itemLMdes itemLM">
+                                                                                        <div class="pull-left"> <a onclick="LogMetrics('{!peopleRslt.id}','{!peopleRslt.Name}','/apex/AthenaUserProfile?id={!peopleRslt.id}','People Tab');" target="_top">{!peopleRslt.Name}</a> </div>
+                                                                                        <div class="bold pull-left ml10">{!peopleRslt.RoleName}</div>
+                                                                                     
+                                                                                        
+
+
+                                                                                    </span>
+                                                                                    <div class="itemLM colorGrey mtop5"> <span> {!peopleRslt.Region} </span> {!IF((peopleRslt.Region == null || peopleRslt.BusinessGroup == null), '','|')} <span> {!peopleRslt.BusinessGroup} </span> </div>
+                                                                                    <div class="mtop5 clearfix" style="margin-left: 63px;"> 
+                                                                                    <apex:outputpanel rendered="{!peopleRslt.IsExperts}">
+                                                                                            <div class="DivEx searchPeopleEx_img pull-left ml10"> &nbsp; </div>
+                                                                                        </apex:outputpanel> 
+                                                                                        <apex:outputpanel rendered="{!peopleRslt.IsBrdCommOwner}">
+                                                                                            <div class="DivEx searchOwnerEx_img pull-left ml10"></div>
+                                                                                        </apex:outputpanel>
+                                                                                        <apex:outputpanel rendered="{!peopleRslt.IsCommunityContributor}">
+                                                                                            <div class="DivEx searchContributorEx_img pull-left ml10"></div>
+                                                                                        </apex:outputpanel>
+                                                                                
+                                                                                    </div>
+                                                                                </li>
+                                                                            </div>
+                                                                        </ul>
+                                                                    </apex:repeat>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="showExperts" class="tab-pane fade">
+                                                        <div class="searchResult" style="{!IF((ExpertResultCount == 0 || ExpertResultCount == null)," display:block","display:none")}">
+                                                            <h2 style="{!IF((ExpertResultCount == 0 || ExpertResultCount == null)," display:block","display:none")}">{!IF((ExpertResultCount == 0 || ExpertResultCount == null), 'No Results Found','')}</h2>
+                                                        </div>
+                                                        <div>
+                                                            <div class="row-fluid">
+                                                                <div class="span12">
+                                                                    <apex:repeat value="{!ExpertResult}" var="ExpertRslt">
+                                                                        <ul class="item-list scroller padding" data-always-visible="1">
+                                                                            <div id="div2">
+                                                                                <!-- Commented By Komala <li class="f14"> <span class="label hpit_athenaListPersonImg"> <img src='{!ExpertRslt.FullImageName}' /> </span> <span class="itemLMdes itemLM"> <span> <a href="/apex/AthenaUserProfile?id={!ExpertRslt.id}" target="_top">{!ExpertRslt.Name}</a> </span> <span class="bold">{!ExpertRslt.RoleName}</span>-->
+                                                                                <li class="f14">
+                                                                                    <span class="label hpit_athenaListPersonImg"> <img src='{!ExpertRslt.FullImageName}' /> </span> <span class="itemLMdes itemLM">
+                                                                                        <div class="pull-left"> <a onclick="LogMetrics('{!ExpertRslt.id}','{!ExpertRslt.Name}','/apex/AthenaUserProfile?id={!ExpertRslt.id}','Expert Finder Tab');" target="_top">{!ExpertRslt.Name}</a> </div>
+                                                                                        <div class="bold pull-left ml10">{!ExpertRslt.RoleName}</div>
+                                                                                        <apex:outputpanel rendered="{!ExpertRslt.IsExperts}">
+                                                                                            <div class="DivEx searchPeopleEx_img pull-left ml10"> &nbsp; </div>
+                                                                                        </apex:outputpanel>
+                                                                                    </span>
+                                                                                    <div class="itemLM colorGrey mtop5"> <span> {!ExpertRslt.Region} </span> {!IF((ExpertRslt.Region == null || ExpertRslt.BusinessGroup == null), '','|')} <span> {!ExpertRslt.BusinessGroup} </span> </div>
+                                                                                </li>
+                                                                            </div>
+                                                                        </ul>
+                                                                    </apex:repeat>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="span3 mtop20" style="padding-top:35px">
+                            <div class="row-fluid ">
+                                <div class="hpit_athena_rightDiv span12">
+                                    <h3>Most frequent searches</h3>
+                                    <hr />
+                                    <div>
+                                        <ul class="recentSearchUl">
+                                            <apex:repeat value="{!GetRecentSearchResult}" var="RecentRslt">
+                                                <!-- Commented By Komala <li> <a href="/apex/SLP_GlobalSearch?SearchOptions=multiselect-all%2CBoards%2CTopics%2CCommunity%2CPeople%2C&SearchVal={!RecentRslt.Text__c}" target="_top">{!RecentRslt.Text__c}</a></li>-->
+                                                <li> <a onclick="LogMetrics('{!''}','{!RecentRslt}','/apex/SLP_GlobalSearch?SearchOptions=multiselect-all%2CBoards%2CTopics%2CCommunity%2CPeople%2C&SearchVal={!RecentRslt}','Most frequent searches');" target="_top">{!RecentRslt}</a></li>
+                                            </apex:repeat>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        #idFrame {
+                            position: absolute !important;
+                        }
+                    </style>
+                    <div id="VideoPopUp" class="modal hide fade modalUploadView in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                        <div class="modal-header">
+                            <h3 id="videoHeading"></h3>
+                        </div>
+                        <div class="modal-body">
+                            <iframe id="frameVideo" class='EBaddTopicLF' frameborder='0' scrolling='no'></iframe>
+                            <!--<iframe src=" + result[icount].lstlrngs[icnt].LURL + " class='EBaddTopicLF' frameborder='0'   scrolling='no'></iframe>-->
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true" onclick="functionCloseDialog()">Cancel</button>
+                        </div>
+                    </div>
+                    <div id="modalPreviewRequired" class="modal hide fade modalUploadView in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                        <div class="modal-header">
+                            <h3>Preview</h3>
+                        </div>
+                        <div class="modal-body">
+                            <iframe id="frameFileUrl" class='EBaddTopicLF' frameborder='0' style="display:none;" scrolling='yes'></iframe>
+                            <div id="cappPDF" style="display:none;">
+                                <apex:canvasapp canvasid="cappPDF" applicationname="SLP_File_Download" />
+                            </div>
+                            <div id="cappTXT" style="display:none;">
+                                <apex:canvasapp canvasid="cappTXT" applicationname="SLP_File_Download" />
+                            </div>
+                            <div id="cappXLSX" style="display:none;">
+                                <apex:canvasapp canvasid="cappXLSX" applicationname="SLP_File_Download" />
+                            </div>
+                            <div id="cappHTML">
+                                <!--<apex:canvasApp canvasId="cappHTML" applicationName="SLP_File_Download" />-->
+                                <iframe id="cappHTMLFrame" style="display:none;"></iframe>
+                            </div>
+                            <div id="cappDOCX" style="display:none;">
+                                <apex:canvasapp canvasid="cappDOCX" applicationname="SLP_File_Download" />
+                            </div>
+                            <div id="cappPPT" style="display:none;">
+                                <apex:canvasapp canvasid="cappPPT" applicationname="SLP_File_Download" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btnAthena" data-dismiss="modal" aria-hidden="true" onclick="functionCloseDialog()">Cancel</button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="hdnSetPosition" />
+                    <input type="hidden" id="hdnUrl" />
+                    <!-- END PAGE CONTENT-->
+                </div>
+                <!-- END PAGE CONTAINER-->
+            </div>
+            <!-- END PAGE -->
+        </div>
+        <!-- END CONTAINER -->
+        <form>
+            <a id="lnkDownloadFile" target="_blank"></a>
+        </form>
+        <!-- BEGIN FOOTER -->
+        <div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+        <!-- END FOOTER -->
+        <!-- BEGIN JAVASCRIPTS -->
+        <!-- Load javascripts at bottom, this will reduce page load time
+               -->
+        <apex:includescript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}" />
+        <apex:includescript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}" />
+        <apex:includescript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}" />
+        <apex:includescript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}" />
+        <apex:includescript value="{!$Resource.athena_canvas_controller}" />
+        <!-- ie8 fixes -->
+        <!--[if lt IE 9]>
+         <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+         <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+         <![endif]-->
+        <!--common script for all pages-->
+        <apex:includescript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}" />
+
+        <!-- END JAVASCRIPTS -->
+
+        <script>
+            $(document).ready(function () {
+
+                if (getUrlVars()["SearchOptions"] == 'People') {
+
+                    $('#Communityli').removeClass('active');
+                    $('#Communities').removeClass('active');
+                    $('#Communities').addClass('tab-pane fade in');
+
+                    $('#Collli').removeClass('active');
+                    $('#Collateral').removeClass('active');
+                    $('#Collateral').addClass('tab-pane fade in');
+
+                    $('#Boardli').removeClass('active');
+                    $('#LearningBoards').removeClass('active');
+                    $('#LearningBoards').addClass('tab-pane fade in');
+
+                    $('#Topicli').removeClass('active');
+                    $('#Content').removeClass('active');
+                    $('#Content').addClass('tab-pane fade in');
+                    $('#Expertli').removeClass('active');
+                    $('#ExpertFinder').removeClass('active');
+                    $('#ExpertFinder').addClass('tab-pane fade in');
+
+                    $('#Peopleli').addClass('active');
+                    $('#NewPeople').addClass('tab-pane fade in active');
+
+                }
+
+                // Displaying Board Result's Rating
+                for (var i = 0; i < listBoardIds.length; i++) {
+                    $('#ratingBoard_' + listBoardIds[i].ID).raty({
+                        cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                        cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                        starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                        starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                        starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                        readOnly: true,
+                        score: listBoardIds[i].RatingNbr,
+
+                    });
+                }
+
+                // Displaying Topic Result's Rating
+                for (var i = 0; i < listTopicIds.length; i++) {
+
+                    if (listTopicIds[i].ID != '') {
+                        $('#ratingTopic_' + listTopicIds[i].ID + '_' + i).raty({
+                            cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                            cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                            starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                            starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                            starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                            readOnly: true,
+                            score: listTopicIds[i].RatingNbr,
+
+                        });
+                    }
+                }
+                // Displaying Collateral Result's Rating
+                for (var i = 0; i < listCollateralIds.length; i++) {
+                    $('#ratingCollaterals_' + listCollateralIds[i].ID + '_' + i).raty({
+                        cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                        cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                        starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                        starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                        starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                        readOnly: true,
+                        score: listCollateralIds[i].RatingNbr,
+
+                    });
+                }
+            });
+
+            function ShowBoardRating(data) {
+
+                var BoardID = $(data).attr('data-boardLBid');
+
+                //  $('#' + data.id).css("cursor", "default");
+
+                $('#' + BoardID).show();
+            }
+
+
+
+            function HideBoardRating(data) {
+                var BoardID = $(data).attr('data-boardLBid');
+
+                $('#' + BoardID).hide();
+            }
+            function ShowActive() {
+
+
+                if ('{!CommunityResultCount}' != 0) {
+                    $('#Peopleli').removeClass('active');
+                    $('#Topicli').removeClass('active');
+                    $('#Boardli').removeClass('active');
+                    $('#Collli').removeClass('active');
+                    $('#Expertli').removeClass('active');
+
+                    $('#Communityli').addClass('active');
+                }
+                else if (('{!CommunityResultCount}' == 0) && ('{!CollResultCount}' != 0)) {
+                    $('#Peopleli').removeClass('active');
+                    $('#Topicli').removeClass('active');
+                    $('#Boardli').removeClass('active');
+                    $('#Expertli').removeClass('active');
+
+                    $('#Communityli').removeClass('active');
+                    $('#Communities').removeClass('active');
+                    $('#Communities').addClass('tab-pane fade in');
+
+                    $('#Collli').addClass('active');
+                    $('#Collateral').addClass('tab-pane fade in active');
+                }
+                else if (('{!CommunityResultCount}' == 0) && ('{!CollResultCount}' == 0) && ('{!LBResultCount}' != 0)) {
+
+                    $('#Communityli').removeClass('active');
+                    $('#Communities').removeClass('active');
+                    $('#Communities').addClass('tab-pane fade in');
+
+                    $('#Collli').removeClass('active');
+                    $('#Collateral').removeClass('active');
+                    $('#Collateral').addClass('tab-pane fade in');
+
+                    $('#Topicli').removeClass('active');
+                    $('#Content').removeClass('active');
+                    $('#Content').addClass('tab-pane fade in');
+
+                    $('#Peopleli').removeClass('active');
+                    $('#NewPeople').removeClass('active');
+                    $('#NewPeople').addClass('tab-pane fade in');
+
+                    $('#Expertli').removeClass('active');
+                    $('#ExpertFinder').removeClass('active');
+                    $('#ExpertFinder').addClass('tab-pane fade in');
+
+                    $('#Boardli').addClass('active');
+                    $('#LearningBoards').addClass('tab-pane fade in active');
+                }
+                else if (('{!CommunityResultCount}' == 0) && ('{!CollResultCount}' == 0) && ('{!LBResultCount}' == 0) && ('{!TopicResultCount}' != 0)) {
+
+                    $('#Communityli').removeClass('active');
+                    $('#Communities').removeClass('active');
+                    $('#Communities').addClass('tab-pane fade in');
+
+                    $('#Collli').removeClass('active');
+                    $('#Collateral').removeClass('active');
+                    $('#Collateral').addClass('tab-pane fade in');
+
+                    $('#Boardli').removeClass('active');
+                    $('#LearningBoards').removeClass('active');
+                    $('#LearningBoards').addClass('tab-pane fade in');
+
+                    $('#Peopleli').removeClass('active');
+                    $('#NewPeople').removeClass('active');
+                    $('#NewPeople').addClass('tab-pane fade in');
+
+                    $('#Topicli').addClass('active');
+                    $('#Content').addClass('tab-pane fade in active');
+                }
+                else if (('{!CommunityResultCount}' == 0) && ('{!CollResultCount}' == 0) && ('{!LBResultCount}' == 0) && ('{!TopicResultCount}' == 0) && ('{!PeopleResultCount}' != 0)) {
+
+                    $('#Communityli').removeClass('active');
+                    $('#Communities').removeClass('active');
+                    $('#Communities').addClass('tab-pane fade in');
+
+                    $('#Collli').removeClass('active');
+                    $('#Collateral').removeClass('active');
+                    $('#Collateral').addClass('tab-pane fade in');
+
+                    $('#Boardli').removeClass('active');
+                    $('#LearningBoards').removeClass('active');
+                    $('#LearningBoards').addClass('tab-pane fade in');
+
+                    $('#Topicli').removeClass('active');
+                    $('#Content').removeClass('active');
+                    $('#Content').addClass('tab-pane fade in');
+                    $('#Expertli').removeClass('active');
+                    $('#ExpertFinder').removeClass('active');
+                    $('#ExpertFinder').addClass('tab-pane fade in');
+
+                    $('#Peopleli').addClass('active');
+                    $('#NewPeople').addClass('tab-pane fade in active');
+                }
+                else if (('{!CommunityResultCount}' == 0) && ('{!CollResultCount}' == 0) && ('{!LBResultCount}' == 0) && ('{!TopicResultCount}' == 0) && ('{!ExpertResultCount}' != 0)) {
+
+                    $('#Communityli').removeClass('active');
+                    $('#Communities').removeClass('active');
+                    $('#Communities').addClass('tab-pane fade in');
+
+                    $('#Collli').removeClass('active');
+                    $('#Collateral').removeClass('active');
+                    $('#Collateral').addClass('tab-pane fade in');
+
+                    $('#Boardli').removeClass('active');
+                    $('#LearningBoards').removeClass('active');
+                    $('#LearningBoards').addClass('tab-pane fade in');
+
+                    $('#Topicli').removeClass('active');
+                    $('#Content').removeClass('active');
+                    $('#Content').addClass('tab-pane fade in');
+
+                    $('#Expertli').addClass('active');
+                    $('#ExpertFinder').addClass('tab-pane fade in active');
+
+                }
+
+            }
+
+        </script>
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+
+                //var queryStringValue = getUrlVars()["SearchVal"];
+                //$('[id$=searchText]').val(queryStringValue);
+
+                //alert('hi');
+                var searchText = '{!searchText}';
+
+
+                $('[id$=searchText]').val(searchText);
+
+
+                var urlString = getUrlVars()["SearchOptions"];
+                if (urlString != undefined) {
+                    if (urlString.indexOf('multiselect-all') > -1 || urlString.indexOf('multiselect-all') == 0) {
+                        $('input[name=multiselect][value=All]').attr('checked', true);
+                    }
+                    else {
+                        $('input[name=multiselect][value="' + urlString + '"]').attr('checked', true);
+                    }
+                }
+
+                //if ($('[id$=searchText]').val() != '') {
+                //    $('#multiSearch').multiselect('deselect', 'multiselect-all');
+                //    $('#multiSearch').multiselect('deselect', 'Boards');
+                //    $('#multiSearch').multiselect('deselect', 'Topics');
+                //    $('#multiSearch').multiselect('deselect', 'Community');
+                //    //$('#multiSearch').multiselect('deselect', 'Collateral');
+                //    $('#multiSearch').multiselect('deselect', 'People');
+                //}
+                //var searchOptions = '{!SearchOptions}';
+                //if (searchOptions != '') {
+
+                //    var array = searchOptions.split(',');
+                //    var lastChar = searchOptions.slice(-1);
+                //    if (lastChar == ',') {
+                //        array = array.slice(0, -1);
+                //    }
+
+
+
+                //    $('#multiSearch').multiselect({});
+
+
+                //    $('#multiSearch').multiselect('select', array);
+                //    //$('#multiSearch').multiselect('select', 'multiselect-all');
+
+                //    if (array.indexOf('Boards') >= 0 && array.indexOf('Community') >= 0 && array.indexOf('Collateral') >= 0 && array.indexOf('Topics') >= 0 && array.indexOf('People') >= 0)
+                //        $('#multiSearch').multiselect('select', 'multiselect-all');
+                //}
+            });
+
+            function CreateMetric(data) {
+
+                var strCommunityId = $(data).attr('data-CommunityId');
+                var communityUrl = $(location)[0].href;
+                Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.SLP_GlobalSearch.MetricCommunity}',
+                            strCommunityId,
+                            communityUrl,
+                            CommnityMetric
+
+                        );
+            }
+
+            function CommnityMetric(result, event) {
+
+                var communityUrl = $(location)[0].protocol + '//' + $(location)[0].host + '/' + '/apex/SLP_ViewCommunity?id=' + result;
+                //window.location=communityUrl;
+                window.location.href = communityUrl;
+                window.location.replace(result);
+            }
+
+            function CreateBoardMetric(data) {
+                var strCommunityId = $(data).attr('data-BoardId');
+                var communityUrl = $(location)[0].href;
+                Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.SLP_GlobalSearch.MetricBoard}',
+                            strCommunityId,
+                            communityUrl,
+                            BoardMetric
+
+                        );
+            }
+
+            function BoardMetric(result, event) {
+
+                var communityUrl = $(location)[0].protocol + '//' + $(location)[0].host + '/' + '/apex/AthenaLearningBoardDtls?id=' + result;
+                //window.location=communityUrl;
+                window.location.href = communityUrl;
+                window.location.replace(result);
+            }
+
+            function functionOpenVideo(data) {
+
+                var videoNameHeading = $(data).attr('data-name');
+                var id = $(data).attr('data-PositionID');
+
+                $('#hdnSetPosition').val(id);
+                var videoURL = $(data).attr('data-url');
+
+                $('#frameVideo').attr('src', videoURL);
+                $('#videoHeading').text(videoNameHeading);
+
+                $('#VideoPopUp').modal('show');
+            }
+
+            function ShowPDF(data) {
+
+                var pdfURL = $(data).attr('data-url');
+
+                var id = $(data).attr('data-PositionID');
+
+                $('#hdnSetPosition').val(id);
+
+                document.getElementById('modalPreviewRequired').style.display = 'block';
+                document.getElementById('cappPDF').style.display = 'block';
+                document.getElementById('cappTXT').style.display = 'none';
+                document.getElementById('cappXLSX').style.display = 'none';
+                document.getElementById('cappHTML').style.display = 'none';
+                document.getElementById('cappDOCX').style.display = 'none';
+                document.getElementById('cappPPT').style.display = 'none';
+
+                var m = { 'name': 'button.click', 'payload': { 'url': 'abc', 'contenttype': 'def' }, 'target': { 'canvas': 'cappPDF' } };
+
+                m.payload.url = pdfURL;
+                m.payload.contenttype = 'application/pdf';
+                Sfdc.canvas.controller.publish(m);
+                $('#modalPreviewRequired').modal('show');
+            }
+
+            function ShowDOCX(data) {
+
+                var docURL = $(data).attr('data-url');
+                var id = $(data).attr('data-PositionID');
+
+                $('#hdnSetPosition').val(id);
+                //document.getElementById('modalPreviewRequired').style.display = 'block';
+                document.getElementById('cappPDF').style.display = 'none';
+                document.getElementById('cappTXT').style.display = 'none';
+                document.getElementById('cappXLSX').style.display = 'none';
+                document.getElementById('cappHTML').style.display = 'none';
+                //document.getElementById('cappDOCX').style.display = 'block';
+                document.getElementById('cappPPT').style.display = 'none';
+
+                var m = { 'name': 'button.click', 'payload': { 'url': 'abc', 'contenttype': 'def' }, 'target': { 'canvas': 'cappDOCX' } };
+
+                m.payload.url = docURL;
+                m.payload.contenttype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                Sfdc.canvas.controller.publish(m);
+                //$('#modalPreviewRequired').modal('show');
+            }
+
+
+
+            function ShowPPTX(data) {
+
+                var pptURL = $(data).attr('data-url');
+
+                //document.getElementById('modalPreviewRequired').style.display = 'block';
+                document.getElementById('cappPDF').style.display = 'none';
+                document.getElementById('cappTXT').style.display = 'none';
+                document.getElementById('cappXLSX').style.display = 'none';
+                document.getElementById('cappHTML').style.display = 'none';
+                document.getElementById('cappDOCX').style.display = 'none';
+                // document.getElementById('cappPPT').style.display = 'block';
+
+
+                var m = { 'name': 'button.click', 'payload': { 'url': 'abc', 'contenttype': 'def' }, 'target': { 'canvas': 'cappPPT' } };
+
+
+                m.payload.url = pptURL;
+                m.payload.contenttype = 'vnd.ms-powerpoint.presentation.macroEnabled.12';
+
+                Sfdc.canvas.controller.publish(m);
+
+
+            }
+            function ShowTXT(data) {
+                var id = $(data).attr('data-PositionID');
+
+                $('#hdnSetPosition').val(id);
+                var txtURL = $(data).attr('data-url');
+                document.getElementById('modalPreviewRequired').style.display = 'block';
+                document.getElementById('cappPDF').style.display = 'none';
+                document.getElementById('cappTXT').style.display = 'block';
+                document.getElementById('cappXLSX').style.display = 'none';
+                document.getElementById('cappHTML').style.display = 'none';
+                document.getElementById('cappDOCX').style.display = 'none';
+                document.getElementById('cappPPT').style.display = 'none';
+
+                var m = { 'name': 'button.click', 'payload': { 'url': 'abc', 'contenttype': 'def' }, 'target': { 'canvas': 'cappTXT' } };
+
+                m.payload.url = txtURL;
+                m.payload.contenttype = 'text/plain';
+                Sfdc.canvas.controller.publish(m);
+                $('#modalPreviewRequired').modal('show');
+            }
+            function ShowXLSX(data) {
+
+                var xlsURL = $(data).attr('data-url');
+
+                //document.getElementById('modalPreviewRequired').style.display = 'block';
+                document.getElementById('cappPDF').style.display = 'none';
+                document.getElementById('cappTXT').style.display = 'none';
+                // document.getElementById('cappXLSX').style.display = 'block';
+                document.getElementById('cappHTML').style.display = 'none';
+                document.getElementById('cappDOCX').style.display = 'none';
+                document.getElementById('cappPPT').style.display = 'none';
+
+                var m = { 'name': 'button.click', 'payload': { 'url': 'abc', 'contenttype': 'def' }, 'target': { 'canvas': 'cappXLSX' } };
+
+                m.payload.url = xlsURL;
+                m.payload.contenttype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                Sfdc.canvas.controller.publish(m);
+            }
+
+            function ShowHTML(data) {
+
+                var htmlURL = $(data).attr('data-url');
+                var id = $(data).attr('data-PositionID');
+
+                $('#hdnSetPosition').val(id);
+                document.getElementById('modalPreviewRequired').style.display = 'block';
+                document.getElementById('cappPDF').style.display = 'none';
+                document.getElementById('cappTXT').style.display = 'none';
+                document.getElementById('cappXLSX').style.display = 'none';
+                document.getElementById('cappHTML').style.display = 'block';
+                document.getElementById('cappDOCX').style.display = 'none';
+                document.getElementById('cappPPT').style.display = 'none';
+                document.getElementById('frameFileUrl').style.display = 'none';
+                document.getElementById('cappHTMLFrame').style.display = 'block';
+
+                var m = { 'name': 'button.click', 'payload': { 'url': 'abc', 'contenttype': 'def' }, 'target': { 'canvas': 'cappHTML' } };
+
+                var urlText = htmlURL;
+                if (htmlURL.indexOf("https") == -1) {
+                    urlText = htmlURL.replace("http:", "https:");
+                    //urlText=urlText.replace("www","");
+                }
+
+                if (urlText.indexOf("https://www8.hp.com") != -1) {
+                    urlText = urlText.replace("https://www8.hp.com", "https://ssl.www8.hp.com:");
+                }
+                $('#hdnUrl').html(urlText);
+                $('#hdnUrl').html(urlText + '&amp;output=embed');
+                if (urlText.indexOf('google') != -1) {
+                    $('#cappHTMLFrame').attr('src', $('#hdnUrl')[0].innerText);
+                }
+                else {
+                    $('#cappHTMLFrame').attr('src', urlText);
+                }
+                //m.payload.url = htmlURL;
+                //m.payload.contenttype = 'html';
+                //Sfdc.canvas.controller.publish(m);
+                $('#modalPreviewRequired').modal('show');
+                return false;
+            }
+
+            function functionCloseDialog() {
+
+                var positionID = $('#hdnSetPosition').val();
+
+                if (positionID != '' || positionID != "") {
+                    $("html, body").animate({ scrollTop: $('#' + positionID).offset().top }, 1000);
+                }
+            }
+
+            function getUrlVars() {
+                var vars = [], hash;
+                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                for (var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
+                return vars;
+            }
+
+            function FindBrowserVersion() {
+
+                var nVer = navigator.appVersion;
+                var nAgt = navigator.userAgent;
+                var browserName = navigator.appName;
+                var fullVersion = '' + parseFloat(navigator.appVersion);
+                var majorVersion = parseInt(navigator.appVersion, 10);
+                var nameOffset, verOffset, ix;
+                if ((verOffset = nAgt.indexOf("Opera")) != -1) {
+                    browserName = "Opera";
+                    fullVersion = nAgt.substring(verOffset + 6);
+                    if ((verOffset = nAgt.indexOf("Version")) != -1)
+                        fullVersion = nAgt.substring(verOffset + 8);
+                }
+                    // In MSIE, the true version is after "MSIE" in userAgent
+                else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
+                    browserName = "Microsoft Internet Explorer";
+                    fullVersion = nAgt.substring(verOffset + 5);
+                }
+                    // In Chrome, the true version is after "Chrome"
+                else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
+                    browserName = "Chrome";
+                    fullVersion = nAgt.substring(verOffset + 7);
+                }
+                    // In Safari, the true version is after "Safari" or after "Version"
+                else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
+                    browserName = "Safari";
+                    fullVersion = nAgt.substring(verOffset + 7);
+                    if ((verOffset = nAgt.indexOf("Version")) != -1)
+                        fullVersion = nAgt.substring(verOffset + 8);
+                }
+                    // In Firefox, the true version is after "Firefox"
+                else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
+                    browserName = "Firefox";
+                    fullVersion = nAgt.substring(verOffset + 8);
+                }
+                    // In most other browsers, "name/version" is at the end of userAgent
+                else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) < (verOffset = nAgt.lastIndexOf('/'))) {
+                    browserName = nAgt.substring(nameOffset, verOffset);
+                    fullVersion = nAgt.substring(verOffset + 1);
+                    if (browserName.toLowerCase() == browserName.toUpperCase()) {
+                        browserName = navigator.appName;
+                    }
+                }
+                else {
+                    browserName = nAgt;
+                    fullVersion = "None";
+                }
+                // trim the fullVersion string at semicolon/space if present
+                if ((ix = fullVersion.indexOf(";")) != -1)
+                    fullVersion = fullVersion.substring(0, ix);
+                if ((ix = fullVersion.indexOf(" ")) != -1)
+                    fullVersion = fullVersion.substring(0, ix);
+
+                majorVersion = parseInt('' + fullVersion, 10);
+                if (isNaN(majorVersion)) {
+                    fullVersion = '' + parseFloat(navigator.appVersion);
+                    majorVersion = parseInt(navigator.appVersion, 10);
+                }
+                var BrowserVer = '';
+                if (fullVersion == 'None') {
+                    BrowserVer = browserName;
+                }
+                else {
+                    BrowserVer = browserName + ' ' + fullVersion;
+                }
+                return BrowserVer;
+            }
+
+
+            function LogMetrics(boardId, boardName, link, tabSection) {
+
+                var operatingSystem = navigator.appVersion;
+                operatingSystem = operatingSystem.substring(0, operatingSystem.indexOf("\)") + 1);
+                var browserVersion = FindBrowserVersion();
+                var url = $('#hdnHost').val() + link;
+                Visualforce.remoting.Manager.invokeAction(
+                                '{!$RemoteAction.SLP_GlobalSearch.LogMetrics}',
+                                boardId,
+                                boardName,
+                                url,
+                                tabSection,
+                                GetOSName(operatingSystem),
+                                browserVersion,
+                                'Desktop',
+                                DoNothingWithResult
+                            );
+            }
+
+            function DoNothingWithResult(result, event) {
+
+                $('[id$=hdnRedirectUrl]').val(result);
+                $('[id$=btnRedirectUrl]').click();
+            }
+
+            function LogTabMetrics(tabName) {
+                var operatingSystem = navigator.appVersion;
+                operatingSystem = operatingSystem.substring(0, operatingSystem.indexOf("\)") + 1);
+                var browserVersion = FindBrowserVersion();
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SLP_GlobalSearch.LogTabMetrics}',
+                          tabName,
+                          GetOSName(operatingSystem),
+                          browserVersion,
+                          DoNothing
+                      );
+            }
+
+            function LogIdolSearchMetrics(link) {
+                $("#lnkDownloadFile").removeAttr('href');
+                OpenPopUp(link);
+                var operatingSystem = navigator.appVersion;
+                operatingSystem = operatingSystem.substring(0, operatingSystem.indexOf("\)") + 1);
+                var browserVersion = FindBrowserVersion();
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SLP_GlobalSearch.LogIdolSearchMetrics}',
+                          link,
+                          GetOSName(operatingSystem),
+                          browserVersion,
+                          DoNothingWithIdolSearchResult
+                      );
+                //$("#lnkDownloadFile")[0].click();
+
+                //window.location.href=$("#lnkDownloadFile").attr('href');
+            }
+
+            function LogDownloadMetrics(link, fileType) {
+                $("#lnkDownloadFile").removeAttr('href');
+                OpenPopUp(link);
+                var operatingSystem = navigator.appVersion;
+                operatingSystem = operatingSystem.substring(0, operatingSystem.indexOf("\)") + 1);
+                var browserVersion = FindBrowserVersion();
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SLP_GlobalSearch.LogDownloadMetrics}',
+                          link,
+                          fileType,
+                          GetOSName(operatingSystem),
+                          browserVersion,
+                          DoNothing
+                      );
+                //window.location.href=$("#lnkDownloadFile").attr('href');
+            }
+
+
+            function DoNothingWithIdolSearchResult(result, event) {
+
+
+            }
+
+            function DoNothing() {
+                //return true;
+                return false;
+            }
+
+        </script>
+    </body>
+    <!-- END BODY -->
+</html>
+</apex:page>

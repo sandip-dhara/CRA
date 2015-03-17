@@ -1,0 +1,74 @@
+<apex:page standardController="Apttus__APTS_Agreement__c" extensions="ApttusButtonIntermediate">
+	  
+	<script type="text/javascript" src="/soap/ajax/16.0/connection.js"></script>
+    <script type="text/javascript" src="/soap/ajax/16.0/apex.js"></script>
+    <script type="text/javascript" src="{!$Resource.Apttus__ComplyJSLib}" ></script>
+    
+    <script type="text/javascript">
+     
+    var hasValidationError = false; 
+    var agreement = "Apttus__APTS_Agreement__c";  
+    var orgAgreementId = ""; 
+
+	function initCall() {    
+        
+        try {
+        	sforce.connection.sessionId = "{!$Api.Session_ID}"; //to avoid session timeout
+        	orgAgreementId  = "{!Apttus__APTS_Agreement__c.Id}";
+        	doValidate();
+        }
+        catch(e) {
+        	erroralert(cERROR_UNKNOWN,e);
+        }    
+    }
+   
+   window.onload = function() {     
+    
+        setTimeout(function() {
+        try {
+        	initCall();
+        }
+        catch (ex) {
+                erroralert("afterLoad():", ex);
+                navigateTo("/{!Apttus__APTS_Agreement__c.Id}");
+            } 
+        }, 0);     
+    }
+    
+    function doValidate() { 
+        try {
+                var validationMessage = "";
+                hasValidationError = false;             
+                var agmtStatus = "{!Apttus__APTS_Agreement__c.Apttus__Status__c}";
+				var custLegalContact = "{!Apttus__APTS_Agreement__c.Customer_Legal_Contact__c}";
+				var baseTerm = "{!Apttus__APTS_Agreement__c.Base_Term__c}";
+				var geographic = "{!Apttus__APTS_Agreement__c.Contract_Geographic_Scope__c}";
+				var perpetual = "{!Apttus__APTS_Agreement__c.Apttus__Perpetual__c}";
+				var term = "{!Apttus__APTS_Agreement__c.Apttus__Term_Months__c}";
+				
+				 
+                if(custLegalContact == '' || custLegalContact == null || baseTerm == '' || baseTerm == null || geographic == null || geographic == '' || ((term != null || term != '') && perpetual == 'TRUE') || ((term == '' || term == null) && perpetual == 'FALSE'))
+                {
+                	hasValidationError = true; 
+                    validationMessage += "Customer Legal Contact, Base Term,Evergreen or Term(in months) and Contract Geographic Scope Should not blank.\n";
+                }
+ 
+                    if (hasValidationError == true) {
+                        alert("Can't send for signatures:"+validationMessage);
+                        navigateTo("/"+orgAgreementId);
+                    }
+                    
+                    else{
+                    	navigateSucc();
+                    }
+        } catch (ex) { 
+            alert("Error validating Signatures: " + ex); 
+            navigateTo("/"+orgAgreementId);
+        } 
+    }   
+    
+    </script>
+<apex:form >
+<apex:actionFunction name="navigateSucc" action="{!navigateTo}"/>
+</apex:form>
+</apex:page>

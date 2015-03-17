@@ -1,0 +1,245 @@
+<apex:page controller="AthenaHelp"
+    showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false"
+    applyhtmltag="false">
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Edit</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-fileupload.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/tagit.ui-zendesk.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/jquery.tagit.css')}" />
+
+    <!-- check box, radio button -->
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/css/uniform.default.css')}" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+    <!-- BEGIN HEADER -->
+    <header>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="HpLogo">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/>
+                    </a>
+                    <div class="nav mtop10">
+                        <h1>Social Learning Platform</h1>
+                        <h3>Learning on your terms!</h3>
+                    </div>
+                    <div class="nav notify-row">
+                        <input type="text" class="span3 mtop16" />
+                        <button class="btn btn-primary" type="button">Search</button>
+                    </div>
+                    <div class="top-nav">
+                        <ul class="nav pull-right top-menu mtop16">
+                            <!-- BEGIN USER LOGIN DROPDOWN -->
+                            <li class="dropdown open">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="username">Welcome {!LoggedinUserDtls.Name}</span>
+                                    <i class="icon-user"></i>
+                                    <!--<b class="caret"></b>-->
+                                </a>
+                                <ul class="dropdown-menu extended logout">
+                                    <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+                                </ul>
+                            </li>
+                            <!-- END USER LOGIN DROPDOWN -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid menunavBar">
+                    <a href="#">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Home.png')}" alt="Icon_Home"/>
+                        </a>
+                    <div class="btn-group">
+                        <a href="#" data-toggle="dropdown">
+                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Menu.png')}" alt="Icon_Menu"/>
+                            </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="https://{!getSfInstance}">Salesforce Home</a></li>
+                            <li><a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank">Help &amp; Support</a></li>
+                            <hr />
+                            <li><a href="http://amp.corp.hp.com/" target="_blank">Account Management Portal(AMP)</a></li>
+                            <li><a href="http://ent241.sharepoint.hp.com/teams/GSCDC/es/ITO.aspx" target="_blank">Portfolio Accrediation</a></li>
+                            <li><a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html" target="_blank">What We Sell</a></li>
+                            <li><a href="https://{!getSfInstance}/apex/AthenaHelp" target="_blank">Help</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+    <!-- BEGIN CONTAINER -->
+    <div id="container" class="row-fluid">
+   
+        <!-- BEGIN PAGE -->
+        <div id="main-content">
+            <div class="container-fluid">
+                <!-- BEGIN PAGE HEADER-->
+                <div class="row-fluid">
+                    <div id = "load_status"></div>
+                    <div id = "embedded_page"></div>
+                    <br/>TEST START <br/>
+                    <!--http://intranet.hp.com/enterpriseservices/ww/site/market/index.html-->
+                    <!--https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social%20Learning.aspx-->                    
+                    <apex:iframe id="frameForEmbeddedYouTubeVideo" src="https://www.youtube.com/embed/J---aiyznGQ?feature=player_detailpage" html-allowfullscreen="true" scrolling="true">
+                        <a href="https://www.youtube.com/embed/J---aiyznGQ?feature=player_detailpage">https://www.youtube.com/embed/J---aiyznGQ?feature=player_detailpage</a>
+                    </apex:iframe>                    
+                    <apex:iframe id="frameThatWorkedForVeeresh" src="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html">
+                        <a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html">http://intranet.hp.com/enterpriseservices/ww/site/market/index.html</a>
+                    </apex:iframe>
+                    <apex:iframe id="frameThatDoesNotWork" src="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social%20Learning.aspx">
+                        <a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social%20Learning.aspx">https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social%20Learning.aspx</a>
+                    </apex:iframe>                    
+                </div>        
+            </div>
+        TEST END<br/>
+        </div>
+        <!-- END PAGE -->           
+    </div>
+    <!-- END CONTAINER -->
+
+    <!-- BEGIN FOOTER -->
+    <div id="footer">
+        © Hewlett-Packard Development Company, L.P.     |     HP Restricted
+    </div>
+    <!-- END FOOTER -->
+
+    <!-- BEGIN JAVASCRIPTS -->
+    <!-- Load javascripts at bottom, this will reduce page load time
+         -->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-fileupload.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/jquery.uniform.min.js')}"/>
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+
+    <!-- END JAVASCRIPTS -->
+    <script>
+    
+    // Hey kids, let's make a Cross-Origin-Resource-Sharing (CORS) request
+    function loadEmbeddedPage() {
+        var url = 'https://www.google.com';
+        var xhr = new XMLHttpRequest();
+        if ("withCredentials" in xhr) {
+            xhr.open('GET', url, true); // XHR for WebKit, Chrome/Firefox/Opera/Safari.
+          } else if (typeof XDomainRequest != "undefined") {
+            xhr = new XDomainRequest(); // XDomainRequest for Internet Explorer
+            xhr.open('GET', url);
+          } else {        
+             $('#load_status').html('CORS not supported... so sad, too bad.');
+             return;
+        }
+        
+      // Response handlers.
+      xhr.onload = function() {
+          var text = xhr.responseText;
+          $('#embedded_page').load(url, function(response, status, xhr) {
+              $('#load_status').html((status == 'error') ? 'load failure:' + xhr.status + '  ' + xhr.statusText  : 'load success');
+          });
+      };
+
+      xhr.onerror = function() {
+          $('#load_status').html('what? load failure:' + xhr.status + '  ' + xhr.statusText);
+      };
+    
+      xhr.send();                           
+    }
+        
+        $(function () {
+            var sampleTags = ['cloud', 'athena', 'sample', 'board', 'UI', 'css', 'jQuery', 'salesforce', 'html5', 'responcive', ];
+
+
+
+            //-------------------------------
+            // Single TAG field
+            //-------------------------------
+            $('#learningTagsTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTags')
+            });
+
+            $('#learningTagsTextTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTagsText')
+            });
+
+            $('#learningTagsLinkTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTagsLink')
+            });
+
+            $('#learningTagsVideoTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningVideoLink')
+            });
+
+            $(" input[type=radio], input[type=checkbox]").uniform();
+
+            //show hide imageUpload in popup
+            $("input[type=radio]").change(function () {
+                var divId = $(this).attr("id");
+                $("div.check").hide();
+                $("." + divId).show();
+                $("input[type=checkbox]").change();
+            });
+
+            //toggle the componenet with class menu_body
+            $(".menu_body").show();
+            $(".menu_head").click(function () {
+                $(this).next(".menu_body").slideToggle(600);
+                var plusmin;
+                plusmin = $(this).children(".plusminus").text();
+
+                if (plusmin == '+')
+                    $(this).children(".plusminus").text('-');
+                else
+                    $(this).children(".plusminus").text('+');
+            });
+            
+            loadEmbeddedPage();                    
+        });      
+    </script>
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

@@ -1,0 +1,56 @@
+<apex:page controller="OAE_Rules_StartCtlr">   
+<apex:sectionheader title="Field Selection Wizard"/>
+  <apex:form >
+    <apex:pageBlock tabstyle="Contact">
+        <apex:pageBlockSection title="Option 1: Edit an object currently in use" collapsible="false" />
+        <apex:dataTable value="{!objectsInUse}" var="objName" id="tblInUse" cellpadding="2">
+          <apex:column width="200">
+            <apex:facet name="header">Object</apex:facet>
+            <apex:outputText value="{!objName.sTwo}"/>
+          </apex:column>
+          <apex:column width="100">
+            <apex:facet name="header"></apex:facet>
+            <apex:outputPanel id="rend" onclick="editObj('{!objName.sOne}')" 
+                styleClass="btn">Edit Fields</apex:outputPanel>
+          </apex:column>
+          <apex:column width="150">
+            <apex:facet name="header">Default Queue ID</apex:facet>
+            <apex:outputText value="{!objName.sSeven}"/>
+          </apex:column>
+          <apex:column width="150">
+            <apex:facet name="header">UserData Workload</apex:facet>
+            <apex:outputText value="{!objName.sThree}"/>
+          </apex:column>
+          <apex:column width="150">
+            <apex:facet name="header">Object Time Field</apex:facet>
+            <apex:outputText value="{!objName.sFour}"/>
+          </apex:column>
+          <apex:column width="150">
+            <apex:facet name="header">Object Workload</apex:facet>
+            <apex:outputText value="{!objName.sFive}"/>
+          </apex:column>
+          <apex:column width="150">
+            <apex:facet name="header">Event Record Type ID</apex:facet>
+            <apex:outputText value="{!objName.sSix}"/>
+          </apex:column>
+        </apex:dataTable>
+        <apex:pageBlockSection title="Option 2: Edit a new object" collapsible="false" />
+		  <Table><tr><td width="220">
+			<apex:outputPanel id="selectObject">
+			<apex:selectList value="{!objToAdd}" size="1" style="width:200px">
+			<apex:selectOptions value="{!availablePicklist}"/>
+			</apex:selectList>
+			</apex:outputPanel>
+          </td><td width="200">
+            <apex:outputPanel id="rendy" onclick="addObj()" styleClass="btn">Use This Object</apex:outputPanel>
+		  </td></tr></Table>
+
+        <apex:actionFunction action="{!editNewObject}" name="addObj" rerender="rend">
+        </apex:actionFunction>
+        <apex:actionFunction action="{!editObject}" name="editObj" rerender="rend">
+          <apex:param name="firstParam" assignTo="{!objToEdit}" value="" />
+        </apex:actionFunction>
+
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

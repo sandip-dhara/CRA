@@ -1,0 +1,777 @@
+<!-- 
+/***********************************************************
+* Page Name: HPQuoteRelatedList
+* Author: HP - Mohit
+* Date: 07-Nov-2012 
+* Requirement # Request Id :
+* Description: UI to show the Quotes in opportunity custom Related list
+***********************************************************/
+-->
+<apex:page standardController="Opportunity" extensions="HPQuoteController" sidebar="false" id="pg" showHeader="false">
+    <script src="/soap/ajax/25.0/connection.js" type="text/javascript"></script>
+    <script src="/soap/ajax/25.0/apex.js" type="text/javascript"></script>
+    <apex:includeScript value="{!URLFOR($Resource.Json)}"/>
+    <script>
+        function ttableId(){
+            var tableId1;
+            if('{!objUser.Business_Group__c}' == 'ES'){
+           
+               tableId1 = 'pg:formId:pgBlock:pbTable1:';
+               }
+              else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId1 = 'pg:formId:pgBlock:pbTable2:';
+              }
+              else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId1 = 'pg:formId:pgBlock:pbTable3:';
+              }
+              else
+                  tableId1 = 'pg:formId:pgBlock:pbTable:';
+              return tableId1;
+        }
+        function checkSelectedForPreviousVersion(){
+            var selectedRecords = [];
+            var tableId = 'pg:formId:pgBlock:pbTable:';
+            var inputElem = document.getElementsByTagName("input");
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';
+              }
+              else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';
+              }
+              else
+                  tableId = 'pg:formId:pgBlock:pbTable';
+            for (i=0;i<inputElem.length;i++){
+                if(document.getElementById(tableId +i+':isSelected') != null){
+                    if (document.getElementById(tableId +i+':isSelected').checked == true){
+                        selectedRecords.push(document.getElementById(tableId +i+':quoteIdsIdHidden').value);
+                    }
+                }
+            }
+            if (selectedRecords[0] == null){
+                alert('Please Select any Quote to see the Previous Versions');
+                return false;
+            }
+            else{
+                window.open('/apex/HPQuoteRelatedList?id={!Opportunity.Id}&sortExpression={!sortExpression}&sortDirection={!sortDirection}&viewMode=showPrevious&selectedIds='+selectedRecords,'popUpWindow','height=500,width=800,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,status=No');
+                return false;
+            }
+        }
+        /* Shaijan Thomas 5th March 13 for R5 */
+        function init()
+        {
+            var tableId = 'pg:formId:pgBlock:pbTable:';
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';
+              }
+              else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';
+              }
+              else
+                  tableId = 'pg:formId:pgBlock:pbTable:';
+            if({!isQuoteCheckAll})
+                document.getElementById(tableId+'isAllSelected').checked = true;
+        }
+    function MaintainSelected(QuoteSize)
+        {
+            var i, selectedAll = true;
+            var tableId = 'pg:formId:pgBlock:pbTable:';
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';
+              }
+              else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';
+              }
+              else
+                  tableId = 'pg:formId:pgBlock:pbTable:'; 
+            for (i=0;i<QuoteSize;i++)
+                if(document.getElementById(tableId +i+':isSelected').checked == false)
+                {
+                    selectedAll = false;
+                    break;
+                }
+            if(selectedAll)
+                document.getElementById(tableId+'isAllSelected').checked = true;
+        }
+        function CheckCheckAll(tCheck)
+        {
+            var tableId = 'pg:formId:pgBlock:pbTable:';
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';
+              }
+              else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';
+              }
+              else
+                  tableId = 'pg:formId:pgBlock:pbTable:';
+            if(tCheck)
+                document.getElementById(tableId+'isAllSelected').checked = true;
+        }
+        function checkAll(cb,AorGSize)
+        {
+            var i;
+            var tableId = 'pg:formId:pgBlock:amppbTable:';
+            if(cb.checked)
+            for (i=0;i<AorGSize;i++)
+                document.getElementById(tableId +i+':checkdone').checked = true;
+            if(!cb.checked)
+            for (i=0;i<AorGSize;i++)
+                document.getElementById(tableId +i+':checkdone').checked = false;
+        }
+        function MaintainSelectedAG(AorGSize)
+        {
+            var i;
+            var temp = document.getElementById('pg:formId:pgBlock:amppbTable:checkAll');
+            var tableId = 'pg:formId:pgBlock:amppbTable:';
+            if(temp.checked)
+            {
+                for (i=0;i<AorGSize;i++)
+                    document.getElementById(tableId +i+':checkdone').checked = true;
+            }
+        }
+        function MaintainSelectedHPQ(QuoteSize)
+        {
+            var i, tempflg,temp;
+            var tableId = 'pg:formId:pgBlock:pbTable:';
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';
+              }
+              else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';
+              }
+              else
+                  tableId = 'pg:formId:pgBlock:pbTable:';
+            tempflg = true;
+            if(document.getElementById(tableId+'isAllSelected').checked)
+            {
+                document.getElementById(tableId+'isAllSelected').checked = true;
+                for (i=0;i<QuoteSize;i++)
+                {
+                    document.getElementById(tableId+i+':isSelected').checked=true;
+                    temp = document.getElementById(tableId+i+':isSelected');
+                    if(!temp.checked)
+                    {
+                        tempflg = false;
+                        break;  
+                    }
+                }
+            }
+            else
+            {
+                for (i=0;i<QuoteSize;i++)
+                {
+                    temp = document.getElementById(tableId+i+':isSelected');
+                    if(temp.checked)
+                    {
+                        document.getElementById(tableId+i+':isSelected').checked=true;
+                    }
+                }
+            }
+        }
+        function checkAllonFilterSingleClick (cb,AorGSize)
+        {
+            var tmpflg = true;
+            var tableId = 'pg:formId:pgBlock:amppbTable:';
+            var temp;
+            if (!cb.checked)
+            {
+                document.getElementById('pg:formId:pgBlock:amppbTable:checkAll').checked = false;   
+            }
+            else
+            {
+                for (var i = 0;i<AorGSize;i++)
+                {
+                    temp = document.getElementById(tableId +i+':checkdone').checked;
+                    if (!temp)
+                    {
+                        tmpflg = false;
+                        break;      
+                    }
+                }
+                if(tmpflg)
+                    document.getElementById('pg:formId:pgBlock:amppbTable:checkAll').checked = true;    
+            }
+        }
+        function checkAllSingleClick (cb,Quotesize)
+        {
+            var tmpflg = true;
+           var tableId = 'pg:formId:pgBlock:pbTable:';
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';
+              }
+              else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';
+              }
+              else
+                  tableId = 'pg:formId:pgBlock:pbTable:';
+            var temp;
+            if (!cb.checked)
+            {
+                document.getElementById(tableId+'isAllSelected').checked = false; 
+            }
+            else
+            {
+                for (var i = 0;i<Quotesize;i++)
+                {
+                    temp = document.getElementById(tableId +i+':isSelected').checked;
+                    if (!temp)
+                    {
+                        tmpflg = false;
+                        break;      
+                    }
+                }
+                if(tmpflg)
+                    document.getElementById(tableId+'isAllSelected').checked = true;  
+            }
+        }
+        function checkAllQuote (cb,Quotesize)
+        {
+           var i;
+            var tableId = 'pg:formId:pgBlock:pbTable:';
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';
+              }
+              else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';
+              }
+              else
+                  tableId = 'pg:formId:pgBlock:pbTable:';
+            if(cb.checked)
+            for (i=0;i<Quotesize;i++)
+                document.getElementById(tableId +i+':isSelected').checked = true;
+            if(!cb.checked)
+            for (i=0;i<Quotesize;i++)
+                document.getElementById(tableId +i+':isSelected').checked = false; 
+        }
+        /* Shaijan Thomas 5th March 13 for R5 */
+        
+        function checkSelectedForHideSync(){
+            var selectedRecords = [];
+            var tableId = 'pg:formId:pgBlock:pbTable:';
+            var inputElem = document.getElementsByTagName("input");
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';        
+               }
+            else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';        
+               }
+            else{
+               tableId = 'pg:formId:pgBlock:pbTable:';
+              }
+              for (i=0;i<inputElem.length;i++){
+                if(document.getElementById(tableId +i+':isSelected') != null && document.getElementById(tableId +i+':syncedOpportunity') != null){
+                    if (document.getElementById(tableId +i+':isSelected').checked == true && document.getElementById(tableId +i+':syncedOpportunity').checked == true){
+                        selectedRecords.push(document.getElementById(tableId +i+':quoteIdsIdHidden').value);
+                    }
+                }
+            }
+            if (selectedRecords[0] == null){
+                alert('In true');
+                return true;
+            }
+            else{
+                alert('One or more selected Quotes are Synced');
+                return false;
+            }
+        }
+        
+        function syncOpptyLineItem(){
+            var __sfdcSessionId = '{!GETSESSIONID()}';
+            sforce.connection.sessionId = '{!GETSESSIONID()}';
+            var selectedRecords = [];
+            var tableId = 'pg:formId:pgBlock:pbTable:';
+            var inputElem = document.getElementsByTagName("input");
+            if('{!objUser.Business_Group__c}' == 'ES'){
+               tableId = 'pg:formId:pgBlock:pbTable1:';
+               }
+            else if('{!objUser.Business_Group__c}' == 'EG' || '{!objUser.Business_Group__c}' == 'PPS'|| '{!objUser.Business_Group__c}' == 'ESSN'){
+               tableId = 'pg:formId:pgBlock:pbTable2:';        
+               }
+            else if('{!objUser.Business_Group__c}' == 'TS' || '{!objUser.Business_Group__c}' == 'SW'){
+               tableId = 'pg:formId:pgBlock:pbTable3:';        
+               }
+            else{
+               tableId = 'pg:formId:pgBlock:pbTable:';
+              }
+            for (i=0;i<inputElem.length;i++){
+                if(document.getElementById(tableId +i+':isSelected') != null){
+                    if (document.getElementById(tableId +i+':isSelected').checked == true){
+                        selectedRecords.push(document.getElementById(tableId +i+':quoteIdHidden').value);
+                    }
+                }
+            }
+            var queryRecords = sforce.connection.query("Select id from HP_Quote__c where Synced_To_Opportunity__c = true and Opportunity_Name__c = '{!Opportunity.Id}'");
+            var syncRecords = queryRecords.getArray("records"); 
+            var newRecords = [];
+            var oldRecords = [];
+            if (selectedRecords[0] == null)
+            {
+                if (confirm('No quotes are selected. Clicking OK will remove all opportunity products which are not marked to Retain. Do you want to continue?'))
+                {
+                    for (var n=0; n<syncRecords.length; n++) 
+                    { 
+                        var c = new sforce.SObject("HP_Quote__c"); 
+                        c.id = syncRecords[n].Id; 
+                        c.Synced_To_Opportunity__c = 0;
+                        c.Last_Synced_to_Opportunity__c =null;
+                        oldRecords.push(c); 
+                    }
+                    result = sforce.connection.update(oldRecords);
+                    if(result != ''){
+                        if(result[0].errors != '' && result[0].errors != null)
+                            alert(result[0].errors.message);
+                    }
+                    var syncResult = sforce.apex.execute("syncQuoteLineItemWithOpportunityLineItem","syncQuoteLineItemWithOpptyLineItem", {OpportunityId:"{!Opportunity.Id}",runQuoteLineItem:"False",opptyISOCode:"{!Opportunity.CurrencyIsoCode}"});
+                    if(syncResult != 'Inserted'){
+                        alert(syncResult);
+                    }
+                    window.parent.location.href='/{!Opportunity.Id}';
+                    return false;
+                }
+            }
+            else
+            {
+                //Check selected quote status
+                var q = "Select id,Quote_Status__c,Has_Expired__c,Synced_To_Opportunity__c from HP_Quote__c where Id In " + "('" + selectedRecords.toString().replace(/,/g, "','") + "')";
+                var selectedQueryRecords = sforce.connection.query(q);
+                var selectedQuoteStatus = selectedQueryRecords.getArray("records");
+                var allStatusCompleted = true;
+                for(var i=0;i<selectedQuoteStatus.length;i++)
+                {   
+                    if(selectedQuoteStatus[i].Quote_Status__c != 'Quote Complete' || selectedQuoteStatus[i].Has_Expired__c == 'TRUE')
+                        allStatusCompleted = false;
+                }
+                if(allStatusCompleted == false){
+                    alert('One or more selected quotes are not complete or expired, hence cannot be synced with the opportunity. Please select completed quotes for syncing');
+                }
+                else{
+                    //uncheck all quotes marked for sync
+                    for (var n=0; n<syncRecords.length; n++) 
+                    { 
+                        var c = new sforce.SObject("HP_Quote__c"); 
+                        c.id = syncRecords[n].Id; 
+                        c.Synced_To_Opportunity__c = 0;
+                        c.Last_Synced_to_Opportunity__c =null;
+                        oldRecords.push(c); 
+                    } 
+                    result = sforce.connection.update(oldRecords);
+                    if(result != ''){
+                        if(result[0].errors != '' && result[0].errors != null)
+                            alert(result[0].errors.message);
+                    }
+
+                    //check all quotes marked for sync
+                    for (var n=0; n<selectedRecords.length; n++)
+                    {
+                        var c = new sforce.SObject("HP_Quote__c");
+                        c.id = selectedRecords[n];
+                        c.Synced_To_Opportunity__c = 1;
+                        var d =new Date(); 
+                        c.Last_Synced_to_Opportunity__c = d.toJSON();
+                        newRecords.push(c);
+                    }
+                    result = sforce.connection.update(newRecords);
+                    if(result != ''){
+                        if(result[0].errors != '' && result[0].errors != null)
+                            alert(result[0].errors.message);
+                    }
+                    var syncResult = sforce.apex.execute("syncQuoteLineItemWithOpportunityLineItem","syncQuoteLineItemWithOpptyLineItem", {OpportunityId:"{!Opportunity.Id}",runQuoteLineItem:"True",opptyISOCode:"{!Opportunity.CurrencyIsoCode}"});
+                    //alert(syncResult);
+                    if(syncResult != 'Inserted'){
+                        alert(syncResult);
+                    }
+                    window.parent.location.href='/{!Opportunity.Id}';
+                    return false;
+                }
+            }
+        }
+    </script>
+<apex:form id="formId">
+    <apex:actionStatus id="loading">
+            <apex:facet name="start">
+                &nbsp;&nbsp;
+                <FONT COLOR="black" SIZE="2"><b><i>Updating List....</i></b></FONT>
+                <br/><br/>
+            </apex:facet>
+    </apex:actionStatus>  
+    <apex:outputField value="{!Opportunity.Account.Name}" rendered="false"/>
+    <apex:outputField value="{!Opportunity.Account.MDCP_Organization_ID__c}" rendered="false"/>
+    <apex:outputField value="{!Opportunity.Account.RPL_status__c}" rendered="false"/>
+    <apex:inputHidden value="{!Opportunity.Opportunity_ID__c}"/>
+    <apex:inputHidden value="{!Opportunity.CurrencyIsoCode}"/>
+    <apex:outputField value="{!Opportunity.account.World_Region1__r.Name}" rendered="false"/>
+    <apex:inputHidden value="{!Opportunity.account.Name}"/>
+    <body onload="init();"> </body>
+    <apex:image url="/s.gif" style="background-image: url(/img/sprites/master.png);background-position: 0 -1238px;width: 32px;height: 32px;"  title="Opportunity" alt="Opportunity" rendered="{!IF(CONTAINS(viewMode,'List'),True,False)}"/>
+    <apex:outputLabel rendered="{!IF(CONTAINS(viewMode,'List'),True,False)}"><a href="/{!Opportunity.Id}" target="_self" style="font-weight:bold;font-size:15px;">Opportunity : {!Opportunity.Name}</a></apex:outputLabel>
+    <apex:pageBlock id="pgBlock" title="HP Quotes">
+         <apex:pageBlockButtons location="top" rendered="{!!isPreviousVersionClicked}">
+             <apex:commandButton value="Create Quote" oncomplete="window.parent.location.href='{!redirectURL}';" action="{!redirctToNewRequestPage}" rendered="{!showBMIQuoteButton}"/>
+             <apex:commandButton value="Request Quote" oncomplete="window.parent.location.href='{!redirectURL}';" action="{!requestNewQuote}" rendered="{!showNewQuoteButton}" />
+             <!--<apex:CommandButton value="Build Quote" onclick="window.parent.location.href='/apex/CPQHPQuoteSelectionPage?id={!Opportunity.Id}';" rendered="{!showBMIQuoteButton}"/>-->
+             <apex:CommandButton value="Sync" onclick="return syncOpptyLineItem();" rendered="{!showSyncButton}"/>
+             <apex:CommandButton value="Show Previous Versions" onClick="return checkSelectedForPreviousVersion();"/>
+             <apex:CommandButton value="Hide" action="{!hideSelectedQuotes}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"/>
+             <apex:CommandButton value="Show All" action="{!ShowAllHiddenRecords}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"/>
+             <!-- // Shaijan Thomas 5th March 13 for R5-->            
+            <div class="menuButton" id="Actions"><apex:outputPanel layout="none" rendered="{!IF((objUser.Business_Group__c == 'SW' || objUser.Business_Group__c == 'TS') && (viewMode!='showPrevious'),True,False)}">
+                <div class="menuButtonButton" id="ActionsButton"><span class="menuButtonLabel" id="ActionsLabel" >Filter By</span></div>
+                <div class="menuButtonMenu" id="ActionsMenu"><apex:outputPanel layout="none">
+                    <apex:commandLink action="{!showAMPID}" status="loadingpopup" title="{!retAmp}" rerender="tstpopup"><b>{!retAMPLabel}</b></apex:commandLink>                   
+                    <apex:commandLink action="{!showGC}" status="loadingpopup" title="{!retGC}" rerender="tstpopup"><b>{!retGCPLabel}</b></apex:commandlink>
+                    <apex:commandLink action="{!showQN}" status="loadingpopup" title="{!retQN}" rerender="tstpopup"><b>{!retQNLabel}</b></apex:commandlink>
+                    <apex:commandLink action="{!ClearAllFilters}" status="loadingpopup" title="Clear All" reRender="pgBlock"><b>Clear All</b></apex:commandlink>
+                </apex:outputPanel></div>
+            </apex:outputPanel></div>
+            <script type="text/javascript">new MenuButton('Actions', false);</script>
+             <!-- // Shaijan Thomas 5th March 13 for R5 -->
+         </apex:pageBlockButtons>
+         <apex:actionStatus id="loadingpopup">
+            <apex:facet name="start">
+                <img src="{!$Resource.AjaxAnimation}" />
+                &nbsp;&nbsp;
+                <FONT COLOR="black" SIZE="2"><b><i>Loading.............</i></b></FONT>
+                <br/><br/>
+            </apex:facet>
+        </apex:actionStatus>
+         <apex:pageBlock rendered="{!IF(CONTAINS(viewMode,'List'),True,False)}">
+             <apex:pageBlockButtons location="top"> 
+                 <apex:commandLink value="A" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="A" /></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="B" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="B"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="C" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="C"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="D" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="D"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="E" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="E"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="F" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="F"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="G" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="G"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="H" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="H"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="I" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="I"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="J" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="J"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="K" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="K"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="L" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="L"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="M" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="M"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="N" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="N"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="O" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="O"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="P" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="P"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="Q" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="Q"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="R" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="R"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="S" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="S"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="T" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="T"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="U" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="U"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="V" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="V"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="W" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="W"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="X" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="X"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="Y" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="Y"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="Z" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="Z"/></apex:commandLink>  &nbsp;&nbsp;
+                 <apex:commandLink value="ALL" action="{!Albetsresults}" reRender="pgBlock" status="loading" oncomplete="CheckCheckAll({!isQuoteCheckAll})"><apex:param name="Alpha" value="ALL"/></apex:commandLink>
+            </apex:pageBlockButtons>
+         </apex:pageBlock>
+          <apex:messages />
+         <apex:pagemessages />
+         <apex:actionStatus id="loading">
+            <apex:facet name="start">
+                <img src="{!$Resource.AjaxAnimation}" />
+                &nbsp;&nbsp;
+                <FONT COLOR="black" SIZE="2"><b><i>Updating List....</i></b></FONT>
+                <br/><br/>
+            </apex:facet>
+        </apex:actionStatus>
+        
+       <!-- // Shaijan Thomas 5th March 13 for R5 -->
+        <apex:outputPanel id="tstpopup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+             <apex:actionStatus id="loadingFilter">
+            <apex:facet name="start">
+                <img src="{!$Resource.AjaxAnimation}" />
+                &nbsp;&nbsp;
+                <FONT COLOR="black" SIZE="2"><b><i>Processing....</i></b></FONT>
+                <br/><br/>
+            </apex:facet>
+        </apex:actionStatus>
+                       <apex:outputPanel style="height:200px;overflow:auto;" id="inpanel" layout="block">
+                        <apex:pageblockTable value="{!AmpORGroupValues}" var="a" columnswidth="5px,5px" cellpadding="2" border="2" id="amppbTable"> 
+                            <apex:column >
+                                <apex:facet name="header">
+                                    <input type="checkbox" id="pg:formId:pgBlock:amppbTable:checkAll" name="Action" value="Action" onclick="checkAll(this,{!AmpORGroupValues.size})"/>Action
+                                </apex:facet>
+                                <apex:inputCheckbox value="{!a.selected}" id="checkdone" onclick="checkAllonFilterSingleClick(this,{!AmpORGroupValues.size})"> 
+                                </apex:inputCheckbox>
+                            </apex:column> 
+                            <apex:column headervalue="AMP ID" value="{!a.AG.AMPID_TS__c}" rendered="{!isAMPID}"/>
+                            <apex:column headervalue="Group Contract" value="{!a.AG.Group_Contract_SW__c}" rendered="{!isGroupContract}"/> 
+                            <apex:column headervalue="Functional Location" value="{!a.AG.Name}" rendered="{!isQuoteName}"/> 
+                        </apex:pageblockTable>
+                        </apex:outputPanel>
+                    <apex:commandLink action="{!showMoreAMPS}" status="loadingFilter" rerender="tstpopup" oncomplete="MaintainSelectedAG({!AmpORGroupValues.size})" rendered="{!IF(AmpORGroupValues.Size >= 5,True,False)}">Show More</apex:commandlink>
+                    <apex:commandButton style="margin-left: 275px;" value="   OK   " action="{!closePopup}" rerender="pgBlock" status="loadingFilter" oncomplete="CheckCheckAll({!isQuoteCheckAll})"/>
+                    <apex:commandButton style="margin-left: 5px;" value=" Cancel " action="{!cancelPopup}" rerender="pgBlock" status="loadingFilter" oncomplete="CheckCheckAll({!isQuoteCheckAll})"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <style type="text/css">
+            .custPopup
+            {
+                background-color: white;
+                border-width: 2px;
+                border-style: solid;
+                z-index: 9999;
+                left: 50%;
+                padding:10px;
+                position: absolute;
+                width: 500px;
+                margin-left: -250px;
+                top:12px;
+            }
+            .popupBackground
+            {
+                background-color:black;
+                opacity: 0.20;
+                filter: alpha(opacity = 20);
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 9998;
+            }
+        </style>
+        <!-- // Shaijan Thomas 5th March 13 for R5 -->
+         <apex:outputPanel id="panelId" style="{!IF(CONTAINS(viewMode,'List'),'','height:180px;width:100%;overflow:auto;')}" layout="block" rendered="{!OR(ISNULL(HPQuotes),HPQuotes.size>0) && ((objUser.Business_Group__c != 'PPS') && (objUser.Business_Group__c != 'ES') &&(objUser.Business_Group__c != 'ESSN')) && ((objUser.Business_Group__c != 'TS') && (objUser.Business_Group__c != 'SW')) && objUser.Business_Group__c != 'EG'}">
+             <apex:pageblockTable value="{!HPQuotes}" var="Q" id="pbTable" >
+                 <apex:column >
+                     <apex:facet name="header">
+                         <input type="checkbox" value="{!Q.isSelected}" id="pg:formId:pgBlock:pbTable:isAllSelected" name="Action" onclick="checkAllQuote(this,{!HPQuotes.size})"/>Action
+                     </apex:facet>
+                     <apex:inputCheckbox value="{!Q.isSelected}" id="isSelected" onclick="checkAllSingleClick(this,{!HPQuotes.size})"/>
+                     <apex:inputHidden value="{!Q.oQuoteObj.Id}" id="quoteIdHidden"/>
+                     <apex:inputHidden value="{!Q.oQuoteObj.Quote_IDS_ID__c}" id="quoteIdsIdHidden"/>
+                 </apex:column>
+                  <apex:column >
+                      <apex:outputLink target="_top" value="/{!Q.oQuoteObj.Id}" title="{!Q.oQuoteObj.Name}">{!Q.oQuoteObj.Name}</apex:outputLink>
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Quote Name{!IF(sortExpression=='Name',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="Name" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Originating_System_Quote_ID__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Quote ID Doc #{!IF(sortExpression=='Originating_System_Quote_ID__c',IF(sortDirection='ASC','▲','▼'),'')}" >             
+                            <apex:param value="Originating_System_Quote_ID__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                  <apex:column value="{!Q.oQuoteObj.AMPID_TS__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="AMP ID{!IF(sortExpression=='AMPID_TS__c',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="AMPID_TS__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                  <apex:column value="{!Q.oQuoteObj.Group_Contract_SW__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Group Contract{!IF(sortExpression=='Group_Contract_SW__c',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="Group_Contract_SW__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Service_Agreement_ID__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Originating_System_Quote_Version__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_Status__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Grand_Total__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_End_Date__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Last_Synced_to_Opportunity__c}"></apex:column>
+                 <apex:facet name="footer"><apex:outputLabel rendered="{!isPagination}">Showing Page # {!PageNumber} of {!totalPages}</apex:outputLabel></apex:facet>
+            </apex:pageblockTable>
+         </apex:outputPanel>
+
+        <apex:outputPanel id="panelId1" style="{!IF(CONTAINS(viewMode,'List'),'','height:180px;width:100%;overflow:auto;')}" layout="block" rendered="{!OR(ISNULL(HPQuotes),HPQuotes.size>0) && objUser.Business_Group__c == 'ES'}">
+             <apex:pageblockTable value="{!HPQuotes}" var="Q" id="pbTable1">
+                 <apex:column >
+                     <apex:facet name="header">
+                         <input type="checkbox" value="{!Q.isSelected}" id="pg:formId:pgBlock:pbTable1:isAllSelected" name="Action" onclick="checkAllQuote(this,{!HPQuotes.size})"/>Action
+                     </apex:facet>
+                     <apex:inputCheckbox value="{!Q.isSelected}" id="isSelected" onclick="checkAllSingleClick(this,{!HPQuotes.size})"/>
+                     <apex:inputHidden value="{!Q.oQuoteObj.Id}" id="quoteIdHidden"/>
+                     <apex:inputHidden value="{!Q.oQuoteObj.Quote_IDS_ID__c}" id="quoteIdsIdHidden"/>
+                 </apex:column>
+                 <apex:column >
+                      <apex:outputLink target="_top" value="/{!Q.oQuoteObj.Id}" title="{!Q.oQuoteObj.Name}">{!Q.oQuoteObj.Name}</apex:outputLink>
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Quote Name{!IF(sortExpression=='Name',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="Name" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Originating_System_Quote_ID__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Quote Number{!IF(sortExpression=='Originating_System_Quote_ID__c',IF(sortDirection='ASC','▲','▼'),'')}" >             
+                            <apex:param value="Originating_System_Quote_ID__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>                  
+                 <apex:column value="{!Q.oQuoteObj.Total__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Total{!IF(sortExpression=='Total__c',IF(sortDirection='ASC','▲','▼'),'')}" >             
+                            <apex:param value="Total__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Total_Cost__c}"><apex:facet name="header">Total Cost</apex:facet></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Contract_Start_Date__c}"><apex:facet name="header">Contract Start Date</apex:facet></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Term_in_Months__c}"><apex:facet name="header">Term in Months</apex:facet></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_Owner__c}"><apex:facet name="header">Quote Owner</apex:facet></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_Detail_URL__c}"><apex:facet name="header">Quote Detail</apex:facet></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_Status__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Last_Synced_to_Opportunity__c}"><apex:facet name="header">Synced to Opportunity</apex:facet></apex:column>
+                 <apex:facet name="footer"><apex:outputLabel rendered="{!isPagination}">Showing Page # {!PageNumber} of {!totalPages}</apex:outputLabel></apex:facet>
+            </apex:pageblockTable>
+         </apex:outputPanel>
+                  
+           <apex:outputPanel id="panelId2" style="{!IF(CONTAINS(viewMode,'List'),'','height:180px;width:100%;overflow:auto;')}" layout="block" rendered="{!OR(ISNULL(HPQuotes),HPQuotes.size>0) && (objUser.Business_Group__c == 'EG'|| objUser.Business_Group__c == 'PPS' ||objUser.Business_Group__c == 'ESSN')}">
+             <apex:pageblockTable value="{!HPQuotes}" var="Q" id="pbTable2" >
+                 <apex:column >
+                     <apex:facet name="header">
+                         <input type="checkbox" value="{!Q.isSelected}" id="pg:formId:pgBlock:pbTable2:isAllSelected" name="Action" onclick="checkAllQuote(this,{!HPQuotes.size})"/>Action
+                     </apex:facet>
+                     <apex:inputCheckbox value="{!Q.isSelected}" id="isSelected" onclick="checkAllSingleClick(this,{!HPQuotes.size})"/>
+                     <apex:inputHidden value="{!Q.oQuoteObj.Id}" id="quoteIdHidden"/>
+                     <apex:inputHidden value="{!Q.oQuoteObj.Quote_IDS_ID__c}" id="quoteIdsIdHidden"/>
+                 </apex:column>
+                  <apex:column >
+                      <apex:outputLink target="_top" value="/{!Q.oQuoteObj.Id}" title="{!Q.oQuoteObj.Name}">{!Q.oQuoteObj.Name}</apex:outputLink>
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Quote Name{!IF(sortExpression=='Name',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="Name" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Originating_System_Quote_ID__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Quote Number{!IF(sortExpression=='Originating_System_Quote_ID__c',IF(sortDirection='ASC','▲','▼'),'')}" >             
+                            <apex:param value="Originating_System_Quote_ID__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Originating_System_Quote_Version__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_Status__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Grand_Total__c}"></apex:column>
+                  <!--<apex:column value="{!Q.oQuoteObj.AMPID_TS__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="AMP ID{!IF(sortExpression=='AMPID_TS__c',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="AMPID_TS__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                  <apex:column value="{!Q.oQuoteObj.Group_Contract_SW__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Group Contract{!IF(sortExpression=='Group_Contract_SW__c',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="Group_Contract_SW__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Service_Agreement_ID__c}"></apex:column>-->
+                 <apex:column value="{!Q.oQuoteObj.Quote_Start_Date__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_End_Date__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Last_Synced_to_Opportunity__c}"></apex:column>
+                 <apex:facet name="footer"><apex:outputLabel rendered="{!isPagination}">Showing Page # {!PageNumber} of {!totalPages}</apex:outputLabel></apex:facet>
+            </apex:pageblockTable>
+         </apex:outputPanel>
+         
+         <apex:outputPanel id="panelId3" style="{!IF(CONTAINS(viewMode,'List'),'','height:180px;width:100%;overflow:auto;')}" layout="block" rendered="{!OR(ISNULL(HPQuotes),HPQuotes.size>0) && (objUser.Business_Group__c == 'TS'|| objUser.Business_Group__c == 'SW')}">
+             <apex:pageblockTable value="{!HPQuotes}" var="Q" id="pbTable3" >
+                 <apex:column >
+                     <apex:facet name="header">
+                         <input type="checkbox" value="{!Q.isSelected}" id="pg:formId:pgBlock:pbTable3:isAllSelected" name="Action" onclick="checkAllQuote(this,{!HPQuotes.size})"/>Action
+                     </apex:facet>
+                     <apex:inputCheckbox value="{!Q.isSelected}" id="isSelected" onclick="checkAllSingleClick(this,{!HPQuotes.size})"/>
+                     <apex:inputHidden value="{!Q.oQuoteObj.Id}" id="quoteIdHidden"/>
+                     <apex:inputHidden value="{!Q.oQuoteObj.Quote_IDS_ID__c}" id="quoteIdsIdHidden"/>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Originating_System_Quote_ID__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Document#{!IF(sortExpression=='Originating_System_Quote_ID__c',IF(sortDirection='ASC','▲','▼'),'')}" >             
+                            <apex:param value="Originating_System_Quote_ID__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.AMPID_TS__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="AMP ID{!IF(sortExpression=='AMPID_TS__c',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="AMPID_TS__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                  <apex:column >
+                      <apex:outputLink target="_top" value="/{!Q.oQuoteObj.Id}" title="{!Q.oQuoteObj.Name}">{!Q.oQuoteObj.Name}</apex:outputLink>
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Functional Location{!IF(sortExpression=='Name',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="Name" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Service_Agreement_ID__c}"></apex:column>
+                                 
+                  <apex:column value="{!Q.oQuoteObj.Group_Contract_SW__c}">
+                     <apex:facet name="header">
+                         <apex:commandLink reRender="pgBlock" status="loading" action="{!ViewData}" value="Group Contract{!IF(sortExpression=='Group_Contract_SW__c',IF(sortDirection='ASC','▲','▼'),'')}">             
+                            <apex:param value="Group_Contract_SW__c" name="column" assignTo="{!sortExpression}"></apex:param>
+                        </apex:commandLink>      
+                     </apex:facet>
+                 </apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_Start_Date__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Quote_End_Date__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Grand_Total__c}"></apex:column>
+                  <apex:column value="{!Q.oQuoteObj.Quote_Status__c}"></apex:column>
+                 <apex:column value="{!Q.oQuoteObj.Last_Synced_to_Opportunity__c}"></apex:column>
+                 
+                 <apex:facet name="footer"><apex:outputLabel rendered="{!isPagination}">Showing Page # {!PageNumber} of {!totalPages}</apex:outputLabel></apex:facet>
+            </apex:pageblockTable>
+         </apex:outputPanel>
+         <apex:outputPanel id="noRecordPanelID" rendered="{!OR(HPQuotes.size==0)}">
+            <apex:outputText value="No records to display"/>
+        </apex:outputPanel>
+         <apex:panelGrid columns="4" rendered="{!IF((CONTAINS(viewMode,'List') && HPQuotes.Size >= 5) || (CONTAINS(viewMode,'showPrevious')&& HPQuotes.Size >= 5),False,True)}">
+            <apex:commandLink action="{!showAllRecords}" rendered="{!IF(HPQuotes.Size >= 5,True,False)}">Show More</apex:commandlink>
+            <apex:outputLabel rendered="{!IF(HPQuotes.Size >= 5,True,False)}">|</apex:outputLabel>
+            <apex:outputLabel rendered="{!IF(HPQuotes.Size >= 5,True,False)}" ><a href="/apex/HPQuoteRelatedList?id={!opportunity.id}&viewMode=List&AMSearchRetSring={!AMSearchRetSring}&QNSearchRetSring={!QNSearchRetSring}&GCSearchRetSring={!GCSearchRetSring}&Searchorder={!Searchorder}&SearchRetSring={!SearchRetSring}&sortExpression={!sortExpression}&sortDirection={!sortDirection}&retAMPLabel={!retAMPLabel}&retQNLabel={!retQNLabel}&retGCPLabel={!retGCPLabel}&retAmp={!retAmp}&retGC={!retGC}&retQN={!retQN}" target="_top" >Goto List</a></apex:outputLabel>
+         </apex:panelGrid>
+         <apex:pageBlock rendered="{!isPagination}">
+             <apex:pageBlockButtons location="{!IF(isPagination,'bottom','top')}"  >
+                <apex:outputPanel layout="block" id="myButtons" >
+                      <apex:commandLink value="First" status="loading" action="{!Beginning}"  rendered="{!!disablePrevious}" reRender="formId"/>  &nbsp;
+                      <apex:outputtext value="First" style="color: #999;font-size: 1em;" rendered="{!disablePrevious}"/> &nbsp;
+                      <apex:commandLink value="Previous" status="loading" action="{!Previous}" rendered="{!!disablePrevious}" reRender="formId"/>  &nbsp;
+                      <apex:outputtext value="Previous" style="color: #999;font-size: 1em;" rendered="{!disablePrevious}"/> &nbsp;
+                      <apex:commandLink value="Next" status="loading" action="{!Next}" rendered="{!!disableNext}" reRender="formId"/>  &nbsp;
+                      <apex:outputtext value="Next" style="color: #999;font-size: 1em;" rendered="{!disableNext}"/> &nbsp;
+                      <apex:commandLink value="Last" status="loading" action="{!End}" rendered="{!!disableNext}" reRender="formId"/>  &nbsp;
+                      <apex:outputtext value="Last" style="color: #999;font-size: 1em;" rendered="{!disableNext}"/> &nbsp;
+                </apex:outputPanel>
+             </apex:pageBlockButtons>
+         </apex:pageBlock>
+     </apex:pageBlock>
+ </apex:form>     
+</apex:page>

@@ -1,0 +1,68 @@
+<!-- 
+/**********************************************************
+* Page Name: EditAccountTeamMember
+* Author: Accenture
+* Date: 10-APR-2012 
+* Requirement # Request Id:
+* Description: To Edit Account Team Member
+***********************************************************/
+-->
+<apex:page controller="EditAccountTeamMember" tabStyle="Account">
+    <apex:form id="frm">
+        <apex:sectionHeader title="Account Team" subtitle="Edit Member"/>
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock id="pb" title="" mode="edit">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Save" action="{!save}" />
+                <apex:commandButton value="Cancel" action="{!cancel}"  />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Update this team member:" columns="1">
+                <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="Team Member"/>
+                    <apex:outputText value="{!accountTeamMember.User.Name}" id="teamMember" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="Account Access" />
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="pwPanel" >
+                        <apex:outputPanel layout="block"/>
+                        <apex:selectList id="accountAccess" value="{!accountShare.accountAccessLevel}" multiselect="false" size="1" required="true">
+                            <apex:selectOptions value="{!accountAccessOptions}"/>
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <!-- <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="Contact Access" />
+                    <apex:outputPanel styleClass="requiredBlock" layout="block" id="pwPanel" >
+                        <apex:outputPanel layout="block"/>
+                        <apex:selectList id="contactAccess" value="{!accountShare.contactAccessLevel}" multiselect="false" size="1" required="true">
+                            <apex:selectOptions value="{!accessLevelOptions}"/>
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                 -->
+                <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="Opportunity Access" />
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="pwPanel" >
+                        <apex:outputPanel layout="block"/>
+                        <apex:selectList id="opptyAccess" value="{!accountShare.OpportunityAccessLevel}" multiselect="false" size="1" required="true">
+                            <apex:selectOptions value="{!accessLevelOptions}"/>
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+                <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="Case Access" />
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="pwPanel" >
+                        <apex:outputPanel layout="block"/>
+                        <apex:selectList id="caseAccess" value="{!accountShare.caseAccessLevel}" multiselect="false" size="1" required="true">
+                            <apex:selectOptions value="{!accessLevelOptions}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="Team Role" />
+                    <apex:inputField value="{!accountTeamMember.TeamMemberRole}" required="true"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

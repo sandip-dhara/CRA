@@ -1,0 +1,647 @@
+<apex:page standardController="Opportunity_Plan__c" extensions="RelationshipExtnController" showHeader="false" sidebar="false"   >
+<body onload="window.print();" style="padding-left:10px;padding-right:10px;">
+    
+
+    <style type="text/css">
+    .rotation{
+    background-color:#66CCFF;
+    color: #000000; 
+    font-weight:bold;
+    white-space:nowrap;
+    height:130px;
+    text-align:Left;
+    vertical-align:bottom;
+    writing-mode: tb-rl;
+    filter: flipv fliph;  
+    font-family: arial;
+    
+
+    }
+
+    .relscore {
+    border-collapse:collapse;
+    table-layout:fixed;
+    border-color:solid grey 1px;
+    border-top:thick;
+    border-bottom:thick;
+    border-left:thick;
+    border-right:thick;
+    border-left-color:#000000;
+    border-right-color:#000000;
+    border-top-color:#000000;
+    border-bottom-color:#000000;
+    border-spacing:1px";
+    }
+
+    .style_column{
+    background-color:#66CCFF;
+    color: #000000; 
+    font-weight:bold; 
+    width:50px; 
+    height: 25px;
+    text-align:center;
+    vertical-align:middle;
+    padding: 2px;
+    }
+
+    .style_column2{
+    background-color:#66CCFF;
+    color: #000000; 
+    font-weight:bold;
+    width:50px;
+    height: 25px;
+    text-align:center;
+    vertical-align:middle;
+    padding: 2px;
+    }
+    h1 {
+    color: #5ABBE8;
+    font-size: 28px;
+    }
+    body {
+    padding:10px;
+    }
+    </style>
+<script language="javascript">          
+              function validate(){
+    var del = confirm("Are you sure?");
+    if (del == true) {
+    return true;
+    }else {
+    return false;  
+    }        
+} 
+ </script>
+               
+         
+    <!--Heading of Opportunity Gauge-->   
+    
+    <apex:form style="background-color:#FFFFFF">
+    <br />
+    <apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" /><h1 style="color: #5ABBE8;">     Relationship Suite Summary</h1>
+    
+    <br />
+    <hr size="2"></hr>
+    <!--End-->
+    <!-- buttons -->
+     <span style="padding-left:300px"> <input type="button" class="btn" value="Add Contact" title="Add"  onclick="location.href='/apex/RelationshipSuiteAdd?OppPlanId={!Opportunity_plan__c.Id}&retURL=/apex/RelationshipSuiteSummary?id={!Opportunity_Plan__c.id}&OppId={!Opportunity_Plan__c.Opportunity__c}'"/> 
+              <apex:commandButton value="Sync Contact" action="{!addRemaingContacts}"/>
+              <input type="button" class="btn" value="Print" title="Print"  onclick="window.open('/apex/RelationshipSuitePrint?id={!Opportunity_Plan__c.Id}')"/> 
+              <input type="button" class="btn" value="Help" title="Add"  onclick="window.open('/apex/RelationshipSuiteHelp','RelationshipSuiteHelp','width=600,height=400,scrollbars=yes,resizable=yes')"/> </span>
+              
+    <!--<apex:pageblocktable value="{!Opportunity_Plan__c.relationship_Suite__r}" var="item" >
+    <apex:column headerValue="Action" style="width:100px;">
+         <apex:outputlink value="/apex/RelationshipSuiteEdit?id={!item.id}&retURL=/apex/RelationshipSuiteSummary?id={!Opportunity_Plan__c.id}" target="_self">
+                    Edit
+         </apex:outputLink>&nbsp;|&nbsp;
+          <apex:outputlink value="{!URLFOR($Action.Relationship_Suite__c.Delete,item.id,[retURL='/apex/RelationshipSuiteSummary?id='+Opportunity_Plan__c.id])}" target="_self">
+                    Del
+         </apex:outputLink>
+         </apex:column>
+    <apex:column value="{!item.contact__r.Name}"/>
+    <apex:column value="{!item.Contact__r.Title}"/>
+    <apex:column value="{!item.Parent_Contact__c}"/>
+
+    </apex:pageBlockTable>-->
+
+    
+    <br></bR>    <br></br><br></br> 
+    <!--Heading of Relationship ScoreCard  -->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:OutputText value="Relationship Scorecard"  style="size:100%;color: #000000; font-size: 14pt; width: 25%; font-weight:bold;text-align:left;padding-left:300px"/>
+    </apex:panelgrid>
+
+    <!--End-->
+
+    <table  border="1" bordercolor="#00000" cellspacing="2" Cellpadding="2" class="relscore">
+      <tr >
+        <td colspan="7" rowspan="2" class="style_column">Political Power Radar Results</td>
+    <td  width="0" rowspan="2" style="background-color: #404040;"></td> 
+        <td colspan="5" rowspan="2" class="style_column">Relationship Meter Results</td>
+    <td  width="0" rowspan="2" style="background-color: #404040;"></td>
+        <td height="26" colspan="8" class="style_column">Relationship Map Results</td>
+      </tr>
+      <tr>
+       
+        <td colspan="2" class="style_column" style="width:60px">Authorizer</td>
+        <td colspan="2" class="style_column" style="width:60px">Influencer</td>
+       <td colspan="2" class="style_column" style="width:60px">Justifier</td>
+        <td colspan="2" class="style_column" style="width:60px">Operationalizer</td>
+      </tr>
+      <tr>
+        <td class="style_column" >Action</td>
+        <td class="style_column" >Contact Name</td>
+        <td class="style_column2" >Title</td>
+        <td class="style_column" >Reports To</td>
+        <td class="style_column2" >No of Decisions Owned</td>
+        <td class="style_column" >Total Score</td>
+        <td class="style_column">Result</td>
+
+     <td  width="0" style="background-color: #404040;"> </td>
+
+        <!--<td style="color: #000000; font-weight:bold;width:40px;height:150px" class="rotation">Total Score</div></td>-->
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'potential-adversary.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'detractor.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'neutral.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'supporter.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'partner-ally.gif')}" /></td>
+
+        <td   width="0" style="background-color: #404040;"></td>
+
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'executive.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'decision-maker.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'political-influencer.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'consultant.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'financial-buyer.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'sme.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'end-user.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'internal-enabler.gif')}" /></td>
+      </tr>
+      
+      <!--<apex:repeat value="{!Opportunity_Plan__c.relationship_Suite__r}" var="RS" id="RSTable" >
+      <tr>
+        <td width="45" nowrap="nowrap" align="Left"><apex:outputlink value="/apex/RelationshipSuiteEdit?id={!RS.id}&retURL=/apex/RelationshipSuiteSummary?id={!Opportunity_Plan__c.id}" target="_self">
+                    Edit
+         </apex:outputLink>&nbsp;|&nbsp;
+          <apex:outputlink value="{!URLFOR($Action.Relationship_Suite__c.Delete,RS.id,[retURL='/apex/RelationshipSuiteSummary?id='+Opportunity_Plan__c.id])}" target="_self">
+                    Delete
+         </apex:outputLink> </td>
+        <td width="45" nowrap="nowrap" align="Left">{!RS.Contact__r.Name}</td>
+        <td width="30" nowrap="nowrap" align="Left">{!RS.Contact__r.Title}</td>
+        <td nowrap="nowrap" align="Left">{!RS.Parent_Contact__c}</td>
+        <td nowrap="nowrap" style="text-align:center;" align="Center">{!RS.PP_S__c}</td>
+        <td align="center">{!RS.RM_S__c}</td>
+        <td align="center"><apex:image url="{!IF(RS.RM_S__c<16,URLFOR($Resource.OPBar, 'Red.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+
+     <td  width="0" style="background-color: #404040;"> </td>
+
+        <td align="center"><apex:image url="{!IF(AND(RS.RM_S__c>15,RS.RM_S__c<21),URLFOR($Resource.OPBar, 'Amber.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(AND(RS.RM_S__c>20,RS.RM_S__c<30),URLFOR($Resource.OPBar, 'Blue.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(AND(RS.RM_S__c>29,RS.RM_S__c<37),URLFOR($Resource.OPBar, 'Lblue.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(RS.RM_S__c>36,URLFOR($Resource.OPBar, 'green.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(CONTAINS( RS.Relationship_map__c,"Executive"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+
+     <td  width="0" style="background-color: #404040;"></td>
+
+        <td align="center"><apex:image url="{!IF(CONTAINS( RS.Relationship_map__c,"Decision Maker"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(CONTAINS( RS.Relationship_map__c,"Political Influencer"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(CONTAINS( RS.Relationship_map__c,"Consultant"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(CONTAINS( RS.Relationship_map__c,"Financial Buyer"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(CONTAINS( RS.Relationship_map__c,"Subject Mater Expert"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td align="center"><apex:image url="{!IF(CONTAINS( RS.Relationship_map__c,"End User"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+        <td ><apex:image url="{!IF(CONTAINS( RS.Relationship_map__c,"Internal Enabler"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="24" /></td>
+       </tr>-->
+    <apex:repeat value="{!RelSuite2}" var="RS" id="RSTable" >
+  <tr>
+    <td  align="center" style="white-space:nowrap;">&nbsp;<apex:outputlink value="/apex/RelationshipSuiteEdit?id={!RS.id}&retURL=/apex/RelationshipSuiteSummary?id={!Opportunity_Plan__c.id}" target="_self">Edit</apex:outputLink>&nbsp;|&nbsp;
+      <apex:outputlink value="{!URLFOR($Action.Relationship_Suite__c.Delete,RS.id,[retURL='/apex/RelationshipSuiteSummary?id='+Opportunity_Plan__c.id])}" target="_self" onclick="return validate()">Del</apex:outputLink>&nbsp;</td> 
+    <td align="Left">{!RS.Cr_Name}</td>
+    <td align="Left">{!RS.Cr_Title}</td>
+    <td align="Left">{!RS.parent_contact}</td>
+    <td align="Center">{!RS.decision_count}</td>
+    <td align="Center">{!ROUND(RS.PPS,0)}</td>
+    <td align="Left"><apex:image url="{!If(RS.colorcode='Green',URLFOR($Resource.OPBar, 'BOP.jpg'),If(RS.colorcode='Blue',URLFOR($Resource.OPBar, 'PDZ.jpg'),If(RelSuiteMin=RS.PPS,URLFOR($Resource.OPBar, 'PWI.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))))}" height="20" /></td>
+
+    <td  width="0" style="background-color: #404040;" ></td>
+
+    <td align="center"><apex:image url="{!IF(RS.RMS<16,URLFOR($Resource.OPBar, 'Red.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(RS.RMS>15,RS.RMS<23),URLFOR($Resource.OPBar, 'Amber.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(RS.RMS>22,RS.RMS<30),URLFOR($Resource.OPBar, 'dgrey.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(RS.RMS>29,RS.RMS<36),URLFOR($Resource.OPBar, 'green.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(RS.RMS>35,URLFOR($Resource.OPBar, 'Blue.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+
+     <td  width="0" style="background-color: #404040;"></td>
+
+
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Executive"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Decision Maker"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Political Influencer"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Consultant"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Financial Buyer"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"SME"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"End User"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Internal Enabler"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+   </tr>
+   </apex:repeat>
+    </table>
+   
+    
+    <br></bR>    
+    <br></bR>    
+    <!--Heading of Org Chart-->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:OutputText value="Power Organization Chart"  style="size:100%;color: #000000; font-size: 14pt; width: 25%; font-weight:bold;text-align:center;padding-left:300px"/>
+    </apex:panelgrid>
+    <br></bR>    
+      <html>
+      <head>
+        <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+        <script type='text/javascript'>
+          google.load('visualization', '1', {packages:['orgchart']});
+          google.setOnLoadCallback(drawChart);
+          function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Contact');
+            data.addColumn('string', 'ReportTo');
+            data.addColumn('string', 'ToolTip');
+          
+            data.addRows([
+             
+              {!Contactdata}
+             
+            ]);
+            var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+            
+             {!contactcolorcodestr}
+            chart.draw(data, {allowHtml:true});
+          }
+        </script>
+      </head>
+
+      <body>
+     
+        <div id='chart_div' style="font-size:18px;"></div>
+      </body>
+    </html>
+    <br></bR>    
+    Copyright © 2001–2013 Revenue Storm Corporation.
+    <br></bR>
+    <!--Heading of Org Chart-->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:OutputText value="Power Matrix Report"  style="size:100%;color: #000000; font-size: 14pt; width: 25%; font-weight:bold;text-align:center;padding-left:300px"/>
+
+    </apex:panelgrid>
+    <!--
+    <table border="1" style="width:60%;table-layout:fixed:border:solig grey 2px;margin-left:auto;">
+    <tr height="150 px">
+    <td rowspan="4" align="Left" valign="Top" style="font-weight:bold">Analytical<BR></BR>
+    <table border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+    <apex:repeat value="{!RelStyle1}" var="Rel1" >
+    <tr>
+    <td colspan="2">{!Rel1.Contact__r.Name}<BR></BR>{!Rel1.Contact__r.Title}</td>
+    </tr>
+    </apex:repeat>
+    </table>
+
+    </td>
+    <td colspan="2" align="right" valign="Top" style="font-weight:bold">Driving
+    <table border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+    <apex:repeat value="{!RelStyle4}" var="Rel4" >
+    <tr>
+    <td>{!Rel4.Contact__r.Name}<BR></BR>{!Rel4.Contact__r.Title}</td>
+    </tr>
+    </apex:repeat>
+    </table>
+    </td>
+    </tr>
+    <tr height="150 px">
+    <td align="left" valign="bottom" style="font-weight:bold">
+    <table border="1"  style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+    <apex:repeat value="{!RelStyle4}" var="Rel4" >
+    <tr>
+    <td>{!Rel4.Contact__r.Name}<BR></BR>{!Rel4.Contact__r.Title}</td>
+    </tr>
+    </apex:repeat>
+    </table>
+    <BR></BR>Amicable
+    </td>
+    <td align="right" valign="bottom" style="font-weight:bold">
+    <table border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+    <apex:repeat value="{!RelStyle4}" var="Rel4" >
+    <tr>
+    <td>{!Rel4.Contact__r.Name}<BR></BR>{!Rel4.Contact__r.Title}</td>
+    </tr>
+    </apex:repeat>
+    </table><BR></BR>Expressive
+    </td>
+    </tr>
+    </table>-->
+
+
+<apex:panelgrid columns="2" style="width:100%;text-align:left;margin-left:auto;" border="0">
+    <apex:PanelGroup >
+    
+    <table border="0" cellspacing="2" cellpadding="2" align="right"  style="table-layout:fixed; overflow-x:hidden; width:1200; height:600; max-height:600px;">
+      <tr>
+        <td rowspan="4" align="Right" width="30Px" style="font-weight:bold">Asks</td>
+        <td colspan="2" align="center" valign="Bottom" style="font-weight:bold">Controls</td>
+        <td rowspan="4" align="Left" width="30Px" style="font-weight:bold">Tells</td>
+      </tr>
+    <tr>
+        <td align="Left" valign="Top" border = "1" width="600px" height="300px" max-height="300px" style="border-right:Solid blue 2px;border-bottom:Solid blue 2px;border-top:Solid blue 2px;border-left:Solid blue 2px"><b>Analytical</b>&nbsp;<BR />
+            <table>
+        
+            <tr> <!-- First Row-->
+            <td>
+            <apex:outputpanel rendered="{!IF(RelSuiteQ1>0,True, False)}">
+            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+            <tr><td>{!RelStyle1[0].Contact__r.Name}<BR></BR>{!RelStyle1[0].Contact__r.Title} </td>
+            <td colspan="2"><apex:image url="{!IF(RelStyle1[0].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle1[0].RM_S__c >15,RelStyle1[0].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle1[0].RM_S__c >19,RelStyle1[0].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle1[0].RM_S__c >29,RelStyle1[0].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle1[0].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+              </tr>
+            </table>
+            </apex:outputpanel>
+            </td>
+            <td>
+            <apex:outputpanel rendered="{!IF(RelSuiteQ1>1,True, False)}">
+            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+            <tr><td>{!RelStyle1[1].Contact__r.Name}<BR></BR>{!RelStyle1[1].Contact__r.Title}</td>
+                <td colspan="2"><apex:image url="{!IF(RelStyle1[1].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle1[1].RM_S__c >15,RelStyle1[1].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle1[1].RM_S__c >19,RelStyle1[1].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle1[1].RM_S__c >29,RelStyle1[1].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle1[1].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+              </tr>
+            </table>
+            </apex:outputpanel>
+            </td>
+            <td>
+            <apex:outputpanel rendered="{!IF(RelSuiteQ1>2,True, False)}">
+            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+            <tr><td>{!RelStyle1[2].Contact__r.Name}<BR></BR>{!RelStyle1[2].Contact__r.Title}</td>
+                <td colspan="2"><apex:image url="{!IF(RelStyle1[2].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle1[2].RM_S__c >15,RelStyle1[2].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle1[2].RM_S__c >19,RelStyle1[2].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle1[2].RM_S__c >29,RelStyle1[2].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle1[2].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+              </tr>
+            </table>
+            </apex:outputpanel>
+            </td>
+    </tr>
+    <tr><!-- Second Row-->
+            <td>
+            <apex:outputpanel rendered="{!IF(RelSuiteQ1>3,True, False)}">
+            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+            <tr><td>{!RelStyle1[3].Contact__r.Name}<BR></BR>{!RelStyle1[3].Contact__r.Title}</td>
+                <td colspan="2"><apex:image url="{!IF(RelStyle1[3].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle1[3].RM_S__c >15,RelStyle1[3].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle1[3].RM_S__c >19,RelStyle1[3].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle1[3].RM_S__c >29,RelStyle1[3].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle1[3].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+              </tr>
+            </table>
+            </apex:outputpanel>
+            </td>
+            <td>
+            <apex:outputpanel rendered="{!IF(RelSuiteQ1>4,True, False)}">
+            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+            <tr><td>{!RelStyle1[4].Contact__r.Name}<BR></BR>{!RelStyle1[4].Contact__r.Title}</td>
+                <td colspan="2"><apex:image url="{!IF(RelStyle1[4].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle1[4].RM_S__c >15,RelStyle1[4].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle1[4].RM_S__c >19,RelStyle1[4].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle1[4].RM_S__c >29,RelStyle1[4].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle1[4].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+              </tr>
+            </table>
+            </apex:outputpanel>
+            </td>
+            <td>
+            <apex:outputpanel rendered="{!IF(RelSuiteQ1>5,True, False)}">
+            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                <tr>
+                <td>{!RelStyle1[5].Contact__r.Name}<BR></BR>{!RelStyle1[5].Contact__r.Title}</td>
+                <td colspan="2"><apex:image url="{!IF(RelStyle1[5].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle1[5].RM_S__c >15,RelStyle1[5].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle1[5].RM_S__c >19,RelStyle1[5].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle1[5].RM_S__c >29,RelStyle1[5].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle1[5].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                </tr>
+            </table>
+            </apex:outputpanel>
+           </td>
+    </tr>
+      
+    </table>
+        </td>
+        <td align="right" valign="Top" width="600px" height="300px" max-height="300px" style="border-right:Solid blue 2px;border-bottom:Solid blue 2px;border-top:Solid blue 2px;border-left:Solid blue 2px"><B> Driving</B>&nbsp;
+            
+                <table>
+        
+                <tr> <!-- First Row-->
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ4>0,True, False)}">
+                        <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                            <tr><td>{!RelStyle4[0].Contact__r.Name}<BR></BR>{!RelStyle4[0].Contact__r.Title}</td>
+                                <td colspan="2"><apex:image url="{!IF(RelStyle4[0].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle4[0].RM_S__c >15,RelStyle4[0].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle4[0].RM_S__c >19,RelStyle4[0].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle4[0].RM_S__c >29,RelStyle4[0].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle4[0].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                            </tr>
+                        </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ4>1,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle4[1].Contact__r.Name}<BR></BR>{!RelStyle4[1].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle4[1].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle4[1].RM_S__c >15,RelStyle4[1].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle4[1].RM_S__c >19,RelStyle4[1].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle4[1].RM_S__c >29,RelStyle4[1].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle4[1].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ4>2,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle4[2].Contact__r.Name}<BR></BR>{!RelStyle4[2].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle4[2].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle4[2].RM_S__c >15,RelStyle4[2].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle4[2].RM_S__c >19,RelStyle4[2].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle4[2].RM_S__c >29,RelStyle4[2].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle4[2].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                </tr>
+                <tr><!-- Second Row-->
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ4>3,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle4[3].Contact__r.Name}<BR></BR>{!RelStyle4[3].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle4[3].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle4[3].RM_S__c >15,RelStyle4[3].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle4[3].RM_S__c >19,RelStyle4[3].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle4[3].RM_S__c >29,RelStyle4[3].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle4[3].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ4>4,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle4[4].Contact__r.Name}<BR></BR>{!RelStyle4[4].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle4[4].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle4[4].RM_S__c >15,RelStyle4[4].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle4[4].RM_S__c >19,RelStyle4[4].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle4[4].RM_S__c >29,RelStyle4[4].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle4[4].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ4>5,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr>
+                                    <td>{!RelStyle4[5].Contact__r.Name}<BR></BR>{!RelStyle4[5].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle4[5].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle4[5].RM_S__c >15,RelStyle4[5].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle4[5].RM_S__c >19,RelStyle4[5].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle4[5].RM_S__c >29,RelStyle4[5].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle4[5].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                </tr>
+      
+            </table>
+            
+
+        </td>
+    </tr>   
+
+
+    <tr>
+        <td align="Left" valign="Bottom" width="600px" height="300px" max-height="300px" style="border-right:Solid blue 2px;border-bottom:Solid blue 2px;border-top:Solid blue 2px;border-left:Solid blue 2px">
+            
+            
+                <table>
+        
+                <tr> <!-- First Row-->
+                    <td >
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ2>0,True, False)}">
+                        <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                            <tr><td>{!RelStyle2[0].Contact__r.Name}<BR></BR>{!RelStyle2[0].Contact__r.Title}</td>
+                                <td colspan="2"><apex:image url="{!IF(RelStyle2[0].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle2[0].RM_S__c >15,RelStyle2[0].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle2[0].RM_S__c >19,RelStyle2[0].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle2[0].RM_S__c >29,RelStyle2[0].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle2[0].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                            </tr>
+                        </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td >
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ2>1,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle2[1].Contact__r.Name}<BR></BR>{!RelStyle2[1].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle2[1].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle2[1].RM_S__c >15,RelStyle2[1].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle2[1].RM_S__c >19,RelStyle2[1].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle2[1].RM_S__c >29,RelStyle2[1].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle2[1].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td >
+                    <td >
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ2>2,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle2[2].Contact__r.Name}<BR></BR>{!RelStyle2[2].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle2[2].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle2[2].RM_S__c >15,RelStyle2[2].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle2[2].RM_S__c >19,RelStyle2[2].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle2[2].RM_S__c >29,RelStyle2[2].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle2[2].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td >
+                </tr>
+                <tr><!-- Second Row-->
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ2>3,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle2[3].Contact__r.Name}<BR></BR>{!RelStyle2[3].Contact__r.Title}</td>
+                                <td colspan="2"><apex:image url="{!IF(RelStyle2[3].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle2[3].RM_S__c >15,RelStyle2[3].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle2[3].RM_S__c >19,RelStyle2[3].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle2[3].RM_S__c >29,RelStyle2[3].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle2[3].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ2>4,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle2[4].Contact__r.Name}<BR></BR>{!RelStyle2[4].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle2[4].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle2[4].RM_S__c >15,RelStyle2[4].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle2[4].RM_S__c >19,RelStyle2[4].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle2[4].RM_S__c >29,RelStyle2[4].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle2[4].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ2>5,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr>
+                                    <td>{!RelStyle2[5].Contact__r.Name}<BR></BR>{!RelStyle2[5].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle2[5].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle2[5].RM_S__c >15,RelStyle2[5].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle2[5].RM_S__c >19,RelStyle2[5].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle2[5].RM_S__c >29,RelStyle2[5].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle2[5].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                </tr>
+      
+            </table>
+            
+            <B> <br></br>  <br></br> <br></br>  <br></br>  <br></br> <br></br> <br></br>  <br></br> <br></br> Amiable</B>&nbsp;
+        </td>
+        <td align="Right" valign="Bottom" width="600px" height="300px" max-height="300px" style="border-right:Solid blue 2px;border-bottom:Solid blue 2px;border-top:Solid blue 2px;border-left:Solid blue 2px">
+            
+                <table>
+        
+                <tr> <!-- First Row-->
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ3>0,True, False)}">
+                        <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                            <tr><td>{!RelStyle3[0].Contact__r.Name}<BR></BR>{!RelStyle3[0].Contact__r.Title}</td>
+                                <td colspan="2"><apex:image url="{!IF(RelStyle3[0].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle3[0].RM_S__c >15,RelStyle3[0].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle3[0].RM_S__c >19,RelStyle3[0].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle3[0].RM_S__c >29,RelStyle3[0].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle3[0].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                            </tr>
+                        </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ3>1,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle3[1].Contact__r.Name}<BR></BR>{!RelStyle3[1].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle3[1].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle3[1].RM_S__c >15,RelStyle3[1].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle3[1].RM_S__c >19,RelStyle3[1].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle3[1].RM_S__c >29,RelStyle3[1].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle3[1].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ3>2,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle3[2].Contact__r.Name}<BR></BR>{!RelStyle3[2].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle3[2].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle3[2].RM_S__c >15,RelStyle3[2].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle3[2].RM_S__c >19,RelStyle3[2].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle3[2].RM_S__c >29,RelStyle3[2].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle3[2].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                </tr>
+                <tr><!-- Second Row-->
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ3>3,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle3[3].Contact__r.Name}<BR></BR>{!RelStyle3[3].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle3[3].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle3[3].RM_S__c >15,RelStyle3[3].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle3[3].RM_S__c >19,RelStyle3[3].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle3[3].RM_S__c >29,RelStyle3[3].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle3[3].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ3>4,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr><td>{!RelStyle3[4].Contact__r.Name}<BR></BR>{!RelStyle3[4].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle3[4].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle3[4].RM_S__c >15,RelStyle3[4].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle3[4].RM_S__c >19,RelStyle3[4].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle3[4].RM_S__c >29,RelStyle3[4].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle3[4].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                    <td>
+                        <apex:outputpanel rendered="{!IF(RelSuiteQ3>5,True, False)}">
+                            <table width="150px" height="70px" border="1" style="font-weight:light;border:solid grey 2px" cellpadding="3" cellspacing="3">
+                                <tr>
+                                    <td>{!RelStyle3[5].Contact__r.Name}<BR></BR>{!RelStyle3[5].Contact__r.Title}</td>
+                                    <td colspan="2"><apex:image url="{!IF(RelStyle3[5].RM_S__c<16,URLFOR($Resource.OPBar, 'minus2.jpg'),(IF(AND(RelStyle3[5].RM_S__c >15,RelStyle3[5].RM_S__c < 20),URLFOR($Resource.OPBar, 'minus1.jpg'),(IF(AND(RelStyle3[5].RM_S__c >19,RelStyle3[5].RM_S__c < 29),URLFOR($Resource.OPBar, 'zero.jpg'),(IF(AND(RelStyle3[5].RM_S__c >29,RelStyle3[5].RM_S__c < 37),URLFOR($Resource.OPBar, 'plus1.jpg'),(IF(AND(RelStyle3[5].RM_S__c >36),URLFOR($Resource.OPBar,'plus2.jpg'),URLFOR($Resource.OPBar, 'grey.jpg'))))))))))}" height="24px"></apex:image></td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                    </td>
+                </tr>
+      
+            </table>
+            
+            <B> <br></br>  <br></br> <br></br>  <br></br>  <br></br> <br></br> <br></br>  <br></br> <br></br> Expressive</B>&nbsp;
+        </td>
+    </tr>
+      <tr>
+        <td colspan="2" align="center" valign="Top" style="font-weight:bold">Emotes</td>
+      </tr>
+    </table>
+   
+    </apex:PanelGroup>
+
+    <apex:PanelGroup >
+        <table width="175px" height="70px" border="1" style="font-weight:light;border:solid grey 2px">
+            <tr>
+                <td>
+                    <span style="padding-left:50px"> <b align="center"> Legend </b> </span> <br></br><br></br>
+                 <apex:image url="{!URLFOR($Resource.OPBar, 'minus2.jpg')}" height="24px"></apex:image>  &nbsp;&nbsp;Potential Adversary <br></br><br></br>
+                 <apex:image url="{!URLFOR($Resource.OPBar, 'minus1.jpg')}" height="24px"></apex:image>  &nbsp;&nbsp; Detractor <br></br><br></br>
+                 <apex:image url="{!URLFOR($Resource.OPBar, 'zero.jpg')}" height="24px"></apex:image>  &nbsp;&nbsp; Neutral <br></br><br></br>
+                 <apex:image url="{!URLFOR($Resource.OPBar, 'plus1.jpg')}" height="24px"></apex:image>  &nbsp;&nbsp; Supportor <br></br><br></br>
+                 <apex:image url="{!URLFOR($Resource.OPBar, 'plus2.jpg')}" height="24px"></apex:image>  &nbsp;&nbsp; Partner Ally 
+                 
+                
+                
+                </td>
+            </tr>
+        </table>
+    </apex:PanelGroup>
+
+    </apex:panelGrid>
+    
+    <!--<apex:panelgrid columns="2" border="0" style="width:100%;table-layout:fixed:border:solig grey 2px">
+    <apex:outputLabel value="Analytical" />
+    <apex:outputLabel value="Driving" />
+    <apex:outputLabel value="Amicable" />
+    <apex:outputLabel value="Expressive" />
+    <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
+    </apex:panelgrid>-->
+    </apex:form>  
+           
+   </body><br/>  
+   Copyright © 2001–2013 Tracom Group All rights reserved    
+</apex:page>

@@ -1,0 +1,31 @@
+<!-- 
+/**********************************************************
+* Page Name: SupportReqProductDetail
+* Author: Accenture
+* Date: 12-June-2012 
+* Requirement # Request Id :
+* Description: UI to display opty products on support request detail page
+***********************************************************/
+-->
+<apex:page standardController="Support_Request__c" extensions="SupportReqProductDetailController">
+    <apex:form >
+        <apex:inputHidden value="{!Support_Request__c.Opportunity__c}"/>
+        <apex:pageBlock >
+            <apex:outputpanel >
+            <apex:pageBlockTable value="{!OpportunityProductsList}" rendered="{!Not(isOpportunityProductsListEmpty)}" var="lineItem">
+                <apex:column value="{!lineItem.PricebookEntry.Product2.Name}"/>
+                <apex:column value="{!lineItem.Business_Group__c}"/>
+                <apex:column value="{!lineItem.GBU__c}"/>
+                <apex:column value="{!lineItem.UnitPrice}"/>
+                <apex:column value="{!lineItem.Quantity}"/>
+                <apex:column value="{!lineItem.HasSchedule}"/>
+                <apex:column value="{!lineItem.Subtotal}"/>
+                <apex:column value="{!lineItem.ServiceDate}"/>
+            </apex:pageBlockTable>
+            <apex:outputLabel rendered="{!isOpportunityProductsListEmpty}">
+                {!$Label.No_records_to_display}
+            </apex:outputLabel>
+            </apex:outputpanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

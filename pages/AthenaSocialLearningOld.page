@@ -1,0 +1,755 @@
+<apex:page id="SLHomePage" controller="AthenaSocialLearningOld" showheader="false" standardstylesheets="true"
+    doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+  <html>
+  <head>
+  <title>Social Learning Platform</title>
+  <style type="text/css">
+      body
+      {
+          background-color: #fff !important;
+          background: #fff !important;
+      }
+      .bPageBlock
+      {
+          background: #fff !important;
+      }
+  </style>
+  
+  <script type="text/javascript">
+      function SearchLBPrev(PrevIndex) {
+          var StrRes = FindBrowserResolution();
+          var strSearch=$('#searchTxt').val();
+          CallAthenaSLSearch(StrRes, -1, PrevIndex,strSearch);
+      }
+
+      function SearchLBNext(NextIndex) {
+          var StrRes = FindBrowserResolution();
+          var strSearch=$('#searchTxt').val();
+          CallAthenaSLSearch(StrRes, NextIndex, "-1",strSearch);
+      }
+
+      function LoadSearchLB(){
+          debugger;
+          var StrRes = FindBrowserResolution();
+          var strSearch=$('#searchTxt').val();
+          CallAthenaSLSearch(StrRes, 0, "-1",strSearch);
+      }
+
+      function CallAthenaSLSearch(DisplayNoOfRecords, strNext, strPrev,strSearch) {
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.AthenaSocialLearningOld.GetSearchLB}',
+            DisplayNoOfRecords,
+            strNext,
+            strPrev,
+            strSearch,
+            DisplaySearchLB
+        );
+      }
+
+      function DisplaySearchLB(result, event) {
+          debugger;
+          $('#SearchLBResult').empty();
+          if(result.length>0)
+         {        
+          var PrevIndex = result[0].FeaIndex;
+          $('#SearchLBResult').append("<a class='ca-nav-prev' id='aSearchPrev' style='height:40px; width:25px' onclick='SearchLBPrev(" + PrevIndex + ")'/>");
+          if (PrevIndex == 1 || PrevIndex == '1') {
+              $('#aSearchPrev').hide();
+          }
+          for (var iCount = 0; iCount < result.length; iCount++) {
+              $('#SearchLBResult').append("<div class='hpit_athena_ca-item hpit_athena_ca-item-2'>" +
+                                        "<div class='hpit_athena_ca-item-main'>" +
+                                            " <div class='hpit_athena_ca-item-firstHalf'>" +
+                                             " <div class='hpit_athena_ca-item-topBar'>" +
+                                              "  <div class='hpit_athena_ca-item-topBarDate'> " + (result[iCount].LBCreateDate) + " </div>" +
+                                                "<div class='hpit_athena_ca-item-topBarLikes'>" +
+                                                 " <div class='hpit_athena_ca-item-topBarLikesImg'> <img src='" + result[iCount].LikeIcon + "' width='18' height='18' src=''></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarLikesValue'>" + result[iCount].LBNoOfLikes + " </div>" +
+                                                "</div>" +
+                                                "<div class='hpit_athena_ca-item-topBarChat'>" +
+                                                 " <div class='hpit_athena_ca-item-topBarChatImg'><img src='" + result[iCount].CommentIcon + "' width='18' height='18' src=''></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarChatValue'>" + result[iCount].LBNoOfComments + "</div>" +
+                                                "</div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-BottomBar'>" +
+                                              "<a class='hpit_athena_ca_itemA' style='height:180px; width:180px' href='/apex/AthenaLearningBoardDtls?id=" + result[iCount].LBid + "'>" +
+                                               " <h3>" + result[iCount].LBName + "</h3></a>" +
+                                              "</div>" +
+                                              "<div class='ca-icon'><a class='hpit_athena_ca_itemLink' style='height:180px; width:180px' href='/apex/AthenaLearningBoardDtls?id=" + result[iCount].LBid + "'> <img src='" + result[iCount].LBImgURL + "' width='181' height='181'></a> </div>" +
+                                            "</div>" +
+                                            "<div class='hpit_athena_ca-item-SecondHalf'>" +
+                                             " <div class='hpit_athena_ca-item-person cf'>" +
+                                              "  <div class='hpit_athena_ca-item-personPhoto'>" +
+                                               "<img src='" + result[iCount].LBOwnerURL + "' width='35' height='35'/>" +
+                                              "</div>" +
+                                               " <div class='hpit_athena_ca-item-personName'><a class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[iCount].LBOwnerID + "'> " + result[iCount].LBOwnerName + " </a></div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-PersonPost'>" +
+                                               " <p>" + result[iCount].LBDescription + "</p>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                        "</div>");
+          }
+          var featureLen = result.length - 1;
+          var NextIndex = result[featureLen].FeaIndex;
+          $('#SearchLBResult').append("<a class='ca-nav-next' id='aSearchNext' style='height:40px; width:25px' onclick='SearchLBNext(" + NextIndex + ")' />");
+          if (NextIndex == result[0].TotalCount) {
+              $('#aSearchNext').hide();
+          }
+        }
+      }
+    
+      function funcSearchLBResult(){
+          debugger;
+          //if(document.getElementById('{!$Component.LBForm.LBPageBlock.searchText}').value!=''){ 
+            var showsearch = {!ShowSearch};            
+         if($('#searchTxt').val()!=''){
+              LoadSearchLB();
+              $('#Futured').hide();
+              $('#MyTopics').hide();
+              $('#MostLiked').hide();
+              $('#MostCommented').hide();
+              $('#SearchResults').show();
+          }
+          else {
+              document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+              return false;
+          }
+      }     
+    
+      // Find the Browser Resolution
+      function FindBrowserResolution() {
+          var StrRes = "0";
+          if (($(window).width() >= 310) && ($(window).width() <= 320)) {
+              StrRes = "1";
+          }
+          else if (($(window).width() >= 340) && ($(window).width() <= 699)) {
+              StrRes = "1";
+          }
+           else if (($(window).width() >= 700) && ($(window).width() <= 1000)) {
+              StrRes = "3";
+          }
+          else if (($(window).width() >= 1001) && ($(window).width() <= 1200)) {
+              StrRes = "4";
+          }
+          else if (($(window).width() >= 1201) && ($(window).width() <= 1350)) {
+              StrRes = "5";
+          }
+          else {
+        var widthWindow = $(window).width();
+        var widthMargins = 170;
+        var widthTile = 181;
+        StrRes =  Math.floor(((widthWindow - widthMargins) / widthTile)-1);
+          }
+          return StrRes;                   
+      }
+
+
+      function FeaturedLBPrev(PrevIndex) {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLFeatured(StrRes, -1, PrevIndex);
+      }
+
+      function FeaturedLBNext(NextIndex) {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLFeatured(StrRes, NextIndex, "-1");
+      }
+
+      function LoadFeaturedLB() {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLFeatured(StrRes, 0, "-1");
+      }
+
+      function CallAthenaSLFeatured(DisplayNoOfRecords, strNext, strPrev) {
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.AthenaSocialLearningOld.GetFeaturedLB}',
+            DisplayNoOfRecords,
+            strNext,
+            strPrev,
+            DisplayFeaturedLB
+        );
+      }
+
+      $(window).bind('resize', function () {
+          LoadFeaturedLB();
+          PersonalizedLB();
+        //  LoadMostLikedLB(); 
+          LoadMostCommentedLB();      
+      });
+
+      // Use the jQuery "ready()" method to ensure our page is ready before running
+
+      $(document).ready(function () {
+          // Intial Laod Featured LB
+          debugger;
+            var  QSSrchVal = $.urlParam('SearchVal');
+            if(QSSrchVal==undefined || QSSrchVal==null || QSSrchVal=='')
+             {
+              LoadFeaturedLB();
+              PersonalizedLB();
+              //LoadMostLikedLB();
+              LoadMostCommentedLB();
+             }
+          else
+          {
+            var StrRes = FindBrowserResolution();
+            //var strSearch=$('#searchTxt').val();
+            CallAthenaSLSearch(StrRes, 0, "-1",QSSrchVal);
+              $('#Futured').hide();
+              $('#MyTopics').hide();
+              $('#MostLiked').hide();
+              $('#MostCommented').hide();
+              $('#SearchResults').show();
+            
+          }
+   
+      });
+      
+      // Utility; parse out parameter by name from URL query string
+        $.urlParam = function(name){
+            debugger;
+            var results = new RegExp('[\\?&]' + name + '=([^&#]*)')
+                .exec(window.location.href);
+                if(results!=null){
+            return results[1] || 0; 
+                }
+                else{
+                return null;
+                }
+            
+        }
+
+      function DisplayFeaturedLB(result, event) {
+          debugger;
+          $('#RepeaterDiv').empty();
+          if(result.length>0) 
+          {
+          var PrevIndex= result[0].FeaIndex;
+          
+          $('#RepeaterDiv').append("<a class='ca-nav-prev' id='aPrev' style='height:40px; width:25px' onclick='FeaturedLBPrev("+PrevIndex +")'/>");
+          if (PrevIndex == 1 || PrevIndex == '1') {
+              $('#aPrev').hide();
+          }
+          for (var iCount = 0; iCount < result.length; iCount++) {
+              $('#RepeaterDiv').append("<div class='hpit_athena_ca-item hpit_athena_ca-item-2'>" +
+                                        "<div class='hpit_athena_ca-item-main'>" +
+                                            " <div class='hpit_athena_ca-item-firstHalf'>" +
+                                             " <div class='hpit_athena_ca-item-topBar'>" +
+                                              "  <div class='hpit_athena_ca-item-topBarDate'> " + (result[iCount].LBCreateDate) + " </div>" +
+                                                "<div class='hpit_athena_ca-item-topBarLikes'>" +
+                                                 " <div class='hpit_athena_ca-item-topBarLikesImg'> <img src='" + result[iCount].LikeIcon + "' width='18' height='18' src=''></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarLikesValue'>" + result[iCount].LBNoOfLikes + " </div>" +
+                                                "</div>" +
+                                                "<div class='hpit_athena_ca-item-topBarChat'>" +
+                                                 " <div class='hpit_athena_ca-item-topBarChatImg'><img src='" + result[iCount].CommentIcon + "' width='18' height='18' src=''></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarChatValue'>" + result[iCount].LBNoOfComments + "</div>" +
+                                                "</div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-BottomBar'>" +
+                                              "<a class='hpit_athena_ca_itemA' style='height:180px; width:180px' href='/apex/AthenaLearningBoardDtls?id=" + result[iCount].LBid + "'>" +
+                                               " <h3>" + result[iCount].LBName + result[iCount].AvgRating + "</h3></a>" +
+                                              "</div>" +
+                                              "<div class='ca-icon'><a class='hpit_athena_ca_itemLink' style='height:180px; width:180px' href='/apex/AthenaLearningBoardDtls?id=" + result[iCount].LBid + "'> <img src='" + result[iCount].LBImgURL + "' width='181' height='181'></a> </div>" +
+                                            "</div>" +
+                                            "<div class='hpit_athena_ca-item-SecondHalf'>" +
+                                             " <div class='hpit_athena_ca-item-person cf'>" +
+                                              "  <div class='hpit_athena_ca-item-personPhoto'>" +
+                                               "<img src='" + result[iCount].LBOwnerURL + "' width='35' height='35'/>" +
+                                              "</div>" + 
+                                               " <div class='hpit_athena_ca-item-personName'><a class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[iCount].LBOwnerID + "'> " + result[iCount].LBOwnerName + " </a></div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-PersonPost'>" +
+                                               " <p>" + result[iCount].LBDescription + "</p>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                        "</div>");
+          }
+          var featureLen = result.length - 1;
+          var NextIndex=result[featureLen].FeaIndex;
+          $('#RepeaterDiv').append("<a class='ca-nav-next' id='aNext' style='height:40px; width:25px' onclick='FeaturedLBNext("+NextIndex+")' />");
+          if (NextIndex== result[0].TotalCount) {
+              $('#aNext').hide();
+          }
+        }   
+      }
+      //Most Liked
+      function MostLikedLBPrev(PrevIndex) {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLMostLiked(StrRes, -1, PrevIndex);
+      }
+
+      function MostLikedLBNext(NextIndex) {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLMostLiked(StrRes, NextIndex, "-1");
+      }
+
+      function LoadMostLikedLB() {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLMostLiked(StrRes, 0, "-1");
+      }
+
+      function CallAthenaSLMostLiked(DisplayNoOfRecords, strNext, strPrev) {
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.AthenaSocialLearningOld.GetMostLikedTrends}',
+            DisplayNoOfRecords,
+            strNext,
+            strPrev,
+            DisplayMostLikedLB
+        );
+      }
+
+
+      function DisplayMostLikedLB(result, event) {
+          debugger;
+          $('#MostLikedDiv').empty();
+           if(result.length>0)
+           {
+          var PrevIndex = result[0].FeaIndex;
+          $('#MostLikedDiv').append("<a class='ca-nav-prev' id='aMostLikePrev' style='height:40px; width:25px' onclick='MostLikedLBPrev("+PrevIndex +")'/>");
+          if (PrevIndex == 1 || PrevIndex == '1') {
+              $('#aMostLikePrev').hide();
+          }
+          for (var iCount = 0; iCount < result.length; iCount++) {
+              $('#MostLikedDiv').append("<div class='hpit_athena_ca-item hpit_athena_ca-item-2'>" +
+              "<div class='hpit_athena_ca-item-main'>" +
+                  " <div class='hpit_athena_ca-item-firstHalf'>" +
+                   " <div class='hpit_athena_ca-item-topBar'>" +
+                    "  <div class='hpit_athena_ca-item-topBarDate'> " + (result[iCount].LBCreateDate) + " </div>" +
+                      "<div class='hpit_athena_ca-item-topBarLikes'>" +
+                       " <div class='hpit_athena_ca-item-topBarLikesImg'> <img src='" + result[iCount].LikeIcon + "' width='18' height='18' src=''></div>" +
+                        "<div class='hpit_athena_ca-item-topBarLikesValue'>" + result[iCount].LBNoOfLikes + " </div>" +
+                      "</div>" +
+                      "<div class='hpit_athena_ca-item-topBarChat'>" +
+                       " <div class='hpit_athena_ca-item-topBarChatImg'><img src='" + result[iCount].CommentIcon + "' width='18' height='18' src=''></div>" +
+                        "<div class='hpit_athena_ca-item-topBarChatValue'>" + result[iCount].LBNoOfComments + "</div>" +
+                      "</div>" +
+                    "</div>" +
+                    "<div class='hpit_athena_ca-item-BottomBar'>" +
+                    "<a class='hpit_athena_ca_itemA' style='height:180px; width:180px' href='/apex/AthenaLearningBoardDtls?id=" + result[iCount].LBid + "'>" +
+                     " <h3>" + result[iCount].LBName + "</h3></a>" +
+                    "</div>" +
+                    "<div class='ca-icon'><a class='hpit_athena_ca_itemLink' style='height:180px; width:180px' href='/apex/AthenaLearningBoardDtls?id=" + result[iCount].LBid + "'> <img src='" + result[iCount].LBImgURL + "' width='181' height='181'></a> </div>" +
+                  "</div>" +
+                  "<div class='hpit_athena_ca-item-SecondHalf'>" +
+                   " <div class='hpit_athena_ca-item-person cf'>" +
+                    "  <div class='hpit_athena_ca-item-personPhoto'>" +
+                     "<img src='" + result[iCount].LBOwnerURL + "' width='35' height='35'/>" +
+                    "</div>" + 
+                     " <div class='hpit_athena_ca-item-personName'><a class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[iCount].LBOwnerID + "'> " + result[iCount].LBOwnerName + " </a></div>" +
+                    "</div>" +
+                    "<div class='hpit_athena_ca-item-PersonPost'>" +
+                     " <p>" + result[iCount].LBDescription + "</p>" +
+                    "</div>" +
+                  "</div>" +
+                "</div>" +
+              "</div>");
+          }
+          var featureLen = result.length - 1;
+          var NextIndex=result[featureLen].FeaIndex;
+          $('#MostLikedDiv').append("<a class='ca-nav-next' id='aMostLikeNext' style='height:40px; width:25px' onclick='MostLikedLBNext("+NextIndex+")' />");
+          if (NextIndex== result[0].TotalCount) {
+              $('#aMostLikeNext').hide();
+          }
+        }
+      }
+      
+       //Most Commented
+      function MostCommentedLBPrev(PrevIndex) {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLMostCommented(StrRes, -1, PrevIndex);
+      }
+
+      function MostCommentedLBNext(NextIndex) {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLMostCommented(StrRes, NextIndex, "-1");
+      }
+
+      function LoadMostCommentedLB() {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLMostCommented(StrRes, 0, "-1");
+      }
+
+      function CallAthenaSLMostCommented(DisplayNoOfRecords, strNext, strPrev) {
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.AthenaSocialLearningOld.GetMostCommentedTrends}',
+            DisplayNoOfRecords,
+            strNext,
+            strPrev,
+            DisplayMostCommentedLB
+        );
+      }
+
+
+      function DisplayMostCommentedLB(result, event) {
+          debugger;
+          $('#MostCommentedDiv').empty();
+        if(result.length>0)
+            {
+        var PrevIndex = result[0].FeaIndex;
+          $('#MostCommentedDiv').append("<a class='ca-nav-prev' id='aMostCommentedPrev' style='height:40px; width:25px' onclick='MostCommentedLBPrev("+PrevIndex +")'/>");
+          if (PrevIndex == 1 || PrevIndex == '1') {
+              $('#aMostCommentedPrev').hide();
+          }
+          for (var iCount = 0; iCount < result.length; iCount++) {
+              $('#MostCommentedDiv').append("<div class='hpit_athena_ca-item hpit_athena_ca-item-2'>" +
+              "<div class='hpit_athena_ca-item-main'>" +
+                  " <div class='hpit_athena_ca-item-firstHalf'>" +
+                   " <div class='hpit_athena_ca-item-topBar'>" +
+                    "  <div class='hpit_athena_ca-item-topBarDate'> " + (result[iCount].LBCreateDate) + " </div>" +
+                      "<div class='hpit_athena_ca-item-topBarLikes'>" +
+                       " <div class='hpit_athena_ca-item-topBarLikesImg'> <img src='" + result[iCount].LikeIcon + "' width='18' height='18' src=''></div>" +
+                        "<div class='hpit_athena_ca-item-topBarLikesValue'>" + result[iCount].LBNoOfLikes + " </div>" +
+                      "</div>" +
+                      "<div class='hpit_athena_ca-item-topBarChat'>" +
+                       " <div class='hpit_athena_ca-item-topBarChatImg'><img src='" + result[iCount].CommentIcon + "' width='18' height='18' src=''></div>" +
+                        "<div class='hpit_athena_ca-item-topBarChatValue'>" + result[iCount].LBNoOfComments + "</div>" +
+                      "</div>" +
+                    "</div>" +
+                    "<div class='hpit_athena_ca-item-BottomBar'>" +
+                    "<a class='hpit_athena_ca_itemA' style='height:180px; width:180px' href='/apex/AthenaLearningBoardDtls?id=" + result[iCount].LBid + "'>" +
+                     " <h3>" + result[iCount].LBName + "</h3></a>" +
+                    "</div>" +
+                    "<div class='ca-icon'><a class='hpit_athena_ca_itemLink' style='height:180px; width:180px' href='/apex/AthenaLearningBoardDtls?id=" + result[iCount].LBid + "'> <img src='" + result[iCount].LBImgURL + "' width='181' height='181'></a> </div>" +
+                  "</div>" +
+                  "<div class='hpit_athena_ca-item-SecondHalf'>" +
+                   " <div class='hpit_athena_ca-item-person cf'>" +
+                    "  <div class='hpit_athena_ca-item-personPhoto'>" +
+                     "<img src='" + result[iCount].LBOwnerURL + "' width='35' height='35'/>" +
+                    "</div>" + 
+                     " <div class='hpit_athena_ca-item-personName'><a class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[iCount].LBOwnerID + "'> " + result[iCount].LBOwnerName + " </a></div>" +
+                    "</div>" +
+                    "<div class='hpit_athena_ca-item-PersonPost'>" +
+                     " <p>" + result[iCount].LBDescription + "</p>" +
+                    "</div>" +
+                  "</div>" +
+                "</div>" +
+              "</div>");
+          }
+          var featureLen = result.length - 1;
+          var NextIndex=result[featureLen].FeaIndex;
+          $('#MostCommentedDiv').append("<a class='ca-nav-next' id='aMostCommentedNext' style='height:40px; width:25px' onclick='MostCommentedLBNext("+NextIndex+")' />");
+          if (NextIndex== result[0].TotalCount) {
+              $('#aMostCommentedNext').hide();
+          }
+        }
+      }
+
+                
+      //Personalized 
+
+      function PersonalizedLBPrev(PrevIndex) {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLPersonalized(StrRes, -1, PrevIndex);
+      }
+
+      function PersonalizedLBNext(NextIndex) {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLPersonalized(StrRes, NextIndex, "-1");
+      }
+
+      function PersonalizedLB() {
+          var StrRes = FindBrowserResolution();
+          CallAthenaSLPersonalized(StrRes, 0, "-1");
+      }
+      //GetPersonalizedLB
+      function CallAthenaSLPersonalized(DisplayNoOfRecords, strNext, strPrev) {
+          Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.AthenaSocialLearningOld.GetMyBoards}',
+              DisplayNoOfRecords,
+              strNext,
+              strPrev,
+              DisplayPersonalizedLB
+          );
+      }
+
+
+      function DisplayPersonalizedLB(result, event) {
+          debugger;
+          $('#personalizedDiv').empty();
+          if(result.length>0)
+          {
+          var PrevIndex = result[0].FeaIndex;
+          $('#personalizedDiv').append("<a class='ca-nav-prev' id='aPersonalizedPrev' style='height:80px; width:25px' onclick='PersonalizedLBPrev("+PrevIndex +")'/>");
+          if (PrevIndex == 1 || PrevIndex == '1') {
+              $('#aPersonalizedPrev').hide();
+          }
+          for (var iCount = 0; iCount < result.length; iCount++) {
+               
+          if(result[iCount].existing==false)
+          {
+           $('#personalizedDiv').append("<div class='hpit_athena_ca-item hpit_athena_ca-item-2'>" +
+                                        "<div class='hpit_athena_ca-item-main'>" +
+                                            " <div class='hpit_athena_ca-item-firstHalf'>" +
+                                             " <div class='hpit_athena_ca-item-topBar'>" +
+                                              "  <div class='hpit_athena_ca-item-topBarDate'> " +  " </div>" +
+                                                "<div class='hpit_athena_ca-item-topBarLikes'>" + 
+                                                 " <div class='hpit_athena_ca-item-topBarLikesImg'> </div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarLikesValue'>"  + " </div>" +
+                                                "</div>" +
+                                                "<div class='hpit_athena_ca-item-topBarChat'>" +
+                                                 " <div class='hpit_athena_ca-item-topBarChatImg'></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarChatValue'>"  + "</div>" +
+                                                "</div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-BottomBar'>" +
+                                              "<a class='hpit_athena_ca_itemA' style='height:180px; width:180px' href='" + result[iCount].NavigationLink + "'>" +
+                                               " <h3>" + result[iCount].LBName + "</h3></a>" +
+                                              "</div>" +
+                                              "<div class='ca-icon'><a class='hpit_athena_ca_itemLink' style='height:180px; width:180px' href='" + result[iCount].NavigationLink  + "'> <img src='" + result[iCount].LBImgURL + "' width='181' height='181'></a> </div>" +
+                                            "</div>" +
+                                            "<div class='hpit_athena_ca-item-SecondHalf'>" +
+                                             " <div class='hpit_athena_ca-item-person cf'>" +
+                                              "  <div class='hpit_athena_ca-item-personPhoto'>" +
+                                             
+                                              "</div>" +
+                                               " <div class='hpit_athena_ca-item-personName'><a class='hpit_athena_ca_itemLink' href='" +  "'> " +  " </a></div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-PersonPost'>" +
+                                               " <p>" +  "</p>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                        "</div>");
+          }
+           else if(result[iCount].Active==false && result[iCount].existing==true)
+            {
+            $('#personalizedDiv').append("<div class='hpit_athena_ca-item hpit_athena_ca-item-2'>" +
+                                        "<div class='hpit_athena_ca-item-main'>" +
+                                            " <div class='hpit_athena_ca-item-firstHalf'>" +
+                                             " <div class='hpit_athena_ca-item-topBarInactive'>" +
+                                              "  <div class='hpit_athena_ca-item-topBarDate'> " + (result[iCount].LBCreateDate) + " </div>" +
+                                                "<div class='hpit_athena_ca-item-topBarLikes'>" + 
+                                                 " <div class='hpit_athena_ca-item-topBarLikesImg'> <img src='" + result[iCount].LikeIcon + "' width='18' height='18' src=''></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarLikesValue'>" + result[iCount].LBNoOfLikes + " </div>" +
+                                                "</div>" +
+                                                "<div class='hpit_athena_ca-item-topBarChat'>" +
+                                                 " <div class='hpit_athena_ca-item-topBarChatImg'><img src='" + result[iCount].CommentIcon + "' width='18' height='18' src=''></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarChatValue'>" + result[iCount].LBNoOfComments + "</div>" +
+                                                "</div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-BottomBar'>" +
+                                              "<a class='hpit_athena_ca_itemA' style='height:180px; width:180px' href='" + result[iCount].NavigationLink + "'>" +
+                                               " <h3>" + result[iCount].LBName + "</h3></a>" +
+                                              "</div>" +
+                                              "<div class='ca-icon'><a class='hpit_athena_ca_itemLink' style='height:180px; width:180px' href='" + result[iCount].NavigationLink  + "'> <img src='" + result[iCount].LBImgURL + "' width='181' height='181'></a> </div>" +
+                                            "</div>" +
+                                            "<div class='hpit_athena_ca-item-SecondHalf'>" +
+                                             " <div class='hpit_athena_ca-item-person cf'>" +
+                                              "  <div class='hpit_athena_ca-item-personPhoto'>" +
+                                               "<img src='" + result[iCount].LBOwnerURL + "' width='35' height='35'/>" +
+                                              "</div>" +
+                                               " <div class='hpit_athena_ca-item-personName'><a class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[iCount].LBOwnerID + "'> " + result[iCount].LBOwnerName + " </a></div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-PersonPost'>" +
+                                               " <p>" + result[iCount].LBDescription + "</p>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                        "</div>");
+                                        
+            }   
+          else
+          {
+              $('#personalizedDiv').append("<div class='hpit_athena_ca-item hpit_athena_ca-item-2'>" +
+                                        "<div class='hpit_athena_ca-item-main'>" +
+                                            " <div class='hpit_athena_ca-item-firstHalf'>" +
+                                             " <div class='hpit_athena_ca-item-topBar'>" +
+                                              "  <div class='hpit_athena_ca-item-topBarDate'> " + (result[iCount].LBCreateDate) + " </div>" +
+                                                "<div class='hpit_athena_ca-item-topBarLikes'>" + 
+                                                 " <div class='hpit_athena_ca-item-topBarLikesImg'> <img src='" + result[iCount].LikeIcon + "' width='18' height='18' src=''></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarLikesValue'>" + result[iCount].LBNoOfLikes + " </div>" +
+                                                "</div>" +
+                                                "<div class='hpit_athena_ca-item-topBarChat'>" +
+                                                 " <div class='hpit_athena_ca-item-topBarChatImg'><img src='" + result[iCount].CommentIcon + "' width='18' height='18' src=''></div>" +
+                                                  "<div class='hpit_athena_ca-item-topBarChatValue'>" + result[iCount].LBNoOfComments + "</div>" +
+                                                "</div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-BottomBar'>" +
+                                              "<a class='hpit_athena_ca_itemA' style='height:180px; width:180px' href='" + result[iCount].NavigationLink + "'>" +
+                                               " <h3>" + result[iCount].LBName + "</h3></a>" +
+                                              "</div>" +
+                                              "<div class='ca-icon'><a class='hpit_athena_ca_itemLink' style='height:180px; width:180px' href='" + result[iCount].NavigationLink  + "'> <img src='" + result[iCount].LBImgURL + "' width='181' height='181'></a> </div>" +
+                                            "</div>" +
+                                            "<div class='hpit_athena_ca-item-SecondHalf'>" +
+                                             " <div class='hpit_athena_ca-item-person cf'>" +
+                                              "  <div class='hpit_athena_ca-item-personPhoto'>" +
+                                               "<img src='" + result[iCount].LBOwnerURL + "' width='35' height='35'/>" +
+                                              "</div>" +
+                                               " <div class='hpit_athena_ca-item-personName'><a class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[iCount].LBOwnerID + "'> " + result[iCount].LBOwnerName + " </a></div>" +
+                                              "</div>" +
+                                              "<div class='hpit_athena_ca-item-PersonPost'>" +
+                                               " <p>" + result[iCount].LBDescription + "</p>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                        "</div>");
+                                        
+                    }
+          }
+          var featureLen = result.length - 1;
+          var NextIndex=result[featureLen].FeaIndex;
+          $('#personalizedDiv').append("<a class='ca-nav-next' id='aPersonalizedNext' style='height:80px; width:25px' onclick='PersonalizedLBNext("+NextIndex+")' />");
+          if (NextIndex== result[0].TotalCount) {
+              $('#aPersonalizedNext').hide();
+          }
+      }
+      }
+      
+                
+
+
+</script>
+
+ <!-- ETR JavaScript -->
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery.min.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery-ui.min.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/hp-esm_theme.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/theme.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.athena_js, '/athena_js/jquery.dropdown.js')}"/>
+      
+      <!-- end themed busy popup  --> 
+  <!-- Example of an application-specific style -->
+  
+  <!-- Athena Style Starts -->
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/style.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.jscrollpane.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/jquery-ui.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/theme.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.dropdown.css')}"/>
+  <!-- Athena Style Ends -->
+  
+  </head>
+  <apex:form id="LBform">
+    <apex:pageblock id="LBPageBlock">
+      <body class="hpit_body">
+      <!-- begin themed header -->
+      <header>
+        <div id="hpit_top" class="">
+          <div id="hpit_topTitle">
+            <h1>Social Learning Platform</h1>
+            <h3>Learning on your terms!</h3>
+          </div>
+          <div id="hpit_topLogo"></div>
+          <div id="hpit_topSearch">
+           <input type="text" class="hpit_topSearchBox" id="searchTxt"  />
+<INPUT type="button" class="SearchBtn" value="Search" name="button2" onClick="funcSearchLBResult()"/>
+
+            <!--<span style="align:right"><a style="text-decoration: underline;" href="/apex/helppage" target="_blank">Athena Help</a></span>-->
+          </div>
+          
+          <!-- Begin Themed User Greeting and Menu -->
+         <div id="hpit_topUser"> <span>Welcome {!LoggedinUserDtls.Name}</span>
+            <ul id="hpit_topUserMenu">
+              <li><a href="https://{!getSfInstance}/secur/logout.jsp">Logout</a></li>
+            </ul>
+          </div>
+          <!-- End Themed User Greeting and Menu --> 
+          
+        </div>
+        <div style="background-color: #393939;height: 40px; min-width:1000px; margin:0 auto"> <a href="https://{!getSfInstance}/apex/AthenaSocialLearningOld">
+          <apex:image url="{!URLFOR($Resource.athena_images, 'images/Icon_Home.png')}" style="margin: 8px;"/>
+          </a> <a href="#" data-dropdown="#dropdown-1">
+          <apex:image url="{!URLFOR($Resource.athena_images, 'images/Icon_Menu.png')}" style="margin: 2px;"/>
+          </a>
+          <div id="dropdown-1" class="dropdown dropdown-tip">
+            <ul class="dropdown-menu">
+              <li><a href="https://{!getSfInstance}">Salesforce Home</a></li>
+              <li><a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank">Help &amp; Support</a></li>
+              <br/>
+              <li><a href="http://amp.corp.hp.com/" target="_blank">Account Management Portal(AMP)</a></li>
+              <li><a href="http://ent241.sharepoint.hp.com/teams/GSCDC/es/ITO.aspx" target="_blank">Portfolio Accrediation</a></li>
+              <li><a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html" target="_blank">What We Sell</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <!-- end themed header --> 
+
+      <!-- Athena Body Content Starts -->
+    
+      <div style="width:1000px; margin:0 auto">
+
+      </div>
+       <span class="err_msg hpit_error" id="err_msg"></span>     
+      <div id="Futured" class="hpit_Athena_container">
+        <apex:outputPanel id="FeaturedLBTable" layout="block">
+          <div class="hpit_Athena_contRow1">
+            <div class="hpit_Athena_contRow1Headding"></div>
+            <div id="hpit_athena_ca-container" class="hpit_athena_ca-container">
+             <div class="hpit_athena_ca-wrapper" id="RepeaterDiv">
+              </div>
+               </div>
+          </div>
+        </apex:outputPanel>
+      </div>
+      
+       <div id="MyTopics" class="hpit_Athena_container">
+        <apex:outputPanel id="personalizedTable" layout="block">
+          <div class="hpit_Athena_contRow2">
+            <div class="hpit_Athena_contRow2Headding"></div>
+            <div id="hpit_athena_ca-container1" class="hpit_athena_ca-container">
+             <div class="hpit_athena_ca-wrapper" id="personalizedDiv">
+              </div>
+               </div>
+          </div>
+        </apex:outputPanel>
+      </div>
+        <div id="SearchResults" class="hpit_Athena_container" style="display:none">
+        <apex:outputPanel id="searchResultTable" layout="block">
+          <div class="hpit_Athena_contRow1">
+            <div class="hpit_Athena_contSearchHeadding"></div>
+            <div id="Div1" class="hpit_athena_ca-container">
+              <div class="hpit_athena_ca-wrapper" id="SearchLBResult">
+              </div>
+               </div>
+          </div>
+        </apex:outputPanel>
+      </div>
+      
+        <!--<div id="MostLiked" class="hpit_Athena_container">
+        
+        <apex:outputPanel id="MostLikedTable" layout="block">
+          <div class="hpit_Athena_contRow2">
+            <div class="hpit_Athena_contMostLikedHeadding"></div>
+            <div id="Div2" class="hpit_athena_ca-container">
+             <div class="hpit_athena_ca-wrapper" id="MostLikedDiv">
+              </div>
+               </div>
+          </div>
+        </apex:outputPanel>
+      </div> -->
+     
+      
+        
+      
+       <div id="MostCommented" class="hpit_Athena_container">
+       <!--Most Commented from last {!MostCommentedNoOfDays} days-->
+        <apex:outputPanel id="MostCommentedTable" layout="block">
+          <div class="hpit_Athena_contRow2">
+            <div class="hpit_Athena_contCommentedHeadding"></div>
+            <div id="Div3" class="hpit_athena_ca-container">
+             <div class="hpit_athena_ca-wrapper" id="MostCommentedDiv">
+              </div>
+               </div>
+          </div>
+        </apex:outputPanel>
+      </div>
+
+             <!-- Athena Body Content Ends --> 
+      
+      <!-- begin themed footer -->
+      <div>
+        <footer>
+          <div id="hpit_btm">
+            <div id="hpit_btmCopyright">&copy; <span class="hpit_year"></span> Hewlett-Packard Development Company, L.P. &nbsp; &nbsp; | &nbsp; &nbsp; HP Restricted</div>
+          </div>
+        </footer>
+      </div>
+      <!-- end themed footer --> 
+      </body>
+    </apex:pageblock>
+  </apex:form>
+  </html>
+</apex:page>

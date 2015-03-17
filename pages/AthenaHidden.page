@@ -1,0 +1,28 @@
+<apex:page controller="myClass">
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Page: AthenaHidden
+  <!-- End Default Content REMOVE THIS -->
+  <script>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+function setVar(param){
+debugger;
+    jQuery('[id$=myHiddenField]').val(param);
+    passStringToController();
+}
+
+function updateHiddenValue() {
+ debugger;
+  var param='param';
+  jQuery('[id$=myHiddenElement]').val(param)
+  debugger;
+}
+
+
+</script>
+<apex:form >
+<!-- Hidden field to store a new value of the variable -->
+<apex:inputHidden id="myHiddenElement" value="{!myHiddenValue}"/>
+<apex:commandButton value="Submit" onclick="return updateHiddenValue();" action="{!test}" id="btn"/>
+  </apex:form>
+</apex:page>

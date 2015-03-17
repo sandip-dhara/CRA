@@ -1,0 +1,234 @@
+<apex:page sidebar="false" showheader="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    <!--<apex:includeScript value="{!URLFOR($Resource.SessionTkGwLoginMinJs)}"/>    
+        <script type="text/javascript">
+            GWSessionTk.login();
+            if(GWSessionTk.errorStatus) {
+                alert(GWSessionTk.errorStatus);
+            }        
+        </script> -->
+    
+    <apex:includeScript value="{!$Resource.jquery172}"/>
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+    
+    <script type="text/javascript">
+         var memberList = new Array();
+    </script>
+
+<body>  
+    <div data-role="page" id="searchPage" style="background:#ffffff;">
+    <!-- Header -->        
+        <div data-role="header" style="background:#404040; vertical-align: middle;border:none;padding-top:7px;padding-bottom:7px;" data-position="fixed" data-tap-toggle="false">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;margin-top:10px;"> 
+                <a href="#" data-rel="back"><img src="{!URLFOR($Resource.iconassets, 'icons/back_icon.png')}" id="menuImage"  width="30px" height="30px"/></a>
+            </div>
+            <h1 id="jqTitle" style="color: #ffffff; font-weight:normal;"></h1>
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right" style="vertical-align:middle;margin-top:7px;">  
+              <a href="#" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/download.png')}" id="searchImage" width="40px" height="40px" onclick="downloaddoc()"/></a> 
+        </div> 
+        </div>
+        <!-- /Header -->
+        <div style="background:#ffffff; margin-top:50px;" id="docContent">   
+        </div>
+        
+                <div data-role="popup" id="popupDownloadErr" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <p style="margin:20px;">Preview and Downloading of documents is only supported on Chrome for Android.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.android.chrome" class="ui-btn" style="margin:15px;background:#F9A006;color:#ffffff;text-shadow:none;">Get Chrome</a>
+        </div>
+        
+    </div>  
+</body>  
+
+
+ <script type="text/javascript" src="https://hp--esit.cs11.my.salesforce.com/canvas/sdk/js/30.0/controller.js"  />
+ <script>
+    
+ 
+ $(document).ready(function(){
+         
+          $.mobile.loading( "show", {
+                text: "Loading document",
+                textVisible: false,
+                theme:   "a",
+            } ); // Displays load spinner while loading
+ 
+            var aDocTitle= getParameterByName('docTitle');
+            if(aDocTitle==undefined||aDocTitle=="undefined"){
+                $("#jqTitle").text("Document Preview");
+            }
+            else{
+                $("#jqTitle").text(aDocTitle);
+            }
+            
+            /*setTimeout(function(){
+                //ShowSelectedDoc();
+            }, 5000);*/
+            
+            getHTMLDoc()
+            
+            /*setTimeout(function(){
+                $.mobile.loading( "hide"); // timeout to hide the loading spinner because the load on iFrame is dodgy (As with everything about the iFrame)
+            }, 15000);*/
+            
+            
+            
+  });
+  
+  window.domainEXO = 'it-services-gw-itg.external.hp.com';
+  
+  function getHTMLDoc(){
+  
+       var aDocURL= getParameterByName('docURL'); // Id of topic (document) to set display focus on
+       /*var url = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=html&EmbedImages=true&IgnoreCache=true&reference=" + aDocURL;
+       var height = $(window).height();
+       $('#docContent').html('<iframe id="player" src="'+url+'" frameborder="0" width="100%" height="'+height +'"></iframe>');*/
+       
+       var arrDocURL = aDocURL.split(",");
+       
+       var sDomain = getDomainName(aDocURL);
+       var urlToUse="";
+       
+       for (i = 0; i < arrDocURL.length; i++) { 
+
+       if(sDomain == window.domainEXO){
+           var previewURL = arrDocURL[i].replace("contents/download", "document/preview");
+           urlToUse = previewURL;
+       }
+       else{
+           urlToUse = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=html&EmbedImages=true&IgnoreCache=true&reference=" + arrDocURL[i];
+       }
+       
+      $.ajax({
+        url: urlToUse,
+        type: "GET",
+        dataType: "html",
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function (data) {
+            $.mobile.loading( "hide"); 
+            $('#docContent').append(data);
+        },
+        error: function (xhr, status) {
+            $.mobile.loading( "hide"); 
+            if(xhr.status==401){
+                alert('Error: Your security session has expired. Please sign out and sign in again');
+            }
+            else{
+                if(isThisAndroid()&&xhr.status==0){
+                    $('#popupDownloadErr').popup('open');
+                    $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+                }
+                else{
+                    alert('The KeyView service has encountered a viewing error, the document you are looking for may not be mapped by IDOL for keyview preview and is therefore unavailable');
+                }   
+            }
+             
+        },
+        complete: function (xhr, status) {
+            $.mobile.loading( "hide"); 
+        }
+    });
+    
+    }
+  
+  }
+  
+  function ShowSelectedDoc(){
+  
+       //Get community id from query string and use it to load community data
+            var aDocType= getParameterByName('docType'); // Id of current community
+            var aDocURL= getParameterByName('docURL'); // Id of topic (document) to set display focus on
+            
+            if (aDocType== 'Text') {
+                // Nothing else to do
+            } 
+               else if (aDocType== 'PDF') {
+                    //pdf
+                    ShowPDF(aDocURL);
+                } else if (aDocType== 'PPT') {
+                    //powerpoint
+                    ShowPPTX(aDocURL);
+                } else if (aDocType== 'DOC') {
+                   //word
+                   ShowDOCX(aDocURL);
+                } else if (aDocType== 'XLS') {
+                    //excel
+                    ShowXLSX(aDocURL);
+                } else if (aDocType== 'TXT') {
+                    //text
+                    
+                } else if (aDocType== 'OTHER') {
+                    //other link?
+                    ShowHTML(aDocURL);
+                }
+                else if (aDocType== 'Video') {
+                //video
+                if (aDocURL.indexOf('http') != 0) {
+                    aDocURL= 'http://'+aDocURL; // Video links don't seem to have a protocol (http://) defined, so add it if needed
+                }
+                ShowVideo(aDocURL);
+            };
+  }
+  
+   // Read parameter from query string
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+   }
+   
+   function downloaddoc(){
+       var aDocURL= getParameterByName('docURL'); // Id of topic (document) to set display focus on
+       var sDomain = getDomainName(aDocURL);
+       
+       var arrDocURL = aDocURL.split(",");
+       
+        for (i = 0; i < arrDocURL.length; i++) { 
+        
+       if(sDomain == window.domainEXO){
+           window.location = arrDocURL[i];
+       }
+       else{
+           var downloadDoc= arrDocURL[i];  
+           doSetTimeout(i, downloadDoc)
+       }
+       
+       }
+   }
+   
+   function doSetTimeout(i, documentTitle) {
+         setTimeout(function() {  
+             window.location= "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + documentTitle; 
+         }, i*1000);
+    }
+     
+      
+   function getDomainName(url) {
+       var r = /:\/\/(.[^/]+)/;
+       if(url.match(r)){
+            return url.match(r)[1];
+       }
+       else{
+           return "";
+       }
+    }
+    
+function isThisAndroid(){
+var ua = navigator.userAgent.toLowerCase();
+var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+if(isAndroid) {
+  return true;
+}
+else{
+  return false;
+}
+} 
+ 
+   </script> 
+   
+
+</apex:page>

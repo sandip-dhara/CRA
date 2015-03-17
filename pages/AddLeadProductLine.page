@@ -1,0 +1,59 @@
+<!-- 
+/**********************************************************
+* Page Name: AddLeadProductLine
+* Author: Accenture  
+* Date: 02-JUL-2012 
+* Requirement # Request Id: 1175
+* Description: VF page to add Level 3 and Level 4 Products to Lead
+**********************************************************/
+-->
+
+<apex:page standardController="Product_Interest__c" extensions="AddLeadProductLineController" id="page">
+    <!-- Form to add products on lead -->
+    <apex:form id="form">
+        <apex:sectionHeader title="{!$ObjectType.Product_Interest__c.label}"/>
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock title="{!$ObjectType.Product_Interest__c.label}" id="pageBlock">
+            <!-- Command buttons to perform actions -->
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="{!$Label.Save}" action="{!save}"/>
+                <apex:commandButton value="{!$Label.Save_New}" action="{!saveAndNew}"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+                
+            <apex:pageBlockSection collapsible="false" columns="2" id="pageBlockSection">
+                <apex:pageBlockSectionItem id="pageBlockSectionItem">
+                    <apex:outputLabel value="{!$ObjectType.Product_Interest__c.fields.Product__c.label}" />
+                    <apex:inputField value="{!leadproduct.Product__c}" id="productlinelookup" required="true"/>
+                </apex:pageBlockSectionItem>
+                <!-- <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.Product_Interest__c.fields.Quantity__c.label}"/>
+                    <apex:inputField value="{!leadproduct.Quantity__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.Product_Interest__c.fields.Unit_Price__c.label}"/>
+                    <apex:inputField value="{!leadproduct.Unit_Price__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.Product_Interest__c.fields.Book_Ship_Date__c.label}"/>
+                    <apex:inputField value="{!leadproduct.Book_Ship_Date__c}" />
+                </apex:pageBlockSectionItem>-->
+            </apex:pageBlockSection>                        
+        </apex:pageBlock>    
+    </apex:form>
+    
+    <!-- JavaScript -->
+    <script>
+        window.onload = function(){
+            var productlineId = 'page:form:pageBlock:pageBlockSection:pageBlockSectionItem:productlinelookup';
+            var lookupId = productlineId + '_lkwgt';
+            var lookupComp = document.getElementById(lookupId);
+            //alert(lookupId);
+            //alert(lookupComp);    
+            /* Setting lookup url*/
+            if (lookupComp != null) {
+                lookupComp.href = "javascript: openLookup('/apex/LeadProductLookup?lkfm=page%3Afrm&lknm="+productlineId+"&lktp=' + getElementByIdCS('"+productlineId+"_lktp').value,800,'1','&lksrch=' + escapeUTF(getElementByIdCS('"+productlineId+"').value.substring(0, 80)))";    
+            }           
+        }         
+    </script> 
+</apex:page>

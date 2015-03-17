@@ -1,0 +1,60 @@
+<apex:page standardController="Opportunity_Plan__c" extensions="customRelatedCallPlans" showHeader="false" sidebar="false">
+<apex:pageMessages ></apex:pageMessages>
+<style>
+body{
+padding:10px;
+
+}
+
+h1 {
+    font-size:28px;
+}
+</style>
+<script language="javascript">          
+              function validate(){
+    var del = confirm("Are you sure?");
+    if (del == true) {
+    return true;
+    }else {
+    return false;  
+    }        
+} 
+ 
+               
+     </script>
+<body>
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;">Call Plans</h1>
+<hr size="2"></hr> 
+<apex:form >
+
+<br />
+<apex:pageBlock tabStyle="Decision__c" mode="maindetail">
+
+<div style="margin-left:auto;margin-right:auto;width:200px;">
+<input type="button" id="add_button" class="btn" value="Add Call Plan" onclick="location.href='/apex/Call_Plan_Edit?oppPlanId={!Opportunity_Plan__c.id}&retURL=/apex/cp_list?id={!Opportunity_Plan__c.id}'"/>
+</div>
+<br />
+  <apex:pageblocktable value="{!relatedCallPlans}" var="table">
+  
+    <apex:column headerValue="Action" style="width:69px;">
+     <a href="/apex/Call_Plan_Edit?id={!table.id}&retURL=/apex/cp_list?id={!Opportunity_Plan__c.id}" style="">Edit</a> |&nbsp; 
+     <a href="{!URLFOR($Action.Call_Plan__c.Delete,table.id,[retURL='/apex/cp_list?id='+Opportunity_Plan__c.id])}" onclick="return validate()" style="">Del</a>
+    </apex:column>
+    <apex:column headerValue="Call Plan Name" ><apex:commandLink value="{!table.Name}" action="/apex/Call_Plan_View?id={!table.id}"/></apex:column> 
+   
+    <!--apex:column value="{!table.Customer__c}"-->
+    <apex:column value="{!table.Meeting_Date__c}"/>
+    <apex:column headerValue="Duration(Hours)">
+        {!table.Duration_of_Call__c}
+    </apex:column>
+    <apex:column value="{!table.CreatedById}"/>
+    <apex:column value="{!table.CreatedDate}"/>
+  </apex:pageblocktable>
+  
+<!--<apex:relatedList list="Call_Plan__r" title="Call Plan" />-->
+
+ </apex:pageBlock>
+</apex:form>
+</body>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

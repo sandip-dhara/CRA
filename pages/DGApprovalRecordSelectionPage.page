@@ -1,0 +1,52 @@
+<!-- *****************************************************
+Author: Mousumi Panda
+Created Date: 26-APR-2013
+Release: R5
+Capability: Deal Governance
+Description: ApprovalRecord Type Selection page for showing the OR and OBR record type for only Standard Opportunity and restrict it from renewal Opportunity
+***********************************************************-->
+
+
+<apex:page controller="DGApprovalRecordSelectionController" action="{!opptyAccess}">
+     <apex:pageMessages ></apex:pageMessages>
+     <apex:outputLink value="/{!Opptyid}" rendered="{!NOT(hasOptyaccess)}">Click Here to go back to Opportunity</apex:outputLink>
+ <apex:form rendered="{!hasOptyaccess}">
+     <apex:sectionHeader title="Aproval Request" subtitle="New Approval Request"/>
+       <apex:pageBlock >
+         <apex:pageBlockButtons location="bottom">
+          <apex:commandButton value="Next" onclick="return validate();" action="{!next}"/>
+          <apex:commandButton value="cancel" action="{!cancel}"/>   
+         </apex:pageBlockButtons>
+         <apex:pageBlockSection rendered="True" title="Select Type" columns="1" collapsible="false"  >
+           <apex:pageBlockSectionItem id="pgBlkSecItem1" >     
+              <apex:outputlabel value="Approval Request type" for="subType" />             
+                 <apex:selectList id="chooseColor" value="{!ApprovalRequestLabel}" size="1">
+                    <apex:selectOptions value="{!SupportRequestSubTypes}"/>            
+                 </apex:selectList>  
+           </apex:pageBlockSectionItem>  
+         </apex:pageBlockSection>   
+      </apex:pageBlock>
+   
+      <apex:pageBlock mode="maindetail">
+            <apex:pageBlockTable style="width:100%" id="detail" value="{!DesctList}" var="detail">
+                <apex:column headerValue="Approval Request Type" value="{!detail.name}"/>
+                <apex:column headerValue="Description" value="{!detail.des}"/><!--{!mainDetails[detail]}-->
+            </apex:pageBlockTable>
+      </apex:pageBlock>
+ </apex:form>
+
+ 
+ <script>
+  function validate(){                
+            var rectype = document.getElementById('j_id0:j_id30:j_id32:j_id36:pgBlkSecItem1:chooseColor');
+           
+            
+                       
+            if(rectype.value==''){
+                alert('Please select a Record type');
+                rectype.focus();
+                return false;
+            }
+  }
+ </script>
+ </apex:page>

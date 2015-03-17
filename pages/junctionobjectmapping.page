@@ -1,0 +1,31 @@
+<apex:page standardController="Related_Learning_Board__c" extensions="Juntionobject" showHeader="false" sidebar="false" id="page">
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}"/>
+    <body class="lookupTab  LookupSearchFrame, marginCls">
+        <apex:form >
+            <apex:sectionHeader title="Lookup"/>
+                <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">
+                <apex:outputLabel value="Search Within" styleClass="searchLabelCls"/>        
+                    <apex:pageblock >
+                        Search:<apex:inputText />
+                        <apex:commandButton action="{!goMethod}" value="Go"/>            
+                    </apex:pageblock>
+          
+                <!--<apex:inputField value="{!account.name}"/>
+                <apex:inputField value="{!account.site}"/>
+                <apex:inputField value="{!account.type}"/>
+                <apex:inputField value="{!account.accountNumber}"/>-->
+            
+                    <apex:pageblock >
+                        <apex:pageBlockTable value="{!learn}" var="lng">
+                            <apex:column value="{!lng.Name__c}"/>
+                            <!--<apex:column value="{!lng.Description__c}"/>-->
+                            <apex:column value="{!lng.Is_Active__c}"/>
+                            <apex:column value="{!lng.Type__c}"/>
+                            <!--<apex:column value="{!lng.Editorial__c}"/>-->
+                            <apex:column value="{!lng.URL__c}"/>
+                        </apex:pageBlockTable>                    
+                    </apex:pageblock>
+            </apex:outputPanel>
+        </apex:form>    
+    </body>    
+</apex:page>

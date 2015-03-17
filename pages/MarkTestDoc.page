@@ -1,0 +1,162 @@
+<apex:page sidebar="false" controller="SarahTestCanvas" showheader="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+
+        <apex:includeScript value="{!URLFOR($Resource.SessionTkGwLoginMinJs)}"/>    
+        <script type="text/javascript">
+            GWSessionTk.login();
+            if(GWSessionTk.errorStatus) {
+                alert(GWSessionTk.errorStatus);
+            }        
+        </script>
+
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+ <apex:form style="background:red;"> 
+      <input type='button' onclick="ShowPDF();" value="Open PDF" style="padding-left:20px" class="btnAthena btn-primary"/>  
+        <p></p>        
+        <input type='button' onclick="ShowDOCX();" value="Inject" style="padding-left:20px" class="btnAthena btn-primary"/>  
+        <p></p>
+             
+         <input type='button' onclick="ShowPPTX();" value="Open DOCX" style="padding-left:20px" class="btnAthena btn-primary"/>  
+        <p></p>
+
+             
+          <div id="divPDFCanvas" style="display:none; overflow:auto !important;">
+             <apex:canvasApp canvasId="cappPDF" applicationName="SLP_File_Download" width="100%" height="100%" scrolling="no" />
+          </div> 
+             
+           <div id="divDOCXCanvas" style="display:none">
+             <apex:canvasApp canvasId="cappDOCX" applicationName="SLP_File_Download" width="100%" height="1px" scrolling="no" />
+          </div> 
+     
+      <div id="divXLSXCanvas" style="display:none">
+             <apex:canvasApp canvasId="cappXLSX" applicationName="SLP_File_Download" width="100%" height="1px" scrolling="no" />
+          </div>
+     
+       <div id="divPPTXCanvas" style="display:none; overflow:auto; -webkit-overflow-scrolling:touch; height:100px;">
+            <iframe src="#"></iframe>
+         </div>
+             
+          <div id="divHTMLCanvas" style="display:none">
+             <apex:canvasApp canvasId="cappHTML" applicationName="SLP_File_Download" width="100%" height="600px" scrolling="yes" />
+          </div> 
+             
+           <div id="divVideoCanvas" style="display:none">
+             <apex:canvasApp canvasId="cappVideo" applicationName="SLP_File_Download" width="100%" height="600px" scrolling="yes" />
+          </div> 
+   
+  </apex:form>
+
+   <script type="text/javascript" src="https://hp--esit.cs11.my.salesforce.com/canvas/sdk/js/30.0/controller.js"  />
+ <script>
+ 
+   function ShowPDF() {
+      document.getElementById('divPDFCanvas').style.display = 'block';
+
+        var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'def'},'target' : {'canvas' : 'cappPDF'}}; 
+
+        //m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008r4xIAA/EMEA-ABS-Masterclass---SAP-HANA.pdf';
+        //m.payload.contenttype= 'application/pdf';
+
+        //m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rI1IAI/Find%20an%20Expert.xlsx';
+        //m.payload.contenttype= 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+         m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rOTIAY/Simulation%20walkthrough%20(1).pptx';
+         m.payload.contenttype= 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+
+         //m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/Issues%20Mar24_a6wZ00000008qaYIAQ.docx';
+         //m.payload.contenttype= 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+        Sfdc.canvas.controller.publish(m);
+        } 
+         
+      function ShowDOCX() {
+            //$('body').attr('style', 'height: 500px; overflow: auto !important;-webkit-overflow-scrolling:touch !important');
+//            //$('iframe').css('height','11000px');
+            
+            //$('canvas-frame-_:SLP_File_Download:cappPDF').css('height','auto');
+            
+            //$('iframe').css('width','100px');
+            
+            $('iframe').css({
+                    '-webkit-transform': 'scale(0.45)',
+                    '-webkit-transform-origin': '0 0',
+                    'width': '720px',
+                    'height': '5vh'
+                });
+        } 
+    function ShowPPTX() {
+    debugger;
+      document.getElementById('divPDFCanvas').style.display = 'none';
+      document.getElementById('divDOCXCanvas').style.display = 'none';
+      document.getElementById('divHTMLCanvas').style.display = 'none';
+       document.getElementById('divVideoCanvas').style.display = 'none';
+      document.getElementById('divXLSXCanvas').style.display = 'none';
+      document.getElementById('divPPTXCanvas').style.display = 'block';
+
+        //var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'application/vnd.openxmlformats-officedocument.presentationml.presentation'},'target' : {'canvas' : 'cappPPTX'}}; 
+                var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'def'},'target' : {'canvas' : 'cappPPTX'}}; 
+
+       // m.payload.url= 'https://ensv.hp.com/sales/sam/docs/sam-1-2846/en/c03835086.pptx';
+        m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008r4nIAA/c03835086.pptx';
+         m.payload.contenttype= 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+       //alert(JSON.stringify(m));
+        Sfdc.canvas.controller.publish(m);
+        //document.getElementById('divPPTXCanvas').innerHTML=Sfdc.canvas.controller.publish(m);
+        } 
+    
+    function ShowXLSX() {
+      document.getElementById('divPDFCanvas').style.display = 'none';
+      document.getElementById('divDOCXCanvas').style.display = 'none';
+      document.getElementById('divHTMLCanvas').style.display = 'none';
+       document.getElementById('divVideoCanvas').style.display = 'none';
+        document.getElementById('divXLSXCanvas').style.display = 'block';
+        document.getElementById('divPPTXCanvas').style.display = 'none';
+
+        var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'def'},'target' : {'canvas' : 'cappXLSX'}}; 
+
+        m.payload.url= 'https://ensv.hp.com/sales/sam/docs/sam-1-1862/en/c03376644.xls';
+        // m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/2-%20SLP%20Sprint%202%20User%20Stories_a6wZ00000008qQ4IAI.xlsx';
+        // m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008r52IAA/c03376644.xls';
+        m.payload.contenttype= 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      //   alert(JSON.stringify(m));
+        Sfdc.canvas.controller.publish(m);
+        } 
+    
+   function ShowHTML() {
+       document.getElementById('divPDFCanvas').style.display = 'none';
+      document.getElementById('divDOCXCanvas').style.display = 'none';
+      document.getElementById('divHTMLCanvas').style.display = 'block';
+        document.getElementById('divVideoCanvas').style.display = 'none';
+       document.getElementById('divXLSXCanvas').style.display = 'none';
+       document.getElementById('divPPTXCanvas').style.display = 'none';
+
+        var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'def'},'target' : {'canvas' : 'cappHTML'}}; 
+
+       m.payload.url= 'https://ensv.hp.com/sales/offerings-collateral/offerings/enterprise-cloud-services-virtual-private-cloud/';
+       //m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/WWSHTML/Enterprise%20Cloud%20Services%20-%20Virtual%20Private%20Cloud%20%20What%20We%20Sell%20%20Enterprise%20Services.htm';
+       m.payload.contenttype= 'html';  
+       // alert(JSON.stringify(m));
+        Sfdc.canvas.controller.publish(m);
+        } 
+    
+     function ShowVideo() {
+       document.getElementById('divPDFCanvas').style.display = 'none';
+      document.getElementById('divDOCXCanvas').style.display = 'none';
+      document.getElementById('divHTMLCanvas').style.display = 'none';
+        document.getElementById('divVideoCanvas').style.display = 'block';
+         document.getElementById('divXLSXCanvas').style.display = 'none';
+         document.getElementById('divPPTXCanvas').style.display = 'none';
+
+        var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'def'},'target' : {'canvas' : 'cappVideo'}}; 
+
+       m.payload.url= 'https://www.brainshark.com/HPLearning/vu?pi=zHPz16oXldz6NN2z0';
+       m.payload.contenttype= 'video';
+         //      alert(JSON.stringify(m));
+        Sfdc.canvas.controller.publish(m);
+        } 
+   </script> 
+</apex:page>

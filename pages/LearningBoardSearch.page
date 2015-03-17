@@ -1,0 +1,31 @@
+<apex:page Controller="LearningBoardSearch">
+    <apex:form >
+        <apex:outputPanel layout="block">
+            <apex:sectionHeader title="Search LearningBoard"/>
+        </apex:outputPanel>
+
+        <apex:pageBlock mode="edit" id="block">
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="searchText">Search Text</apex:outputLabel>
+                    <apex:panelGroup >
+                        <apex:inputText id="searchText" value="{!searchText}"/>               
+                        <apex:commandButton value="Search" action="{!search}" rerender="block"/>
+                    </apex:panelGroup>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:actionStatus id="status" startText="requesting..."/>
+           
+              
+        </apex:pageBlock>
+
+        <apex:pageBlock >
+            <apex:pageBlockSection title="Available LearningBoard2:" id="results" columns="1"> 
+                <apex:selectcheckboxes value="{!searchText}" layout="pageDirection">
+                    <apex:selectOptions value="{!LearningBoardName}"/>            
+                </apex:selectcheckboxes>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:commandButton action="{!add}" value="Add" id="theButton"/>
+    </apex:form>
+</apex:page>

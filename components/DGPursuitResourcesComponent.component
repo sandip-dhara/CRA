@@ -1,0 +1,19 @@
+<!--
+Created by: Venkatesh S
+Created on: 15/04/2013
+Comments  : Component to show Pursuit Resources as a table in Deal Goverance Email Notification
+-->
+
+<apex:component Controller="DGPursuitResourcesController" access="global">
+
+    <apex:attribute name="ApprovalId" assignTo="{!AppId}" type="id" description="Approvals"/>
+    
+    <apex:DataTable columns="5" border="2" value="{!PursuitResource}" var="PRR" style="background-color:lightblue;">
+                <apex:column ><apex:facet name="header">Pursuit Team Name/Role</apex:facet><apex:Outputfield value="{!PRR.Pursuit_Team_Name_Role__c}" /></apex:column>
+                <apex:column ><apex:facet name="header">Region/Sub Region/Country</apex:facet><apex:Outputfield value="{!PRR.Region_subregion_Country__c}" /></apex:column>
+                <apex:column ><apex:facet name="header">Estimated Start Date</apex:facet><apex:Outputfield value="{!PRR.Estimated_Start_Date__c}" /></apex:column>
+                <apex:column ><apex:facet name="header">Estimated End Date</apex:facet><apex:Outputfield value="{!PRR.Estimated_End_Date__c}" /></apex:column>
+                <apex:column ><apex:facet name="header">Requested Hours</apex:facet><apex:Outputfield value="{!PRR.Requested_Hours__c}" /></apex:column>
+        </apex:DataTable>  
+        
+</apex:component>

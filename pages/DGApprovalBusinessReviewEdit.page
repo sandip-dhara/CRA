@@ -1,0 +1,157 @@
+<!-- *****************************************************
+Author: Mousumi Panda
+Created Date: 26-APR-2013
+Release: R5
+Capability: Deal Governance
+Description: Edit Page for Opportunity Business Review 
+***********************************************************-->
+
+<apex:page standardController="Approval__c"  id="apppage" >
+<!--java script funtions to disabling and enabling the fields on selection of some picklist value-->
+<!--<script>
+window.onload = function() {
+
+if (document.getElementById('apppage:appform:apppageblock:essection:secitmother:other') != null){
+document.getElementById('apppage:appform:apppageblock:essection:secitmother:other').disabled=true;
+}
+if(document.getElementById('apppage:appform:apppageblock:pgsection:espmregion') != null){
+document.getElementById('apppage:appform:apppageblock:pgsection:espmregion').disabled=true;
+
+}
+}
+
+
+function esdealvalue(){
+
+     var espickvalue=document.getElementById('apppage:appform:apppageblock:pgsection:esinput').value;
+     
+      if(espickvalue=='Yes'){      
+          document.getElementById('apppage:appform:apppageblock:pgsection:espmregion').disabled=false;
+      }if(espickvalue=='No'){
+          document.getElementById('apppage:appform:apppageblock:pgsection:espmregion').disabled=true;
+          
+          
+      }
+      }
+function escontracttypvalue(){
+
+     var contractpickvalue=document.getElementById('apppage:appform:apppageblock:essection:secitem:contrcttyp').value;
+    
+      if(contractpickvalue=='Other'){      
+         document.getElementById('apppage:appform:apppageblock:essection:secitmother:other').disabled=false;
+      }
+      else{
+       document.getElementById('apppage:appform:apppageblock:essection:secitmother:other').disabled=true;
+      }
+      
+    }
+      
+</script>
+
+<apex:form id="appform">
+ <apex:sectionHeader title="Approval" subtitle="{!Approval__c.Approval_Long_Name__c}"/>
+  <apex:pageBlock title="Approval Request Form: Business Review" id="apppageblock">
+        <apex:pageBlockButtons >
+           <apex:commandButton action="{!onSave}" value="Save"/>
+           <apex:commandButton action="{!customCancel}" value="Cancel"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="2" title="Opportunity Information" id="pbsec"> 
+                <apex:outputField value="{!Approval__c.Opportunity_Id__c}"/>
+                <apex:outputField value="{!Approval__c.Opportunity_Type__c}"/>
+                <apex:pageBlockSectionItem >
+                   <apex:OutputLabel value="Opportunity Name"/>
+                   <apex:OutputLink value="/{!Approval__c.Opportunity_system_id__c}" > {!Approval__c.Opportunity_Name__c} </apex:OutputLink>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!Approval__c.Close_Date__c}"/>
+                <apex:pageBlockSectionItem >
+                   <apex:OutputLabel value="Account Name"/>
+                   <apex:OutputLink value="/{!Approval__c.Account_id__c}" > {!Approval__c.Account_Name__c} </apex:OutputLink>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!Approval__c.Sales_Stage__c}"/>
+                <apex:outputField label="Opportunity Owner" value="{!Approval__c.Opportunity_Owner__c}"/>
+                <apex:outputField label="Opportunity's Owner BG" value="{!Approval__c.Owners_BG__c}"/>
+                <apex:outputField label="Region (Account Region)" value="{!Approval__c.Region_Account_Region__c}"/>
+                <apex:outputField value="{!Approval__c.Total_Opportunity_Value__c}"/>
+                <apex:OutputField value="{!Approval__c.Proposal_Due_Date__c}"/>
+                <!--<apex:outputtext label="{!$Label.Total_Opportunity_Value}">
+                   <apex:panelgroup id="amountid">
+                        <apex:outputtext value="{!Approval__c.Opportunity__r.CurrencyISOCode}" />
+                        <apex:outputText value="{0, number, ###,###,###.00}" style="text-align:Left;">
+                        <apex:param value="{!Approval__c.Opportunity__r.Amount}" />
+                        </apex:outputText>
+                        <apex:outputText value=".00" rendered="{!ISBLANK(Approval__c.Opportunity__r.Amount)}" >
+                        <apex:param value="{!Approval__c.Opportunity__r.Amount}" />
+                        </apex:outputText> 
+                  </apex:panelgroup>
+                  <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != oppty.CurrencyIsoCode)}">
+                                    (
+                                    <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                                    
+                                    <apex:outputText value="{0, number, ###,###,###.00}" >
+                                    <apex:param value="{!oppty.Amount}" />
+                                    </apex:outputText>
+                                    <apex:outputText value=".00"  rendered="{!ISBLANK(oppty.Amount)}">
+                                    <apex:param value="{!oppty.Amount}" />
+                                    </apex:outputText>
+                                    )
+                   </apex:panelgroup>
+                  </apex:outputtext>-->
+            
+        <!--</apex:pageBlockSection>
+         <!--Business Review detail-->
+        <!--<apex:pageBlockSection columns="2" title="Review Details">
+            <apex:inputField value="{!Approval__c.Meeting_Review_Request_Date__c}"/>
+            <apex:inputField value="{!Approval__c.Pricing_Approach__c}"/>
+            <apex:inputField value="{!Approval__c.Approval_Description__c}"  Style="Width:80%"/>
+            <apex:inputField value="{!Approval__c.Requestor_Comments__c}"  Style="Width:80%"/>
+            <apex:inputField value="{!Approval__c.Solution_Mix__c}"  Style="Width:80%"/>
+        </apex:pageBlockSection>
+        <!--BG Specific Information PPS,IPG and PSG-->
+      <!-- <apex:pageBlockSection columns="2" title="BG Specific Information({!Approval__c.Opportunity__r.Business_Group2__c})" id="pgsection" rendered="{!IF((Approval__c.Opportunity__r.Business_Group2__c=='PPS') || (Approval__c.Opportunity__r.Business_Group2__c=='PSG') || (Approval__c.Opportunity__r.Business_Group2__c=='IPG'),true,false)}">
+            <apex:inputField value="{!Approval__c.System_Pricing_Margin__c}"/>
+            <apex:inputField value="{!Approval__c.Overall_Risk_Rating__c}"/>
+            <apex:inputField value="{!Approval__c.Alliance_Markup__c}"/>
+            <apex:inputField value="{!Approval__c.Office_jet_Pro_HW_Pricing_Margin__c}"/>
+            <apex:inputField label="Office-jet Pro Supplies Pricing Margin(%)" value="{!Approval__c.Office_jet_ProSupplies_Pricing_Margin__c}"/>
+            <apex:inputField value="{!Approval__c.Billing_Model__c}"/>
+            <apex:inputField value="{!Approval__c.Is_this_part_of_an_ES_deal__c}" id="esinput" onchange="esdealvalue()"/>
+            <apex:inputField label="If yes, is the PM% in the region ES 10pt target window?" value="{!Approval__c.If_yes_is_the_PM_in_the_region_ES_10pt__c}" id="espmregion"/>
+             <apex:inputField value="{!Approval__c.Date_Time_bid_is_due_to_the_customer__c}"/>
+             <apex:inputField value="{!Approval__c.Inbound_regions_for_multi_region_deal__c}"/>
+        </apex:pageBlockSection>
+        <!--BG Specific Information for TS-->
+        <!--<apex:pageBlockSection columns="2" title="BG Specific Information(TS)" id="tssection" rendered="{!IF(Approval__c.Opportunity__r.Business_Group2__c=='TS',true,false)}">
+              <apex:inputField value="{!Approval__c.Engagement_Margin__c}"/>
+              <apex:inputField value="{!Approval__c.Gross_Margin__c}"/>
+              <apex:outputField label="Lead Country" value="{!Approval__c.Opportunity__r.Account_Shipping_Country__c}" />
+              <apex:inputField value="{!Approval__c.Billing_Model_TS__c}"/>
+              <apex:outputField value="{!Approval__c.Opportunity__r.Account.Confidential_Account__c }" />
+              <apex:outputField value="{!Approval__c.Opportunity__r.Multi_Country_Type__c}" />
+              <apex:outputField value="{!Approval__c.Opportunity__r.Confidential__c}" />
+              <apex:outputField value="{!Approval__c.Opportunity__r.Non_standard_Opportunity__c}" />
+              <apex:inputField value="{!Approval__c.Lead_Org__c}"/>
+        </apex:pageBlockSection>
+         <!--BG Specific Information for ES-->
+       <!-- <apex:pageBlockSection columns="2" title="BG Specific Information(ES)" id="essection" rendered="{!IF(Approval__c.Opportunity__r.Business_Group2__c=='ES',true,false)}">
+           <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Risk Rating"/>
+                <apex:inputField value="{!Approval__c.Risk_Rating__c}"/>
+           </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Additional Pursuit Budget (USD)"/>
+               <apex:inputField value="{!Approval__c.Additional_Pursuit_Budget_USD__c}"/>
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem id="secitem">
+              <apex:outputLabel value="Contract Type"/>
+              <apex:inputField value="{!Approval__c.Contract_Type__c}" id="contrcttyp" onchange="escontracttypvalue()" />
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem id="secitmother" >
+              <apex:outputLabel value="Other"/>
+              <apex:inputField value="{!Approval__c.Other__c}" id="other"/>
+          </apex:pageBlockSectionItem>
+          
+        </apex:pageBlockSection>
+        
+   </apex:pageBlock>
+</apex:form>  -->
+</apex:page>

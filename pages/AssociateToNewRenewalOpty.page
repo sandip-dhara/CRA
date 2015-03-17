@@ -1,0 +1,50 @@
+<!-- 
+/**********************************************************
+* Page Name: AssociateToNewRenwalOpty
+* Author: HP
+* Date: 23-July-2012 
+* Requirement # 
+* Description: To Associate Contracts and Line items to New Renewal Opportunity
+***********************************************************/
+-->
+<apex:page standardController="Opportunity" extensions="ContractExtensionController" tabstyle="Opportunity" action="{!initialize}">
+    <apex:form >
+    <!-- PageBLock to Create New Renewal Opportunity -->
+        <apex:pageblock title="Opportunity Edit" id="pageblock">     
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save and Associate" action="{!mysave}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+        <apex:pageMessages />      
+              
+        <apex:pageBlockSection title="Opportunity Information" id="section">          
+            <apex:Outputfield value="{!oppty.Ownerid}" />
+            <apex:inputfield value="{!oppty.CloseDate}" />
+            <apex:inputfield value="{!oppty.AccountId}" required="True"/>
+            <apex:inputfield value="{!oppty.StageName}" />
+            <apex:inputfield value="{!oppty.Name}" />
+            <apex:inputfield value="{!oppty.ForecastCategoryName}" />
+            <apex:inputField value="{!oppty.Type}"/>
+            <apex:inputField value="{!oppty.Win_Loss_Reason__c}" />
+            <apex:inputField value="{!oppty.Renewal_Type__c}">
+            
+            </apex:inputField>
+            <apex:inputText value="{!oppty.Amount}" />
+            <!-- <apex:inputField value="{!oppty.Renewal_Sub_Type__c}" id="sub"/>  -->
+            <apex:inputField value="{!oppty.Probability}" required="False" />
+            <apex:inputfield value="{!oppty.CurrencyIsoCode}" />
+            <apex:inputField value="{!oppty.Route_To_Market__c}" />
+            <apex:inputField value="{!oppty.Customer_Engagement__c}" />
+            <apex:inputField value="{!oppty.HP_Solution__c}" />
+            <apex:inputfield value="{!oppty.HPFS_Needed__c}" /> 
+            <apex:inputfield value="{!oppty.Description}" />
+            <apex:pageBlockSectionItem >
+            Auto Sync<apex:inputCheckbox value="{!result}"/>
+            </apex:pageBlockSectionItem>
+            <apex:inputfield value="{!oppty.Opportunity_Update__c}" />
+            <apex:inputfield value="{!oppty.Last_Modified_by_Partner__c}" /><b></b> 
+            
+         </apex:pageBlockSection>
+       </apex:pageblock>
+    </apex:form>
+</apex:page>

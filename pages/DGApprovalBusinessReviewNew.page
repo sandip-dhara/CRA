@@ -1,0 +1,721 @@
+<!-- *****************************************************
+Author: Mousumi Panda
+Created Date: 26-APR-2013
+Release: R5
+Capability: Deal Governance
+Description: New/Create form for Opportunity Business Review 
+***********************************************************-->
+
+<apex:page standardController="Opportunity"  tabStyle="Approval__c" id="apppage" >
+ 
+<!--java script funtions to disabling and enabling the fields on selection of some picklist value-->
+<!--<script>
+
+function EnableSWSections(){
+EnableSWSections1();
+}
+window.onload = function() {
+EnableSWSections1();
+SoftwareField();
+}
+
+
+
+</script>
+
+<apex:form id="appform">
+<apex:pagemessages ></apex:pagemessages>
+ <apex:sectionHeader title="Approval" subtitle="{!Opportunity.Name}"/>
+  <apex:pageBlock title="Approval Request Form: Business Review" id="apppageblock">
+  
+  <apex:actionFunction name="EnableSWSections1" action="{!SWSpecificSection}" rerender="apppageblock,pbsec,swsection,swsectionservices"/>
+  
+  <apex:actionFunction name="SoftwareField" action="{!SoftwareSelection}" reRender="apppageblock" />
+  
+<apex:actionFunction name="ELASection" action="{!SoftwareSelection}" reRender="apppageblock" />
+<apex:actionFunction name="showIfOthePlsSpecify" action="{!ELAStructure}" reRender="ela" />
+<apex:actionFunction name="MultiElementDeal" reRender="apppageblock" />
+
+    
+  <apex:actionFunction name="FutureLicense" rerender="apppageblock"/>
+  <apex:actionFunction name="AnticipatedCarve" rerender="apppageblock"/>
+  <apex:actionFunction name="RevenueSplit" rerender="apppageblock"/>
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!customSave}" value="Save"/>
+            <apex:commandButton action="{!Cancel}" value="Cancel"/>
+        </apex:pageBlockButtons>
+        
+        <apex:pageBlockSection columns="2" title="Opportunity Information" id="pbsec"> 
+           
+            <apex:outputField value="{!Opportunity.Opportunity_ID__c}"/>
+            <apex:outputField label="Opportunity Type" value="{!Opportunity.Type}"/>
+               <apex:pageBlockSectionItem >
+               <apex:OutputLabel value="Opportunity Name"/>
+               <apex:OutputLink value="/{!Opportunity.Id}" > {!Opportunity.Name} </apex:OutputLink>
+             </apex:pageBlockSectionItem>
+             <apex:outputField value="{!Opportunity.CloseDate}"/>
+             <apex:pageBlockSectionItem >
+             <apex:OutputLabel value="Account Name"/>
+             <apex:OutputLink value="/{!Opportunity.Account.Id }" > {!Opportunity.Account.Name } </apex:OutputLink>
+             </apex:pageBlockSectionItem>
+            <apex:outputField value="{!Opportunity.StageName}"/>
+            <apex:outputField label="Opportunity Owner" value="{!Opportunity.Owner.Name}"/>
+            <apex:outputField label="Opportunity Owner's BG" value="{!Opportunity.Business_Group2__c}"/>
+            <apex:outputField label="Region (Account Region)" value="{!Opportunity.Account_Region__c}"/>
+            
+            <apex:outputtext label="{!$Label.Total_Opportunity_Value}">
+            <apex:panelgroup id="amountid">
+                <apex:outputtext value="{!Opportunity.CurrencyISOCode}" />
+                <apex:outputText value="{0, number, ###,###,###.00}" style="text-align:Left;">
+                <apex:param value="{!Opportunity.Amount}" />
+                </apex:outputText>
+                <apex:outputText value=".00" rendered="{!ISBLANK(Opportunity.Amount)}" >
+                <apex:param value="{!Opportunity.Amount}" />
+                </apex:outputText> 
+            </apex:panelgroup>
+             <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != oppty.CurrencyIsoCode)}">
+                                (
+                                <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                                
+                                <apex:outputText value="{0, number, ###,###,###.00}" >
+                                <apex:param value="{!oppty.Amount}" />
+                                </apex:outputText>
+                                <apex:outputText value=".00"  rendered="{!ISBLANK(oppty.Amount)}">
+                                <apex:param value="{!oppty.Amount}" />
+                                </apex:outputText>
+                                )
+             </apex:panelgroup>
+            </apex:outputtext>
+            <apex:OutputField value="{!Opportunity.Proposal_Due_Date__c}"/>
+            
+        </apex:pageBlockSection>
+        
+        <!--Business Review detail-->
+       
+       <!-- <apex:pageBlockSection columns="2" title="Review Details" id="review">
+           <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Meeting Review Request Date"/>
+          <apex:inputField value="{!approvalObj.Meeting_Review_Request_Date__c}" />
+          </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Pricing Approach"/>
+          <apex:inputField value="{!approvalObj.Pricing_Approach__c}"/>
+          </apex:pageBlockSectionItem>
+         
+         <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Approval Description"/>
+          <apex:inputField value="{!approvalObj.Approval_Description__c}"  Style="Width:80%"/>
+          </apex:pageBlockSectionItem>
+         
+         <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Requestor Comments"/>
+          <apex:inputField value="{!approvalObj.Requestor_Comments__c}"  Style="Width:80%"/>
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem id="psitem" rendered="{!isSolutionMix}">
+          <apex:outputLabel value="Solution Mix"/>
+          <apex:SelectList value="{!approvalObj.Solution_Mix__c}"  id="solmix"  size="1" onchange="EnableSWSections();">
+          <apex:selectoptions value="{!solutionmixvals}" />
+          </apex:SelectList>
+          </apex:pageBlockSectionItem>
+          <apex:inputhidden value="{!rectypeid}" />
+          
+        </apex:pageBlockSection>
+        
+        <!--BG Specific Information PPS,IPG and PSG-->
+        
+       <!-- <apex:pageBlockSection columns="2" title="BG Specific Information({!Opportunity.Business_Group2__c})" id="pgsection" rendered="{!IF((Opportunity.Business_Group2__c=='PPS') || (Opportunity.Business_Group2__c== 'IPG') || (Opportunity.Business_Group2__c=='PSG'),true,false)}">
+        
+                
+             <apex:pageBlockSectionItem >
+               <apex:outputLabel value="System Pricing Margin(%)"/>
+              <apex:inputField value="{!approvalObj.System_Pricing_Margin__c}"/>
+              </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Overall Risk Rating"/>
+              <apex:inputField value="{!approvalObj.Overall_Risk_Rating__c}"/>
+              </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Alliance Markup%"/>
+              <apex:inputField value="{!approvalObj.Alliance_Markup__c}"/>
+              </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Office-jet Pro HW Pricing Margin(%)"/>
+              <apex:inputField value="{!approvalObj.Office_jet_Pro_HW_Pricing_Margin__c}"/>
+              </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Office-jet Pro Supplies Pricing Margin (%)"/>
+              <apex:inputField value="{!approvalObj.Office_jet_ProSupplies_Pricing_Margin__c}"/>
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Billing Model"/>
+              <apex:inputField value="{!approvalObj.Billing_Model__c}"/>
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Is this part of an ES deal?"/>
+              <apex:inputField value="{!approvalObj.Is_this_part_of_an_ES_deal__c}" id="esinput" onchange="esdealvalue()"/>
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+               <apex:outputLabel value="If yes, is the PM% in the region ES 10pt target window?"/>
+              <apex:inputField value="{!approvalObj.If_yes_is_the_PM_in_the_region_ES_10pt__c}"/>
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Date/Time bid is due to the customer?"/>
+              <apex:inputField value="{!approvalObj.Date_Time_bid_is_due_to_the_customer__c}"/>
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Inbound regions for multi region deal?"/>
+              <apex:inputField value="{!approvalObj.Inbound_regions_for_multi_region_deal__c}"/>
+              </apex:pageBlockSectionItem>
+          
+        </apex:pageBlockSection>
+        <!--BG Specific Information for TS-->
+         <!--<apex:pageBlockSection columns="2" title="BG Specific Information(TS)" id="tssection" rendered="{!IF(Opportunity.Business_Group2__c=='TS',true,false)}">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Engagement Margin(%)"/>
+                <apex:inputField value="{!approvalObj.Engagement_Margin__c}"/>
+             </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Gross Margin(%)"/>
+              <apex:inputField value="{!approvalObj.Gross_Margin__c}"/>
+              </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Lead Country"/>
+               <apex:outputField value="{!Opportunity.Account_Shipping_Country__c}" />
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Billing Model"/>
+              <apex:inputField value="{!approvalObj.Billing_Model_TS__c}"/>
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Account Private Flag"/>
+               <apex:outputField value="{!Opportunity.Account.Confidential_Account__c}" />
+             </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Multi Country Type"/>
+              <apex:outputField value="{!Opportunity.Multi_Country_Type__c}" />
+              </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Confidential Flag"/>
+              <apex:outputField value="{!Opportunity.Confidential__c}" />
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Non-Standard-Opportunity"/>
+              <apex:outputField value="{!Opportunity.Non_standard_Opportunity__c}" />
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Lead Org"/>
+              <apex:inputField value="{!approvalObj.Lead_Org__c}" />
+              </apex:pageBlockSectionItem>
+       </apex:pageBlockSection>
+        
+        <!--BG Specific Information for ES-->
+        
+    <!--<apex:pageBlockSection columns="2" title="BG Specific Information(ES)" id="essection" rendered="{!IF(Opportunity.Business_Group2__c=='ES',true,false)}">
+    
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Risk Rating"/>
+                <apex:inputField value="{!approvalObj.Risk_Rating__c}"/>
+             </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Additional Pursuit Budget (USD)"/>
+                  <apex:inputField value="{!approvalObj.Additional_Pursuit_Budget_USD__c}"/>
+              </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Contract Type" id="secitem"/>
+                  <apex:inputField value="{!approvalObj.Contract_Type__c}" onchange="escontracttypvalue();" id="contrcttyp"/>
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem id="secitmother" >
+                  <apex:outputLabel value="Other"/>
+                  <apex:inputField value="{!approvalObj.Other__c}" id="other"/>
+              </apex:pageBlockSectionItem>      
+               
+  </apex:pageBlockSection> 
+  <div id="divswsection" style="display:block">
+  <apex:pageBlockSection columns="1" title="BG Specific Information(SW)" id="swsection" rendered="{!IF((Opportunity.Business_Group2__c=='SW' && isSolutionMix == true && SolutionMix == 'Product'),true,false)}">
+      
+      <apex:pageBlockSection columns="2" title="Opportunity Type" id="Opptyp">
+                
+                               
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Software</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock" />
+                        <apex:inputField value="{!approvalObj.Software__c}" id="Software" Onchange="SoftwareField();ELASection();" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+               
+                
+                <apex:pageBlockSectionItem rendered="{!IsSoftware != 'N/A'}">
+                    <apex:outputLabel >Support Type</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Support Type" value="{!approvalObj.Support_Type__c}" id="supprttyp"  />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                
+                <apex:pageBlockSectionItem rendered="{!IsSoftware != 'N/A'}">
+                    <apex:outputLabel >Support Duration</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Support Duration" value="{!approvalObj.Support_Duration__c}" id="suppdur" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!IsSoftware != 'N/A'}">
+                    <apex:outputLabel >Upfront Support %</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Upfront Support %" value="{!approvalObj.Upfront_Support__c}" id="upfrontsupp" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!IsSoftware != 'N/A'}">
+                    <apex:outputLabel >Upfront Support Pricing Methodology</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Upfront Support Pricing Methodology" value="{!approvalObj.Upfront_Support_Pricing_Methodology__c}" id="upfrontsuppmeth" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Premier Support</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField value="{!approvalObj.Premier_Support__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Education</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Education" value="{!approvalObj.Education__c}" id="Education"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >SaaS</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="SaaS" value="{!approvalObj.SaaS__c}" id="saas" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Third Party Products</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Third Party Products" value="{!approvalObj.Third_Party_Products__c}" id="thirdproduct" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Is Deal being financed?</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Is Deal being financed?" value="{!approvalObj.Is_Deal_being_financed__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                 
+                 
+                 
+                 
+
+                 
+                 
+                
+    </apex:pageBlockSection>   
+
+   <apex:pageBlockSection columns="2" title="Deal Value" id="Dealvalsection">
+               <apex:inputField value="{!approvalObj.Net_Product__c}"/>
+              <apex:inputField value="{!approvalObj.Product_Discount__c}"/>
+             <apex:inputField value="{!approvalObj.Net_Hardware_0__c}"/>
+              <apex:inputField value="{!approvalObj.Net_Support__c}" /><apex:inputField value="{!approvalObj.Net_SaaS__c}"/>
+              <apex:inputField value="{!approvalObj.SaaS_Discount__c}" /> 
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Net Education</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Net Education?" value="{!approvalObj.Net_Education__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!approvalObj.Education_Discount__c}"/>  
+               
+                <apex:inputField label="Highest Individual Packaged Services Discount % " value="{!approvalObj.Highest_Individual_Packaged_Services_Dis__c}" />            
+     </apex:pageBlockSection>               
+    
+    
+         <apex:pageBlockSection columns="2" title="Deal Information">
+         
+               <apex:pageBlockSectionItem >
+                    <apex:outputLabel >What is Being Requested</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="What is Being Requested" value="{!approvalObj.What_is_Being_Requested__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Governing Terms</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Governing Terms" value="{!approvalObj.Governing_Terms__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+              
+              <apex:inputField value="{!approvalObj.Agreement_Name__c}"/>
+              
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Quote Proposal Expiration Date</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Quote Proposal Expiration Date?" value="{!approvalObj.Quote_Proposal_Expiration_Date__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+              
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Partner Involvement</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Partner Involvement" value="{!approvalObj.Partner_Involvement__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+             <apex:inputField value="{!approvalObj.Name_of_Channel_Partner__c}"/>
+          </apex:pageBlockSection>
+          
+       <apex:pageBlockSection columns="2" title="General License Info" id="glf" >
+              
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Installed Base SW Relicensing</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Installed Base SW Relicensing" value="{!approvalObj.Installed_Base_SW_Relicensing__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+              
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Future License Price Hold Discount</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Future License Price Hold Discount" value="{!approvalObj.Future_License_Price_Hold_Discount__c}" onchange="FutureLicense()"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+             <!-- <apex:panelGrid id="dofhdpanel">
+             <apex:inputField label="Description of Price Hold Discount" value="{!approvalObj.Description_of_Price_Hold_Discount__c}" id="dofhd"/>
+             </apex:panelGrid>-->
+             <!--<apex:pageBlockSectionItem id="dofhdpanel" rendered="{!approvalObj.Future_License_Price_Hold_Discount__c == 'Yes'}">
+                <apex:outputLabel value="Description of Price Hold Discount" id="dofhdlabel"/>
+                <apex:inputField value="{!approvalObj.Description_of_Price_Hold_Discount__c}" id="dofhd"/>
+             </apex:pageBlockSectionItem>
+             
+             <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Geographic License Option</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Geographic License Option" value="{!approvalObj.Geographic_License_Option__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+              
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Anticipated Carve Out from License</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Anticipated Carve Out from License" value="{!approvalObj.Anticipated_Carve_Out_from_License__c}" onchange="AnticipatedCarve()"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+              
+              <apex:pageBlockSectionItem id="rfcosecitm" rendered="{!approvalObj.Anticipated_Carve_Out_from_License__c = 'Yes'}">
+                <apex:outputLabel value="Reason for Carve Out" id="rfcolabel"/>
+                <apex:inputField value="{!approvalObj.Reason_for_Carve_Out__c}" id="rfco"/>
+             </apex:pageBlockSectionItem>
+              
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Promotion being used</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Promotion being used" value="{!approvalObj.Promotion_being_used__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel >3P Royalty Products with HP SKUs Included</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="3P Royalty Products with HP SKUs Included" value="{!approvalObj.X3P_Royalty_Products_with_HP_SKUs_Includ__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>               
+       </apex:pageBlockSection>
+          
+          
+          
+          
+          <apex:pageBlockSection columns="2" title="Enterprise License Agreement" id="ela" rendered="{!IsSoftware != 'N/A'}">
+          
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Customer Address</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Customer Address" value="{!approvalObj.Customer_Address__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Customer Phone No</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Customer Phone No" value="{!approvalObj.Customer_Phone_No__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >ELA Term (in months)</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="ELA Term (in months)" value="{!approvalObj.ELA_Term_in_months__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >ELA Structure</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="ELA Structure" value="{!approvalObj.ELA_Structure__c}" onchange="showIfOthePlsSpecify();"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+              
+              <!--<apex:inputField value="{!approvalObj.Customer_Address__c}" required="True"/>
+                 
+              <apex:inputField value="{!approvalObj.Customer_Phone_No__c}" required="True"/>
+                 
+              <apex:inputField value="{!approvalObj.ELA_Term_in_months__c}" required="True"/>
+               
+              <apex:inputField value="{!approvalObj.ELA_Structure__c}" required="True" id="elas" onchange="showIfOthePlsSpecify();"/>-->
+                 
+             <!-- <apex:pageBlockSectionItem id="pstsecitm" rendered="{!elastructure = 'Other'}">
+                <apex:outputLabel value="If Other, Please Specify Type" id="pstlabel"/>
+                <apex:inputField value="{!approvalObj.If_Other_Please_Specify_Type__c}" id="pst"/>
+             </apex:pageBlockSectionItem>            
+          </apex:pageBlockSection>
+          
+          <apex:pageBlockSection columns="2" title="Legal Quote">
+               
+               <apex:pageBlockSectionItem >
+                    <apex:outputLabel >3P Royalty Products with HP SKUs Included</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="3P Royalty Products with HP SKUs Included" value="{!approvalObj.X3P_Royalty_Products_with_HP_SKUs_Includ__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+               
+               <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Customer Contact Name</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Customer Contact Name" value="{!approvalObj.Customer_Contact_Name__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+              <apex:inputField value="{!approvalObj.SAID_of_Existing_SW_Installation__c}"/> 
+                  
+              
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Language on Quote</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Language on Quote" value="{!approvalObj.Language_on_Quote__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+              
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Payment Terms</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Payment Terms" value="{!approvalObj.Payment_Terms__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+              <apex:inputField value="{!approvalObj.Additional_Language_to_include_on_Quote__c}"/>
+          </apex:pageBlockSection>
+          
+          <apex:pageBlockSection columns="2" title="Splits" id="split">
+             
+              <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Revenue Splits</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Revenue Splits" value="{!approvalObj.Revenue_Splits__c}" onchange="RevenueSplit()"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+               
+            
+             <apex:pageBlockSectionItem id="mrdsecitm" rendered="{!approvalObj.Revenue_Splits__c='Yes'}">
+                    <apex:outputLabel >Multi-Region Deal?</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Multi-Region Deal?" value="{!approvalObj.Multi_Region_Deal__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+             
+
+             <apex:pageBlockSectionItem id="rginlvsecitm" rendered="{!approvalObj.Revenue_Splits__c='Yes'}">
+                    <apex:outputLabel >Regions Involved</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Regions Involved" value="{!approvalObj.Regions_Involved__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+             
+             
+             <apex:pageBlockSectionItem id="potenincangesecitm" rendered="{!approvalObj.Revenue_Splits__c='Yes'}">
+                    <apex:outputLabel >Potential Inter-region $250K Revenue Split?</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Potential Inter-region $250K Revenue Split?" value="{!approvalObj.Potential_Inter_region_250K_Revenue_Spl__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+           
+             <apex:pageBlockSectionItem id="agrmsecitm" rendered="{!approvalObj.Revenue_Splits__c='Yes'}">
+                    <apex:outputLabel >All sides in agreement?</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="All sides in agreement?" value="{!approvalObj.All_sides_in_agreement__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+             
+          </apex:pageBlockSection>
+               
+  </apex:pageBlockSection> 
+  </div>
+  <div id="divswsectionservices">
+  <apex:pageBlockSection columns="1" title="BG Specific Information(SW)" id="swsectionservices" rendered="{!IF((Opportunity.Business_Group2__c=='SW' && isSolutionMix == true && SolutionMix == 'Service'),true,false)}">
+   <apex:pageBlockSection columns="2" title="Opportunity Type" id="Service-Opptyp">
+            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Services</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Services" value="{!approvalObj.Services__c}" id="Services"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Education</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Education" value="{!approvalObj.Education__c}" id="Education"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >SaaS</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="SaaS" value="{!approvalObj.SaaS__c}" id="saas" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Third Party Products</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Third Party Products" value="{!approvalObj.Third_Party_Products__c}" id="thirdproduct" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Is Deal being financed?</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Is Deal being financed?" value="{!approvalObj.Is_Deal_being_financed__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+   </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Pricing Info" id="Pricinginfosection">
+             
+          <!--  <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Net PS + Net Travel + Net Packaged Services</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Net PS + Net Travel + Net Packaged Services" value="{!approvalObj.Net_PS_Net_Travel_Packaged_Services__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>  -->
+             
+             
+            <!-- <apex:inputField value="{!approvalObj.EM_via_SWIPER__c}"/>
+             
+             <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Net Education</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Net Education" value="{!approvalObj.Net_Education__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+             <apex:inputField value="{!approvalObj.Education_Discount__c}"/>
+             <apex:inputField label="Highest Individual Packaged Services Discount % " value="{!approvalObj.Highest_Individual_Packaged_Services_Dis__c}" />                      
+       </apex:pageBlockSection>               
+    
+    
+       <apex:pageBlockSection columns="2" title="Deal Information">
+            <apex:inputField value="{!approvalObj.Governing_Terms__c}"/>
+            <apex:inputField value="{!approvalObj.Agreement_Name__c}"/>
+            
+            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Partner Involvement</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Partner Involvement" value="{!approvalObj.Partner_Involvement__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Name of Channel Partner</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Name of Channel Partner" value="{!approvalObj.Name_of_Channel_Partner__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Risk Rating</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Risk Rating" value="{!approvalObj.Risk_Rating__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Primary Services Opportunity Structure</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Primary Services Opportunity Structure" value="{!approvalObj.Primary_Services_Opportunity_Structure__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            <!--*Risk Rating** -->
+            
+           
+            <!--<apex:pageBlockSectionItem >
+                    <apex:outputLabel >Deal Composition</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Deal Composition" value="{!approvalObj.Deal_Composition__c}" OnChange="MultiElementDeal();"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem id="MultiElementDeal1" rendered="{!OR(approvalObj.Deal_Composition__c = 'Multi-Element Deal in Single Country',approvalObj.Deal_Composition__c = 'Multi-Element Deal in Multiple Country')}">
+                    <apex:outputLabel >Proposal Center Contact Email</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Proposal Center Contact Email" value="{!approvalObj.Proposal_Center_Contact_Email__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="MultiElementDeal2" rendered="{!OR(approvalObj.Deal_Composition__c = 'Multi-Element Deal in Single Country',approvalObj.Deal_Composition__c = 'Multi-Element Deal in Multiple Country')}">
+                    <apex:outputLabel >Email of BU Contact Responsible for Multi-Element Deal</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                        <apex:inputField label="Email of BU Contact Responsible for Multi-Element Deal" value="{!approvalObj.Email_of_BU_Contact_Responsible_for_Mult__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+       </apex:pageBlockSection>
+     </apex:pageBlockSection> 
+      </div>
+   </apex:pageBlock>
+
+   
+    </apex:form>-->  
+ </apex:page>

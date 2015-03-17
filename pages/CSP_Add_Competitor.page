@@ -1,0 +1,64 @@
+<apex:page standardController="Competitive_Sales_Plan__c" extensions="CSPAddCompetitor" showHeader="false" sidebar="false">
+<style>
+
+body {
+    margin: 10px;
+}
+
+table {
+    border-collapse:collapse;
+        
+}
+
+td {
+    border-width:1px;
+    border-style: solid;
+    border-color: #000000;  
+}
+
+.tdheader{
+    background-color: #5ABBE8;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+
+.tdcsf {
+    font-weight: bold;
+    text-align: center;
+}
+
+.tdgtgp{
+    background-color:#f3f3f3;   
+}
+
+</style>
+
+<body>
+<div>
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px;">Competitive Sales Plans Add Competitor</h1>
+<hr size="1"></hr>
+</div>
+<br />
+<apex:messages />
+<br />
+<apex:outputText value="Please select a competitor from the list and click the corresponding action link to create a new plan."></apex:outputText>
+<br /><br />
+<apex:form >
+<div style="width:200px;margin-left:auto;margin-right:auto;text-align:center;"><apex:commandButton action="{!goBack}" value="Cancel"/>
+</div>
+<br />
+
+<apex:pageBlock mode="maindetail">
+<apex:pageBlockTable value="{!Competitors}" var="cmp" columns="2">
+<apex:column headerValue="Action" width="100"><apex:commandlink value="Create Plan" action="{!addCompetitor}"><apex:param name="chosen_comp" value="{!cmp.Id}" assignTo="{!compId}"/></apex:commandlink></apex:column>
+<apex:column headerValue="Competitors" value="{!cmp.Competitor_Name__c}"/>
+</apex:pageBlockTable>
+</apex:pageBlock>
+
+
+</apex:form>
+</body>
+
+
+</apex:page>

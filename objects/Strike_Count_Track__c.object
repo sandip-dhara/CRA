@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>This custom object is used to keep a track of all the leads and opportunities that are assigned to partners. It will be further leveraged to update the strike count on partner user and account.</description>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Lead_Last_Modified_by_Partner__c</fullName>
+        <description>This field captures the time stamp for the last activity on the lead by the partner.</description>
+        <externalId>false</externalId>
+        <formula>Lead__r.Last_Modified_by_Partner__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Lead - Last Modified by Partner</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Lead_Over_Due__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( AND( NOT(ISNULL( Opportunity__c)),NOT(ISBLANK(Opportunity__c))),TODAY()- DATEVALUE(  Opportunity_Last_Modified_by_Partner__c  ),TODAY()- DATEVALUE(  Lead_Last_Modified_by_Partner__c ))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label># Overdue</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Lead_Status__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT( Lead__r.Status )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Lead Status</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Lead__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Lead</label>
+        <referenceTo>Lead</referenceTo>
+        <relationshipName>Strike_Count_Track</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Opportunity_Last_Modified_by_Partner__c</fullName>
+        <description>This filed captures the time stamp of the last activity of partner on the corresponding opportunity.</description>
+        <externalId>false</externalId>
+        <formula>Opportunity__r.Last_Modified_by_Partner__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Opportunity - Last Modified by Partner</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Opportunity_Stage__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(Opportunity__r.StageName )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Opportunity Stage</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Opportunity__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Opportunity</label>
+        <referenceTo>Opportunity</referenceTo>
+        <relationshipName>Strike_Count_Track</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Owner_Partner_User__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Owner - Partner User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Strike_Count_Track</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Partner_Account__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Partner Account</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipName>Strike_Count_Track</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Partner_Contact__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Partner Contact</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipName>Strike_Count_Track</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Partner_Location__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Partner Location</label>
+        <referenceTo>Location__c</referenceTo>
+        <relationshipLabel>Strike Count Track</relationshipLabel>
+        <relationshipName>Strike_Count_Track</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Lead_Owner_Id__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous Lead Owner Id</label>
+        <length>18</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Queue_Assignment_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Queue Assignment Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Report_Type__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( OR( ISBLANK( Strike_Increment_Date__c ), ISNULL( Strike_Increment_Date__c ) ),&apos;&apos; , IF( OR( ISBLANK( Lead__c ),ISNULL( Lead__c)),IF(  Lead_Over_Due__c  &gt;= 30,&apos;30 Day Report&apos;,&apos;&apos;),IF( Two_Day_SLA_Date__c  =  Strike_Increment_Date__c ,&apos;2 Day Report&apos;,&apos;30 Day Report&apos;)) )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Report Type</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Strike_Increment_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Demerit Increment Date</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Thirty_Day_SLA_Date__c</fullName>
+        <description>This field provides the SLA date for 30-day SLA for lead, Opportunity. It handles recurring SLA date for each 30-day count by using Strike count date.</description>
+        <externalId>false</externalId>
+        <formula>IF(  AND( NOT(  ISBLANK( Lead_Last_Modified_by_Partner__c ) ), NOT(  ISNULL( Lead_Last_Modified_by_Partner__c ) ) )  ,
+
+IF( OR(  ISBLANK(  Strike_Increment_Date__c ), ISNULL(  Strike_Increment_Date__c ), DATEVALUE( Lead_Last_Modified_by_Partner__c) &gt;  Strike_Increment_Date__c   ),  DATEVALUE( Lead_Last_Modified_by_Partner__c) + 30 , Strike_Increment_Date__c + 30) , 
+
+ IF( AND( NOT(  ISBLANK(  Opportunity_Last_Modified_by_Partner__c ) ), NOT(  ISNULL( Opportunity_Last_Modified_by_Partner__c ) ) ) ,
+
+IF( OR(  ISBLANK(  Strike_Increment_Date__c ), ISNULL(  Strike_Increment_Date__c ), DATEVALUE( Opportunity_Last_Modified_by_Partner__c) &gt;   Strike_Increment_Date__c  ),  DATEVALUE( Opportunity_Last_Modified_by_Partner__c) + 30 , Strike_Increment_Date__c + 30) , 
+
+NULL )   )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>30 Day SLA Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Two_Day_SLA_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>2 Day SLA Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>User_Assignment_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>User Assignment Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>User_assignment_day__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE(
+IF(
+OR(ISNULL(Queue_Assignment_Date__c),ISBLANK(Queue_Assignment_Date__c)),
+MOD(DATEVALUE(User_Assignment_Date__c) - DATE(1900, 1, 7), 7), MOD(DATEVALUE(Queue_Assignment_Date__c) - DATE(1900, 1, 7), 7)
+),
+0, &quot;Sunday&quot;, 
+1, &quot;Monday&quot;, 
+2, &quot;Tuesday&quot;, 
+3, &quot;Wednesday&quot;, 
+4, &quot;Thursday&quot;, 
+5, &quot;Friday&quot;, 
+6, &quot;Saturday&quot;,
+&quot;Error&quot;
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>User assignment day</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Demerit Count Track</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>OBJECT_ID</columns>
+        <columns>Lead__c</columns>
+        <columns>Opportunity__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>SCT-{0}</displayFormat>
+        <label>Demerit Count Track #</label>
+        <trackHistory>true</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Demerit Count Track</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

@@ -1,0 +1,64 @@
+<!-- 
+/**********************************************************
+* Page Name:ABPPickBUGrowthContactPage 
+* Author:  HP
+* Date: 25/09/2012
+* Requirement # Request Id: 3256
+* Description: When we click the Pick Contact from BUGrowth Strategy Detail page displaying list of Contacts
+**********************************************************/
+-->
+
+<apex:page standardController="Related_Stakeholder_s__c"  extensions="PickBUGrowthContactJunction" recordSetVar="Related_Stakeholder_s__c">
+<apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+<body class="lookupTab  LookupSearchFrame, marginCls">
+<apex:form >
+<apex:actionRegion >
+<apex:sectionHeader title="{!$Label.Contact_Search}" />
+<apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>
+<apex:inputText id="txtSearch" value="{!searchString}"  onkeypress="return noenter(event);"/>
+                        <span Class="searchspanCls"><apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!Search}"  status="Status" rerender="SearchResults"></apex:commandButton></span>
+                       <br></br>
+<br></br>
+ <p>{!$Label.Wildcard_Usage}</p>
+
+<apex:pageBlock id="SearchResults"> 
+<apex:pageMessages />
+          <apex:actionStatus StartText="Processing..." id="Status"/> 
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Add" action="{!processSelected}" rerender="table"/>
+                <apex:commandButton value="Cancel" action="{!Cancel}"/>
+            </apex:pageBlockButtons>
+            
+          <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls"> 
+          
+                    <apex:pageBlockTable value="{!businessPriorities}" var="c" id="table" rendered="{!!IsBlank(BusinessPriorities)}">
+                <apex:column >
+                    <!-- This is our selected Boolean property in our wrapper class -->
+                    <apex:inputCheckbox value="{!c.selected}"/>
+                </apex:column>
+                <!-- This is how we access the Contact values within our opty container/wrapper -->
+                <apex:column value="{!c.Opp1.Name}" />
+                
+            </apex:pageBlockTable>   
+                  
+            <apex:outputLabel rendered="{!isPickCbpListEmpty}">
+            <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+            </apex:outputLabel>  
+            
+          </apex:outputPanel>            
+        </apex:pageBlock>   
+        </apex:actionRegion>
+    <apex:actionFunction name="doSearchAF" action="{!Search}" rerender="SearchResults" status="Status" />
+    </apex:form>
+    </body>
+    <script type='text/javascript'>
+        function noenter(ev)  {
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                doSearchAF();
+                return false;
+             } else {
+                  return true;
+             }
+         }
+    </script>
+    </apex:page>

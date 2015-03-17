@@ -1,0 +1,77 @@
+<apex:page sidebar="false" controller="SarahTestCanvas">
+<apex:includeScript value="{!URLFOR($Resource.MockLogin)}"/>    
+<script type="text/javascript">
+    GWSessionTk.login();
+    if(GWSessionTk.errorStatus) {
+        alert(GWSessionTk.errorStatus);
+    }        
+</script>
+
+ <apex:form > 
+      <input type='button' onclick="ShowPDF();" value="Open PDF" style="padding-left:20px" class="btnAthena btn-primary"/>  
+        <p></p>        
+        <input type='button' onclick="ShowDOCX();" value="Open DOCX" style="padding-left:20px" class="btnAthena btn-primary"/>  
+        <p></p>
+             <input type='button' onclick="ShowVideo();" value="Open Video" style="padding-left:20px" class="btnAthena btn-primary"/>  
+        <p></p>
+        
+          <div id="divPDFCanvas" style="display:none">
+             <apex:canvasApp canvasId="cappPDF" applicationName="SLP_File_Download" width="100%" height="600px" scrolling="yes" />
+          </div> 
+             
+           <div id="divDOCXCanvas" style="display:none">
+             <apex:canvasApp canvasId="cappDOCX" applicationName="SLP_File_Download" width="100%" height="1px" scrolling="no" />
+          </div> 
+             
+           <div id="divVideoCanvas" style="display:none">
+             <apex:canvasApp canvasId="cappVideo" applicationName="SLP_File_Download" width="100%" height="600px" scrolling="yes" />
+          </div> 
+   
+  </apex:form>
+   
+   <script type="text/javascript" src="https://hp--esit.cs11.my.salesforce.com/canvas/sdk/js/30.0/controller.js"  />
+ <script>
+
+ 
+   function ShowPDF() {
+      document.getElementById('divPDFCanvas').style.display = 'block';
+      document.getElementById('divDOCXCanvas').style.display = 'none';
+       document.getElementById('divVideoCanvas').style.display = 'none';
+
+        var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'def'},'target' : {'canvas' : 'cappPDF'}}; 
+
+        m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/What%20is%20Agile_a6wZ00000008qeLIAQ.pdf';
+        m.payload.contenttype= 'application/pdf';
+              alert(JSON.stringify(m));
+        Sfdc.canvas.controller.publish(m);
+        } 
+        
+  function ShowDOCX() {
+      document.getElementById('divPDFCanvas').style.display = 'none';
+      document.getElementById('divDOCXCanvas').style.display = 'block';
+       document.getElementById('divVideoCanvas').style.display = 'none';
+
+        var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'def'},'target' : {'canvas' : 'cappDOCX'}}; 
+
+        m.payload.url= 'http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/Test5_a8CZ0000000CbBqMAK.docx';
+         m.payload.contenttype= 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+              alert(JSON.stringify(m));
+        Sfdc.canvas.controller.publish(m);
+        } 
+    
+    
+     function ShowVideo() {
+       document.getElementById('divPDFCanvas').style.display = 'none';
+      document.getElementById('divDOCXCanvas').style.display = 'none';
+        document.getElementById('divVideoCanvas').style.display = 'block';
+
+        var m = {'name' : 'button.click','payload' : {'url' : 'abc', 'contenttype' : 'def'},'target' : {'canvas' : 'cappVideo'}}; 
+
+       m.payload.url= 'https://www.brainshark.com/HPLearning/vu?pi=zHPz16oXldz6NN2z0';
+       m.payload.contenttype= 'video';
+              alert(JSON.stringify(m));
+        Sfdc.canvas.controller.publish(m);
+        } 
+   </script> 
+
+</apex:page>

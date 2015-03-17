@@ -1,0 +1,1480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Allocated_MDF_Amount_Q1__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Allocated Q1 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Allocated_MDF_Amount_Q2__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Allocated Q2 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Allocated_MDF_Amount_Q3__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Allocated Q3 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Allocated_MDF_Amount_Q4__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Allocated Q4 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>BG__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>The name of the HP business group responsible for the plan.</inlineHelpText>
+        <label>Business Group</label>
+        <picklist>
+            <picklistValues>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Achievement_Q1__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Q1_percent__c = 0) || (Current_FY_Planned_Q1_percent__c =0), 0, (Current_FY_Actual_Q1_percent__c /Current_FY_Planned_Q1_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Q1_Days__c = 0 || Current_FY_Planned_Q1_Days__c =0,0,Current_FY_Actual_Q1_Days__c/Current_FY_Planned_Q1_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(MDF_Spent_Amount_Q1__c = 0||Allocated_MDF_Amount_Q1__c=0,0,(MDF_Spent_Amount_Q1__c/Allocated_MDF_Amount_Q1__c)),IF(Current_FY_Actual_Q1__c = 0 || Current_FY_Planned_Q1__c=0,0,Current_FY_Actual_Q1__c / Current_FY_Planned_Q1__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of the planned value attained for the quarter. Calculation: Actual / Planned</inlineHelpText>
+        <label>Current FY Achievement Q1 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Achievement_Q2__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Q2_percent__c = 0) || (Current_FY_Planned_Q2_percent__c =0), 0, (Current_FY_Actual_Q2_percent__c /Current_FY_Planned_Q2_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Q2_Days__c = 0 || Current_FY_Planned_Q2_Days__c =0,0,Current_FY_Actual_Q2_Days__c/Current_FY_Planned_Q2_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(MDF_Spent_Amount_Q2__c = 0||Allocated_MDF_Amount_Q2__c=0,0,(MDF_Spent_Amount_Q2__c/Allocated_MDF_Amount_Q2__c)),IF(Current_FY_Actual_Q2__c = 0 || Current_FY_Planned_Q2__c=0,0,Current_FY_Actual_Q2__c / Current_FY_Planned_Q2__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of the planned value attained for the quarter. Calculation: Actual / Planned</inlineHelpText>
+        <label>Current FY Achievement Q2 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Achievement_Q3__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Q3_percent__c = 0) || (Current_FY_Planned_Q3_percent__c =0), 0, (Current_FY_Actual_Q3_percent__c /Current_FY_Planned_Q3_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Q3_Days__c = 0 || Current_FY_Planned_Q3_Days__c =0,0,Current_FY_Actual_Q3_Days__c/Current_FY_Planned_Q3_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(MDF_Spent_Amount_Q3__c = 0||Allocated_MDF_Amount_Q3__c=0,0,(MDF_Spent_Amount_Q3__c/Allocated_MDF_Amount_Q3__c)),IF(Current_FY_Actual_Q3__c = 0 || Current_FY_Planned_Q3__c=0,0,Current_FY_Actual_Q3__c / Current_FY_Planned_Q3__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of the planned value attained for the quarter. Calculation: Actual / Planned</inlineHelpText>
+        <label>Current FY Achievement Q3 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Achievement_Q4__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Q4_percent__c = 0) || (Current_FY_Planned_Q4_percent__c =0), 0, (Current_FY_Actual_Q4_percent__c /Current_FY_Planned_Q4_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Q4_Days__c = 0 || Current_FY_Planned_Q4_Days__c =0,0,Current_FY_Actual_Q4_Days__c/Current_FY_Planned_Q4_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(MDF_Spent_Amount_Q4__c = 0||Allocated_MDF_Amount_Q4__c=0,0,(MDF_Spent_Amount_Q4__c/Allocated_MDF_Amount_Q4__c)),IF(Current_FY_Actual_Q4__c = 0 || Current_FY_Planned_Q4__c=0,0,Current_FY_Actual_Q4__c / Current_FY_Planned_Q4__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of the planned value attained for the quarter. Calculation: Actual / Planned</inlineHelpText>
+        <label>Current FY Achievement Q4 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Achievement_Total__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Total_percent__c = 0) || (Current_FY_Planned_Total_percent__c =0), 0, (Current_FY_Actual_Total_percent__c /Current_FY_Planned_Total_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Total_Days__c = 0 || Current_FY_Planned_Total_Days__c =0,0,Current_FY_Actual_Total_Days__c/Current_FY_Planned_Total_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(Total_MDF_Spent_Amount__c = 0||Total_Allocated_MDFAmount__c=0,0,(Total_MDF_Spent_Amount__c/Total_Allocated_MDFAmount__c)),IF(Current_FY_Actual_Total__c = 0 || Current_FY_Planned_Total__c=0,0,Current_FY_Actual_Total__c / Current_FY_Planned_Total__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of the planned value attained for the year. Calculation: Actual / Planned</inlineHelpText>
+        <label>Current FY Achievement Total  %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q1_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q1 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q1__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q1 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q1_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q1 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q2_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q2 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q2__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q2 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q2_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q2 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q3_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q3 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q3__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q3 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q3_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q3 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q4_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q4 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q4__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q4 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Q4_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Actual Q4 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Total_Days__c</fullName>
+        <externalId>false</externalId>
+        <formula>( Current_FY_Actual_Q1_Days__c + Current_FY_Actual_Q2_Days__c + Current_FY_Actual_Q3_Days__c + Current_FY_Actual_Q4_Days__c ) / 4</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Current FY Actual Total (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Total__c</fullName>
+        <externalId>false</externalId>
+        <formula>Current_FY_Actual_Q1__c + Current_FY_Actual_Q2__c + Current_FY_Actual_Q3__c + Current_FY_Actual_Q4__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Current FY Actual Total ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Actual_Total_percent__c</fullName>
+        <externalId>false</externalId>
+        <formula>( Current_FY_Actual_Q1_percent__c + Current_FY_Actual_Q2_percent__c + Current_FY_Actual_Q3_percent__c + Current_FY_Actual_Q4_percent__c  ) / 4</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Current FY Actual Total (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q1_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q1 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q1__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q1 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q1_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q1 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>true</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q2_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q2 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q2__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q2 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q2_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q2 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>true</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q3_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q3 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q3__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q3 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q3_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q3 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>true</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q4_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q4 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q4__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q4 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Q4_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Planned Q4 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>true</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Total_Days__c</fullName>
+        <externalId>false</externalId>
+        <formula>( Current_FY_Planned_Q1_Days__c + Current_FY_Planned_Q2_Days__c + Current_FY_Planned_Q3_Days__c + Current_FY_Planned_Q4_Days__c ) / 4</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Current FY Planned Total (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Total__c</fullName>
+        <externalId>false</externalId>
+        <formula>Current_FY_Planned_Q1__c  +  Current_FY_Planned_Q2__c  +  Current_FY_Planned_Q3__c  +  Current_FY_Planned_Q4__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Current FY Planned Total ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Current_FY_Planned_Total_percent__c</fullName>
+        <externalId>false</externalId>
+        <formula>( Current_FY_Planned_Q1_percent__c  + Current_FY_Planned_Q2_percent__c  + Current_FY_Planned_Q3_percent__c  + Current_FY_Planned_Q4_percent__c ) / 4</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Current FY Planned Total (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>GbuSpecializationPlan__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>The associated sub-plan for the metric.</inlineHelpText>
+        <label>Sub Plan</label>
+        <referenceTo>GBU_Specialization_Plans__c</referenceTo>
+        <relationshipLabel>Metrics</relationshipLabel>
+        <relationshipName>Metrics</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>true</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Last_Upload_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Last Upload Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>MDF_Spent_Amount_Q1__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Spent Q1 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>MDF_Spent_Amount_Q2__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Spent Q2 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>MDF_Spent_Amount_Q3__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Spent Q3 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>MDF_Spent_Amount_Q4__c</fullName>
+        <externalId>false</externalId>
+        <label>Current FY Spent Q4 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>MDF_Utilization_Rate_Q1__c</fullName>
+        <externalId>false</externalId>
+        <formula>if(MDF_Spent_Amount_Q1__c==0||  Allocated_MDF_Amount_Q1__c==0,0,( MDF_Spent_Amount_Q1__c /Allocated_MDF_Amount_Q1__c ))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of MDF spent of the allocated amount. Calculation: (Spent / Allocated) as a %</inlineHelpText>
+        <label>Current FY Utilization Rate Q1 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>MDF_Utilization_Rate_Q2__c</fullName>
+        <externalId>false</externalId>
+        <formula>if(MDF_Spent_Amount_Q2__c==0|| Allocated_MDF_Amount_Q2__c==0,0,( MDF_Spent_Amount_Q2__c /Allocated_MDF_Amount_Q2__c ))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of MDF spent of the allocated amount. Calculation: (Spent / Allocated) as a %</inlineHelpText>
+        <label>Current FY Utilization Rate Q2 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>MDF_Utilization_Rate_Q3__c</fullName>
+        <externalId>false</externalId>
+        <formula>if(MDF_Spent_Amount_Q3__c==0|| Allocated_MDF_Amount_Q3__c==0,0,( MDF_Spent_Amount_Q3__c /Allocated_MDF_Amount_Q3__c ))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of MDF spent of the allocated amount. Calculation: (Spent / Allocated) as a %</inlineHelpText>
+        <label>Current FY Utilization Rate Q3 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>MDF_Utilization_Rate_Q4__c</fullName>
+        <externalId>false</externalId>
+        <formula>if(MDF_Spent_Amount_Q4__c==0|| Allocated_MDF_Amount_Q4__c==0,0,( MDF_Spent_Amount_Q4__c /Allocated_MDF_Amount_Q4__c ))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % of MDF spent of the allocated amount. Calculation: (Spent / Allocated) as a %</inlineHelpText>
+        <label>Current FY Utilization Rate Q4 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Metrics_Type__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>The metric applicable only to the business group selected.</inlineHelpText>
+        <label>Metrics Type</label>
+        <picklist>
+            <controllingField>BG__c</controllingField>
+            <picklistValues>
+                <fullName>Partner Programs:  Win Ratio</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Penetration Rate</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <controllingFieldValues>HPFS</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Conversion Rate</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Renewal Rate</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>HP Contract Revenue</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Penetration Rate Index</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Total Operating Performance</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Channel Assistance Fee</fullName>
+                <controllingFieldValues>HPFS</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Credit Turn Around Time</fullName>
+                <controllingFieldValues>HPFS</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>HP v. Non HP Product Mix</fullName>
+                <controllingFieldValues>HPFS</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Attach %</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>HP Share of Business %</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Market Development Fund</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Sales</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Partner Compensation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Weeks of Inventory</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <controllingFieldValues>PPS</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Aged Inventory</fullName>
+                <controllingFieldValues>EG</controllingFieldValues>
+                <controllingFieldValues>PPS</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q1_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q1 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q1__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q1 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q1_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q1 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q2_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q2 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q2__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q2 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q2_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q2 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q3_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q3 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q3__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q3 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q3_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q3 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q4_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q4 (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q4__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q4 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Q4_percent__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Actual Q4 (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Total_Days__c</fullName>
+        <externalId>false</externalId>
+        <formula>( Previous_FY_Actual_Q1_Days__c + Previous_FY_Actual_Q2_Days__c + Previous_FY_Actual_Q3_Days__c + Previous_FY_Actual_Q4_Days__c ) / 4</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Previous FY Actual Total (#)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Total__c</fullName>
+        <externalId>false</externalId>
+        <formula>Previous_FY_Actual_Q1__c  +  Previous_FY_Actual_Q2__c  +  Previous_FY_Actual_Q3__c  +  Previous_FY_Actual_Q4__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Previous FY Actual Total ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_FY_Actual_Total_percent__c</fullName>
+        <externalId>false</externalId>
+        <formula>( Previous_FY_Actual_Q1_percent__c  + Previous_FY_Actual_Q2_percent__c + Previous_FY_Actual_Q3_percent__c + Previous_FY_Actual_Q4_percent__c ) / 4</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Previous FY Actual Total (%)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Year_MDF_Spent_Q1__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Spent Q1 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Year_MDF_Spent_Q2__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Spent Q2 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Year_MDF_Spent_Q3__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Spent Q3 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Year_MDF_Spent_Q4__c</fullName>
+        <externalId>false</externalId>
+        <label>Previous FY Spent Q4 ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Year_MDF_Spent_Total__c</fullName>
+        <externalId>false</externalId>
+        <formula>Previous_Year_MDF_Spent_Q1__c +  Previous_Year_MDF_Spent_Q3__c +  Previous_Year_MDF_Spent_Q4__c +  Previous_Year_MDF_Spent_Q2__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Previous FY Spent Total ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Total_Allocated_MDFAmount__c</fullName>
+        <externalId>false</externalId>
+        <formula>Allocated_MDF_Amount_Q1__c  +  Allocated_MDF_Amount_Q2__c +  Allocated_MDF_Amount_Q3__c +  Allocated_MDF_Amount_Q4__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Current FY Allocated Total ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Total_MDF_Spent_Amount__c</fullName>
+        <externalId>false</externalId>
+        <formula>MDF_Spent_Amount_Q1__c + MDF_Spent_Amount_Q2__c + MDF_Spent_Amount_Q3__c + MDF_Spent_Amount_Q4__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Current FY Spent Total ($)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Total_MDF_Utilization_Rate__c</fullName>
+        <externalId>false</externalId>
+        <formula>if(Total_MDF_Spent_Amount__c==0|| Total_Allocated_MDFAmount__c==0,0,( Total_MDF_Spent_Amount__c /Total_Allocated_MDFAmount__c ))</formula>
+        <inlineHelpText>The % of MDF spent of the allocated amount. Calculation: (Spent / Allocated) as a %</inlineHelpText>
+        <label>Current FY Utilization Rate Total %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Total_YoY_Actual_Growth__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Total_percent__c = 0) || (Previous_FY_Actual_Total_percent__c  =0), 0, (Current_FY_Actual_Total_percent__c - Previous_FY_Actual_Total_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Total_Days__c = 0 || Previous_FY_Actual_Total_Days__c =0,0,(Current_FY_Actual_Total_Days__c-Previous_FY_Actual_Total_Days__c)/Previous_FY_Actual_Total_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(Total_MDF_Spent_Amount__c = 0||Previous_Year_MDF_Spent_Total__c=0,0,(Total_MDF_Spent_Amount__c-Previous_Year_MDF_Spent_Total__c)/Previous_Year_MDF_Spent_Total__c),IF(Current_FY_Actual_Total__c = 0 || Previous_FY_Actual_Total__c=0,0,(Current_FY_Actual_Total__c - Previous_FY_Actual_Total__c)/Previous_FY_Actual_Total__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year actual value for the year. Calculation: (Actual – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Actual Growth Total %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_Actual_Growth_Q1__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Q1_percent__c = 0) || (Previous_FY_Actual_Q1_percent__c  =0), 0, (Current_FY_Actual_Q1_percent__c - Previous_FY_Actual_Q1_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Q1_Days__c = 0 || Previous_FY_Actual_Q1_Days__c =0,0,(Current_FY_Actual_Q1_Days__c-Previous_FY_Actual_Q1_Days__c)/Previous_FY_Actual_Q1_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(MDF_Spent_Amount_Q1__c = 0||Previous_Year_MDF_Spent_Q1__c=0,0,(MDF_Spent_Amount_Q1__c-Previous_Year_MDF_Spent_Q1__c)/Previous_Year_MDF_Spent_Q1__c),IF(Current_FY_Actual_Q1__c = 0 || Previous_FY_Actual_Q1__c=0,0,(Current_FY_Actual_Q1__c - Previous_FY_Actual_Q1__c)/Previous_FY_Actual_Q1__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year actual value for the quarter. Calculation: (Actual – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Actual Growth Q1 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_Actual_Growth_Q2__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Q2_percent__c = 0) || (Previous_FY_Actual_Q2_percent__c  =0), 0, (Current_FY_Actual_Q2_percent__c - Previous_FY_Actual_Q2_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Q2_Days__c = 0 || Previous_FY_Actual_Q2_Days__c =0,0,(Current_FY_Actual_Q2_Days__c-Previous_FY_Actual_Q2_Days__c)/Previous_FY_Actual_Q2_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(MDF_Spent_Amount_Q2__c = 0||Previous_Year_MDF_Spent_Q2__c=0,0,(MDF_Spent_Amount_Q2__c-Previous_Year_MDF_Spent_Q2__c)/Previous_Year_MDF_Spent_Q2__c),IF(Current_FY_Actual_Q2__c = 0 || Previous_FY_Actual_Q2__c=0,0,(Current_FY_Actual_Q2__c - Previous_FY_Actual_Q2__c)/Previous_FY_Actual_Q2__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year actual value for the quarter. Calculation: (Actual – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Actual Growth Q2 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_Actual_Growth_Q3__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Q3_percent__c = 0) || (Previous_FY_Actual_Q3_percent__c  =0), 0, (Current_FY_Actual_Q3_percent__c - Previous_FY_Actual_Q3_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Q3_Days__c = 0 || Previous_FY_Actual_Q3_Days__c =0,0,(Current_FY_Actual_Q3_Days__c-Previous_FY_Actual_Q3_Days__c)/Previous_FY_Actual_Q3_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(MDF_Spent_Amount_Q3__c = 0||Previous_Year_MDF_Spent_Q3__c=0,0,(MDF_Spent_Amount_Q3__c-Previous_Year_MDF_Spent_Q3__c)/Previous_Year_MDF_Spent_Q3__c),IF(Current_FY_Actual_Q3__c = 0 || Previous_FY_Actual_Q3__c=0,0,(Current_FY_Actual_Q3__c - Previous_FY_Actual_Q3__c)/Previous_FY_Actual_Q3__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year actual value for the quarter. Calculation: (Actual – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Actual Growth Q3 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_Actual_Growth_Q4__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Actual_Q4_percent__c = 0) || (Previous_FY_Actual_Q4_percent__c  =0), 0, (Current_FY_Actual_Q4_percent__c - Previous_FY_Actual_Q4_percent__c)),IF(RecordType.Name = &apos;BG Specific #&apos;|| RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Actual_Q4_Days__c = 0 || Previous_FY_Actual_Q4_Days__c =0,0,(Current_FY_Actual_Q4_Days__c-Previous_FY_Actual_Q4_Days__c)/Previous_FY_Actual_Q4_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(MDF_Spent_Amount_Q4__c = 0||Previous_Year_MDF_Spent_Q4__c=0,0,(MDF_Spent_Amount_Q4__c-Previous_Year_MDF_Spent_Q4__c)/Previous_Year_MDF_Spent_Q4__c),IF(Current_FY_Actual_Q4__c = 0 || Previous_FY_Actual_Q4__c=0,0,(Current_FY_Actual_Q4__c - Previous_FY_Actual_Q4__c)/Previous_FY_Actual_Q4__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year actual value for the quarter. Calculation: (Actual – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Actual Growth Q4 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_gr_Comparision_Plan_Q1__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Planned_Q1_percent__c = 0) || (Previous_FY_Actual_Q1_percent__c =0), 0, Current_FY_Planned_Q1_percent__c - Previous_FY_Actual_Q1_percent__c),IF(RecordType.Name = &apos;BG Specific #&apos; || RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;, IF(Current_FY_Planned_Q1_Days__c = 0 || Previous_FY_Actual_Q1_Days__c =0,0,(Current_FY_Planned_Q1_Days__c-Previous_FY_Actual_Q1_Days__c)/Previous_FY_Actual_Q1_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(Allocated_MDF_Amount_Q1__c = 0||Previous_Year_MDF_Spent_Q1__c=0,0,(Allocated_MDF_Amount_Q1__c-Previous_Year_MDF_Spent_Q1__c)/Previous_Year_MDF_Spent_Q1__c),IF(Current_FY_Planned_Q1__c = 0 || Previous_FY_Actual_Q1__c=0,0,(Current_FY_Planned_Q1__c - Previous_FY_Actual_Q1__c)/Previous_FY_Actual_Q1__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year planned value for the quarter. Calculation: (Planned – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Planned Growth Q1 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_gr_Comparision_Plan_Q2__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Planned_Q2_percent__c = 0) || (Previous_FY_Actual_Q2_percent__c  =0), 0, Current_FY_Planned_Q2_percent__c - Previous_FY_Actual_Q2_percent__c),IF(RecordType.Name = &apos;BG Specific #&apos; || RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Planned_Q2_Days__c = 0 || Previous_FY_Actual_Q2_Days__c =0,0,(Current_FY_Planned_Q2_Days__c-Previous_FY_Actual_Q2_Days__c)/Previous_FY_Actual_Q2_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(Allocated_MDF_Amount_Q2__c = 0||Previous_Year_MDF_Spent_Q2__c=0,0,(Allocated_MDF_Amount_Q2__c-Previous_Year_MDF_Spent_Q2__c)/Previous_Year_MDF_Spent_Q2__c),IF(Current_FY_Planned_Q2__c = 0 || Previous_FY_Actual_Q2__c=0,0,(Current_FY_Planned_Q2__c - Previous_FY_Actual_Q2__c)/Previous_FY_Actual_Q2__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year planned value for the quarter. Calculation: (Planned – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Planned Growth Q2 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_gr_Comparision_Plan_Q3__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Planned_Q3_percent__c = 0) || (Previous_FY_Actual_Q3_percent__c  =0), 0, Current_FY_Planned_Q3_percent__c - Previous_FY_Actual_Q3_percent__c),IF(RecordType.Name = &apos;BG Specific #&apos; || RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Planned_Q3_Days__c = 0 || Previous_FY_Actual_Q3_Days__c =0,0,(Current_FY_Planned_Q3_Days__c-Previous_FY_Actual_Q3_Days__c)/Previous_FY_Actual_Q3_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(Allocated_MDF_Amount_Q3__c = 0||Previous_Year_MDF_Spent_Q3__c=0,0,(Allocated_MDF_Amount_Q3__c-Previous_Year_MDF_Spent_Q3__c)/Previous_Year_MDF_Spent_Q3__c),IF(Current_FY_Planned_Q3__c = 0 || Previous_FY_Actual_Q3__c=0,0,(Current_FY_Planned_Q3__c - Previous_FY_Actual_Q3__c)/Previous_FY_Actual_Q3__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year planned value for the quarter. Calculation: (Planned – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Planned Growth Q3 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_gr_Comparision_Plan_Q4__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Planned_Q4_percent__c = 0) || (Previous_FY_Actual_Q4_percent__c  =0), 0, Current_FY_Planned_Q4_percent__c - Previous_FY_Actual_Q4_percent__c),IF(RecordType.Name = &apos;BG Specific #&apos; || RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Planned_Q4_Days__c = 0 || Previous_FY_Actual_Q4_Days__c =0,0,(Current_FY_Planned_Q4_Days__c-Previous_FY_Actual_Q4_Days__c)/Previous_FY_Actual_Q4_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(Allocated_MDF_Amount_Q4__c = 0||Previous_Year_MDF_Spent_Q4__c=0,0,(Allocated_MDF_Amount_Q4__c-Previous_Year_MDF_Spent_Q4__c)/Previous_Year_MDF_Spent_Q4__c),IF(Current_FY_Planned_Q4__c = 0 || Previous_FY_Actual_Q4__c=0,0,(Current_FY_Planned_Q4__c - Previous_FY_Actual_Q4__c)/Previous_FY_Actual_Q4__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year planned value for the quarter. Calculation: (Planned – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Planned Growth Q4 %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>YoY_gr_Comparision_Plan_Total__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(RecordType.Name = &apos;BG Specific %&apos; || RecordType.Name = &apos;Attach %&apos; || RecordType.Name = &apos;HP Share of Business %&apos;,IF((Current_FY_Planned_Total_percent__c	 = 0) || (Previous_FY_Actual_Total_percent__c  =0), 0, Current_FY_Planned_Total_percent__c - Previous_FY_Actual_Total_percent__c),IF(RecordType.Name = &apos;BG Specific #&apos; || RecordType.Name = &apos;Aged Inventory&apos; || RecordType.Name = &apos;Weeks of Inventory&apos;,IF(Current_FY_Planned_Total_Days__c = 0 || Previous_FY_Actual_Total_Days__c =0,0,(Current_FY_Planned_Total_Days__c	 -Previous_FY_Actual_Total_Days__c)/Previous_FY_Actual_Total_Days__c),IF(RecordType.Name = &apos;Market Development Fund&apos;,IF(Total_Allocated_MDFAmount__c = 0||Previous_Year_MDF_Spent_Total__c=0,0,(	Total_Allocated_MDFAmount__c-Previous_Year_MDF_Spent_Total__c)/Previous_Year_MDF_Spent_Total__c),IF(Current_FY_Planned_Total__c = 0 || Previous_FY_Actual_Total__c=0,0,(Current_FY_Planned_Total__c - Previous_FY_Actual_Total__c)/Previous_FY_Actual_Total__c))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>The % increase or decrease between the previous year actual and the current year planned value for the year. Calculation: (Planned – Prev. Yr. Actual) / Prev. Yr. Actual</inlineHelpText>
+        <label>YoY Planned Growth Total %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Percent</type>
+    </fields>
+    <label>Metrics</label>
+    <nameField>
+        <displayFormat>M - {0000}</displayFormat>
+        <label>Metrics ID</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Metrics</pluralLabel>
+    <recordTypeTrackHistory>false</recordTypeTrackHistory>
+    <recordTypes>
+        <fullName>Aged_Inventory</fullName>
+        <active>true</active>
+        <label>Aged Inventory</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Aged Inventory</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Attach</fullName>
+        <active>true</active>
+        <description>Complementary products/services sold with a primary product/service – measured as a ratio of complementary units to primary units.  Note: different BGs may use a different calculation</description>
+        <label>Attach %</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Attach %25</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>BG_Specific_currency</fullName>
+        <active>true</active>
+        <description>Metrics that are planned for and collected in currency values which are only applicable to specific Business Groups</description>
+        <label>BG Specific $</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Attach %25</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HP Contract Revenue</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Market Development Fund</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partner Compensation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sales</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>BG_Specific_days</fullName>
+        <active>true</active>
+        <description>Metrics that are planned for and collected in a Number format which are only applicable to specific Business Groups</description>
+        <label>BG Specific #</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Aged Inventory</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Credit Turn Around Time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Penetration Rate Index</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Total Operating Performance</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weeks of Inventory</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>BG_Specific_percentage</fullName>
+        <active>true</active>
+        <description>Metrics that are planned for and collected in percentages which are only applicable to specific Business Groups</description>
+        <label>BG Specific %</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Attach %25</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Channel Assistance Fee</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Conversion Rate</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HP Share of Business %25</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HP v%2E Non HP Product Mix</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partner Programs%3A  Win Ratio</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Penetration Rate</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Renewal Rate</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>HP_Share_of_Business</fullName>
+        <active>true</active>
+        <description>HP Sales $ / Partner Total Sales $</description>
+        <label>HP Share of Business %</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>HP Share of Business %25</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Market_Development_Fund</fullName>
+        <active>true</active>
+        <description>Market Development Funds (MDF) are funds provided to partners to subsidize the partner’s costs for marketing activities which drive awareness, interest and demand for HP products, solutions and services.</description>
+        <label>Market Development Fund</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Market Development Fund</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Sales_Goal_Attainment</fullName>
+        <active>true</active>
+        <description>Partner Compensation programs are developed by the business units to incent and compensate partners to promote and sell products and services and enhance partner loyalty.  Goals and calculation logic are pre-defined by the BUs.</description>
+        <label>Partner Compensation</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Partner Compensation</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Sales_Out</fullName>
+        <active>true</active>
+        <description>Sales reported by the partner. Definition and terminology varies by BG. For example, SW typically uses the term ‘Revenue’ and EG typically uses the term ‘Sales Out’.</description>
+        <label>Sales</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Sales</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Weeks_of_Inventory</fullName>
+        <active>true</active>
+        <description>The number of weeks of inventory the partner has at the end of the HP quarter.</description>
+        <label>Weeks of Inventory</label>
+        <picklistValues>
+            <picklist>BG__c</picklist>
+            <values>
+                <fullName>EG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HPFS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PPS</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SW</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Metrics_Type__c</picklist>
+            <values>
+                <fullName>Weeks of Inventory</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Metrics_Type_Not_Null_Check</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISBLANK(Text(Metrics_Type__c))</errorConditionFormula>
+        <errorDisplayField>Metrics_Type__c</errorDisplayField>
+        <errorMessage>Metric Type is required, please enter a value.</errorMessage>
+    </validationRules>
+</CustomObject>

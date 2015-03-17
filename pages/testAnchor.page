@@ -1,0 +1,79 @@
+<apex:page >
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+<style>
+    .modalDialog {
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.6); /*background: rgba(0,0,0,0.8);*/
+        z-index: 99999;
+        opacity:0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        pointer-events: none;
+    }
+
+    .modalDialog:target {
+        opacity:1;
+        pointer-events: auto;
+    }
+
+    .modalDialog > div {
+        width: 500px;
+        position: relative;
+        margin: 10% auto;
+        padding: 5px 20px 13px 20px;
+        border-radius: 10px;
+        background: #fff;
+        background: -moz-linear-gradient(#fff, #bbb);
+        background: -webkit-linear-gradient(#fff, #bbb);
+        background: -o-linear-gradient(#fff, #bbb);
+    }
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+    .close:hover { background: #00d9ff; text-decoration: none; }
+    .myLabels{font-weight:bold;}
+    .myData{font-size:14px; width:330px;}
+    #ReviewTitle{padding-top:8px; color:blue; font-size:24px; font-weight:bold}
+    .ReviewHeader{font-weight:bold; border-bottom:1px #888888 solid;}
+    .ReviewRow{ border-bottom:1px white solid; }
+</style>
+
+
+ <a href="#reviewSummary">click me</a> 
+  
+
+<div id="reviewSummary" class="modalDialog">
+        <div>
+            <a href="#close" Xtitle="Close" class="close">X</a>
+            <apex:outputPanel id="reviewData"><!--{!delivId}-->
+                <div>tovid test</div>
+            </apex:outputPanel>
+            <!-- Reviewer__c, Rating__c, __c, Offering_Deliverable__c, Offering_Deliverable__r.Deliverable__c,
+                 Offering_Name__c, Comments__c, Status__c-->
+        </div>
+    </div>
+
+</apex:page>

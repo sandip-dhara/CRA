@@ -1,0 +1,134 @@
+<!--
+Created By: Venkatesh Satyamoorthy/Abrar Mohammad/Praneeth Yalamati
+Created Date: 29-Jul-2013
+Release: R6
+Capability: Deal Governance
+Description: Page for showing additional Opportunity fields related to deal governance and ability to input and save GOAP form containing Global Business Forum and its child Regional Profile.
+Revision
+Version 1 –: Venkatesh S  - 29-Jul-2013 - Initial version 
+-->
+<apex:page standardController="opportunity" extensions="DGOpportunityExtensionController">
+  <apex:form >
+    <apex:pagemessages > </apex:pagemessages>
+    <p align="center"> <a href="#GINFO">General Information</a> &nbsp; | &nbsp; <a href="#GPROF">Global Profile and Size</a> &nbsp; | &nbsp; <a href="#RegionalProfile">Regional Profile</a> &nbsp; | &nbsp; <a href="#BREQ">Business Requirements</a> </p>
+    <apex:pageBlock title="Deal Governance">
+      <apex:pageBlock title="Opportunity Information">
+        <apex:pageblockSection >
+          <apex:outputField value="{!opportunity.accountid}"/>
+          <apex:pageBlockSectionItem >
+            <apex:OutputLabel value="Opportunity Name"/>
+            <apex:outputlink value="/{!opportunity.id}">{!opportunity.name}</apex:outputlink>
+          </apex:pageBlockSectionItem>
+          <apex:outputField value="{!opportunity.Opportunity_Sales_Stage__c}"/>
+          <apex:outputField value="{!opportunity.CloseDate}"/>
+          <apex:outputField value="{!opportunity.ownerid}"/>
+          <apex:outputField value="{!opportunity.createdbyid}"/>
+          <apex:outputField value="{!opportunity.lastmodifiedbyid}"/>
+        </apex:pageblockSection>
+        <apex:pageBlockSection title="Pursuit Information" collapsible="false">
+          <apex:OutputField value="{!opportunity.Record_Open_Date__c}"/>
+          <apex:OutputField value="{!opportunity.RFI_Date__c}"/>
+          <apex:OutputField value="{!opportunity.RFP_Date__c}"/>
+          <apex:OutputField value="{!opportunity.Turn_Days__c}"/>
+          <apex:OutputText value="{!opportunity.Economic_Value__c}"/>
+          <apex:OutputText value="{!opportunity.Price2Win__c}"/>
+          <apex:outputField value="{!opportunity.Proposal_Due_Date__c}"/>
+          <apex:outputField value="{!opportunity.Down_Select__c}"/>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+      <apex:pageBlock title="Global Business Forum (PPS Specific)"  id="block1">
+        <apex:pageBlockButtons location="Both">
+          <apex:commandButton value="Save" action="{!saveGBF}"/>
+          <apex:commandButton value="Cancel" action="{!CancelGBF}"/>
+        </apex:pageBlockButtons>
+        <a name="GINFO"/>
+        <apex:pageblockSection title="General Information" id="GINFO" columns="2" collapsible="true" >
+          <apex:inputField value="{!oGBF.Project_Name__c}"/>
+          <apex:inputField value="{!oGBF.Solution_Offering__c}">
+            <apex:actionSupport event="onchange" reRender="ajaxrequest" />
+          </apex:inputfield>
+          <apex:inputField value="{!oGBF.Global_Customer_Segment__c}"/>
+          <apex:inputField value="{!oGBF.Opportunity_Presented_as__c}"/>
+          <apex:inputField value="{!oGBF.Exec_Sponsor_engaged_name_if_present__c}"/>
+          <apex:inputField value="{!oGBF.Regional_and_or_Global_Must_Win_deal__c}"/>
+          <apex:inputField value="{!oGBF.Lead_Business_Unit__c}"/>
+          <apex:inputField value="{!oGBF.Additional_Business_Unit__c}"/>
+          <apex:inputField value="{!oGBF.Global_Opportunity_Description__c}"/>
+        </apex:pageblockSection>
+        <a name="GPROF"/>
+        <apex:pageblockSection title="Global Profile and Size"  id="GPROF">
+          <apex:inputField value="{!oGBF.Lead_Region__c}"/>
+          <apex:inputField value="{!oGBF.HP_Share_of_Customer_HW_Spend__c}"/>
+          <apex:inputField value="{!oGBF.Details_of_any_existing_contract__c}"/>
+          <apex:inputField value="{!oGBF.Estimated_Contract_Start_Date__c}"/>
+          <apex:inputField value="{!oGBF.Total_Contract_Length_In_Months__c}"/>
+        </apex:pageblockSection>
+        <a name="RegionalProfile"/>
+        <apex:pageBlockSection title="Regional Profile" id="RegionalProfile">
+          <apex:pageBlockTable value="{!RegionalProfileWrapper}" var="RP" id="cp_table2" width="100%">
+            <apex:column >
+              <apex:facet name="header">Region Name</apex:facet>
+              <apex:inputField value="{!RP.oRegionalProfile.Region_Name__c}"/>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header">Headquarter country</apex:facet>
+              <apex:inputField value="{!RP.oRegionalProfile.Headquarter_country__c}"/>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header">Number of countries </apex:facet>
+              <apex:inputField value="{!RP.oRegionalProfile.Number_of_countries__c}"/>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header">Fulfilment model</apex:facet>
+              <apex:inputField value="{!RP.oRegionalProfile.Fulfilment_model__c}"/>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header">Account revenue %</apex:facet>
+              <apex:inputField value="{!RP.oRegionalProfile.Account_revenue__c}"/>
+            </apex:column>
+          </apex:pageBlockTable>
+          <center>
+            <apex:commandbutton value="Add Regions" action="{!addRow}" rerender="cp_table2" immediate="true" />
+          </center>
+        </apex:pageBlockSection>
+        <apex:pageblockSection title="Business Requirement" columns="1"> <a name="BREQ"/>
+          <apex:panelgrid border="1" columns="3" cellspacing="0px" cellpadding="1px">
+            <apex:OutputText value="Category" style="font-weight: bold"/>
+            <apex:OutputText value="Standard Element" style="font-weight: bold"/>
+            <apex:OutputText value="Standard/Custom Description Requirements" style="font-weight: bold"/>
+            <apex:OutputText value="Pricing Methodology"/>
+            <apex:inputfield label="" value="{!oGBF.Pricing_Methodology_standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.Pricing_Methodology_Description__c}" style="width:200px"/>
+            <apex:OutputText value="TAT SLAs"/>
+            <apex:inputfield label="" value="{!oGBF.TAT_SLAs_Standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.TAT_SLAs_Description__c}" style="width:200px"/>
+            <apex:OutputText value="Penalties"/>
+            <apex:inputfield label="" value="{!oGBF.Penalties_standard_element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.Penalties_Description__c}" style="width:200px"/>
+            <apex:OutputText value="Product"/>
+            <apex:inputfield label="" value="{!oGBF.Product_Standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.Product_Description__c}" style="width:200px"/>
+            <apex:OutputText value="Factory Services"/>
+            <apex:inputfield label="" value="{!oGBF.Factory_Services_standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.Factory_Services_description__c}" style="width:200px"/>
+            <apex:OutputText value="Warranty Services"/>
+            <apex:inputfield label="" value="{!oGBF.Warranty_Services_Standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.Warranty_Services_Description__c}" style="width:200px"/>
+            <apex:OutputText value="E Business"/>
+            <apex:inputfield label="" value="{!oGBF.E_Business_Standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.E_Business_Description__c}" style="width:200px"/>
+            <apex:OutputText value="Has HP Credit received the credit request for this customer"/>
+            <apex:inputfield label="" value="{!oGBF.HP_Credit_received_Standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.HP_Credit_received_Description__c}" style="width:200px"/>
+            <apex:OutputText value="Country Coverage"/>
+            <apex:inputfield label="" value="{!oGBF.Country_Coverage_Standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.Country_Coverage_Description__c}" style="width:200px"/>
+            <apex:OutputText value="Expected SLO (Platinum,Gold, Silver, Standard) and Other"/>
+            <apex:inputfield label="" value="{!oGBF.Expected_SLO_Standard_Element__c}"/>
+            <apex:inputfield label="" value="{!oGBF.Expected_SLO_Description__c}" style="width:200px"/>
+          </apex:panelgrid>
+        </apex:pageblockSection>
+      </apex:pageBlock>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

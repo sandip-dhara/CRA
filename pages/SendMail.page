@@ -1,0 +1,270 @@
+<apex:page standardController="Apttus__APTS_Agreement__c" 
+    extensions="sendMailEDSearchController" 
+    action="{!getAllAttachments}">
+<script type="text/javascript" src="/soap/ajax/20.0/connection.js"></script>
+<script type="text/javascript" src="/soap/ajax/20.0/apex.js"></script>
+    
+    <apex:includescript value="{!$Resource.Apttus__ComplyJSLib}" />
+    
+    <script type="text/javascript">     
+        var emailAuthorURL = "{!JSENCODE(emailAuthorURL)}";
+        var agreementId = "{!agreementID}";
+        var selectedTemplateId;
+        var attachmentIds;
+        var tempObjectId = null;
+        var protect = "{!protect}";
+        var cPROTECTION_LEVEL_IGNORE = "Ignore";
+        var pLevel;     
+        var templateID = "";
+        /**
+         * Initializes the call
+         */
+        function initCall() {
+        
+            try {
+                sforce.connection.sessionId = "{!$Api.Session_ID}"; //to avoid session timeout
+            } catch(e) {
+                erroralert(cERROR_UNKNOWN,e);
+                goBack();
+            }
+        
+        }
+        
+        /**
+         * Display progress message and create/update necessary objects for email author page.
+         */
+        function doPrepareEmailTemplate(emailTemplateId, attachedIds,protectionLevel) {
+
+            
+            templateID = emailTemplateId;
+            
+            if ((emailTemplateId == null) || (emailTemplateId.length == 0)) {
+                alert("Unable to locate Apttus out-of-the-box EmailTemplate (ApttusEmailTemplateForReviewSignatures).");
+                return;
+            } else {
+                selectedTemplateId = emailTemplateId;
+            }
+            attachmentIds = attachedIds;
+            pLevel = protectionLevel;
+            var exception = null;
+           
+            try {
+                
+                // delay to allow the progress message to show  
+                setTimeout("prepareTemplate()", 1000);
+
+            } catch(ex) {
+                exception = ex;             
+                //erroralert("prepareTemplate():", ex);
+            } finally {
+                if (exception != null) {
+                    // back to agreement detail page
+                    goBack();
+                } 
+            }
+        }
+
+        /**
+         * Prepare email template
+        `* - clone selected email template
+         * - clone and add selected attachments to the cloned template      
+         * - launch email author page
+         */
+         function prepareTemplate() {
+            // temp email template
+            var newTemplateId = null;
+            // temporary object
+            var tempObjectId = null;
+            
+            
+            try {
+                initCall();
+                             
+                var applyProtection = (protect == "true" && cPROTECTION_LEVEL_IGNORE != pLevel);
+                newTemplateId = cloneEmailTemplate(selectedTemplateId);
+
+                
+                // associate selected attachments to the new email template
+                var strIds = new String(attachmentIds);
+
+                
+                //tempObjectId = createTemporaryObject();
+                // copy attachments to the temporary object
+                //var tempAttIds = copyAttachments(tempObjectId, strIds.split(','));
+                //protectTemporaryDocs(tempObjectId, pLevel)
+                // copy attachments to the email template
+                copyAttachments(newTemplateId, strIds.split(','));
+                //copyAttachments(newTemplateId, tempAttIds);
+                
+                
+                // substitute new template id and request email author page
+                var tempId = newTemplateId.valueOf(0, 15);
+
+                var url = emailAuthorURL.replace(/__NEW_TEMPLATE_ID_16CHARS__/g, tempId);
+                
+                url = url.replace("%2Fapex%2Fapttus__sendtootherpartypostprocess", agreementId);
+                //The Url is replaced with the agreement id because this page is updating status progress from javascript..to skip this page this is done
+                
+                //var url = '/_ui/core/email/author/EmailAuthor?p3_lkid='+agreementId+'&template_id='+tempId;
+                
+                navigateTo(url);
+                
+
+            } catch(ex) {        
+                
+                
+                var uel = '{!urlToEmail}';
+                var url = uel+'&template_id='+templateID;
+                navigateTo(url);
+                
+                
+                
+                // delete temp email template if it was already created
+                if (newTemplateId != null) {
+                    // invoke action on the controller
+                    invokeDoDeleteTempEmailTemplate(newTemplateId);
+                }
+                
+                // back to agreement detail page
+                goBack();
+                
+            } finally {
+                
+                // delete temp object if it was already created
+                if (tempObjectId != null) {
+                    // invoke action on the controller
+                    invokeDoDeleteTempObject(tempObjectId);
+                }
+                
+            }
+        }
+        
+        /**
+         * Cancel the generation
+         */
+        function cancel() {
+            // Go back to the detail page
+            goBack();
+        }        
+        
+        /**
+         * Go back to the detail page
+         */
+        function goBack() {
+            // get the agreement id
+            
+        
+            // go back to the detail page
+            navigateTo("/" + agreementId);
+        }
+
+    </script>
+    <apex:form >
+        
+        <apex:pageBlock mode="detail" >
+            <apex:pageBlockButtons location="both">
+                <apex:commandButton action="{!doNext}" oncomplete="doPrepareEmailTemplate('{!emailTemplateId}','{!attachIds}','{!protectionLevel}');" value="Next" />                
+                <apex:commandButton action="{!doCancel}" value="Cancel"/>
+                <apex:commandButton action="{!doSearchED}" value="Search Enterprise Directory"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Step 1 - Include Enterprise Directory recipients if applicable" columns="1" >
+                <apex:pageBlockSectionItem dataStyle="font-weight:bold;text-align:left;" labelStyle="text-align:center"> 
+                    <apex:outputLabel style="font-weight: bold;" value="From "  ></apex:outputLabel>
+                    <apex:outputText value="{!$User.Email}"/>
+                    
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyle="font-weight:bold;text-align:left;" labelStyle="text-align:center">
+                    <apex:outputLabel value="Additional To" />
+                    <apex:outputText value="{!AdditionalTO}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyle="font-weight:bold;text-align:left;" labelStyle="text-align:center" >
+                    <apex:outputLabel value="CC" />
+                    <apex:outputText value="{!CC}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyle="font-weight:bold;text-align:left;" labelStyle="text-align:center" >
+                    <apex:outputLabel value="BCC" />
+                    <apex:outputText value="{!BCC}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageblockSection title="Step 2 - Add Attachement" columns="1"  >
+                <apex:outputpanel >
+                    <apex:pageBlockTable value="{!dispAttachment}" var="attachData" width="100%" >
+                        <apex:column >
+                            <apex:facet name="header">{!$Label.Apttus__Select}</apex:facet>
+                            <apex:inputCheckbox selected="{!attachData.selected}" value="{!attachData.selected}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">{!$Label.Apttus__FileName}</apex:facet>
+                            <apex:outputLink value="/{!attachData.attach.Id}">{!attachData.attach.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">{!$Label.Apttus__AgreementName}</apex:facet>
+                            <apex:outputLink value="/{!attachData.agrmt.Id}">{!attachData.agrmt.Name}</apex:outputLink>
+                        </apex:column>
+                      <!--  <apex:column >
+                            <apex:facet name="header">{!$Label.Apttus__Relationship}</apex:facet>
+                            <apex:outputText value="{!attachData.agmtAssociationType}" />
+                        </apex:column> -->
+                        <apex:column >
+                            <apex:facet name="header">{!$Label.Apttus__Type}</apex:facet>
+                            <apex:outputText value="{!attachData.agrmt.Apttus__Status_Category__c}" />
+                        </apex:column>
+                        <apex:column value="{!attachData.agrmt.Apttus__FF_Agreement_Number__c}" />
+                        <apex:column value="{!attachData.agrmt.Apttus__Status__c}" />
+                        <apex:column >
+                            <apex:facet name="header">{!$Label.Apttus__Size}</apex:facet>
+                            <apex:outputText value="{!attachData.attach.BodyLength}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">{!$ObjectType.Attachment.Fields.LastModifiedDate.Label}</apex:facet>
+                            <apex:outputField value="{!attachData.attach.LastModifiedDate}" />
+                        </apex:column>
+                    </apex:pageBlockTable>
+                    <br/><br/> <apex:commandButton value="Add Attachments" action="{!addAttachments}" rerender="emailAttachmentContentPanel"/>
+                </apex:outputpanel>                            
+                <apex:outputPanel id="emailAttachmentContentPanel">
+                   <p><b> Selected attachments are :  <br/></b></p>
+                   <apex:dataList value="{!atName}" var="s">
+                       <apex:outputText value="{!s}" />
+                   </apex:dataList>
+                </apex:outputPanel>
+            </apex:pageblockSection>
+            <apex:pageblockSection title="Step 3 - Select Email Template(Optional)" columns="1" >
+                <apex:outputPanel >
+                    Select Email Template Folder:
+                    <apex:selectList value="{!selectedEmailTemplateFolder}" multiselect="false" size="1" >
+                        <apex:selectOptions value="{!emailTemplateFolderOpts}" />
+                        <apex:actionSupport event="onchange" action="{!getEmailTemplateOpts}" rerender="det" />
+                    </apex:selectList>
+                </apex:outputPanel>
+                <apex:outputPanel id="det">
+                    <apex:pageBlockTable value="{!dispEmailTemplates}" var="et" width="100%">
+                        <apex:column headervalue="Select">
+                            <input type="radio" name="selET" value="{!et.id}">
+                            </input>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Name</apex:facet>
+                            <apex:outputText value="{!et.Name}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Template Type</apex:facet>
+                            <apex:outputText value="{!et.TemplateType}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">Description</apex:facet>
+                            <apex:outputText value="{!et.Description}" />
+                        </apex:column>
+                    </apex:pageBlockTable>
+                    <br/><br/> <apex:commandButton value="Add Template" action="{!refreshEmailTemplateSection}" reRender="emailTemplateContentPanel"/>                    
+                </apex:outputPanel>                
+                <apex:outputPanel id="emailTemplateContentPanel">
+                    <p><b>Selected Template is : <br/></b> </p>
+                    <apex:dataList value="{!chosenEmailTemplate}" var="s">
+                       <apex:outputText value="{!s.name}" />
+                   </apex:dataList>
+                </apex:outputPanel>
+            </apex:pageblockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

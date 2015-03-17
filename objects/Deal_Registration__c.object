@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <content>DealRegistrationsTab</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Auto_Approve__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Auto Approve</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Business_Group__c</fullName>
+        <externalId>false</externalId>
+        <label>Business Group</label>
+        <length>75</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Business_Unit__c</fullName>
+        <externalId>false</externalId>
+        <label>Global Business Unit</label>
+        <length>75</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Customer_Account__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Customer Account</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Deal Registrations</relationshipLabel>
+        <relationshipName>Deal_Registrations</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Customer_Name__c</fullName>
+        <defaultValue>$User.FirstName</defaultValue>
+        <externalId>false</externalId>
+        <label>Customer Name</label>
+        <length>75</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Deal__c</fullName>
+        <externalId>false</externalId>
+        <formula>Opportunity__r.Opportunity_ID__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Deal</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Expiration_Date__c</fullName>
+        <externalId>false</externalId>
+        <formula>Submission_Date__c +  90</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Expiration Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Final_Approver__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>This field is used to identify whether the L1 approvers are final approver</description>
+        <externalId>false</externalId>
+        <label>Final Approver</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Hidden_Auto_Approve__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Hidden Auto Approve</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approval_Owner__c</fullName>
+        <externalId>false</externalId>
+        <label>Level 1 Approval Owner</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_10__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 10</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations9</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_11__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 11</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations12</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_12__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 12</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations13</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_1__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 1</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations1</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_2__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 2</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_3__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 3</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations2</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_4__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 4</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations3</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_5__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 5</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations4</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_6__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 6</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations5</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_7__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 7</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations6</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_8__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 8</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations7</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_1_Approver_9__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Level 1 Approver 9</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Deal_Registrations8</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Level_2_Approval_Deadline__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Deal Registration will be automatically approved if L2 approver does not take action by this date/time.</inlineHelpText>
+        <label>Level 2 Approval Deadline</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Opportunity__c</fullName>
+        <description>Master-detail relation with Opportunity object</description>
+        <externalId>false</externalId>
+        <label>Opportunity</label>
+        <referenceTo>Opportunity</referenceTo>
+        <relationshipLabel>Deal Registrations</relationshipLabel>
+        <relationshipName>Deal_Registrations</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>true</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>true</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Partner_Account_Formula__c</fullName>
+        <externalId>false</externalId>
+        <formula>Partner_User_Location__r.Account__r.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Partner Account</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Partner_Account__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Partner Account</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Deal Registrations (Partner Account)</relationshipLabel>
+        <relationshipName>Deal_Registrations1</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Partner_User_Location__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Locator ID</label>
+        <referenceTo>Location__c</referenceTo>
+        <relationshipLabel>Deal Registrations</relationshipLabel>
+        <relationshipName>Deal_Registrations</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ProductIds__c</fullName>
+        <externalId>false</externalId>
+        <label>ProductIds</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Product_Registration_Approved_count__c</fullName>
+        <externalId>false</externalId>
+        <label>Product Registration Approved count</label>
+        <summaryFilterItems>
+            <field>Product_Registration__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Approved</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Product_Registration__c.Deal_Registration__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Product_Registrations_Count__c</fullName>
+        <externalId>false</externalId>
+        <label>Product Registrations Count</label>
+        <summaryFilterItems>
+            <field>Product_Registration__c.Status__c</field>
+            <operation>notEqual</operation>
+            <value>Approved, Rejected</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Product_Registration__c.Deal_Registration__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Program_Comments__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Additional information provided by partner registering for deal</inlineHelpText>
+        <label>Comments from Submitter to HP</label>
+        <length>32768</length>
+        <trackHistory>true</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Program__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <description>Lookup to Campaign object</description>
+        <externalId>false</externalId>
+        <label>Program</label>
+        <referenceTo>Campaign</referenceTo>
+        <relationshipLabel>Deal Registrations</relationshipLabel>
+        <relationshipName>Deal_Registrations</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Rejection_Comments__c</fullName>
+        <externalId>false</externalId>
+        <label>Comments from HP to Submitter</label>
+        <length>32768</length>
+        <trackHistory>true</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Rejection_Reason__c</fullName>
+        <externalId>false</externalId>
+        <label>Rejection Reason</label>
+        <picklist>
+            <picklistValues>
+                <fullName>11 - Registration is closed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>12 - Duplicate registration request</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>21 - Opportunity already managed by HP Sales</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>22 - Opportunity is already in HP Pipeline</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>23 - Opportunity already approved with another HP partner</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>24 - Opportunity does not meet criteria</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>31 - Partner is not authorized to sell the specific product</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>32 - Partner value add could not be verified</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>41 - Customer is ineligible for specific program benefits</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>42 - Customer information could not be verified</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>43 - Customer is on HP Direct Listed Account list</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>43 - Customer is an existing customer</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>51 - Selected products are not eligible for program benefits</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>52 - Deal does not meet threshold requirements</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>61 - Rejected based on End User Account Manager feedback</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>00 - Additional Detail / Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Submitted</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Review Initiated</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Expired</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Open</fullName>
+                <default>true</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Submission_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Submission Date</label>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Verified_Account__c</fullName>
+        <externalId>false</externalId>
+        <formula>Customer_Account__r.Verified_Account__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>MDCP Subscribed</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>XX_Temp_For_WF_Update__c</fullName>
+        <description>This is a temporary custom field which is used as part of temporary workflow(Deal Registration Expiration Temporary) rule criteria to update the &apos;Status&apos; to &apos;Expired&apos; of the existing deal_reg records and this field is valid till 7th, August,2013 after which it will be deleted along with the temporary workflow.</description>
+        <externalId>false</externalId>
+        <label>XX_Temp_For_WF_Update</label>
+        <length>20</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Deal Registration</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Submission_Date__c</columns>
+        <columns>Partner_Account_Formula__c</columns>
+        <columns>Status__c</columns>
+        <columns>Customer_Account__c</columns>
+        <columns>Opportunity__c</columns>
+        <columns>Program__c</columns>
+        <columns>Expiration_Date__c</columns>
+        <columns>LAST_UPDATE</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>Partner_User_Location__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+        <language>en_US</language>
+    </listViews>
+    <listViews>
+        <fullName>All_Active_Registrations</fullName>
+        <columns>NAME</columns>
+        <columns>Submission_Date__c</columns>
+        <columns>Status__c</columns>
+        <columns>Customer_Account__c</columns>
+        <columns>Opportunity__c</columns>
+        <columns>Program__c</columns>
+        <columns>Expiration_Date__c</columns>
+        <columns>LAST_UPDATE</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>CREATEDBY_USER</columns>
+        <columns>Partner_Account_Formula__c</columns>
+        <columns>Partner_User_Location__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>notEqual</operation>
+            <value>Rejected,Expired</value>
+        </filters>
+        <label>All Active Registrations</label>
+        <language>en_US</language>
+        <sharedTo>
+            <allInternalUsers></allInternalUsers>
+            <allPartnerUsers></allPartnerUsers>
+        </sharedTo>
+    </listViews>
+    <listViews>
+        <fullName>Deals_Expiring_in_7_Days</fullName>
+        <columns>NAME</columns>
+        <columns>Opportunity__c</columns>
+        <columns>Customer_Account__c</columns>
+        <columns>Partner_Account_Formula__c</columns>
+        <columns>Partner_User_Location__c</columns>
+        <columns>Program__c</columns>
+        <columns>Status__c</columns>
+        <columns>Expiration_Date__c</columns>
+        <columns>Submission_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Expiration_Date__c</field>
+            <operation>equals</operation>
+            <value>NEXT_N_DAYS:7</value>
+        </filters>
+        <label>Deals Expiring in 7 Days</label>
+        <language>en_US</language>
+        <sharedTo>
+            <allInternalUsers></allInternalUsers>
+        </sharedTo>
+    </listViews>
+    <listViews>
+        <fullName>Deals_Pending_Approval</fullName>
+        <columns>NAME</columns>
+        <columns>Opportunity__c</columns>
+        <columns>Customer_Account__c</columns>
+        <columns>Verified_Account__c</columns>
+        <columns>Partner_Account_Formula__c</columns>
+        <columns>Partner_User_Location__c</columns>
+        <columns>Submission_Date__c</columns>
+        <columns>Status__c</columns>
+        <columns>Level_1_Approval_Owner__c</columns>
+        <columns>Program__c</columns>
+        <columns>Expiration_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Submitted,Review Initiated</value>
+        </filters>
+        <label>Deals Pending Approval</label>
+        <language>en_US</language>
+    </listViews>
+    <nameField>
+        <label>Deal Registration Name</label>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Deal Registrations</pluralLabel>
+    <searchLayouts>
+        <excludedStandardButtons>New</excludedStandardButtons>
+        <excludedStandardButtons>Accept</excludedStandardButtons>
+        <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
+        <listViewButtons>Accept</listViewButtons>
+        <listViewButtons>Assign</listViewButtons>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Deal_Reg_Auto_Approve_DeadLine_check</fullName>
+        <active>true</active>
+        <description>This validation fires when a L1 approver checks Final Approval flag and enters values in L1 Approval Dead line date field</description>
+        <errorConditionFormula>IF(($Setup.Global_Config__c.Mute_Validation_Rule__c==true) , False,
+        IF(AND (Final_Approver__c  =  true,   NOT(ISNULL(Level_2_Approval_Deadline__c) ))  ,                        true, false)
+)</errorConditionFormula>
+        <errorMessage>Both Final Approver and Level 2 Approval Deadline cannot be entered. Choose only one.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Status_Required_For_Product_Registration</fullName>
+        <active>false</active>
+        <errorConditionFormula>AND(
+(Product_Registrations_Count__c  &lt;&gt; 0),
+( ISPICKVAL(Status__c,&quot;Submitted&quot;))
+)</errorConditionFormula>
+        <errorMessage>Please Approve/Reject Product Registrations To Continue</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Accept</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Accept</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>{!REQUIRESCRIPT(&quot;/soap/ajax/19.0/connection.js&quot;)} 
+var url = parent.location.href; 
+var records = {!GETRECORDIDS($ObjectType.Deal_Registration__c)}; 
+var updateRecords = []; 
+var approvalOwner = &quot;{!$User.FirstName} {!$User.LastName}&quot;;
+if (records[0] == null) 
+	alert(&quot;Please select at least one record to update.&quot;);
+else { 
+	for (var a=0; a&lt;records.length; a++) { 
+		var update_Deal = new sforce.SObject(&quot;Deal_Registration__c&quot;); 
+		update_Deal.Id = records[a]; 
+		update_Deal.Level_1_Approval_Owner__c = String(approvalOwner); 
+		updateRecords.push(update_Deal); 
+	}
+	result = sforce.connection.update(updateRecords); 
+	parent.location.href = url; 
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Assign</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Assign</masterLabel>
+        <openType>sidebar</openType>
+        <page>DealReg_DealMassUpdate</page>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+    </webLinks>
+    <webLinks>
+        <fullName>Case_Details</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Case Details</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT(&quot;/soap/ajax/18.0/connection.js&quot;)} 
+sforce.connection.sessionId = &apos;{!$Api.Session_ID}&apos;;
+var caseId=sforce.connection.query(&quot;select c.id from case c where c.AccountId=&apos;{!Deal_Registration__c.Customer_AccountId__c}&apos;&quot;);
+var records = caseId.getArray(&quot;records&quot;); 
+if (records.length == 0) {
+alert (&quot;No case associated to the customer account&quot;);
+}
+else{
+window.open(&quot;{!Opportunity.DynamicUrl__c}&quot;+&quot;/&quot;+records[0].Id);
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Products</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Product Detail View</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>/00OG0000004G7hA?pv0={!Deal_Registration__c.Deal__c}</url>
+    </webLinks>
+</CustomObject>

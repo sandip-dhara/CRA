@@ -1,0 +1,23 @@
+<apex:page Controller="UserFeedItemController">
+    <apex:form >
+        <apex:pageblock >
+            <apex:pageBlockSection >
+                <apex:inputtextarea value="{!InputText}"/>
+                <apex:commandButton value="Post" action="{!PostAction}"/>                
+            </apex:pageblockSection>
+            <apex:pageBlockSection >
+            <apex:outputText >Total comment Count:{!CommentCount}</apex:outputText>
+            <table>
+                <apex:repeat value="{!fdcList}" var="fdc">
+                    <tr>
+                        <td> <image src = "{!fdc.u.SmallPhotoUrl}" /> </td>
+                        <td> {!fdc.u.Name} </td>
+                        <td> {!fdc.fitem.CreatedDate} </td>
+                        <tr> <td> {!fdc.fitem.body} </td> </tr>
+                    </tr>
+                </apex:repeat>
+            </table>
+            </apex:pageblockSection>
+      </apex:pageblock>
+    </apex:form>
+</apex:page>

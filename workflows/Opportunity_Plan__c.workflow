@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>CBP_Result_Stored</fullName>
+        <field>OG_CBP_S__c</field>
+        <formula>LEFT(WTB_CBP__c,1) &amp; LEFT(WTBO_CBP__c,1)</formula>
+        <name>CBP Result Stored</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>true</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>CR_Last_Modified_By</fullName>
+        <field>CR_Last_Modified_By__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName &amp; &quot;,&quot;  &amp;TEXT(MONTH(TODAY())) &amp; &quot;/&quot; &amp;  TEXT(DAY(TODAY())) &amp; &quot;/&quot; &amp; TEXT(YEAR(TODAY())) &amp; &quot; &quot; &amp; 
+TEXT(CASE( VALUE(MID(TEXT(NOW()),12,2)) , 
+00,00,
+01,01,
+02,02,
+03,03,
+04,04,
+05,05,
+06,06,
+07,07,
+08,08,
+09,09,
+10,10,
+11,11,
+12,12,
+13,01,
+14,02,
+15,03,
+16,04,
+17,05,
+18,06,
+19,07,
+20,08,
+21,09,
+22,10,
+23,11,0)
+) &amp; &quot;:&quot; &amp; MID(TEXT(NOW()),15,2) &amp; &quot; &quot; &amp; CASE( VALUE(MID(TEXT(NOW()),12,2)) , 
+00,&apos;AM&apos;,
+01,&apos;AM&apos;,
+02,&apos;AM&apos;,
+03,&apos;AM&apos;,
+04,&apos;AM&apos;,
+05,&apos;AM&apos;,
+06,&apos;AM&apos;,
+07,&apos;AM&apos;,
+08,&apos;AM&apos;,
+09,&apos;AM&apos;,
+10,&apos;AM&apos;,
+11,&apos;AM&apos;,
+12,&apos;PM&apos;,
+13,&apos;PM&apos;,
+14,&apos;PM&apos;,
+15,&apos;PM&apos;,
+16,&apos;PM&apos;,
+17,&apos;PM&apos;,
+18,&apos;PM&apos;,
+19,&apos;PM&apos;,
+20,&apos;PM&apos;,
+21,&apos;PM&apos;,
+22,&apos;PM&apos;,
+23,&apos;PM&apos;,&apos;AA&apos;)</formula>
+        <name>CR Last Modified By</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>DHC_last_updated</fullName>
+        <field>DHC_last_updated__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName &amp; &quot;, &quot;  &amp;TEXT(MONTH(TODAY())) &amp; &quot;/&quot; &amp;  TEXT(DAY(TODAY())) &amp; &quot;/&quot; &amp; TEXT(YEAR(TODAY())) &amp; &quot; &quot; &amp; 
+TEXT(CASE( VALUE(MID(TEXT(NOW()),12,2)) , 
+00,00,
+01,01,
+02,02,
+03,03,
+04,04,
+05,05,
+06,06,
+07,07,
+08,08,
+09,09,
+10,10,
+11,11,
+12,12,
+13,01,
+14,02,
+15,03,
+16,04,
+17,05,
+18,06,
+19,07,
+20,08,
+21,09,
+22,10,
+23,11,0)
+) &amp; &quot;:&quot; &amp; MID(TEXT(NOW()),15,2) &amp; &quot; &quot; &amp; CASE( VALUE(MID(TEXT(NOW()),12,2)) , 
+00,&apos;AM&apos;,
+01,&apos;AM&apos;,
+02,&apos;AM&apos;,
+03,&apos;AM&apos;,
+04,&apos;AM&apos;,
+05,&apos;AM&apos;,
+06,&apos;AM&apos;,
+07,&apos;AM&apos;,
+08,&apos;AM&apos;,
+09,&apos;AM&apos;,
+10,&apos;AM&apos;,
+11,&apos;AM&apos;,
+12,&apos;PM&apos;,
+13,&apos;PM&apos;,
+14,&apos;PM&apos;,
+15,&apos;PM&apos;,
+16,&apos;PM&apos;,
+17,&apos;PM&apos;,
+18,&apos;PM&apos;,
+19,&apos;PM&apos;,
+20,&apos;PM&apos;,
+21,&apos;PM&apos;,
+22,&apos;PM&apos;,
+23,&apos;PM&apos;,&apos;AA&apos;)</formula>
+        <name>DHC_last_updated</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>OG_Updated_By</fullName>
+        <field>OG_Last_Modified_By__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName &amp; &quot;,&quot;  &amp;TEXT(MONTH(TODAY())) &amp; &quot;/&quot; &amp;  TEXT(DAY(TODAY())) &amp; &quot;/&quot; &amp; TEXT(YEAR(TODAY())) &amp; &quot; &quot; &amp; 
+TEXT(CASE( VALUE(MID(TEXT(NOW()),12,2)) , 
+00,00,
+01,01,
+02,02,
+03,03,
+04,04,
+05,05,
+06,06,
+07,07,
+08,08,
+09,09,
+10,10,
+11,11,
+12,12,
+13,01,
+14,02,
+15,03,
+16,04,
+17,05,
+18,06,
+19,07,
+20,08,
+21,09,
+22,10,
+23,11,0)
+) &amp; &quot;:&quot; &amp; MID(TEXT(NOW()),15,2) &amp; &quot; &quot; &amp; CASE( VALUE(MID(TEXT(NOW()),12,2)) , 
+00,&apos;AM&apos;,
+01,&apos;AM&apos;,
+02,&apos;AM&apos;,
+03,&apos;AM&apos;,
+04,&apos;AM&apos;,
+05,&apos;AM&apos;,
+06,&apos;AM&apos;,
+07,&apos;AM&apos;,
+08,&apos;AM&apos;,
+09,&apos;AM&apos;,
+10,&apos;AM&apos;,
+11,&apos;AM&apos;,
+12,&apos;PM&apos;,
+13,&apos;PM&apos;,
+14,&apos;PM&apos;,
+15,&apos;PM&apos;,
+16,&apos;PM&apos;,
+17,&apos;PM&apos;,
+18,&apos;PM&apos;,
+19,&apos;PM&apos;,
+20,&apos;PM&apos;,
+21,&apos;PM&apos;,
+22,&apos;PM&apos;,
+23,&apos;PM&apos;,&apos;AA&apos;)</formula>
+        <name>OG Updated By</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_DHC_last_modified</fullName>
+        <field>DHC_last_modified__c</field>
+        <formula>Today()</formula>
+        <name>Update DHC last modified</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_User_Lagacy_No</fullName>
+        <description>To update DHC Last Updated Lagacy No when DHC is updated.</description>
+        <field>DHC_Last_Updated_Lagacy_No__c</field>
+        <formula>$User.Username</formula>
+        <name>Update User Lagacy No</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>VP_last_updated_by</fullName>
+        <field>VP_last_updated_by__c</field>
+        <formula>$User.FirstName &amp; &quot; &quot; &amp; $User.LastName &amp; &quot;,&quot;  &amp;TEXT(MONTH(TODAY())) &amp; &quot;/&quot; &amp;  TEXT(DAY(TODAY())) &amp; &quot;/&quot; &amp; TEXT(YEAR(TODAY())) &amp; &quot; &quot; &amp; 
+TEXT(CASE( VALUE(MID(TEXT(NOW()),12,2)) , 
+00,00,
+01,01,
+02,02,
+03,03,
+04,04,
+05,05,
+06,06,
+07,07,
+08,08,
+09,09,
+10,10,
+11,11,
+12,12,
+13,01,
+14,02,
+15,03,
+16,04,
+17,05,
+18,06,
+19,07,
+20,08,
+21,09,
+22,10,
+23,11,0)
+) &amp; &quot;:&quot; &amp; MID(TEXT(NOW()),15,2) &amp; &quot; &quot; &amp; CASE( VALUE(MID(TEXT(NOW()),12,2)) , 
+00,&apos;AM&apos;,
+01,&apos;AM&apos;,
+02,&apos;AM&apos;,
+03,&apos;AM&apos;,
+04,&apos;AM&apos;,
+05,&apos;AM&apos;,
+06,&apos;AM&apos;,
+07,&apos;AM&apos;,
+08,&apos;AM&apos;,
+09,&apos;AM&apos;,
+10,&apos;AM&apos;,
+11,&apos;AM&apos;,
+12,&apos;PM&apos;,
+13,&apos;PM&apos;,
+14,&apos;PM&apos;,
+15,&apos;PM&apos;,
+16,&apos;PM&apos;,
+17,&apos;PM&apos;,
+18,&apos;PM&apos;,
+19,&apos;PM&apos;,
+20,&apos;PM&apos;,
+21,&apos;PM&apos;,
+22,&apos;PM&apos;,
+23,&apos;PM&apos;,&apos;AA&apos;)</formula>
+        <name>VP last updated by</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>WTBO_Advan_Save</fullName>
+        <field>WTBO_Advantage__c</field>
+        <formula>IF(OR(VALUE(LEFT(TEXT(OG_WTBO_Q1__c),1))&lt;2,VALUE(LEFT(TEXT(OG_WTBO_Q2__c),1))&lt;2,VALUE(LEFT(TEXT(OG_WTBO_Q3__c),1))&lt;2,VALUE(LEFT(TEXT(OG_WTBO_Q4__c),1))&lt;2),&quot;Disadvan&quot;,&quot;Advan&quot;)</formula>
+        <name>WTBO Advan Save</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>WTB_Agree_Store</fullName>
+        <field>WTB_Agree__c</field>
+        <formula>IF(OR(VALUE(LEFT(TEXT(OG_WTB_Q1__c),1))&lt;3,VALUE(LEFT(TEXT(OG_WTB_Q2__c),1))&lt;3,VALUE(LEFT(TEXT(OG_WTB_Q3__c),1))&lt;3,VALUE(LEFT(TEXT(OG_WTB_Q4__c),1))&lt;3,VALUE(LEFT(TEXT(OG_WTB_Q5__c),1))&lt;3),&quot;Disagree&quot;,&quot;Agree&quot;)</formula>
+        <name>WTB Agree Store</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <rules>
+        <fullName>CR_Modification</fullName>
+        <actions>
+            <name>CR_Last_Modified_By</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>OR( ISCHANGED( DG_Money__c ) , ISCHANGED( DG_People__c ), ISCHANGED( DG_Time__c ))</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>DHC_Modification</fullName>
+        <actions>
+            <name>DHC_last_updated</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_DHC_last_modified</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_User_Lagacy_No</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>updating last modified by and last modified date values for DHC tool</description>
+        <formula>OR ( ISCHANGED( DHC_2_Will_the_client_buy__c ) , ISCHANGED( DHC_Comments_WTB__c ) ,  ISCHANGED( DHC_2_Buyer_experience_with_HP__c), ISCHANGED( DHC_Comments_Buyer_Experience__c ), ISCHANGED( DHC_2_Client_Relationship_and_Insight__c ), ISCHANGED( DHC_Comments_Client_Relationship__c ), ISCHANGED( DHC_2_Client_Decision_Process__c ), ISCHANGED( DHC_Comments_Client_Decision_Process__c ), ISCHANGED( DHC_2_Competitive_Position__c ), ISCHANGED( DHC_Comments_Competitive_Position__c ), ISCHANGED( DHC_2_Solution_Scope__c ), ISCHANGED( DHC_Comments_Solution_Scope__c ), ISCHANGED( DHC_2_Differentiation__c ), ISCHANGED( DHC_Comments_Differentiation__c ), ISCHANGED( DHC_2_Teaming__c), ISCHANGED( DHC_Comments_Teaming__c ), ISCHANGED( DHC_2_Sales_Team_Staffing__c ), ISCHANGED( DHC_Comments_Sales_Team_Staffing__c ), ISCHANGED( DHC_2_Deal_Shape_and_Pricing__c ), ISCHANGED( DHC_Comments_Deal_Shape_and_Pricing__c ), ISCHANGED( DHC_2_Delivery_Leadership_Team__c ), ISCHANGED( DHC_Comments_Delivery_Leadership_Team__c ), ISCHANGED( DHC_2_Terms_and_Conditions__c ), ISCHANGED( DHC_Comments_Terms_and_Conditions__c ) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>OG Store WTB</fullName>
+        <actions>
+            <name>CBP_Result_Stored</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>WTBO_Advan_Save</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>WTB_Agree_Store</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Opportunity_Plan__c.CreatedDate</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>OPGauge_Modified</fullName>
+        <actions>
+            <name>OG_Updated_By</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>updating last modified date and last Updated by fields for opportunity guage tool</description>
+        <formula>OR ( ISCHANGED( OG_WTB_Q1__c ) , ISCHANGED( OG_WTB_Q2__c ) , ISCHANGED( OG_WTB_Q3__c ) , ISCHANGED(OG_WTB_Q4__c ), ISCHANGED( OG_WTB_Q5__c ),  ISCHANGED( OG_WTBO_Q1__c ) , ISCHANGED( OG_WTBO_Q2__c ),ISCHANGED( OG_WTBO_Q3__c ),ISCHANGED( OG_WTBO_Q4__c ),ISCHANGED( OG_WTB_Q5__c ) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>VP_Modification</fullName>
+        <actions>
+            <name>VP_last_updated_by</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>OR( ISCHANGED( VP_value_proposition__c ) , ISCHANGED( VP_01_clients_most_important_problems__c ) , ISCHANGED( VP_02_how_do_they_show_up__c ) , ISCHANGED( VP_03_effects_of_issues__c ), ISCHANGED( VP_04_who_is_affected__c ) , ISCHANGED( VP_05_constraints__c ) ,  ISCHANGED( VP_06_alternatives__c ) , ISCHANGED( VP_07_what_are_we_offering__c ), ISCHANGED( VP_08_what_will_it_take__c ) , ISCHANGED( VP_09_criteria__c ) )</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

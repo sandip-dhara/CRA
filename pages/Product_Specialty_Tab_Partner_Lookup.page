@@ -1,0 +1,70 @@
+<!-- 
+/**********************************************************
+* Page Name: Product_Specialty_Tab_Partner_Lookup
+* Author: HP: Debmalya
+* Date: 23-Feb-2013 
+* Requirement # Request Id :CR-0474
+* Description: To display Partner Account According to the Territoriesof Logged in User
+***********************************************************/
+-->
+<apex:page controller="SpecialtyMatchesforPartnerAccounts" showHeader="false" sideBar="false" tabStyle="Account">
+<!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+<body class="lookupTab  LookupSearchFrame, marginCls">
+    <apex:form >
+        <apex:sectionHeader title="{!$Label.Account_Search}" />
+            <apex:actionRegion >  
+                <!-- Output Panel for showing search options -->
+                <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">
+                    <apex:outputLabel value="{!$Label.Search_By_Options}" styleClass="searchLabelCls" for="searchByKeyWord"/>
+                    <apex:selectRadio label="{!$Label.Search_Options}" id="searchByKeyWord" value="{!searchByKeyWord}" layout="pageDirection">
+                        <apex:selectOption itemValue="Name" itemLabel="{!$ObjectType.account.fields.name.label}"/>
+                        <apex:selectOption itemValue="Location_ID__c" itemLabel="{!$ObjectType.account.fields.Location_ID__c.label}"/>
+                    </apex:selectRadio>
+                    <apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>
+                    <apex:inputText id="txtSearch" value="{!searchString}" onkeypress="return searchAccountOnEnter(event,this);"/>
+                        <span Class="searchspanCls"><apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!Search}" rerender="searchResults"></apex:commandButton></span>
+                </apex:outputPanel>
+                <p>{!$Label.Wildcard_Usage}</p>
+                
+                <!-- Page block for showing search result -->
+                <apex:pageBlock id="searchResults">
+                <apex:outputpanel styleClass="resultPanelCls" layout="block"> 
+                    <apex:pageBlockTable value="{!results}" var="a" id="tblResults">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputPanel >{!$ObjectType.account.fields.name.label}</apex:outputPanel>
+                            </apex:facet>
+                           <!--<apex:outputLink value="javascript:testFunction('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!a.Id}','{!a.Name}', false)" rendered="{!NOT(ISNULL(a.Id))}">{!a.Name}</apex:outputLink>-->
+                            <apex:outputLink onclick="javascript:top.window.opener.lookupPick('{!FormTag}','{!TextBox}_lkid','{!TextBox}','','{!a.Id}','{!a.Name}','null','')">{!a.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.account.fields.Location_ID__c.label}" value="{!a.Location_ID__c}" />
+                        <apex:column headerValue="{!$ObjectType.account.fields.ShippingStreet.label}" value="{!a.ShippingStreet}" />
+                        <apex:column headerValue="{!$ObjectType.account.fields.ShippingCity.label}" value="{!a.ShippingCity}" />
+                        <apex:column headerValue="{!$ObjectType.account.fields.ShippingState.label}" value="{!a.ShippingState}" />
+                        <apex:column headerValue="{!$ObjectType.account.fields.ShippingCountry.label}" value="{!a.ShippingCountry}" />
+                        <apex:column headerValue="{!$ObjectType.account.fields.HP_SFDC_Access__c.label}" value="{!a.HP_SFDC_Access__c}" />
+                    </apex:pageBlockTable>
+                    
+                    <apex:outputLabel rendered="{!isResultEmpty}">
+                        <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+                    </apex:outputLabel>
+                    </apex:outputpanel>
+                </apex:pageBlock>
+            </apex:actionRegion>
+        <!-- defining action function for searching accounts -->
+        <apex:actionFunction action="{!Search}" name="searchAccountOnEnterKey" rerender="searchResults">
+           <apex:param name="firstParam" assignTo="{!searchString}" value="" />
+        </apex:actionFunction>
+    </apex:form>
+</body>
+  <script>
+    function searchAccountOnEnter(ev,searchTextObj)  {
+        var searchTextValue=searchTextObj.value;
+        if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+            searchAccountOnEnterKey(searchTextValue);  
+            return false;           
+         } 
+     }
+  </script>
+</apex:page>

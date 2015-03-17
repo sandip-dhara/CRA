@@ -1,0 +1,25 @@
+<apex:page standardController="Competitive_Sales_Plan__c" extensions="CSPCompetitorAddExtension" showHeader="False" sidebar="False" action="{!initialize}">
+<apex:form >
+      <apex:pageblock >
+      <!--Heading of Opportunity Gauge-->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="24" /><BR>&nbsp;</BR><apex:OutputText value="Competitive Sales Plan"  style="size:100%;color: #000000; font-size: 16pt; width: 25%; font-weight:bold;text-align:left"/>
+    </apex:panelgrid>
+    <hr size="2"></hr>
+    <!--End-->
+
+          <apex:pageBlockButtons >
+          <apex:commandButton value="Save" action="{!save}" onclick="location.href='/apex/CSP_List?id={!Competitive_Sales_Plan__c.Opportunity_Plan__c}"/>
+          <apex:commandButton value="Cancel" action="{!cancel}" onclick="location.href='/apex/CSP_List?id={!Competitive_Sales_Plan__c.Opportunity_Plan__c}"/>
+          </apex:pageBlockButtons>
+          
+          <apex:panelgrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3">
+          <apex:OutputLabel value="Add Competitor" />
+          </apex:panelgrid>
+          <apex:panelgrid columns="1" >
+          <apex:InputField value="{!Competitive_Sales_Plan__c.Competitors__c}" />
+          </apex:panelgrid>
+          
+      </apex:pageblock>
+</apex:form>
+</apex:page>

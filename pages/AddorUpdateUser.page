@@ -1,0 +1,138 @@
+<apex:page controller="AddorUpdateUser" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+ <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">    
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+<meta charset="utf-8" />
+<title>Social Learning</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<meta content="" name="description" />
+<meta content="" name="author" />
+
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+<!-- BEGIN HEADER -->
+<header>
+<apex:form id="DataForm">
+<!--<apex:inputhidden id="AvailableExperts" value="{!GetAvailableExperts}"/>
+<apex:inputhidden id="Users" value="{!GetUsers}"/>-->
+</apex:form>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container-fluid"> <a class="HpLogo"> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/></a>
+        <div class="nav mtop10">
+          <h1>Social Learning Platform</h1>
+          <h3>Learning on your terms</h3>
+        </div>
+        <ul class="nav pull-right top-menu mtop16">
+          <!-- BEGIN USER LOGIN DROPDOWN -->
+          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span><apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_username.jpg')}" styleClass="userImage" alt="no_username"/></span> 
+            <!--<b class="caret"></b>--> 
+            </a>
+            <ul class="dropdown-menu extended logout">
+              <li><a href="#">Log Out</a></li>
+            </ul>
+          </li>
+          <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+        <c:SLP_SearchCustomComponent ></c:SLP_SearchCustomComponent>
+      </div>
+    </div>
+  </div>
+  <div class="navbar">
+    <div class="navbar-inner">
+            <div class="container-fluid menunavBar"> <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Home"></a>
+        <apex:OutputPanel rendered="{!IsLearningBoardCreator}"> 
+            <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus"></span></a> 
+            <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/SLP_createcommunity" title="Create Community"><span class="icon-plus NaviconPlus"></span></a>
+        </apex:OutputPanel>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- END HEADER --> 
+  
+<!-- BEGIN CONTAINER -->
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+  <div id="main-content">
+    <div class="BDheading">
+      <h2>Add Users</h2>
+    </div>
+    <div class="alert alert-error span4 pull-left mr30" style="display:none" id="err_msg">
+    </div>
+      <div>
+          <br />
+          <apex:form >
+            <!--<apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!AddOrUpdateMembers}" value="AddOrUpdateMembers" id="btnAddorUpdateMembers"/>
+              <br/><br /><br />
+              <span><b>Community:</b></span>
+              <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!AddorUpdateRoles}" value="AddMembersOrContributors" id="CommandButton1"/>
+              <br/><br /><br />
+              <div>
+                  <span><b>Board:</b></span>
+                  <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!AddOrUpdateBoardMembers}" value="AddMembersOrContributors" id="CommandButton2"/>
+              </div>-->
+
+               <div>
+                   <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!AddOrUpdateMembers}" value="AddOrUpdateMembers" id="btnAddorUpdateMembers"/>
+               </div>
+              <div style="display:none">
+                  <apex:repeat value="{!UserList}" var="usrDtls" > 
+                                    <br />
+                      <div >
+                          <div>UserId : {!usrDtls.UserId}</div> 
+                          <div>UserIdEmail : {!usrDtls.UserIdEmail}</div>
+                          <div>RegionId : {!usrDtls.RegionId}</div>
+                          <div>RegionName : {!usrDtls.RegionName}</div>
+                          <div>BusinessGroupId : {!usrDtls.BusinessGroupId}</div>
+                          <div>BusinessGroupName : {!usrDtls.BusinessGroupName}</div>
+                      </div>
+                      <br />
+                  </apex:repeat>
+              </div>
+          </apex:form>
+      </div>
+  </div>
+  <!-- END PAGE --> 
+</div>
+<!-- END CONTAINER --> 
+
+<!-- BEGIN FOOTER -->
+<div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+<!-- END FOOTER --> 
+
+<!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>    
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+
+    <!-- END JAVASCRIPTS -->  
+
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

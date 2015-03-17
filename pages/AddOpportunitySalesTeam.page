@@ -1,0 +1,83 @@
+<!-- 
+/**********************************************************
+* Page Name: AddOpportunitySalesTeam
+* Author: hp
+* Modified: 25-Sep-2012 
+* Requirement # Request Id :
+* Description: To add multiple Opportunity SalesTeam
+***********************************************************/
+-->
+<apex:page controller="OpportunitySalesTeamController" tabStyle="Opportunity" id="page">
+    <script type="text/javascript" src="/resource/jQuery"></script>
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+        var theTeamId='';
+        j$(document).ready(function(){
+            j$("a").each(function(){
+                if(j$(this).attr("title") == 'User Lookup (New Window)'){
+                    var hrefValue = generateURL((j$(this).attr("id")).substring(0,37),'User','');
+                    j$(this).attr("href",hrefValue);
+                }
+            });
+            j$("select[name=userType]").bind("change",function(){
+                var selectid= (j$(this).attr("id")).substring(0,37);
+                selectid = selectid.replace(/:/g,"\\:");
+                if(j$(this).val()=='TeamEligibleUserLookup'){
+                    var hreval = generateURL((j$(this).attr("id")).substring(0,37),'User','');
+                    j$("#"+selectid+"_lkwgt").attr("href",hreval);
+                }
+                else{
+                    var hreval = generateURL((j$(this).attr("id")).substring(0,37),'Partner User',theTeamId);
+                    j$("#"+selectid+"_lkwgt").attr("href",hreval);
+                }
+            });
+            j$("input[type=text]").bind("blur", function(){
+                var inputid= (j$(this).attr("id")).substring(0,37);
+                inputid = inputid.replace(/:/g,"\\:");
+                if(j$("#"+inputid+"_mlktp").val()=='PartnerUserLookup'){
+                    theTeamId = j$("#"+inputid+"_lkid").attr("value");
+                }
+            });
+        });
+        function generateURL(elementId,userType,teamIdvalue){
+            var oppId = j$("#page\\:frm\\:pageBlock\\:dataTable\\:0\\:opptyid").attr("value");
+               var hrefReturn = "javascript: openLookup('/apex/salesteamLookup?lkfm=page%3Afrm&optyid="+oppId+"&teamid="+teamIdvalue+"&userType="+userType+"&lknm="+elementId+"&lktp=' + getElementByIdCS('"+elementId+"_lktp').value,670,'1','&lksrch=' + escapeUTF(getElementByIdCS('"+elementId+"').value.substring(0, 80)))";
+                return hrefReturn;
+        }
+    </script>
+    <apex:sectionHeader title="{!$Label.Sales_Team_Members_BG}" />
+        <apex:form id="frm" >
+            <apex:pagemessages />
+            <apex:pageBlock id="pageBlock">
+                <apex:pageBlockButtons location="Top">
+                    <apex:commandButton action="{!Save}" value="{!$Label.Save}"/>
+                    <apex:commandButton action="{!Save_New}" value="{!$Label.Save_More}"/>
+                    <apex:commandButton action="{!Cancel}" value="{!$Label.Cancel}"/>
+                </apex:pageBlockButtons>
+                <apex:DataTable value="{!opportunityTeamMemberList}" var="team" cellspacing="5" id="dataTable">
+                    <apex:column headerValue="{!$Label.user_sales}">
+                        <select name="userType" id="{!$Component.UserId}_mlktp" size="1">
+                            <option value="{!$Label.TeamEligibleUserLookup}" selected="selected">{!$Label.user_value}</option>
+                            <option value="{!$Label.PartnerUserLookup}">{!$Label.Partner_User_value}</option>
+                        </select>&nbsp;&nbsp;
+                        <apex:inputField value="{!team.teamMember.UserId}" id="UserId" required="false" />&nbsp;&nbsp;&nbsp;
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.Opportunity_Access_sales}">
+                        <apex:selectList value="{!team.SelectedOpportunityAccessLevel}" multiselect="false" size="1">
+                            <apex:selectOptions value="{!OpportunityAccessLevel}"/>
+                        </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.Team_Role_sales}">
+                        <apex:inputField value="{!team.teamMember.TeamMemberRole}" id="TeamMemberRole"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:inputhidden id="opptyid" value="{!opptyID}"/>
+                    </apex:column>
+                </apex:DataTable>
+                <apex:actionFunction action="{!TeamIdValue}" name="methodOneInJavascript"  rerender="teamidval"/>
+                   
+                <apex:inputHidden id="teamidval" value="{!teamID}" />   
+                
+            </apex:pageBlock>
+        </apex:form>
+</apex:page>

@@ -1,0 +1,86 @@
+<!-- 
+/**********************************************************
+* Page Name: LeadConvert
+* Author: Accenture  
+* Date: 30-MAR-2012 
+* Requirement # Request Id: 317/304/307
+* Description: VF page to convert Lead into opportunity
+**********************************************************/
+-->
+<apex:page standardController="Lead" extensions="LeadConvertController" tabStyle="Lead">
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+    <apex:form id="LeadConvertId">
+        <!-------------Error Message Section----------------------------------------------->
+        <apex:pageMessages />
+        <apex:pageBlock rendered="{!!isRender}">
+            <apex:pageBlockSection columns="1">  
+                <center><b><apex:outputText value="{!errorMessage}"/></b></center>  <br/> 
+                <apex:commandButton value="{!$Label.Back}" action="{!cancel}"  /> 
+                <!-- Added Create New Case button on Lead Convert page
+                Modified By:HP
+                Date: 29-JUN-2012-->
+                <apex:commandButton value="{!$Label.Create_New_Case}" action="{!createCase}" rendered="{!isCase}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!---------Lead Convert Section ---------------------------------------------------->
+        <apex:pageBlock rendered="{!isRender}" id="leadConvertpbId">   
+            <apex:pageBlockSection title="{!$Label.Convert_Lead}" collapsible="false"/>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.Convert}" action="{!leadConvert}"/> 
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}"/> 
+            </apex:pageBlockButtons>
+            <!-- Panel for internal user -->
+            <apex:outputPanel id="thePanel1" rendered="{!!isPartnerUser}">
+                <table id = "LeadConversionTableId"> 
+                    <tr align="center" id="ownerTR">
+                        <td align="right">{!$Label.LC_Record_Owner}</td>
+                        <td align="left"><apex:inputField value="{!lead.Conv_Lead_Owner__c}"/></td> 
+                    </tr>
+                    <tr align="center" id="emilFlagTR">
+                        <td align="right">{!$Label.LC_Send_Email}</td>                                                 
+                        <td align="left"><apex:inputCheckbox value="{!sendNotificationEmail}"/></td> 
+                    </tr>
+                   <tr  align="center" >
+                        <td align="right" >{!$Label.Account_Name} </td>           
+                        <td align="left" >                   
+                            <apex:outputField value="{!lead.Account_Name__c}" id="accountId" /> 
+                        </td>
+                    </tr>   
+                    <tr>
+                        <td></td>
+                        <td style="color: #FF0000">{!errorMessage}</td>
+                    </tr>
+                    <tr align="center">
+                        <td align="right">{!$label.Opportunity_Name}</td>              
+                        <td align="left"><apex:inputField value="{!lead.company}" /></td> 
+                    </tr>
+                </table>
+            </apex:outputPanel>
+            <!-- For Partner User following panel will be visible -->
+            <apex:outputPanel id="thePanel2" rendered="{!isPartnerUser}">
+                <table id = "LeadConversionTableId">
+            <!-- Disabled the below check box as part of Defect - 8984 -->        
+<!--					<tr align="center" id="emilFlagTR">
+                        <td align="right">{!$Label.LC_Send_Email}</td>                                                 
+                        <td align="left"><apex:inputCheckbox value="{!sendNotificationEmail}"/></td> 
+                    </tr>
+-->					
+                    <tr align="center" >
+                        <td align="right" >{!$Label.Account_Name} </td>           
+                        <td align="left" >                   
+                            <apex:outputField value="{!lead.Account_Name__c}" id="accountId1" /> 
+                        </td>
+                    </tr>   
+                    <tr>
+                        <td></td>
+                        <td style="color: #FF0000">{!errorMessage}</td>
+                    </tr>
+                    <tr align="center">
+                        <td align="right">{!$label.Opportunity_Name}</td>              
+                        <td align="left"><apex:inputField value="{!lead.company}" /></td> 
+                    </tr>
+                </table>
+            </apex:outputPanel>      
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

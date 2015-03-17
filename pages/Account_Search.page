@@ -1,0 +1,69 @@
+<apex:page standardController="Account" extensions="AccountSearchController">
+    <apex:form >
+    
+    <apex:pageBlock title="Donor Account Details:" mode="maindetail">
+        <apex:pageblocksection columns="1">
+                             
+               <apex:pageBlockTable value="{!Account}" var="act" style="width:1500px">
+               
+                    <apex:column value="{!act.Name}" style="width:300px"/>
+                    <apex:column value="{!act.MDCP_Organization_ID__c}"/>
+                    <apex:column value="{!act.WorldRegion_SubRegion1__c}" style="width:100px"/>
+                    <apex:column value="{!act.WorldRegion_SubRegion2__c}" style="width:150px"/>
+                    <apex:column value="{!act.Site}"/>                
+                    <apex:column value="{!act.ShippingCountry}"/>
+                    <apex:column value="{!act.ShippingState}"/>
+                    <apex:column value="{!act.ShippingCity}"/>
+                    <apex:column value="{!act.ShippingStreet}"/>
+                    <apex:column value="{!act.ShippingPostalCode}"/>
+                    <apex:column value="{!act.AMID_L2__c}"/>
+  
+              </apex:pageBlockTable>
+        </apex:pageblocksection>  
+        
+    </apex:pageBlock>
+    
+            <apex:pageBlock mode="edit" id="block"> 
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!next}" value="Next" disabled="{!ISNULL(searchResults)}"/>
+            </apex:pageBlockButtons>
+
+            <apex:pageMessages /> 
+            
+        <apex:panelGrid columns="20" cellspacing="5" frame="box" style="margin-left:00px;">
+               
+                   <apex:outputLabel for="searchText">Account Name</apex:outputLabel>
+
+                   <apex:inputText id="searchText" value="{!searchText}"/>
+         
+                   <apex:outputLabel for="mdcpId">MDCP Org ID</apex:outputLabel>
+                   <apex:inputText id="mdcpId" value="{!mdcpId}"/>                
+          
+                   <apex:commandButton value="Search" action="{!search}" style="margin-left:00px" rerender="block" status="status"/>  
+                   
+                     </apex:panelGrid>
+            
+            <apex:actionStatus id="status" startText="Searching... please wait..."/>
+            
+            <apex:pageBlockSection title="Survivor Account Details:" id="resultsBlock" columns="1">
+            Please select only one record from Survivor list that you wish to merge into one.
+                    <apex:pageBlockTable value="{!searchResults}" var="c" style="width:1500px" rendered="{!NOT(ISNULL(searchResults))}">
+                    <apex:column width="25px">
+                    <apex:inputCheckbox value="{!c.checked}"/>
+                    </apex:column>
+                    <apex:column value="{!c.cat.Name}" style="width:300px"/>
+                    <apex:column value="{!c.cat.MDCP_Organization_ID__c}"/>
+                    <apex:column value="{!c.cat.WorldRegion_SubRegion1__c}" style="width:100px"/>
+                    <apex:column value="{!c.cat.WorldRegion_SubRegion2__c}" style="width:150px"/>
+                    <apex:column value="{!c.cat.Site}"/>
+                    <apex:column value="{!c.cat.ShippingCountry}"/>
+                    <apex:column value="{!c.cat.ShippingState}"/>
+                    <apex:column value="{!c.cat.ShippingCity}"/>
+                    <apex:column value="{!c.cat.ShippingStreet}"/>
+                    <apex:column value="{!c.cat.ShippingPostalCode}"/>
+                    <apex:column value="{!c.cat.AMID_L2__c}"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

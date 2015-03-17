@@ -1,0 +1,52 @@
+<!-- 
+/**********************************************************
+* Page Name: CheckContactBeforeConvert
+* Author: Accenture
+* Date: 30-MAR-2012 
+* Requirement # Request Id:
+* Description: This page will provide the option to select existing contact in conversion, 
+*              if contact with same name as lead name is already available  
+***********************************************************/
+-->
+<apex:page controller="CheckContactController" tabStyle="Lead">
+    <style>
+        table #CheckForExistingContactTableId td {
+            padding-left: 15px;
+        }
+    </style>
+    <apex:form >
+        <apex:pageBlock mode="edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Convert" action="{!leadConvert}"/> 
+                <apex:commandButton value="Cancel" action="{!cancel}"/> 
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Convert Lead" collapsible="false"/>
+            <table id = "CheckForExistingContactTableId">
+                <tr align="center">
+                    <td align="right">Account Name</td>
+                    <td align="left"><apex:outputText value="{!accountName}"/></td> 
+                </tr>
+                <tr align="center">
+                    <td align="right">Contact Name</td>
+                    <td align="left"> 
+                        <apex:selectList id="options" value="{!contactId}" multiselect="false" size="1" >
+                            <apex:selectOptions value="{!contactOptions}"/>
+                            <apex:actionSupport event="onclick" action="{!checkForContact}" reRender="contactDiv"/>
+                        </apex:selectList>
+                        <apex:outputPanel id="contactDiv">
+                        
+                            <apex:outputLink disabled="{!iscontact}" value="/{!contactId}/p" target="_blank" style="align: left">View</apex:outputLink>
+                        </apex:outputPanel> 
+                    </td> 
+                </tr>                
+             </table>
+            <apex:pageBlockSection title="Overwrite Lead Source" collapsible="false"/>
+            <table>
+                <tr align="center">
+                    <td align="right"><apex:inputCheckbox value="{!replaceLeadSource}"/></td>
+                    <td align="left"> Replace existing Lead Source with the value from this lead</td> 
+                </tr>
+            </table>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

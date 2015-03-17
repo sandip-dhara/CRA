@@ -1,0 +1,97 @@
+<!-- 
+/**********************************************************
+* Page Name: OpptyRenewal_SubTypes
+* Author: HP
+* Date: 27-SEP-2012 
+* Requirement # 
+* Description: This is a VF Page that will capture Oppotunity Sub Types Values and will be present  on the Opportunity Detail Page as an inline VF Page.
+***********************************************************/
+-->
+
+<apex:page standardController="Opportunity" extensions="OpptyRenewal_SubTypesController" showHeader="True" id="Page">
+    <apex:form id="idForm">
+        <b> <font color="RED"> <apex:Messages /> </font> </b>
+        <apex:pageBlock id="thePageBlock">
+            <apex:actionRegion id="AR" >
+                <apex:pageBlockSection rendered="{!opp.Renewal_Type__c != 'SW Renewal'}">
+                    <apex:inputfield value="{!opp.Renewal_Sub_Type__c}">
+                   <!-- <apex:commandButton value="Save" action="{!Save}"/> -->
+                    <apex:actionSupport event="onchange" rerender="thePageBlock" status="status"/>
+                    </apex:inputfield>
+                </apex:pageBlockSection>    
+                 
+                <apex:pageBlockSection title="Sub-Types Available" rendered="{!opp.Renewal_Sub_Type__c = 'Complex' && opp.Renewal_Type__c != 'SW Renewal'}">
+                    <apex:inputfield value="{!opp.TS_PROP__c}" />
+                    <apex:inputfield value="{!opp.TS_Multinational__c}" />
+                    <apex:inputfield value="{!opp.TS_Multi_BG__c}" label="Multi BG (only applicable for SW Product Lines)"/>
+                </apex:pageBlockSection>  
+                
+                <apex:pageBlockSection id="Test" title="HP Software Information" showHeader="false" rendered="{!opp.Renewal_Type__c = 'SW Renewal'}" >
+                
+                    <apex:pageBlockSectionItem id="mydr">
+                        <apex:OutputText value="{!$ObjectType.Opportunity.Fields.Multi_Year_Decline_Reason__c.Label}"/>
+                        <apex:inputfield value="{!opp.Multi_Year_Decline_Reason__c}" />  
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                </apex:pageBlockSection>    
+                
+                <apex:pageBlockSection id="SW_SubTypes" title="Sub-Types Available" rendered="{!opp.Renewal_Type__c = 'SW Renewal'}">                 
+                
+                    <apex:pageBlockSectionItem id="pbs" >
+                        <apex:OutputText value="{!$ObjectType.Opportunity.Fields.SW_ELA__c.Label}"/>
+                        <apex:inputfield value="{!opp.SW_ELA__c}" onclick="ELA()" id="ELA"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem helpText="{!$ObjectType.Opportunity.Fields.SW_Premier__c.inlineHelpText}" id="prm">
+                        <apex:OutputText value="{!$ObjectType.Opportunity.Fields.SW_Premier__c.Label}"/>
+                        <apex:inputfield value="{!opp.SW_Premier__c}" onclick="Premier()" id="pr">
+                            <apex:actionSupport event="onchange" rerender="thePageBlock" status="status" />
+                        </apex:inputfield>
+                    </apex:pageBlockSectionItem>
+                    
+                    <!--<apex:inputfield value="{!opp.SW_RTS__c}" >
+                        <apex:actionSupport event="onchange" rerender="thePageBlock" status="status" />
+                    </apex:inputfield> -->
+                    <apex:pageBlockSectionItem >
+                        <apex:OutputText value="{!$ObjectType.Opportunity.Fields.SW_Push_To__c.Label}"/>
+                        <apex:inputfield value="{!opp.SW_Push_To__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                    
+                        <apex:OutputText value="{!$ObjectType.Opportunity.Fields.Premier_Type__c.Label}" rendered="{!opp.SW_Premier__c = True }" />
+                        <!-- <apex:selectRadio id="SW_Addtnl_UU_Fields" rendered="{!Opportunity.SW_Premier__c = True }" >  -->
+                          <!--  <apex:selectOption itemvalue="{!Opportunity.SW_Uplift__c}" itemlabel="Uplift"/>   -->
+                            <apex:inputField value="{!opp.Premier_Type__c}" rendered="{!Opp.SW_Premier__c = True }"/>
+                           <!-- <apex:selectOption itemvalue="{!Opportunity.SW_Upsell__c}" itemlabel="Upsell"/>   -->
+                      <!--  </apex:selectRadio> -->
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                </apex:pageBlockSection>            
+                  
+            </apex:actionRegion> 
+        </apex:pageBlock>
+        
+        
+        <apex:actionStatus id="Saving">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                        
+                    </apex:facet>
+                </apex:actionStatus>
+        
+        <center> <apex:commandLink styleClass="btn" value="Save" action="{!Save}" status="Saving" target="_top"/> </center>
+       
+        <script>
+        function ELA(){
+            if(document.getElementById("{!$Component.idForm.thePageBlock.SW_SubTypes.pbs.ELA}").checked== true) 
+            alert("Consider it is necessary to maintain support streams for renewals of like-products (non-eligible support) on existing SAIDs during an ELA Term.\nRemember to do a health check of the ELA customer to ensure they are deploying the licenses, perform migrations/ upgrades, as well as other servicing of the customer.");
+        }
+        function Premier(){
+            if(document.getElementById("{!$Component.idForm.thePageBlock.SW_SubTypes.prm.pr}").checked== true) 
+            alert("Ensure you are selling PL TH or 2Z on this opportunity.");
+        }
+        
+        </script>
+    </apex:form>  
+</apex:page>

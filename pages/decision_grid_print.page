@@ -1,0 +1,33 @@
+<apex:page standardController="Opportunity_Plan__c" extensions="customRelatedDecision" showHeader="false" sidebar="false" tabStyle="Decision__c" title="Decision Grid">
+<style>
+body {
+padding: 10px;
+}
+
+
+</style>
+<body onload="window.print();">
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px;">Customer Decision Grid Print Summary</h1>
+<hr /><br/>
+<apex:form >
+<apex:iframe src="apex/oppheader?id={!Opportunity_Plan__c.Id}" height="110" width="100%"/>
+ <apex:pageBlock mode="maindetail">
+
+<br />
+  <apex:pageblocktable value="{!relatedDecisions}" var="table">
+  
+    <apex:column value="{!table.Step__c}"/>
+    <apex:column value="{!table.Decision__c}"/>
+    <apex:column value="{!table.When__c}"/>
+    <apex:column headerValue="Who">
+        {!table.Who__c}
+    </apex:column>
+    <apex:column value="{!table.Criteria__c}"/>
+    <apex:column value="{!table.Status__c}"/>
+  </apex:pageblocktable>
+
+ </apex:pageBlock>
+</apex:form>
+</body>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

@@ -1,0 +1,342 @@
+<apex:page controller="SLP_UserRoleAndExpertiseMapController" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+    <!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+    <!--[if !IE]><!-->
+    <html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+
+    <head>
+        <meta charset="utf-8" />
+        <title>Social Learning</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+        <script type="text/javascript">
+            function Edit(userId) {
+
+                var controlId = document.getElementById('{!$Component.EditForm.HdnUserId}');
+                controlId.value = userId;
+                var formId = document.getElementById('{!$Component.EditForm.btnSubmitEditForm}');
+                formId.click();
+                return false;
+                //DoSubmitEditForm();
+            }
+            $(document).ready(function(){
+                debugger;
+                $("#loading_Modal").modal('show');
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.SLP_UserRoleAndExpertiseMapController.listUserAction}',function(result,event){        
+                     for(var val in result){ 
+                            if(result[val].UserName != undefined){
+                                var s11 = result[val].ExpertName;
+                                var displayTable = ("<tr class='odd gradeX'>");
+                                if(result[val].UserName == undefined){
+                                    result[val].UserName="";
+                                }
+                                var UserDtls = "/apex/SLP_EditUserRoleMapping?UserId=" + result[val].UserId;
+                                displayTable += ("<td width='15%'>");
+                                displayTable += ("<span><a href="+ UserDtls +" target='_top'>"+ result[val].UserName +"</a></span>");
+                                displayTable += ("</td>");
+                                if(result[val].RoleName==undefined){
+                                    result[val].RoleName="";
+                                }
+                                displayTable += ("<td width='15%'>"+ result[val].RoleName +"</td>");
+                                if(result[val].ExpertName==undefined){
+                                    result[val].ExpertName="";
+                                }
+                                displayTable += ("<td width='70%'>"+ result[val].ExpertName +"</td>");
+                                displayTable += ("</tr>");
+                                $('#UserResultTable').append(displayTable);
+                            }
+                     } 
+                     $('#loading_Modal').modal('hide');
+                    $('#UserResultTable').dataTable({
+                        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                        "sPaginationType": "bootstrap",
+                        "oLanguage": {
+                            "sLengthMenu": "_MENU_ records per page",
+                            "oPaginate": {
+                                "sPrevious": "Prev",
+                                "sNext": "Next"
+                            }
+                        },
+                        "aoColumnDefs": [{
+                            'bSortable': true,
+                            'aTargets': [0]
+                        }]
+                    }); 
+                });                             
+            });
+        </script>
+    </head>
+    <!-- END HEAD -->
+    <!-- BEGIN BODY -->
+
+    <body>
+
+        <!-- BEGIN HEADER -->
+
+        <header>
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+<!--                        <a class="HpLogo"> -->
+                       <!--<apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/insight_web_logo.png')}" style="width:220px" alt="HP Logo"/></a>    --> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo" styleclass="HpLogo"/>
+<!--           </a> -->
+          <div class="nav mtop20">
+            <h1 class="h1fontS">insight</h1>
+            <h3>Information - on your terms</h3>            
+  
+          </div>
+                
+                        <ul class="nav pull-right top-menu">
+                            <!-- BEGIN USER LOGIN DROPDOWN -->
+                            <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span>
+              <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="userImage" alt="no_username"/>
+              </span> 
+              <!--<b class="caret"></b>--> 
+              </a>
+                                <ul class="dropdown-menu extended logout">
+                                    <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a>
+                                    </li>
+                                    <li><a href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!LoggedinUserDtls.id}">Edit Profile</a>
+                                    </li>
+                                    <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- END USER LOGIN DROPDOWN -->
+                        </ul>
+                        <c:SLP_SearchCustomComponent InputString="User Role And Expertise Mapping Page"/>
+                        <div class="alert alert-error topSearchEr" style="display:none;" id="err_msg"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container-fluid menunavBar">
+                        <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/slp_activity" title="Home"></a>
+                        <a class="icon-book topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Library"></a>
+
+                        <apex:OutputPanel rendered="{!IsLearningBoardCreator}"> <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus"></span></a>  <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/SLP_createcommunity" title="Create Community"><span class="icon-plus NaviconPlus"></span></a> 
+                        </apex:OutputPanel>
+                        <!--<a class="icon-question-sign topNavIcon pull-right" href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank" title="Help"></a> -->
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- END HEADER -->
+        <!-- BEGIN CONTAINER -->
+        <div id="container" class="row-fluid">
+            <!-- BEGIN PAGE -->
+            <div id="main-content">
+                <!-- BEGIN PAGE CONTAINER-->
+                <div class="container-fluid">
+                    <!-- SEARCH BTN -->
+
+                    <div class="row-fluid">
+                        <div class="span12 mtop20">
+                        <!--<div id='warnShare' class="alert alert-warning">Currently Sharepoint links are not accessible</div>-->
+                            <apex:form >
+                                <br />
+                                <div> <a class="btnAthena btn-primary btnAthenaPopP" style="display:none" href="https://{!getSfInstance}/apex/SLP_AddUserRoleMapping">Add</a> 
+                                </div>
+                                <br />
+                                <table class="table table-striped table-bordered" id="UserResultTable">
+                                    <thead>
+                                        <tr>
+                                            <th>User Name</th>
+                                            <th>Role Name</th>
+                                            <th>Area of Focus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!--<apex:repeat value="{!GetUsers}" var="user">
+                                            <script>
+                                                var s11 = {
+                                                    !user.ExpertName
+                                                }
+                                                console.log('s11-------' + s11);
+                                            </script
+                                            <tr class="odd gradeX">
+                                                <td width="15%">
+                                                    <apex:outputLink onClick="return Edit('{!user.UserId}')">{!user.UserName}</apex:outputLink>
+                                                </td>
+                                                <td width="15%">
+                                                    <apex:outputText >{!user.RoleName}</apex:outputText>
+                                                </td>
+                                                <td width="70%">
+                                                    <apex:outputText >{!user.ExpertName}</apex:outputText>
+                                                </td>
+                                            </tr>
+                                       <!-- </apex:repeat>-->
+                                    </tbody>
+                                </table>
+                            </apex:form>
+                            
+                            <apex:form id="EditForm">
+                                <apex:inputhidden id="HdnUserId" value="{!HdnUserId}" />
+                                <apex:commandButton id="btnSubmitEditForm" style="display:none;" action="{!SubmitEdit}" />
+                                <!--<apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"   value="Export To Excel" id="theButton" onclick="ExportToExcelOnBoardingUsers()" />-->
+                                                                
+                                <!--<apex:actionfunction id="btnSubmitEditForm" name="DoSubmitEditForm" action="{!SubmitEdit}"/>-->
+                            </apex:form>
+                        </div>
+                    </div>
+
+                    <!-- END PAGE CONTENT-->
+                    <!--Start Lodaing Indicator-------->
+                    <div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="width:150px;margin:0 auto;margin-top:10%;">
+                        <div class="modal-dialog" style="width:150px;">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div style="height:20px;">
+                                        <img src="/img/loading32.gif" width="16" height="16"/><span >  Loading...</span>                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>              
+                    <!--Ending Loading Indicator------>
+                </div>
+                <!-- END PAGE CONTAINER-->
+            </div>
+            <!-- END PAGE -->
+        </div>
+        <!-- END CONTAINER -->
+
+        <!-- BEGIN FOOTER -->
+        <div id="footer">© Hewlett-Packard Development Company, L.P. | HP Restricted</div>
+        <!-- END FOOTER -->
+
+        <!-- BEGIN JAVASCRIPTS -->
+        <!-- Load javascripts at bottom, this will reduce page load time
+         -->
+        <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}" />
+        <!-- ie8 fixes -->
+        <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+        <!--common script for all pages-->
+        <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}" />
+
+        <!-- END JAVASCRIPTS -->
+        <script>
+            // DATATABLE SLP_1
+             // -------------------------------------------------------------------------------- * -->
+
+             jQuery('#UserResultTable.group-checkable').change(function () {
+                var set = jQuery(this).attr("data-set");
+                var checked = jQuery(this).is(":checked");
+                jQuery(set).each(function () {
+                    if (checked) {
+                        $(this).attr("checked", true);
+                    } else {
+                        $(this).attr("checked", false);
+                    }
+                });
+                jQuery.uniform.update(set);
+            });
+
+            jQuery('#UserResultTable_wrapper .dataTables_filter input').addClass("input-medium"); // modify table search input
+            jQuery('#UserResultTable_wrapper .dataTables_length select').addClass("input-mini"); // modify table per page dropdown
+            
+            
+            function ExportToExcelOnBoardingUsers()
+            {
+              Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.SLP_UserRoleAndExpertiseMapController.GetCommunityMemberDetailsExcel}',
+               ExportToExcelResult
+               );
+            }
+            
+            function ExportToExcelResult(result, event) {
+                debugger
+              var CommName = 'SLP On Boarding Users';
+              if (CommName.length > 30) {
+                  CommName = CommName.substr(0, 30);
+              }
+
+          var tabla = '<html  xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>' + CommName + '</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml></head> <body> <table id="tblExport"><tr>';
+          tabla += '<th>Email</th><th>Role </th><th>Area of focus</th><th>Community Contributor</th><th>Community Member</th><th>Board Contributor</th><th>Board Member</th><th> Bulk Reg</th><th> Status</th><th> Format valid</th><th> Failure Log</th><th>Sucess Log</th> <th> New User</th></tr>';
+          for (var iCnt = 0; iCnt < result.length; iCnt++) {
+              tabla += '<tr>';
+              tabla += '<td> ' + result[iCnt].Email__c + ' </td>';
+              if (result[iCnt].Role__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Role__c + ' </td>';
+              }
+              if (result[iCnt].Area_Of_Focus__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Area_Of_Focus__c + ' </td>';
+              }
+              
+              if (result[iCnt].Community_Contributor__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Community_Contributor__c + ' </td>';
+              }
+              if (result[iCnt].Community_Member__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Community_Member__c + ' </td>';
+              }
+              if (result[iCnt].Board_Contributor__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Board_Contributor__c + ' </td>';
+              }
+              if (result[iCnt].Board_Member__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Board_Member__c + ' </td>';
+              }
+              if (result[iCnt].SLP_BulkReg_Id__c != undefined) {
+              tabla += '<td> ' + result[iCnt].SLP_BulkReg_Id__c + ' </td>';
+              }
+              if (result[iCnt].Status__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Status__c + ' </td>';
+              }
+              if (result[iCnt].FormatValid__c != undefined) {
+              tabla += '<td> ' + result[iCnt].FormatValid__c + ' </td>';
+              }
+              if (result[iCnt].Failure_Log__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Failure_Log__c + ' </td>';
+              }
+              if (result[iCnt].Success_Log__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Success_Log__c + ' </td>';
+              }
+              if (result[iCnt].New_User__c != undefined) {
+              tabla += '<td> ' + result[iCnt].New_User__c + ' </td>';
+              }
+              tabla += '</tr>';
+          }
+                    tabla += '</table></body></html>';
+
+          var dateT = new Date();
+          //CommName = CommName + '_' + dateT.format("d-M-Y");
+
+          var filename = CommName + '.xls';   //'Community Name.xls';
+
+          var link = document.createElement('a');
+          var mimeType = 'application/xls';
+
+          var blob = new Blob([tabla], { type: mimeType });
+          var url = URL.createObjectURL(blob);
+          link.href = url;
+
+          link.setAttribute('download', filename);
+          link.click();
+         }
+            
+        </script>
+    </body>
+
+    </html>
+</apex:page>

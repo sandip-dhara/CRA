@@ -1,0 +1,56 @@
+<apex:page controller="NewLinkDocument" sidebar="False" >
+    <apex:sectionHeader title="Learning Board Append" subtitle="Upload Link/Document for Learning Board "/>
+    <apex:form >
+        <apex:pageBlock title="Enter Detials and Upload Link/Document">
+
+            <apex:pageBlockButtons >
+              <apex:commandButton action="{!upload}" value="Save"/>
+              <apex:commandButton action="{!Cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection showHeader="false" columns="1" id="block1">
+
+                <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Title"/>
+                  <apex:inputText value="{!Title}"/>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Description"/>
+                  <apex:inputTextarea value="{!Descrip}"/>
+                </apex:pageBlockSectionItem> 
+            </apex:pageBlockSection> 
+
+            <apex:pageBlockSection showHeader="false" columns="2">
+
+                <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Learning Image"/>
+                <apex:inputFile value="{!Attachment.body}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:iframe height="160" width="160" src="{!DocumentImage}" />   
+            <apex:pageBlockSection showHeader="false" columns="1">
+
+                <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="URL"/>
+                  <apex:inputText value="{!URL}" id="urlTest"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                  Default Learning Image &nbsp;<apex:selectList multiselect="false" size="1" value="{!filename}" >
+                  <apex:selectOptions value="{!filename}" ></apex:selectOptions>
+                                            </apex:selectList>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                <apex:OutputLabel value="Want To test It?"/> 
+                <input type="button" value="Test" onclick="if(document.getElementById('j_id0:j_id2:j_id3:j_id22:j_id23:urlTest').value!=''){window.open(document.getElementById('j_id0:j_id2:j_id3:j_id22:j_id23:urlTest').value)}else{alert('Enter Url')}" />
+                <!--<apex:commandlink action="{!Test}" target="_Blank">   
+                <apex:commandButton value="test" action="{!Test}"/>
+                </apex:commandLink>-->
+
+                </apex:pageBlockSectionItem>
+                <apex:inputCheckbox label="Add to Current Learning Board" selected="false" value="{!IsChecked}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>  
+    </apex:form>
+</apex:page>

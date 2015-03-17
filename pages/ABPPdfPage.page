@@ -1,0 +1,318 @@
+<apex:page standardController="Account_Plan__c" extensions="ABPPdfController" showHeader="false"  renderAs="pdf">
+<head>
+
+<style>
+
+@page {
+
+size:landscape;
+
+@bottom-right {
+    content: "Page " counter(page) " of " counter(pages);
+    }
+}
+
+
+</style> 
+
+</head> 
+
+<apex:image url="{!$Resource.Hp_logo}" width="75" height="75" style="padding-bottom: 40px"/>
+<apex:form style="font-family: Arial;">
+<apex:pageBlock >
+
+ <div style="padding:3px; font-size: 17px; font-weight: bold; background-color:#B0E0E6; border:1px solid black;"> Account Plan Details:  </div>
+<table border="1" width="100%">
+<tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+  <div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">Owner:</div></td>
+  <td nowrap="nowrap" width="37%" valign="top" style="font-family: Comic Sans MS;" align="justify"><apex:outputText value="{!Account_Plan__c.Owner.Name}"  /> </td>
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+  <div style="color:  #000000; float: left; padding-right: 5px;  font-size: 15px; font-weight: bold;"> Executive Sponsor:  </div></td>
+  <td nowrap="nowrap" width="37%" valign="top" align="justify">
+  <apex:outputText value="{!Account_Plan__c.Executive_Sponsor__c}" />
+   </td>
+   </tr>
+   
+   
+    <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;"> Account:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.Primary_AccountAccount__r.Name}" /> 
+  </td>
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA"> 
+ <div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px;font-weight: bold;"> Last Modified By:</div> </td>
+ <td nowrap="nowrap" width="37%" valign="top" align="justify"> <apex:outputText value="{!Account_Plan__c.LastModifiedBy.Name}" />
+  </td>
+  </tr>
+  
+  
+   <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+ <div style="color:  #000000; float: left; padding-right: 5px;  font-size: 15px; font-weight: bold;"> Account Plan Name:  </div></td>
+ <td nowrap="nowrap" width="37%" valign="top" align="justify">
+ <apex:outputText value="{!Account_Plan__c.Name}" />
+  </td>
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;"> Plan Status:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.Plan_Status__c}" /> 
+  </td>
+  </tr>
+  
+     <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;"> Legal Name:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.Legal_Name__c}" />
+  </td>   
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">HP Go-To-Market Segmentation:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.HP_Go_To_Market_Segmentation__c}" /> 
+  </td>
+  
+  
+  </tr>
+  
+  
+   <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">HQ Region:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.HQ_Region__c}" />
+  </td>
+   <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">Governance:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.Governance__c}" /> 
+</td>
+  </tr>
+  
+   <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">HQ Sub Region:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.HQ_Sub_Region__c}" />
+  </td>
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;"> Industry Segment:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.Industry_Segment__c}" /> 
+  </td>
+  
+ </tr>
+
+    
+  <tr height="35">
+  
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;"> HQ Country:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.Country__c}" /> 
+  </td>
+  
+  </tr>
+   </table>
+
+
+</apex:pageBlock>
+
+<BR/>
+
+<apex:pageBlock >
+<div style="padding:3px; font-size: 17px; font-weight: bold; background-color:#B0E0E6; border:1px solid black;"> Company Overview: </div>
+<table border="1" width="100%">
+<tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+  <div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">Customer Industry:</div></td>
+  <td nowrap="nowrap" width="37%" valign="top" style="font-family: Comic Sans MS;" align="justify"><apex:outputText value="{!Account_Plan__c.Customer_Industry__c}"  /> </td>
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+  <div style="color:  #000000; float: left; padding-right: 5px;  font-size: 15px; font-weight: bold;"> Fiscal Year End:  </div></td>
+  <td nowrap="nowrap" width="37%" valign="top" align="justify">
+  <apex:outputText value="{!Account_Plan__c.Fiscal_Year_End__c}" />
+   </td>
+   </tr>
+  
+   
+    <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;"> Number of Employees:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.Number_of_Employees__c}" /> 
+  </td>
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA"> 
+ <div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px;font-weight: bold;"> Annual Revenue:</div> </td>
+ <td nowrap="nowrap" width="37%" valign="top" align="justify"> <apex:outputField value="{!Account_Plan__c.Annual_Revenue__c}" />
+  </td>
+  </tr>
+  </table>
+   </apex:pageBlock>
+   <br/>
+
+ 
+  <apex:pageBlock >
+
+<div style="padding:3px; font-size: 17px; font-weight: bold; background-color:#B0E0E6; border:1px solid black;"> Account Summary:  </div>
+<table border="1" width="100%">
+     
+  <tr height="35" >
+     <td nowrap="nowrap" width="20%" valign="top" bgcolor="#E6E6FA">
+   <div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;" > Customer Strategic Overview:</div></td> 
+   <td  width="80%" valign="top" nowrap="nowrap" align="justify"><apex:outputField value="{!Account_Plan__c.Customer_Strategy_Priorities__c}" /> 
+   </td>
+  </tr>
+  <tr height="35" >
+   <td nowrap="nowrap" width="20%" valign="top" bgcolor="#E6E6FA">
+  <div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold; "> Current State of Business:  </div></td>
+  <td nowrap="nowrap" width="80%" valign="top" align="justify"><apex:outputField value="{!Account_Plan__c.Current_State_of_Business__c}" />
+  </td>
+  </tr>
+  <tr height="35" style="page-break-after:auto;">
+  <td nowrap="nowrap" width="20%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;"> HP Strategy &amp; Opportunities:</div></td>
+<td nowrap="nowrap" width="80%" valign="top" align="justify"><apex:outputField value="{!Account_Plan__c.HP_Strategy_and_Opportunities__c}" />
+  </td>
+  </tr>
+  <tr height="35">
+  <td nowrap="nowrap" width="20%" valign="top" bgcolor="#E6E6FA"> 
+ <div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">Key challenges: </div></td>
+ <td nowrap="nowrap" width="80%" valign="top" align="justify"><apex:outputField value="{!Account_Plan__c.Key_Challenges__c}" />
+  </td>
+  </tr>
+  
+  <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;"> Executive Asks:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputField value="{!Account_Plan__c.Executive_Asks__c}"/> 
+  </td>
+   </tr>
+  
+   <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">TCE Priorities:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputField value="{!Account_Plan__c.TCE_Priorities__c}" /> 
+  </td>
+   </tr>
+ <tr height="35">
+  <td nowrap="nowrap" width="13%" valign="top" bgcolor="#E6E6FA">
+<div style="color:  #000000; float: left; padding-right: 5px; font-size: 15px; font-weight: bold;">Innovation Agenda Brief Description:</div></td>
+<td nowrap="nowrap" width="37%" valign="top" align="justify"><apex:outputText value="{!Account_Plan__c.Innovation_Agenda_Brief_Description__c}" /> 
+  </td>
+   </tr>
+    </table>
+   
+</apex:pageBlock>
+<br/>
+
+
+
+ <apex:pageBlock >
+
+<div style="padding:3px; font-size: 17px; font-weight: bold; background-color:#B0E0E6; border:1px solid black;"> Customer Business Priorities:  </div>
+
+
+        <apex:pageBlockTable border="1" value="{!pdfData.customPriority}" var="item" style="background-color: #E6E6FA; color: #000000" width="100%" >
+
+  <apex:column value="{!item.Name}"  style="background-color: #FFFFFF; color: #000000"/> 
+
+<apex:column value="{!item.Short_Description__c}" style="background-color: #FFFFFF; color: #000000"/> 
+
+<apex:column value="{!item.Priority__c}" style="background-color: #FFFFFF; color: #000000" />
+<apex:column value="{!item.LastModifiedDate}" style="background-color: #FFFFFF; color: #000000"/>  
+<apex:column value="{!item.Timing__c}"  style="background-color: #FFFFFF; color: #000000"/>
+
+        </apex:pageBlockTable> 
+
+
+    </apex:pageBlock>
+    
+<br/>
+   
+   <apex:pageBlock >
+
+<div style="padding:3px; font-size: 17px; font-weight: bold; background-color: #B0E0E6; border:1px solid black;" > HP Strategic Initiatives:  </div>
+
+ <apex:pageBlockTable border="1" value="{!pdfData.stategic}" var="item" style="background-color: #E6E6FA; color: #000000" width="100%" columns="5">
+ 
+ <apex:column value="{!item.Name}"  style="background-color: #FFFFFF; color: #000000"/> 
+<apex:column value="{!item.Description_of_the_Initiative__c}" style="background-color: #FFFFFF; color: #000000"/>  
+<apex:column value="{!item.HP_Solutions__c}"  style="background-color: #FFFFFF; color: #000000"/> 
+ <apex:column value="{!item.Execution_Timeframe__c}" style="background-color: #FFFFFF; color: #000000"/>  
+
+
+
+        </apex:pageBlockTable> 
+
+
+    </apex:pageBlock>
+    <br/>
+
+
+<apex:pageBlock >
+
+<div style="padding:3px; font-size: 17px; font-weight: bold; background-color:#B0E0E6; border:1px solid black;"> Business Unit Plans:  </div>
+
+
+ <apex:pageBlockTable border="1" value="{!pdfData.optyst}" var="item" style="background-color: #E6E6FA; color: #000000">
+<apex:column value="{!item.Name}"  style="background-color: #FFFFFF; color: #000000"/> 
+  <apex:column value="{!item.BU_Name__c}"  style="background-color: #FFFFFF; color: #000000"/> 
+
+<apex:column value="{!item.Current_TAM__c}" style="background-color: #FFFFFF; color: #000000"/> 
+
+<apex:column value="{!item.Current_SOW__c}" style="background-color: #FFFFFF; color: #000000" /> 
+<apex:column value="{!item.FY11_Revenue_actuals__c}"  style="background-color: #FFFFFF; color: #000000"/>
+<apex:column value="{!item.FY12_Revenue_YTD__c}" style="background-color: #FFFFFF; color: #000000"/>
+<apex:column value="{!item.FY13_Projected_Revenue__c}" style="background-color: #FFFFFF; color: #000000"/>
+<apex:column value="{!item.FY14_Projected_Revenue__c}" style="background-color: #FFFFFF; color: #000000"/>
+<apex:column value="{!item.FY15_Projected_Revenue__c}" style="background-color: #FFFFFF; color: #000000"/>
+
+        </apex:pageBlockTable> 
+
+
+    </apex:pageBlock>
+    
+<br/>
+
+
+    
+     <apex:pageBlock >
+
+<div style="padding:3px; font-size: 17px; font-weight: bold; background-color:#B0E0E6; border:1px solid black;"> Competitive Landscape:  </div>
+
+
+        <apex:pageBlockTable border="1" value="{!pdfData.competitive}" var="item" style="background-color: #E6E6FA; color: #000000" width="100%" >
+
+<apex:column value="{!item.Business_Group__c}" style="background-color: #FFFFFF; color: #000000"/> 
+<apex:column value="{!item.Business_Area__c}"  style="background-color: #FFFFFF; color: #000000"/>
+<apex:column value="{!item.Summary_of_Competitive_Landscape__c}"  style="background-color: #FFFFFF; color: #000000"/>
+<apex:column value="{!item.Current_HP_Share_of_Wallet__c}" style="background-color: #FFFFFF; color: #000000"/> 
+<apex:column value="{!item.Competitor_1__c}" style="background-color: #FFFFFF; color: #000000"/> 
+<apex:column value="{!item.Competitor_2__c}" style="background-color: #FFFFFF; color: #000000"/> 
+<apex:column value="{!item.Competitor_3__c}" style="background-color: #FFFFFF; color: #000000" /> 
+
+
+        </apex:pageBlockTable> 
+
+
+    </apex:pageBlock>
+    
+<br/>
+
+  <apex:pageBlock >
+
+<div style="padding:3px; font-size: 17px; font-weight: bold; background-color:#B0E0E6; border:1px solid black;"> Customer Relationship Maps:  </div>
+
+
+        <apex:pageBlockTable border="1" value="{!pdfData.influencer}" var="item" style="background-color: #E6E6FA; color: #000000" width="100%" >
+
+  <apex:column value="{!item.Contact__c}" style="background-color: #FFFFFF; color: #000000"/> 
+
+<apex:column value="{!item.Title__c}" style="background-color: #FFFFFF; color: #000000" /> 
+<apex:column value="{!item.Role__c}"  style="background-color: #FFFFFF; color: #000000"/>
+<apex:column value="{!item.Scope_of_the_contact__c}" style="background-color: #FFFFFF; color: #000000" /> 
+<apex:column value="{!item.EG_ESSN__c}"  style="background-color: #FFFFFF; color: #000000"/>
+
+
+
+        </apex:pageBlockTable> 
+
+
+    </apex:pageBlock>
+    
+<br/>   
+
+    
+    </apex:form>
+</apex:page>

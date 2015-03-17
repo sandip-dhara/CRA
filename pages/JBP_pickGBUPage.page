@@ -1,0 +1,36 @@
+<!-- 
+/**********************************************************
+* Page Name: JBP_pickGBUPage
+* Author:  HP
+* Date: 10-APRIL-2013
+* Requirement # Request Id: 
+* Description: This page is displays a list of Sub Plans based on the JBP when clicked on the 
+               'Pick Sub-Plan' Button on the Sub PLan related list on the Strategic Initiative Detail page
+**********************************************************/
+-->
+<apex:page controller="JBP_pickGBUController">
+    <apex:form >
+        <apex:sectionHeader title="{!$Label.Select_Sub_Plans}"/>
+        <apex:pageBlock >
+        <apex:pageMessages />
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!Add}" disabled="{!IF((AssociatedGBU.size==0),true,false)}" value="{!$Label.Add_JBP}"/>
+            <apex:commandButton action="{!cancel}" value="{!$Label.Cancel_JBP}"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockTable rendered="{!IF((AssociatedGBU.size!=0),true,false)}" value="{!AssociatedGBU}" var="gb">
+            <apex:column headerValue="{!$Label.Select_JBP}">
+                <apex:inputCheckbox value="{!gb.selected}"/>
+            </apex:column>
+            <apex:column headerValue="{!$Label.sub_plan}"><apex:outputLink value="/{!gb.gbu.id}">{!gb.gbu.Name}</apex:outputLink></apex:column>
+            <apex:column value="{!gb.gbu.GBU_Specialization__c }"/>
+            <apex:column value="{!gb.gbu.Total_FY_Planned_Sales__c}"/>
+            <apex:column value="{!gb.gbu.Total_Actual_FY_Sales__c}"/>
+            <apex:column value="{!gb.gbu.Total_FY_Planned_SGA__c }"/>
+            <apex:column value="{!gb.gbu.Total_FY_Actual_SGA__c }"/>
+            <apex:column value="{!gb.gbu.Total_FY_Allocated_MDF__c }"/>
+            <apex:column value="{!gb.gbu.Total_FY_Spent_MDF__c}"/>            
+        </apex:pageBlockTable>
+        <apex:outputText rendered="{!IF((AssociatedGBU.size==0),true,false)}"><b>{!$Label.No_records_found_jbp}</b></apex:outputText>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

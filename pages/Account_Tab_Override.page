@@ -1,0 +1,33 @@
+<!-- 
+/**********************************************************
+* Page Name: Account tab Override
+* Author: Accenture
+* Date: 26-APR-2012 
+* Requirement # Request Id :
+* Description: To Update the Account landing page to remove Sales Methodologies and all other links
+***********************************************************/
+-->
+<apex:page standardController="Account" recordSetvar="accounts">
+    <apex:sectionHeader title="{!$ObjectType.Account.LabelPlural}" subtitle="Home" />
+    <apex:pageblock >
+    
+    <apex:pageBlockSection title="Territory Assignment">
+    <apex:pageBlockSectionItem >
+    <apex:outputLink value="{!$Page.AccountTerrList}" >Accounts in My Territories</apex:outputLink>
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+    
+    </apex:pageblock>
+    <apex:enhancedList type="Account" height="500" rowsPerPage="200"></apex:enhancedList>
+     <apex:pageblock >   
+    
+    <apex:pageBlockSection title="Admin Tools" rendered="{!IF(CONTAINS($Profile.Name, 'IT Administrator'), True,IF(CONTAINS($Profile.Name, 'Master Data Account Admin'), True,IF(CONTAINS($Profile.Name, 'Master Data'), True,False)))}"  >
+    <apex:pageBlockSectionItem >
+    <apex:outputLink value="/merge/accmergewizard.jsp?retURL=%2F001%2Fo" id="theLink">Account Merge</apex:outputLink>
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+    
+    </apex:pageblock>
+    
+    
+</apex:page>

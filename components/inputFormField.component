@@ -1,0 +1,63 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<apex:component controller="FormFieldController">
+
+	<apex:attribute name="field" description="This is the field that this component wil render" type="Form_Field__c" required="true" assignTo="{!field}"/>
+
+	
+	<!-- Input fields for the different possible field types, non-hidden -->
+	<apex:inputField value="{!field.Text_Value__c}" rendered="{!field.Type__c == 'STRING' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Date_Value__c}" rendered="{!field.Type__c == 'DATE' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.DateTime_Value__c}" rendered="{!field.Type__c == 'DATETIME' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Email_Value__c}" rendered="{!field.Type__c == 'EMAIL' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Boolean_Value__c}" rendered="{!field.Type__c == 'BOOLEAN' && field.Hidden__c == false}"/>
+	<apex:inputField value="{!field.URL_Value__c}" rendered="{!field.Type__c == 'URL' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Currency_Value__c}" rendered="{!field.Type__c == 'CURRENCY' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Number_Value__c}" rendered="{!field.Type__c == 'DOUBLE' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Percent_Value__c}" rendered="{!field.Type__c == 'PERCENT' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Text_Area_Value__c}" rendered="{!field.Type__c == 'TEXTAREA' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Phone_Value__c}" rendered="{!field.Type__c == 'PHONE' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+	<apex:inputField value="{!field.Text_Value__c}" rendered="{!field.Type__c == 'REFERENCE' && field.Hidden__c == false}" style="width: {!field.Width__c}px;"/>
+
+	<apex:selectList value="{!field.Picklist_Value__c}" size="1"  rendered="{!field.Type__c == 'PICKLIST' && field.Hidden__c == false}" style="width: {!field.Width__c}px;">
+			<apex:selectOptions value="{!picklistSelectOptions}"/>			
+	</apex:selectList>
+
+	<!-- Not Yet Supported -->	
+	<apex:outputText value="Multipicklist fields not yet supported" rendered="{!field.Type__c == 'MULTIPICKLIST'}"/>
+	
+	
+	<!-- The rendering of the hidden inputs and their values-->
+	<apex:inputHidden value="{!field.Text_Value__c}" rendered="{!field.Type__c == 'STRING' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Email_Value__c}" rendered="{!field.Type__c == 'EMAIL' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Boolean_Value__c}" rendered="{!field.Type__c == 'BOOLEAN' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.URL_Value__c}" rendered="{!field.Type__c == 'URL' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Currency_Value__c}" rendered="{!field.Type__c == 'CURRENCY' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Number_Value__c}" rendered="{!field.Type__c == 'DOUBLE' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Percent_Value__c}" rendered="{!field.Type__c == 'PERCENT' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Text_Area_Value__c}" rendered="{!field.Type__c == 'TEXTAREA' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Phone_Value__c}" rendered="{!field.Type__c == 'PHONE' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Text_Value__c}" rendered="{!field.Type__c == 'REFERENCE' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.Picklist_Value__c}" rendered="{!field.Type__c == 'PICKLIST' && field.Hidden__c == true}}"/>
+	
+	<!-- PROBLEMS -->
+	<apex:inputHidden value="{!field.Date_Value__c}" rendered="{!field.Type__c == 'DATE' && field.Hidden__c == true}"/>
+	<apex:inputHidden value="{!field.DateTime_Value__c}" rendered="{!field.Type__c == 'DATETIME' && field.Hidden__c == true}"/>
+	
+</apex:component>

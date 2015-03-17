@@ -1,0 +1,48 @@
+<apex:page showHeader="true" standardController="Support_Request__c" extensions="SRTDataFromSFDCController" contenttype="text/xml#SRT_Data_From_SFDC.xml">
+    <name>
+        <OpportunityId>{!Support_Request__c.Opportunity__c}</OpportunityId>
+        <HPOpportunityId>{!Support_Request__c.Opportunity__r.Opportunity_ID__c}</HPOpportunityId>
+        <Name>{!oppty.Name}</Name>
+        <AccountName>{!account.Name}</AccountName>
+        <SupportRequestId>{!id}</SupportRequestId>
+        <SupportRequestName>{!Support_Request__c.Name}</SupportRequestName>
+        <OpportunityProducts>
+        <apex:repeat value="{!opportunityLineItem}" var="opl">
+        <OpportunityProduct>
+        <ID>{!opl.id}</ID>
+        <Sales_Doc_Nbr__c>{!opl.Sales_Doc_Nbr__c}</Sales_Doc_Nbr__c>
+        <Description>{!opl.Sales_Doc_Nbr__c}</Description>
+        <UnitPrice>{!opl.UnitPrice}</UnitPrice>
+        <ListPrice>{!opl.ListPrice}</ListPrice>    
+        <ProductId__c>{!opl.ProductId__c}</ProductId__c>
+        <Product__c>{!opl.Product__c}</Product__c>
+        <ProductName__c>{!opl.ProductName__c}</ProductName__c>    
+        </OpportunityProduct>
+        </apex:repeat>
+        </OpportunityProducts>
+        <Contracts>
+        <apex:repeat value="{!conts}" var="o">
+        <Contract>
+        <ID>{!o.id}</ID>
+        <Name>{!o.Name}</Name>
+        <AMPID>{!o.AMP_ID__c}</AMPID>
+        <SAID>{!o.SAID__c}</SAID>
+        <SalesDocNr>{!o.Sales_Doc_Nbr__c}</SalesDocNr>
+        <Document_Type__c>{!o.Document_Type__c}</Document_Type__c>
+        <Contract_Start_Date__c>{!o.Contract_Start_Date__c}</Contract_Start_Date__c>
+        <Contract_End_date__c>{!o.Contract_End_date__c}</Contract_End_date__c>
+        <Total_Contract_Value__c>{!o.Total_Contract_Value__c}</Total_Contract_Value__c>
+        <Group_Contract_Nbr__c>{!o.Group_Contract_Nbr__c}</Group_Contract_Nbr__c>
+        <Functional_Location__c>{!o.Functional_Location__c}</Functional_Location__c>
+        </Contract>
+        </apex:repeat>
+        
+        <apex:repeat value="{!quotesList}" var="q">
+        <Quote>
+        <Originating_System_Quote_ID__c>{!q.Originating_System_Quote_ID__c}</Originating_System_Quote_ID__c>
+        </Quote>
+        </apex:repeat>
+        
+        </Contracts>
+    </name>
+</apex:page>

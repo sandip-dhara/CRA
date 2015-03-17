@@ -1,0 +1,606 @@
+<apex:page standardController="Risks__c" extensions="ODP_Extension_MitigationPlan">
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Style,'ODP_SR_Style/ODP.Style.Common.css')}"/>
+
+<!-- <apex:stylesheet value="{!URLFOR($Resource.ODP_HP_CommonStyle,'ODP_HP_commonCss-1.0/css/icomoon.css')}"/> -->
+<!-- <apex:stylesheet value="{!URLFOR($Resource.ODP_HP_CommonStyle,'ODP_HP_commonCss-1.0/css/icomoonadvanced.css')}"/> -->
+<!-- <apex:stylesheet value="{!URLFOR($Resource.ODP_HP_CommonStyle,'ODP_HP_commonCss-1.0/css/icomoonadvanced-ie7.css')}"/> -->
+
+
+<style>
+/* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:HPSimplified, Helvetica, Arial, sans-serif; !important;
+            border-top:0px;
+        }
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: 'Voces', sans-serif; !important;
+        color: #fff;
+        font-size:14px !important; /* this controls the blue bar font-sizes */
+    }
+    
+    
+   #chatterDisplay{
+        position:absolute;
+        top:120px;
+        left:59%;
+        width: 38%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 14px;
+   }
+   #chatterWrapper{
+       height:290px;
+       overflow-y: auto;
+       border: 1px solid #ccc;
+       padding:10px !important;
+   }
+   
+   
+    /*add by sofi*/
+    .modal.fade.in {
+    top: -5%;
+    }
+    /*add by june*/
+    #DivAddMitigation, #DivManageRisk, #DivApprovalRisk, #DivRejectRisk, #DivSubmitApprovalRisk, #DivMyMessage,
+    #DivMyAlter, #DivMyConfirm, #DivEditMitigation, #DivChangeMitActOwner, #DivAdjustRPN{
+    z-index:99998;
+    }
+    
+    .modal-backdrop.fade.in{
+        z-index:99997;
+    }
+
+    /*add by june for actions section*/
+    #riskPanel{
+        width:54%;
+        float:left;
+    }
+    #actionPanel{
+        width:37%;
+        float:right;
+        
+        right:2%;
+        position:absolute;
+        overflow-y:auto; 
+        margin-left:10px;
+        margin-top:-0.8em;
+    }
+    #input_ManageBtn{
+        margin:5px 0 0 2px;
+        width:180px;
+    }
+    #input_ApprovalBtn{
+        margin:5px 0 0 90px;
+        width:80px;
+    }
+    #input_RejectBtn{
+        margin:5px 0 0 18px;
+        width:80px;
+    }    
+    #input_AmaBtn{
+         margin:5px 0 0 90px;
+         width:180px;
+    }
+    #input_SubmitApprovalBtn{
+        margin:5px 0 0 2px;
+        width:180px;
+    }
+    input, textarea, .uneditable-input {
+        width: 90%;
+    }
+    #DivAddMitigationErrorMessage{
+        color:red;
+    }
+    .DivMitigationErrorMessage{
+        color:red;
+    }
+</style>
+<script>
+    $j = jQuery.noConflict();
+    $j(document).ready(function() {
+         //Add by june, date pick can't work in pop div
+         $("div[class$=datePicker]").css("z-index","99999");
+
+         $("#input_AmaBtn").click(function(){
+             if({!RiskIsActive}){
+                $('#DivAddMitigation').modal('show');
+             }
+             else{
+                $('#myAlterMessage').html("Mitigation Plan can be created only when the current risk is Active.");
+                $('#DivMyAlter').modal('show');
+             }
+         });
+        
+        $j("#addMABtn").live("click", function(event){
+            var objRegExp =  /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+            if($("input[id$=macName]").val()=='' || $("input[id$=macDueDate]").val()==''){
+               $("#DivAddMitigationErrorMessage").text("Note :Please ensure mitigation name and due date have been filled.");  
+               event.preventDefault();
+            }else if(!objRegExp.test($("input[id$=macDueDate]").val())){
+                $("#DivAddMitigationErrorMessage").text("Note :Please enter the right date format as '01/01/2000'.");  
+                event.preventDefault();
+            }else{
+                $('#DivAddMitigation').modal('hide');
+                $('#DivMyMessage').modal('show');
+                saveMA($("input[id$=macName]").val(),$("textArea[id$=macNote]").val(),$("input[id$=macDueDate]").val());
+                $('#DivMyMessageBtn').attr("disabled","disabled");
+                $('#DivMyMessageBtn').removeClass('myButtons');
+                $('#DivMyMessageBtn').addClass('myDisabledButtons');
+                $('#DivMyMessageBackBtn').hide();
+            }
+        });
+        
+        $("#input_ManageBtn").click(function(){
+             $('#DivManageRisk').modal('show');
+         });
+        
+        $("#input_RPNEditBtn").click(function(){
+             $('#DivManageRisk').modal('hide');
+             $('#DivAdjustRPN').modal('show');
+         });
+        $("#input_HideRPNEditBtn").click(function(){
+            $('#DivAdjustRPN').modal('hide');
+            $('#DivManageRisk').modal('show');
+        });
+        $("#input_ApprovalBtn").click(function(){
+            if({!IsPending}){
+                $('#DivApprovalRisk').modal('show');
+            }
+            else{
+                $('#myAlterMessage').html("This risk has not yet been submitted for approval or already approved.");
+                $('#DivMyAlter').modal('show');
+            }
+         });
+        
+        $("#input_RejectBtn").click(function(){
+            if({!IsPending}){
+                $('#DivRejectRisk').modal('show');
+            }
+            else{
+                $('#myAlterMessage').html("This risk has not yet been submitted for approval or already approved.");
+                $('#DivMyAlter').modal('show');
+            }
+         });
+        
+        $("#input_SubmitApprovalBtn").click(function(){
+            if({!CanSubmitApproval}){
+                $('#DivSubmitApprovalRisk').modal('show');
+            }
+            else{
+                $('#myAlterMessage').html("{!CanNotSubmitApprovalReason}");
+                $('#DivMyAlter').modal('show');
+            }
+         });
+
+
+        //Sofi - Ning Added
+        $j("#editMitigationSave").live("click", function(event){
+            var objRegExp =  /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+            if($("input[id$=editMacName]").val()=='' || $("input[id$=editMacDueDate]").val()==''){
+               $("#DivEditMitigationErrorMessage").text("Note :Please ensure mitigation name and due date have been filled.");  
+               event.preventDefault();
+            }else if(!objRegExp.test($("input[id$=editMacDueDate]").val())){
+                $("#DivEditMitigationErrorMessage").text("Note :Please enter the right date format as '01/01/2000'.");  
+                event.preventDefault();
+            }else{
+                $('#DivEditMitigation').modal('hide');
+                $('#DivMyMessage').modal('show');
+                editSaveMA($("input[id$=editMacName]").val(),$("textArea[id$=editMacNote]").val(),$("input[id$=editMacDueDate]").val(),$("select[id$=editMacStatus]").val());
+                $('#DivMyMessageBtn').attr("disabled","disabled");
+                $('#DivMyMessageBtn').removeClass('myButtons');
+                $('#DivMyMessageBtn').addClass('myDisabledButtons');
+                $('#DivMyMessageBackBtn').hide();
+                flag='edit';
+            }
+        });
+
+        $j("#changeOwnerSave").live("click", function(event){
+            $('#DivChangeMitActOwner').modal('hide');
+            $('#DivMyMessage').modal('show');
+            changeOwnerSaveMA();
+            $('#DivMyMessageBtn').attr("disabled","disabled");
+            $('#DivMyMessageBtn').removeClass('myButtons');
+            $('#DivMyMessageBtn').addClass('myDisabledButtons');
+            $('#DivMyMessageBackBtn').hide();
+        });
+    });
+    
+    function myConfirmWithParm(msg,actionId,parm){
+        $('#myConfirmMessage').html(msg);
+        $('#DivMyConfirm').modal('show');
+        $('#myConfirmSubmit').unbind();
+        $('#myConfirmSubmit').click(function(){
+            $('#DivMyConfirm').hide();
+            $('[id$='+actionId+']').each(function(k){
+                if($(this).text() == parm){
+                    $(this).click();
+                    return;
+                }
+            });
+        });
+    }
+    
+    function OpenEditActionWin(actId){
+        $('#myAlterMessage').html("Data Loading...");
+        $('#DivMyAlterHeader').text("Message");
+        $('#DivMyAlterBtn').hide();
+        
+        $('#DivMyAlter').modal('show');
+        LoadEditAction(actId);
+    }
+    
+    function LoadEditActionHandle(){
+        $('#DivMyAlterBtn').show();
+        $('#DivMyAlterHeader').text("Validation Error");
+        $('#DivMyAlter').modal('hide');
+        $('#DivEditMitigation').modal('show');
+    }
+    
+    function OpenChagneActionOwnerWin(actId){
+        $('#myAlterMessage').html("Data Loading...");
+        $('#DivMyAlterHeader').text("Message");
+        $('#DivMyAlterBtn').hide();
+        
+        $('#DivMyAlter').modal('show');
+        LoadActionOwner(actId);
+    }
+    
+    function LoadActionOwnerHandle(){
+        $('#DivMyAlterBtn').show();
+        $('#DivMyAlterHeader').text("Validation Error");
+        $('#DivMyAlter').modal('hide');
+        $('#DivChangeMitActOwner').modal('show');
+    }
+    
+    function saveMAHandle(){
+        $('#DivMyMessageBtn').attr("disabled",false);
+        $('#DivMyMessageBtn').addClass('myButtons');
+        $('#DivMyMessageBtn').removeClass('myDisabledButtons');
+        
+        $('#DivMyMessageBtn').unbind();
+        $('#DivMyMessageBtn').click(function(){
+            $('#DivMyMessage').modal('hide');
+            
+            refreshMitigationPlan();
+        });
+        
+        if(flag == 'save'){
+          $('#DivMyMessageBackBtn').show();
+        }
+        
+        $j('#DivMyMessageBackBtn').live('click',function(){
+            $('#DivMyMessage').modal('hide');
+            $("#DivAddMitigationErrorMessage").text("");  
+             $('#DivAddMitigation').modal('show');
+                        
+        });
+    }
+
+</script>
+    <apex:pageBlock >
+        <apex:messages />
+        <apex:form >
+            <div id="riskPanel">
+                <apex:pageBlockSection title="Risk" collapsible="false" columns="2">
+                    <apex:outputField value="{!risk.Business_Impact_ID__r.Potential_Risk_ID__r.Project_ID__c}" label="Opportunity"/>
+                    <apex:outputField value="{!risk.Business_Impact_ID__r.Potential_Risk_ID__c}" label="Potential Risk"/>
+                    <apex:outputField value="{!risk.Name__c}" label="Risk Name"/>
+                    <apex:outputField value="{!risk.Risk_Owner__c}" label="Risk Owner" />                
+                    <apex:outputField value="{!risk.Business_Impact_ID__r.Business_Impact_Name__c}" label="Business Impact"/>
+                    <apex:outputField value="{!risk.Business_Impact_ID__r.Severity__c}" label="Severity"/>
+                    <apex:outputField value="{!risk.Root_Cause_ID__r.Root_Cause_Name__c}" label="Root Cause"/>
+                    <apex:outputField value="{!risk.Root_Cause_ID__r.Occurance__c}" label="Occurance"/> 
+                    <apex:outputField value="{!risk.Process_Control_ID__r.Process_Control_Name__c}" label="Process Control"/>
+                    <apex:outputField value="{!risk.Process_Control_ID__r.Detection__c}" label="Detection"/>                                                                                              
+                    <apex:outputField value="{!risk.Planned_Resolution_Date__c}"/>
+                    <apex:outputField value="{!risk.Risk_Priority_Number__c}"/>                
+                    <apex:outputField value="{!risk.Status__c}"/>
+                    
+                    
+                    <apex:outputlabel value=""/>
+                </apex:pageBlockSection>
+                <apex:pageblockSection columns="1" collapsible="false">
+                    <!--<apex:outputText value="{!StgMaxRPN}"  Label="Current Max Allowable RPN"  /> -->
+                    <apex:inputTextarea value="{!risk.Description__c}" title="Risk Description" readonly="true" style="width:80%;height:200px;"/>
+                </apex:pageblockSection>
+            </div>
+            <div id="actionPanel">
+                <div class="pbSubheader" style="margin-top:10px;background-color: #D7410B !important;">
+                    <h3>Actions </h3>
+                </div>
+                <input id="input_ManageBtn" type="button" value="Manage Opportunity Risk" class="myButtons" style="{!IF(IsPM||IsOwner,'','display:none;')}" />
+                <input id="input_AmaBtn" type="button" value="Add Mitigation Action" class="{!IF(RiskIsActive,'myButtons','myDisabledButtons')}" style="{!IF(IsPM||IsOwner,'','display:none;')}"  /> <br />
+                <!--<a id="input_AmaBtn" title="Add Mitigation Action" class="{!IF(RiskIsActive,'myButtons','myDisabledButtons')}" style="{!IF(IsPM||IsOwner,'','display:none;')}"  ><li class="icon-file"></li> Add Mitigation Action</a><br />-->
+                <input id="input_SubmitApprovalBtn" type="button" value="Submit Risk For Approval" class="{!IF(CanSubmitApproval,'myButtons','myDisabledButtons')}" style="{!IF(IsPM||IsOwner,'','display:none;')}"  />
+                <input id="input_ApprovalBtn" type="button" value="Approval" class="{!IF(IsPending,'myButtons','myDisabledButtons')}" style="{!IF(IsPM,'','display:none;')}"  />
+                <input id="input_RejectBtn" type="button" value="Reject" class="{!IF(IsPending,'myButtons','myDisabledButtons')}" style="{!IF(IsPM,'','display:none;')}"  /> <br />
+            </div> 
+            <apex:actionFunction name="LoadEditAction" action="{!loadMA}" rerender="editMitActionSection" oncomplete="LoadEditActionHandle();" >
+                <apex:param name="firstParam" assignTo="{!linkMAId}" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction name="LoadActionOwner" action="{!loadMA}" rerender="changeMitActOwnerSection" oncomplete="LoadActionOwnerHandle();" >
+                <apex:param name="firstParam" assignTo="{!linkMAId}" value="" />
+            </apex:actionFunction>
+            
+            <div style="clear:both">
+                <apex:actionFunction name="refreshMitigationPlan" action="{!reloadMitigationPlan}" reRender="SectionMitigationPlan,SectionAddMAC" />
+                <apex:pageBlockSection title="Mitigation Plan" columns="1" >
+                    <apex:pageBlockTable value="{!macList}" var="d" Id="SectionMitigationPlan">                 
+                        <apex:column colspan="1"  headerValue="Action">
+                            <a onclick="javascript:myConfirmWithParm('Confirm to delete this Action?','deleteMitigation','{!d.Id}'); return false;" style="{!IF(RiskIsActive && (IsOwner || IsPM),'','display:none;')}" title="Delete Action"><span class="icon-trash"></span></a>
+                            <!--<apex:commandLink value="Delete" onclick="javascript:myConfirmWithParm('Confirm to delete this Action?','deleteMitigation','{!d.Id}'); return false;" rendered="{! RiskIsActive && (IsOwner || IsPM)}" title="Edit Action"></apex:commandLink> -->
+                            <apex:commandLink action="{!delMA}" id="deleteMitigation" value="{!d.Id}" style="display:none">
+                                <apex:param name="linkMAId" value="{!d.Id}" assignTo="{!linkMAId}"/>                            
+                            </apex:commandLink>
+                            &nbsp;
+                            <a onclick="javascript:OpenEditActionWin('{!d.Id}'); return false;" style="{!IF(RiskIsActive && (IsOwner || IsPM),'','display:none;')}" title="Edit Action"><span class="icon-edit"></span></a>
+                            <!--<apex:commandLink value="Edit" onclick="javascript:OpenEditActionWin('{!d.Id}'); return false;" rendered="{!RiskIsActive && (IsOwner || IsPM)}"></apex:commandLink>-->
+                            &nbsp;
+                            <!--<apex:commandLink value="Change Owner" onclick="javascript:OpenChagneActionOwnerWin('{!d.Id}'); return false;" rendered="{!RiskIsActive && (IsOwner || IsPM)}"></apex:commandLink>-->
+                            <a onclick="javascript:OpenChagneActionOwnerWin('{!d.Id}'); return false;" style="{!IF(RiskIsActive && (IsOwner || IsPM),'','display:none;')}" title="Change Owner"><span class="icon-user"></span></a>
+                       </apex:column>
+                       <apex:column headerValue="Name" >
+                           <span title="{!d.Note__c}">{!d.Name__c}</span>    
+                       </apex:column>
+                       <apex:column headerValue="Owner" value="{!d.Mitigation_Action_Owner__c}"/>
+                       <apex:column headerValue="Staus" value="{!d.Status__c}"/>
+                       <apex:column headerValue="Due Date" value="{!d.Due_Date__c}"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+            </div>
+        </apex:form>
+        <apex:form >
+            <div id="DivAddMitigation" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <div class="modal-header">
+                <h3>Add Mitigation Action</h3>
+              </div>
+              <div class="modal-body">               
+                  <apex:pageBlockSection columns="1" showHeader="false" Id="SectionAddMAC">
+                      <apex:inputfield value="{!mac.Name__c}" id="macName"/>
+                      <apex:inputTextarea value="{!mac.Note__c}" id="macNote" label="Note" cols="80" rows="10"/>
+                      <apex:inputfield value="{!mac.Due_Date__c}" id="macDueDate"/>
+                        <p id="DivAddMitigationErrorMessage"></p>
+                  </apex:pageBlockSection>
+              </div>
+              <div class="modal-footer">
+                  <input type="button" class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                  <!-- <apex:commandButton styleClass="btnAthena EbtnLess myButtons" value="Add" action="{!saveMA}"/>  -->
+                  <input type="button" Id="addMABtn" class="btnAthena EbtnLess myButtons" value="Add" />
+                  <apex:actionFunction name="saveMA" action="{!saveMA}" status="myStatus" reRender="out" >
+                      <apex:param name="firstParam" assignTo="{!mac.Name__c}" value="" />
+                      <apex:param name="secondParam" assignTo="{!mac.Note__c}" value="" />
+                      <apex:param name="thirdParam" assignTo="{!mac.Due_Date__c}" value="" />
+                  </apex:actionFunction> 
+              </div>
+            </div>
+        </apex:form>
+        <apex:form >
+            <div id="DivEditMitigation" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <div class="modal-header">
+                <h3>Edit Mitigation Action</h3>
+              </div>
+              <div class="modal-body">
+                    <apex:pageBlockSection columns="1" showHeader="false" Id="editMitActionSection">
+                        <apex:inputfield value="{!mac.Name__c}" id="editMacName"/>
+                        <apex:inputTextarea value="{!mac.Note__c}" id="editMacNote" label="Note" cols="50" rows="10"/>
+                        <apex:inputfield value="{!mac.Due_Date__c}" id="editMacDueDate"/>
+                        <apex:inputfield value="{!mac.Status__c}" id="editMacStatus"/>
+                        <p id="DivEditMitigationErrorMessage" class="DivMitigationErrorMessage"></p>
+                    </apex:pageBlockSection>
+                
+              </div>
+              <div class="modal-footer">
+                  <input type="submit" class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true" value="Cancel"></input>
+                 <!-- <apex:commandButton styleClass="btnAthena EbtnLess myButtons" value="Save" action="{!saveMA}" id="editMitigationSave"/> -->
+                 
+               <input type="button" Id="editMitigationSave" class="btnAthena EbtnLess myButtons" value="Save" />
+                  <apex:actionFunction name="editSaveMA" action="{!editSaveMA}" status="myStatus" reRender="out" >
+                      <apex:param name="firstParam" assignTo="{!mac.Name__c}" value="" />
+                      <apex:param name="secondParam" assignTo="{!mac.Note__c}" value="" />
+                      <apex:param name="thirdParam" assignTo="{!mac.Due_Date__c}" value="" />
+                      <apex:param name="fourthParam" assignTo="{!mac.Status__c}" value="" />
+                  </apex:actionFunction>
+              </div>
+            </div>
+        </apex:form>
+        <apex:form >
+            <div id="DivChangeMitActOwner" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <div class="modal-header">
+                <h3>Change Mitigation Action Owner</h3>
+              </div>
+              <div class="modal-body">
+                    <apex:pageBlockSection columns="1" showHeader="false" Id="changeMitActOwnerSection">
+                        <apex:selectList multiselect="false" size="1"  value="{!mac.Mitigation_Action_Owner__c}" required="true">
+                            <apex:selectOptions value="{!TeamMemberList}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:pageBlockSection>
+              </div>
+              <div class="modal-footer">
+                  <input type="submit" class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true" value="Cancel"></input>
+                  <!-- <apex:commandButton styleClass="btnAthena EbtnLess myButtons" value="Save" action="{!saveMA}"/> -->
+                  <input type="button" Id="changeOwnerSave" class="btnAthena EbtnLess myButtons" value="Save" />
+                  <apex:actionFunction name="changeOwnerSaveMA" action="{!changeOwnerSaveMA}" status="myStatus" reRender="out" >
+                  </apex:actionFunction>
+              </div>
+            </div>
+        </apex:form>
+        <apex:form >
+            <div id="DivManageRisk" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <div class="modal-header">
+                <h3>Manage Risk</h3>
+              </div>
+              <div class="modal-body">
+                  <apex:pageBlockSection columns="1" showHeader="false" >
+                      <apex:inputfield value="{!risk.Name__c}"/>
+                      <apex:selectList multiselect="false" size="1"  value="{!risk.Risk_Owner__c}" required="true" label="Owner">
+                          <apex:selectOptions value="{!TeamMemberList}"></apex:selectOptions>
+                      </apex:selectList>
+                      
+                      <apex:inputTextarea value="{!risk.Description__c}" cols="30" rows="5"/>
+                      <apex:inputfield label="Resolution" value="{!risk.Planned_Resolution_Date__c}"/>
+                      <apex:pageBlockSectionItem >
+                          <apex:outputLabel >RPN Number</apex:outputLabel>
+                          <apex:outputPanel layout="block">
+                              <apex:outputText value="{!risk.Risk_Priority_Number__c}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              <input id="input_RPNEditBtn" type="button" value="Change" class="myButtons" />
+                          </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:inputfield value="{!risk.Status__c}" Rendered="{!risk.Status__c != 'Retired'}"/>
+                      <apex:outputField value="{!risk.Status__c}" Rendered="{!risk.Status__c == 'Retired'}"/>
+                  </apex:pageBlockSection>
+              </div>
+              <div class="modal-footer">
+                  <input type="submit" class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true" value="Cancel"></input>
+                  <apex:commandButton styleClass="btnAthena EbtnLess myButtons" value="Save" action="{!saveRisk}"/>
+              </div>
+            </div>
+        </apex:form>
+        <apex:form >
+            <div id="DivApprovalRisk" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <div class="modal-header">
+                <h3>Approval Risk</h3>
+              </div>
+              <div class="modal-body">
+                <div class="span5 ml0">
+                    <apex:pageBlockSection columns="1" showHeader="false">
+                        <apex:inputTextarea value="{!Comments}" label="Comments" cols="20" rows="5"/>
+                    </apex:pageBlockSection>
+                </div>
+              </div>
+              <div class="modal-footer">
+                  <input type="submit" class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true" value="Cancel"></input>
+                  <apex:commandButton styleClass="btnAthena EbtnLess myButtons" value="Approval" action="{!approvalRisk}"/>
+              </div>
+            </div>
+        </apex:form>
+        <apex:form >
+            <div id="DivRejectRisk" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <div class="modal-header">
+                <h3>Reject Risk</h3>
+              </div>
+              <div class="modal-body">
+                <div class="span5 ml0">
+                    <apex:pageBlockSection columns="1" showHeader="false">
+                        <apex:inputTextarea value="{!Comments}" label="Comments" cols="20" rows="5"/>
+                    </apex:pageBlockSection>
+                </div>
+              </div>
+              <div class="modal-footer">
+                  <input type="submit" class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true" value="Cancel"></input>
+                  <apex:commandButton styleClass="btnAthena EbtnLess myButtons" value="Reject" action="{!rejectRisk}"/>
+              </div>
+            </div>
+        </apex:form>
+        <apex:form >
+            <div id="DivSubmitApprovalRisk" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <div class="modal-header">
+                <h3>Approval Risk</h3>
+              </div>
+              <div class="modal-body">
+                  <apex:pageBlockSection columns="1" showHeader="false">
+                    <apex:inputTextarea value="{!Comments}" label="Comments" cols="20" rows="5"/>
+                  </apex:pageBlockSection>
+              </div>
+              <div class="modal-footer">
+                  <input type="submit" class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true" value="Cancel"></input>
+                  <apex:commandButton styleClass="btnAthena EbtnLess myButtons" value="submit" action="{!submitApprovalRisk}"/>
+              </div>
+            </div>
+        </apex:form>
+        <apex:form >
+            <div id="DivAdjustRPN" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <div class="modal-header">
+                <h3>Adjust Risk Priority Number</h3>
+              </div>
+              <div class="modal-body">
+                  <apex:pageBlockSection columns="1" showHeader="false">
+                      <apex:inputField value="{!risk.Business_Impact_ID__r.Severity__c}"/>
+                      <apex:inputField value="{!risk.Root_Cause_ID__r.Occurance__c}"/>
+                      <apex:inputField value="{!risk.Process_Control_ID__r.Detection__c}"/>
+                  </apex:pageBlockSection>
+              </div>
+              <div class="modal-footer">
+                  <input id="input_HideRPNEditBtn" type="button" value="Cancel" class="btnAthena EbtnLess myButtons" />
+                  <apex:commandButton styleClass="btnAthena EbtnLess myButtons" value="submit" action="{!saveRPN}"/>
+              </div>
+            </div>
+        </apex:form>
+    </apex:pageBlock>
+<div id="DivMyAlter" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-header">
+        <h3 Id="DivMyAlterHeader">Validation Error</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0" id="myAlterMessage">
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true" Id="DivMyAlterBtn">OK</button>
+      </div>
+</div>
+
+<div id="DivMyMessage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Message</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0" id="MyMessageContent">
+            <apex:outputPanel id="out">
+                <apex:actionStatus startText="requesting..." id="myStatus" onstop="saveMAHandle();">
+                    <apex:facet name="stop">{!RequestResult}</apex:facet>
+                </apex:actionStatus>
+            </apex:outputPanel>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess myButtons" Id="DivMyMessageBackBtn">Back</button>
+          <button class="btnAthena EbtnLess myButtons" Id="DivMyMessageBtn">OK</button>
+      </div>
+</div>
+
+<div id="DivMyConfirm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Confirm Message</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0" id="myConfirmMessage">
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess myButtons" data-dismiss="modal" aria-hidden="true">Cancel</button>
+          <button class="btnAthena EbtnLess myButtons" id="myConfirmSubmit">Submit</button>
+      </div>
+</div>
+
+<div id="chatterDisplay">
+    <apex:pageBlock >
+        <div class="pbSubheader brandTertiaryBgr first tertiaryPalette"><h3 style="float:left;">Collaborate</h3>
+            <h3 style="float:right;"><chatter:follow entityID="{!risk.Id}"/></h3>
+            <!--<div id="followme" style="text-align:right; float:right;font-size:12px;"><chatter:follow entityID="{!risk.Id}"/></div>-->
+         </div>    
+            
+        <div >
+            <div id="chatterWrapper" style="display:block; min-height:290px; overflow:auto; margin:0px; padding:0px;">
+                <chatter:feed entityId="{!risk.Id}"></chatter:feed>
+            </div>
+        </div>
+    </apex:pageBlock>
+</div>
+</apex:page>

@@ -1,0 +1,216 @@
+<apex:page controller="AptsAgreementActivate" action="{!InsertLegalIssues}" id="pageId" >
+    <script>
+        var j$ = jQuery.noConflict();
+        j$(function(){
+         
+            // add multiple select / deselect functionality
+            j$("#selectall").click(function () {
+                  j$('.case').attr('checked', this.checked);
+            });
+         
+            // if all checkbox are selected, check the selectall checkbox
+            // and viceversa
+            j$(".case").click(function(){
+         
+                if(j$(".case").length == j$(".case:checked").length) {
+                    j$("#selectall").attr("checked", "checked");
+                } else {
+                    j$("#selectall").removeAttr("checked");
+                }
+         
+            });
+        });
+        
+        function RiskRatingRequired(){
+            var riskRating = document.getElementById('pageId:formId:pbId:pbsLegalDetails:selectRiskRating');
+            if(riskRating.value == null || riskRating.value == ''){
+                alert('Please Select Risk Rating.');
+                return false;
+            }
+            return true;
+        }
+       
+    </script>
+   <!-- 
+    <script >
+	
+    function callInlineEdit()
+	{
+		//alert('hi..');
+		disableInlineEdit();
+	}	
+	</script>
+	 -->
+	
+    <apex:form id="formId">
+    	<apex:pageMessages />
+    	<apex:actionFunction name="disableInlineEdit" action="{!disableInlineEdit}" />
+    	
+        <apex:pageBlock title="Issues - SOAR Form" id="pbId">
+            <apex:pageblockButtons >
+                <apex:commandButton value="Save & Continue" onclick="return RiskRatingRequired();" action="{!SaveAndContinue}" rendered="{!!idnull}"/>
+                <apex:commandButton value="Cancel" action="{!Cancel}" rendered="{!!idnull}"/>
+                <apex:commandButton value="Return" action="{!returnAgreement}" rendered="{!idnull}"/>
+            </apex:pageblockButtons>
+            
+            <apex:pageBlockSection columns="1" id="pbsLegalDetails">
+                <apex:outputPanel id="pnlLegalDetails">
+                    <table width="100%">
+                        <tr>
+                            <td><b>Legal Recommendation</b><br/>
+                                <apex:inputField value="{!legalIssueObject.Legal_Recommendation__c}" style="width:95%;"/>
+                            </td>
+                            <td><b>Additional Legal Dept. Reviewer</b><br/>
+                                <apex:inputField value="{!legalIssueObject.Additional_Legal_Dept_Reviewer__c}" style="width:95%;"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Risk Rating</b>&nbsp;
+                                <apex:inputField value="{!legalIssueObject.Risk_Rating__c}" id="selectRiskRating"/>
+                            </td>
+                        </tr>                        
+                    </table>                    
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <apex:outputPanel rendered="{!(!isActive)}" id="tableActiveFalse">
+                <table width="100%" cellpadding="3" cellspacing="0" style="border: 2px solid black;" rules="all" id="table1">
+                    <tr style="border: 2px solid black;background-color:#ECECEC;">
+                        <!-- 
+                        <th style="border: 2px solid black;" width="5%">
+                        
+                        <center>Not<br/>Applicable?<br/><input type="checkbox" id="selectall"/></center></th>
+                         -->
+                        <th style="border: 2px solid black;" width="25%">Risk Category</th>
+                        <th style="border: 2px solid black;" width="25%">Customer Non Standard Positions</th>
+                        <th style="border: 2px solid black;" width="25%">HP's Response</th>
+                        <th style="border: 2px solid black;" width="25%">Risk Rating</th>
+                    </tr>
+                    <apex:repeat value="{!lstLegalIssuesInsert}" var="legalIssue" id="repeat1">
+                        <tr style="border: 2px solid black;">
+                            <!-- 
+                            <td style="border: 2px solid black;vertical-align:middle;padding:15px;">
+                                <center id="center1">
+                                <apex:inputcheckbox styleClass="case" value="{!legalIssue.Not_Applicable__c}"  id="rowCheckBox" onClick="callInlineEdit();" disabled="{!OR((legalIssue.Paragraph__c!= ''),(legalIssue.Paragraph__c!= NULL),(legalIssue.Initial_Content__c !=''),(legalIssue.Initial_Content__c !=NULL))}"/>
+                                </center> 
+                            </td>
+                             -->
+                            <td style="border: 2px solid black;vertical-align:middle;padding:15px;">
+                                <apex:outputField value="{!legalIssue.Risk_Category__c}">
+                                    
+                                </apex:outputField>
+                            </td>
+                            <td style="border: 2px solid black;vertical-align:middle;padding:15px;" id="idParagraph">
+                                <apex:inputfield value="{!legalIssue.Paragraph__c}" id="rowParagraph" style="width:100%;height:100%">
+                                 <!--     <apex:inlineEditSupport event="ondblclick" /> -->
+                                </apex:inputfield>
+                            </td>
+                            <td style="border: 2px solid black;vertical-align:middle;padding:15px;">
+                                <apex:inputfield value="{!legalIssue.Initial_Content__c}" style="width:100%;height:100%;">
+                                <!--    <apex:inlineEditSupport event="ondblclick" /> -->
+                                </apex:inputfield>
+                            </td>
+                            <td style="border: 2px solid black; vertical-align:middle;padding:15px;">
+                                <apex:inputfield value="{!legalIssue.Final_Content__c}" style="width:100%;height:100%">
+                                 <!--    <apex:inlineEditSupport event="ondblclick" />  -->
+                                </apex:inputfield>
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                </table>          
+            </apex:outputPanel>  
+             
+            <apex:outputPanel rendered="{!isActive}">
+                <table width="100%" cellpadding="3" cellspacing="0" style="border: 2px solid black;" rules="all">
+                    <tr style="border: 2px solid black; background-color:#ECECEC;">
+                        <th style="border: 2px solid black;" width="5%"><center>Not<br/>Applicable?<br/><input type="checkbox" id="selectall"/></center></th>
+                        <th style="border: 2px solid black;" width="24%">Risk Category</th>
+                        <th style="border: 2px solid black;" width="15%">Customer Non Standard Positions</th>
+                        <th style="border: 2px solid black;" width="28%">HP's Response</th>
+                        <th style="border: 2px solid black;" width="28%">Risk Rating</th>
+                    </tr>
+                    <apex:repeat value="{!lstLegalIssuesInsert}" var="legalIssue">
+                        <tr>
+                        <!-- 
+                            <td style="border: 2px solid black; vertical-align:middle;padding:15px;">
+                                <center><apex:inputcheckbox styleClass="case" value="{!legalIssue.Not_Applicable__c}" onClick="callInlineEdit();" disabled="{!OR((legalIssue.Paragraph__c!= ''),(legalIssue.Paragraph__c!= NULL),(legalIssue.Initial_Content__c !=''),(legalIssue.Initial_Content__c !=NULL))}"/></center>                                
+                            </td>
+                             -->
+                            <td style="border: 2px solid black; vertical-align:middle;padding:15px;">
+                                <apex:outputfield value="{!legalIssue.Risk_Category__c}">
+                                    
+                                </apex:outputField>
+                            </td>
+                            <td style="border: 2px solid black; vertical-align:middle;padding:15px;">
+                                <apex:inputfield value="{!legalIssue.Paragraph__c}" style="width:100%;height:100%;">
+                                 <!--     <apex:inlineEditSupport event="ondblclick" /> -->
+                                </apex:inputField>
+                            </td>
+                            <td style="border: 2px solid black; vertical-align:middle;padding:15px;" >
+                                <apex:inputfield value="{!legalIssue.Initial_Content__c}" style="width:100%;height:100%;">
+                                <!--   <apex:inlineEditSupport event="ondblclick" /> -->
+                                </apex:inputField>
+                            </td>
+                            <td style="border: 2px solid black; vertical-align:middle;padding:15px;">
+                                <apex:inputfield value="{!legalIssue.Final_Content__c}" style="width:100%;height:100%;">
+                                <!--      <apex:inlineEditSupport event="ondblclick" /> -->
+                                </apex:inputField>
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                </table>          
+            </apex:outputPanel> 
+        </apex:pageBlock>
+    </apex:form>
+<br/><br/>
+<font size="3" >
+<strong>
+<u>
+*Global Risk Management (GRM)
+</u>
+</strong>
+</font>
+<br/><br/>
+<strong>
+Marsh Reviews
+</strong><br/>
+<ul>
+<li>
+<font color="red" >
+The final insurance wording for all contracts with revenue greater than $500M must be reviewed by Marsh prior to execution.
+</font>
+</li>
+<li>
+Seek a review by Marsh if the RFP requires a bond or a customer will not accept HP’s standard insurance exhibit in lieu of their specific requirements
+</li>
+</ul>
+<br/>
+Contact:  Marsh contacts available on the <a href="http://intranet.hp.com/finance/WW/treasury/RiskManagement/Pages/KeyContacts.aspx" target="_blank">http://intranet.hp.com/finance/WW/treasury/RiskManagement/Pages/KeyContacts.aspx</a> webpage.<br/><br/>
+<strong>
+GRM Reviews
+</strong>
+<ul>
+<li>
+Seek a review from GRM if the project involves high-risk operations, i.e., 911 systems, solutions involving aircraft or nuclear energy power plant construction, operation, maintenance or design, air traffic control systems, homeland security, defense contracts, etc. 
+</li>
+<li>
+Seek a review from GRM if the project involves building construction or renovation other than normal cable installation.
+Contact: Erin Scott (ErinS@hp.com 1-650-857-6849)
+</li>
+</ul>
+<br/>
+<br/>
+
+<font size="3" >
+<strong>
+<u>
+**Risk Rating for Limitations of Liability
+</u>
+</strong>
+</font>
+<br/>
+<br/>
+Rating for Limitations of Liability need to follow the WW SOAR/DealONE Liability Guidelines, posted at:
+<a href="http://intranet.hp.com/tsg/WW2/SOAR/Pages/SOARTemplates.aspx" target="_blank">http://intranet.hp.com/tsg/WW2/SOAR/Pages/SOARTemplates.aspx</a>
+    
+</apex:page>

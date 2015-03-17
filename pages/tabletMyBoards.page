@@ -1,0 +1,780 @@
+<apex:page controller="AthenaSocialLearning" extensions="mobileUserData" cache="false" docType="html-5.0"
+           sidebar="false" showheader="false" standardStylesheets="false">
+
+<head>
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+        
+    </head>
+    
+    
+     <script>  
+        
+var K = function () {
+    var a = navigator.userAgent;
+    return {
+        ie: a.match(/MSIE\s([^;]*)/)
+    }
+}();
+      
+      
+      function parseTwitterDate(a) {
+      var b = new Date();
+    var c = new Date(a);
+    if (K.ie) {
+        c = Date.parse(a.replace(/( \+)/, ' UTC$1'))
+    }
+    var d = b - c;
+    var e = 1000,
+        minute = e * 60,
+        hour = minute * 60,
+        day = hour * 24,
+        week = day * 7;
+    if (isNaN(d) || d < 0) {
+        return ""
+    }
+    if (d < e * 7) {
+        return "right now"
+    }
+    if (d < minute) {
+        return Math.floor(d / e) + " seconds ago"
+    }
+    if (d < minute * 2) {
+        return "about 1 minute ago"
+    }
+    if (d < hour) {
+        return Math.floor(d / minute) + " minutes ago"
+    }
+    if (d < hour * 2) {
+        return "about 1 hour ago"
+    }
+    if (d < day) {
+        return Math.floor(d / hour) + " hours ago"
+    }
+    if (d > day && d < day * 2) {
+        return "Yesterday"
+    }
+    if (d < day * 365) {
+        return Math.floor(d / day) + " days ago"
+    } else {
+        return "over a year ago"
+    }
+    /*var system_date = new Date(Date.parse(tdate));
+    var user_date = new Date();
+    if (K.ie) {
+        system_date = Date.parse(tdate.replace(/( \+)/, ' UTC$1'))
+    }
+    var diff = Math.floor((user_date - system_date) / 1000);
+    if (diff <= 1) {return "just now";}
+    if (diff < 20) {return diff + " seconds ago";}
+    if (diff < 40) {return "30 seconds ago";}
+    if (diff < 60) {return "less than a minute ago";}
+    if (diff <= 90) {return "1 minute ago";}
+    if (diff <= 3540) {return Math.round(diff / 60) + " minutes ago";}
+    if (diff <= 5400) {return "1 hour ago";}
+    if (diff <= 86400) {return Math.round(diff / 3600) + " hours ago";}
+    if (diff <= 129600) {return "1 day ago";}
+    if (diff < 604800) {return Math.round(diff / 86400) + " days ago";}
+    if (diff <= 777600) {return "1 week ago";}
+    return "on " + system_date;*/
+}
+
+</script>
+
+  <div data-role="page" class="tabletcontent">
+
+  <div data-role="header" role="banner" class="header-toolbar" data-position="fixed" data-tap-toggle="false">
+    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+         <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" id="menuImage" class="logo"/></a>
+    </div>
+    <h1><input type="search" placeholder="Please enter search text" name="text-1" id="text-1" value="" data-corners="false" data-iconpos="right"/></h1>
+    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right" style="margin-top:8px;">  
+         <span class="welcome-header">Welcome</span><span> </span><span class="username">{!LoggedinUserDtls.Name}</span><span><img src="{!LoggedinUserDtls.FullPhotoUrl}" id="searchImage" class="circular" alt="no_username"/></span> 
+    </div>
+  </div><!-- /header -->
+
+  <div data-role="content"> 
+    <ul class="vertical_menu" >
+      <li>
+        <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/tabletSLPLanding0" data-ajax="false"></a>
+      </li>
+      <li>
+        <a href="#" id="open-popupArrow" data-ajax="false">Activity</a>
+      </li>
+      <li>
+        <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/tabletMyBoards" data-ajax="false"></a>
+      </li>
+      <li>
+        <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/tabletMyCommunities" data-ajax="false"></a>
+      </li>
+      <li>
+        <a class="topNavRoll topNavIconCom" href="#" data-ajax="false"></a>
+      </li>
+    </ul>
+    <div id="main_content">
+        <div class="content-primary" style="background:rgb(64,64,64);border:none !important;margin-top:-17px;"> 
+                <div data-role="collapsible-set" data-inset="false" id="custom-collapsible" class="my-page" style="background:rgb(64,64,64)!important;border:none !important;">
+                    <div data-role="" id="fList" style="background:rgb(64,64,64);border:none !important;">                            
+                        <div data-role="fieldcontain" style="background:rgb(64,64,64);border:none !important;">
+                            <ul data-role="listview" data-inset="false" id="myLearningBoards" style="background:rgb(64,64,64);border:none !important;"/>
+                        </div>
+                    </div>
+                </div> 
+            </div>                  
+    </div>
+  </div><!-- /content -->
+
+      <div data-role="popup" id="popupArrow" data-arrow="true" style="background:#E6E6E6;" data-position="fixed">
+            <ul data-role="listview" data-inset="false" id="activtyStream" style="width:300px;background-color:transparent;white-space:wrap !important;border:none !important;">
+            </ul>
+        </div>
+
+        <script>
+                    /*var aStream = getUserCommunityPostAndCommentsJSON;
+                    
+                     var index = -1;
+                    
+                    for (var obj in aStream) {
+                         if( aStream[obj].ListFeedPost[0].PostName.indexOf("Type:-UploadDoc") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist" ><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" style="text-decoration:none;" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has uploaded a file to the <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" style="text-decoration:none;" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has uploaded a file to the <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("Type:-Link") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a link to the <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a link to the <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("Type:-Video") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a video to the <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a video to the <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                         else if( aStream[obj].ListFeedPost[0].PostName.indexOf("Type:-Text") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a text file to the <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a text file to the <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("I joined as a Member") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has joined as a member of <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has joined as a member of <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("added as a Member") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> -  ' +  aStream[obj].ListFeedPost[0].PostName + ' to <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> - ' +  aStream[obj].ListFeedPost[0].PostName + ' to <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div<div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("is now following") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> ' +  aStream[obj].ListFeedPost[0].PostName.substring( aStream[obj].ListFeedPost[0].PostedUserName.length) + '  </div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> ' +  aStream[obj].ListFeedPost[0].PostName.substring( aStream[obj].ListFeedPost[0].PostedUserName.length) + '  </div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }  
+                        else{
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> - ' + aStream[obj].ListFeedPost[0].PostName + ' on <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> - ' + aStream[obj].ListFeedPost[0].PostName + ' on <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            } 
+                            }                           
+                    }*/
+                    
+        </script>
+
+
+</div><!-- /page -->
+
+<style type="text/css">
+
+    .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li-has-thumb{padding-left:75px !important}
+        
+        .ui-listview>.ui-li-static, .ui-listview>.ui-li-divider, .ui-listview>li>a.ui-btn { white-space:normal !important }
+        
+        .hpFont{
+                font-family:"HP Simplified",sans-serif;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+            }
+
+    .circular-image-container {
+            width:50px;
+            height:50px;
+            margin-top: 15px;
+            margin-left:5px;
+            padding: 3px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #ffffff;
+        }
+
+    .actvitylist{
+            background-color:transparent !important;
+            border-top:none !important;
+            border-left:none !important;
+            border-right:none !important;
+            border-bottom:solid 1px black !important;
+            margin-left:10px !important;
+            margin-right:10px !important;
+            text-shadow:none !important;
+        }
+
+      .tabletcontent{
+          background: rgb(64,64,64)!important;
+      }
+      .header-toolbar{
+          background: rgb(64,64,64)!important;
+          border-color:transparent !important;
+      }
+      .circular{
+        border:4px solid #858585;
+        border-radius:40px;
+        width:40px;
+        height:40px;
+        vertical-align: middle;
+      }
+      .circular-content{
+        border:4px solid #fff;
+        border-radius:40px;
+        width:40px;
+        height:40px;
+        border-width: 4px !important;
+        -webkit-border-top-left-radius: 40px !important;
+        border-top-left-radius: 40px !important;
+        -webkit-border-bottom-left-radius:  40px !important;
+        border-bottom-left-radius:  40px !important;
+      }
+      .rating-stars{
+          -webkit-border-top-left-radius: 0px !important;
+          border-top-left-radius: 0px !important;
+         -webkit-border-bottom-left-radius:  0px !important;
+          border-bottom-left-radius:  0px !important;
+      }
+      .username{
+          color:rgb(0, 148, 218);
+          margin-bottom:17px;
+          margin-right:10px;
+          text-shadow:none;
+          font-size:17px;
+          vertical-align: middle;
+      }
+      .welcome-header{
+          color:white;
+          text-shadow:none;
+          font-size:17px;
+          vertical-align: middle;
+      }
+      .logo{
+          height:70px;
+          width:70px;
+          margin-left: 100px;
+      }
+      .content-primary{
+          float:right;
+          width:99%;
+          background: rgb(64,64,64);
+          border:none;
+      }
+      .my-page .ui-listview li{
+          height:230px;
+          width:32%;
+      }
+      .my-page .ui-listview li .ui-btn,
+      .my-page .ui-listview .ui-li-thumb{
+         border-top:none;
+         border-radius:0 !important;
+         background-color:transparent;
+         border-bottom: 0px !important;
+       }
+       .ui-listview .ui-li-has-thumb h2{
+                text-align:left;
+                height: 55px;
+                max-height:55px !important;
+                min-height:55px !important;
+       }
+       .data-containter{
+           height: 50px;
+           max-height:50px !important;
+           min-height:50px !important;
+       } 
+      .vertical_menu {
+        position:fixed;
+        float: left;
+        width: 50px;
+        border: none;
+        background-color: transparent;
+        padding: 5px;
+        margin: 5px;
+        text-shadow:none !important;
+      }
+      .vertical_menu li {
+        list-style: none;
+        margin: 5px;
+        text-shadow:none !important;
+      }
+      .vertical_menu li a {
+        text-decoration: none;
+        color: white;
+        text-shadow:none !important;
+      }
+      .vertical_menu li a:hover {
+        text-decoration: none;
+        text-shadow:none !important;
+      }
+
+      #main_content {
+        margin-left: 80px;
+      }
+      .ui-input-search::after {
+            left: 376px !important;
+            background-color: rgb(250,160,6) !important;
+            width:30px !important;
+            height: 30px !important;
+            margin-top: -15px !important;
+      }
+      .ui-input-search input {
+         padding-left: 5px !important; 
+      }
+      
+      .ui-alt-icon.ui-icon-search:after, .ui-alt-icon .ui-icon-search:after, .ui-input-search:after {
+        background-image: url("{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+      }
+      
+      .ui-mini.ui-btn-icon-notext, .ui-mini .ui-btn-icon-notext, .ui-header .ui-btn-icon-notext, .ui-footer .ui-btn-icon-notext {
+        display: none !important;
+       }
+       
+       div.ui-input-search { width: 450px !important }
+      
+      .nametext{
+          font-size:9px;vertical-align: middle;margin-right:8px;
+       }
+      
+      @media all and (max-width: 769px) { /* iPad portrait */
+         div.ui-input-search { width: 300px !important }
+         .ui-input-search::after {
+            left: 267px !important;
+          }
+          .logo{
+              margin-left: 50px;
+          }
+          .my-page .ui-listview li{
+              height:230px;
+              width:48%;
+          }
+          .username{
+              font-size:14px;
+          }
+          .welcome-header{
+          font-size:14px;
+          }
+      }
+      
+      @media (min-width: 770px) and (max-width: 967px) and (orientation: landscape) { /* Nexus 7 landscape*/
+      
+      .ui-input-search::after {
+            left: 350px !important;
+       }
+       
+      }
+      
+      @media all and (max-width: 602px) { /* Nexus 7 portrait*/
+      
+         .logo{
+              margin-left: 20px;
+          }
+          .ui-input-search::after {
+              left: 206px !important;
+          }
+          
+          .username{
+               font-size:11px;
+          }
+           .welcome-header{
+              font-size:11px;
+          }
+          ui-listview .ui-li-has-thumb h2{
+                text-align:left;
+                height: 60px;
+                max-height:60px !important;
+                min-height:px !important;
+          }
+          .nametext{
+              font-size:7px;vertical-align: middle;margin-right:2px;
+          }
+      
+      }
+      
+      
+    </style>
+    
+    <script>
+    
+    $('#popupArrow').css('overflow', 'scroll');
+    $('#popupArrow').css('max-height', ($(window).height()*60)/100);
+    
+    $.mobile.document.on( "click", "#open-popupArrow", function( evt ) {
+            $( "#popupArrow" ).popup( "open", { x: evt.pageX+20, y: evt.pageY } );
+            evt.preventDefault();
+     });
+    
+    function LoadCommunities(category) {
+       /*  0: All
+        *  1: Featured
+        *  2: My Communities
+        *  3: My Boardsgory
+        *  4: Trending
+        */
+        CallAthenaSLFeatured(category, "8", 0, "-1");
+    }
+        
+    function CallAthenaSLFeatured(category, DisplayNoOfRecords, strNext, strPrev) {
+        if ( category === 0 ) {
+            // All
+            for (var r = 4; r > 0; r--) {
+                CallAthenaSLFeatured(r, "8", 0, "-1");
+            }
+        }
+        else if ( category === 1 ) {
+            // Featured
+            Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.AthenaSocialLearning.GetFeaturedLB}',
+              DisplayNoOfRecords,
+              strNext,
+              strPrev,
+              DisplayFeaturedLB
+            );
+        }
+        else if ( category === 2 ) {
+            // My communities
+            Visualforce.remoting.Manager.invokeAction(
+               '{!$RemoteAction.AthenaSocialLearning.GetMyCommunities}',
+                DisplayNoOfRecords,
+                strNext,
+                strPrev,
+                DisplayCommunity
+            );
+        }
+        else if ( category === 3 ) {
+            // My Boards
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.AthenaSocialLearning.GetMyBoards}',
+                DisplayNoOfRecords,
+                strNext,
+                strPrev,
+                DisplayPersonalizedLB
+            );
+        }
+        else if ( category === 4 ) {
+            // Trending
+            Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.AthenaSocialLearning.GetMostCommentedTrends}',
+              DisplayNoOfRecords,
+              strNext,
+              strPrev,
+              DisplayTrending
+          );
+        }
+    }
+    
+    function GetSelectedCommunityURL(comUrl) {
+        return "/apex/tabletCommunityMockup?id=" + comUrl;
+
+        //mobileLearningBoardMockup?id=a6tZ00000008S5lIAE
+    }
+    
+    function GetSelectedLearningBoardURL(comUrl) {
+        //return "/apex/mobileCommunityMockup?id=" + comUrl;
+        return "/apex/tabletLearningBoardMockup?id=" + comUrl;
+    }
+    
+    function GetListViewName(category) {
+        var mArr = ["#featuredList", "#myCommunitiesList", "myLearningBoards","trendingBoards"];
+        if ([1,2,3,4].indexOf(category)) {
+            return mArr[category];
+        }
+    }
+    
+    function GetTileColor(isCommunity) {
+        if (isCommunity) {
+            return "green";
+        }
+        else {
+            return "#0197d6";
+        }
+    }
+    
+    function DisplayFeaturedLB(result, event) {
+        //console.log("result = " + JSON.stringify(result[0]));
+        var target;
+        var tileColor;
+        var textColor;
+        var banner;
+        for (var i = 0; i < result.length; i++) {
+            if(result[i].IsCommunity == true){
+                target = GetSelectedCommunityURL(result[i].LBid);
+                tileColor="-webkit-gradient(linear,left bottom,left top,color-stop(1, rgba(22,87,119,0.5)), /* Top */color-stop(0, rgba(22,87,119,1.0)) /* Bottom */);"
+                textColor="white;";
+            }
+            else{
+                target = GetSelectedLearningBoardURL(result[i].LBid);
+                tileColor="-webkit-gradient(linear,left bottom,left top,color-stop(1, rgba(140,197,32,0.5)), /* Top */color-stop(0, rgba(140,197,32,1.0)) /* Bottom */);"
+                textColor="black;";
+            }
+             
+            var avgRatingImg = renderRating(result[i].AvgRating);
+             
+            $( '#featuredList' ).append(
+            '<li><a href="' + target + '" data-ajax="false">' +
+            '<img src="' + result[i].LBImgURL + '" class="ui-li-thumb"/>' +
+            '<h2 class="hpFont" style="background:' + tileColor + '; font-size:12px;">' + result[i].LBName + '</h2>' +
+            '<div style="position: absolute; bottom:5px; left:12px;" class="rating-stars">'+ avgRatingImg  +'</div>' +
+            '<div style="position: absolute; bottom:0; right:0;vertical-align: middle;margin-right:8px;"><span style="font-size:9px;vertical-align: middle;margin-right:8px;color:'+textColor+'">'+result[i].LBOwnerName+'</span><img src="'+result[i].LBOwnerURL+'" class="circular-content" style="vertical-align: middle;margin-bottom:5px;" alt="no_username"/></div>' +
+            '</a></li>');
+            
+            $( '#featuredList' ).listview('refresh');
+        }
+        $.mobile.loading( "hide"); // Hide load spinner after load is complete
+   
+    }
+    
+    // Returns HTML content with star images rendering a given rating
+        function renderRating(avgRating) {
+            // Used to display rating stars
+            var myStarOff = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-UnRated.png')}";
+            var myStarOn = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Rated.png')}";
+            var myStarHalf = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Half.png')}";
+
+            var ratingStarImgs = "";
+            for (var i=1; i<=5; i++) {
+                if (i <= avgRating) {
+                    ratingStarImgs += '<img src="'+myStarOn+'">';
+                } else if ((i - avgRating) <= 0.5){
+                    ratingStarImgs += '<img src="'+myStarHalf+'">';
+                } else {
+                    ratingStarImgs += '<img src="'+myStarOff+'">';
+                }
+            }
+            
+            return ratingStarImgs;
+        }
+    
+    function DisplayCommunity(result, event) {
+        var tileColor;
+        for (var i = 0; i < result.length; i++) { 
+            tileColor = GetTileColor(result[i].IsCommunity);  
+            console.log(tileColor);         
+            $( '#myCommunitiesList' ).append(
+            '<li><a href="' + GetSelectedCommunityURL(result[i].LBid) + ' " data-ajax="false">' +
+            '<img src="' + result[i].LBImgURL + '" class="ui-li-thumb"/>' +
+            '<h2>' + result[i].LBName + '</h2>' +
+            //'<p>' + result[i].LBOwnerName + '</p>' +
+            '<p class="ui-li-aside" style="background:green;">' + result[i].LBNoOfComments + '</p>' +
+            '<div class="starred starredY"></div></a></li>').listview('refresh');
+        }
+    }
+    function DisplayPersonalizedLB(result, event) {
+        var target;
+        var tileColor;        
+        for (var i = 0; i < result.length; i++) {      
+            if(result[i].IsCommunity == true){
+                target = GetSelectedCommunityURL(result[i].LBid);
+            }
+            else{
+                target = GetSelectedLearningBoardURL(result[i].LBid);
+            } 
+            
+            var tileColor="-webkit-gradient(linear,left bottom,left top,color-stop(1, rgba(140,197,32,0.5)), /* Top */color-stop(0, rgba(140,197,32,1.0)) /* Bottom */);"
+            var textColor="black;"
+            
+             var avgRatingImg = renderRating(result[i].AvgRating);
+             
+            $( '#myLearningBoards' ).append(
+            '<li><a href="' + target + '" data-ajax="false">' +
+            '<img src="' + result[i].LBImgURL + '" class="ui-li-thumb"/>' +
+            '<h2 class="hpFont" style="background:' + tileColor + '; font-size:12px;">' + result[i].LBName + '</h2>' +
+            '<div style="position: absolute; bottom:5px; left:12px;" class="rating-stars">'+ avgRatingImg  +'</div>' +
+            '<div style="position: absolute; bottom:0; right:0;vertical-align: middle;margin-right:8px;"><span class="nametext" style="color:'+textColor+'">'+result[i].LBOwnerName+'</span><img src="'+result[i].LBOwnerURL+'" class="circular-content" style="vertical-align: middle;margin-bottom:5px;" alt="no_username"/></div>' +
+            '</a></li>');
+            
+            $( '#myLearningBoards' ).listview('refresh');
+        }
+    }
+    function DisplayTrending(result, event) {
+        var target;
+        var tileColor;        
+        for (var i = 0; i < result.length; i++) {      
+            if(result[i].IsCommunity == true){
+                target = GetSelectedCommunityURL(result[i].LBid);
+            }
+            else{
+                target = GetSelectedLearningBoardURL(result[i].LBid);
+            }   
+            tileColor = GetTileColor(result[i].IsCommunity);                                                    
+            $( '#trendingBoards' ).append(
+            '<li><a href="' + target + '" data-ajax="false">' +
+            '<img src="' + result[i].LBImgURL + '" class="ui-li-thumb"/>' +
+            '<h2>' + result[i].LBName + '</h2>' +
+            //'<p>' + result[i].LBOwnerName + '</p>' +
+            '<p class="ui-li-aside" style="background:' + tileColor + ';">' + result[i].LBNoOfComments + '</p>' +
+            '</a></li>').listview('refresh');
+        }
+    }
+    
+    $(document).ready(function () {   
+    
+    //alert($(window).width());
+    
+    $('input[type="text"]').parent('div').removeClass('ui-input-has-clear')
+    $( "#mypanel" ).panel( "open" , "");
+
+    
+         $('#seach-container').hide();
+         $("#startpage").trigger("create");
+         $('#buttonSearch').on('ontap click', function(e){
+            setTimeout(function(){
+                $('#search-basic').focus();
+            }, 200);
+        });
+         
+    
+        /* 0: All
+        *  1: Featured
+        *  2: My Communities
+        *  3: My Boards
+        *  4: Trending
+        */
+        LoadCommunities(3);
+        
+        $('#lList h3').find('a').css('background','#3a89aa');
+        $('#tList h3').find('a').css('background','#3a89aa');
+        
+        $('#fList').on('collapsibleexpand', '', function () {
+                                $('#fList h3').find('a').css('background','#f05332');
+                                var dataIsLoading = $('#fList li').length;
+                                if (dataIsLoading <= 0) {
+                                    $.mobile.loading( "show", {
+                                        text: "Loading...",
+                                        textVisible: true,
+                                        textOnly: false
+                                    } ); // Displays load spinner while loading
+                                }            
+        }).on('collapsiblecollapse', '', function () { $('#fList h3').find('a').css('background','#0197d6 ');});
+        
+        $('#cList').on('collapsibleexpand', '', function () {
+                                $('#cList h3').find('a').css('background','#f05332');
+                                    $('html, body').animate({
+                                        scrollTop: $('#cList').offset().top - 100
+                                    }, 500);
+
+        }).on('collapsiblecollapse', '', function () { $('#cList h3').find('a').css('background','#0197d6 ');});
+
+        $('#lList').on('collapsibleexpand', '', function () {
+                                $('#lList h3').find('a').css('background','#f05332');
+                                                                    $('html, body').animate({
+                                        scrollTop: $('#lList').offset().top - 100
+                                    }, 500);
+
+        }).on('collapsiblecollapse', '', function () { $('#lList h3').find('a').css('background','#3a89aa');});
+
+        $('#tList').on('collapsibleexpand', '', function () {
+                                $('#tList h3').find('a').css('background','#f05332');
+                                    $('html, body').animate({
+                                        scrollTop: $('#tList').offset().top - 100
+                                    }, 500);
+        }).on('collapsiblecollapse', '', function () { $('#tList h3').find('a').css('background','#3a89aa');
+        });
+
+        // JS to remove the left arrow
+        $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+            $(this).removeClass('ui-btn-icon-left');
+        });
+        
+        $('#buttonHome').on('ontap mousedown', '', function () {
+                $('#buttonHome img').css('background','#33B5E5');
+                setTimeout(function(){ $('#buttonHome img').css('background','transparent');},500)
+            });
+            
+        $('#buttonSearch').on('ontap mousedown', '', function () {
+               
+               if (!$('#seach-container').is(':visible')) {
+                  $('#seach-container').slideDown("fast",function(){
+                    $("#startpage").trigger("create");
+                    // JS to remove the left arrow
+                    $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+                        $(this).removeClass('ui-btn-icon-left');
+                    });
+                });
+               }
+               else{
+                  $('#seach-container').slideUp("fast",function(){
+                     
+                    $("#startpage").trigger("create");
+                    // JS to remove the left arrow
+                    $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+                        $(this).removeClass('ui-btn-icon-left');
+                    });
+                });
+               }
+               
+                
+                //$('#buttonSearch img').css('background','#33B5E5');
+                //setTimeout(function(){ $('#buttonSearch img').css('background','transparent');},200);
+
+            });
+            
+            $('#search-basic').live("keypress", function(e) {
+            
+                /* ENTER PRESSED*/
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    var searchTerm= $('#search-basic').val();
+                    if (searchTerm.length <=2) {
+                        alert('A minimum of 3 characters should be entered');
+                        return;
+                    }
+                    window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+encodeURIComponent(searchTerm);
+                    $.mobile.loading( "show", {
+                          text: "Loading...",
+                          textVisible: true,
+                          textOnly: false
+                    } ); // Displays load spinner while loading
+                }
+            });
+        }); 
+    </script>
+
+</apex:page>

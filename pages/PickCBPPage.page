@@ -1,0 +1,76 @@
+<!-- 
+/**********************************************************
+* Page Name: PickCustomerBusinessPriority Page
+* Author: HP 
+* Date: 25-JULY-2012 
+* Requirement # Request Id: 
+* Description: VF page to pick customerBusinessPriorities
+**********************************************************/
+-->
+
+
+
+<apex:page standardController="Related_CustomerBusiness__c"  extensions="PickCBPJunction" recordSetVar="Related_CustomerBusiness__c">
+
+<apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+<body class="lookupTab  LookupSearchFrame, marginCls">
+
+<apex:form >
+<apex:actionRegion >
+<apex:sectionHeader title="{!$Label.Customer_Business_Priority_Search}" />
+<apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>
+<apex:inputText id="txtSearch" value="{!searchString}" onkeypress="return noenter(event);" />
+                        <span Class="searchspanCls"><apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!Search}" status="Status" rerender="SearchResults"></apex:commandButton></span>
+                       <br></br>
+<br></br>
+ <p>{!$Label.Wildcard_Usage}</p>
+<apex:pageBlock id="SearchResults"> 
+<apex:pageMessages />
+          <apex:actionStatus StartText="Processing..." id="Status"/> 
+            <apex:pageBlockButtons >
+            
+                <apex:commandButton value="Add" action="{!processSelected}" rerender="table"/>
+                <apex:commandButton value="Cancel" action="{!Cancel}"/>
+            </apex:pageBlockButtons>
+           
+
+          <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls"> 
+       
+                    <apex:pageBlockTable value="{!BusinessPriorities}" var="c" id="table" rendered="{!!IsBlank(BusinessPriorities)}">
+               
+                <apex:column >
+                    <!-- This is our selected Boolean property in our wrapper class -->
+                    <apex:inputCheckbox value="{!c.selected}"/>
+                </apex:column>
+                <!-- This is how we access the Opportunity values within our opty container/wrapper -->
+               
+                <apex:column value="{!c.Opp1.Name}" />
+                <apex:column value="{!c.Opp1.Account_Plan__c}" />
+                <apex:column value="{!c.Opp1.Short_Description__c}" />
+                <apex:column value="{!c.Opp1.Priority__c}" />
+                <apex:column value="{!c.Opp1.Timing__c}" />
+                
+            </apex:pageBlockTable>   
+                  
+            <apex:outputLabel rendered="{!isPickCbpListEmpty}">
+            <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+            </apex:outputLabel>
+            
+          </apex:outputPanel>            
+        </apex:pageBlock>
+        </apex:actionRegion>
+    <apex:actionFunction name="doSearchAF" action="{!Search}" rerender="SearchResults" status="Status"/>
+    </apex:form>
+    
+    </body>
+    <script type='text/javascript'>
+        function noenter(ev)  {
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                doSearchAF();
+                return false;
+             } else {
+                  return true;
+             }
+         }
+    </script>
+    </apex:page>

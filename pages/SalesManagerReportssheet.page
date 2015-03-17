@@ -1,0 +1,268 @@
+<apex:page standardController="Opportunity" cache="true" contenttype="application/vnd.ms-excel" extensions="SalesManagerReportCtrller,SalesManagerRepPos,SalesManagerBussGrp,SalesManagerRepBussGrp">
+<!--
+<style>
+        .tbBorderColor {
+            border:1px solid grey !important;
+        }
+        .headerRow th {
+            background-color: skyblue !important;
+            border-bottom: 1px solid grey !important;
+            border-left: 1px solid grey !important;
+            border-right: 1px solid grey !important;
+            border-top: 1px solid grey !important;
+        }
+    </style>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+</head>
+<apex:pageBlock id="headerBlk">
+
+    <apex:pageBlockSection id="Report1" columns="1" showHeader="false" rendered="{!reportName=='Report1'}">
+        <b>Summary by Reporting Person</b><br/>
+             <apex:PageBlockTable value="{!salesManagerResults1}" var="rep1" title="Summary by Reporting Person" border="1" rendered="{!reportName=='Report1'}">
+            <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+            <apex:facet name="header"><center><font size='2'>Responsible Full Name</font></center></apex:facet>{!rep1.RESPONSIBLENAME}
+            </apex:column>
+            
+            <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+             <apex:facet name="header"><center><font size='2'>Reporting Full Name</font></center></apex:facet>
+             {!rep1.REPORTINGNAME}
+            </apex:column>
+            
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+                       <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Open USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.OPENREVENUE_P}"/></apex:outputText></apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+                       <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Commit USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.OPENFORECASTREVENUE_P}"/></apex:outputText>
+                       </apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+                       <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Won USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.WONREVENUE_P}"/></apex:outputText>
+                       </apex:column>
+                       
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+                       <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Upside USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.UPSIDEREVENUE_P}"/></apex:outputText>
+                       </apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+                       <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Open USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.OPENREVENUE_C}"/></apex:outputText>
+                       </apex:column>
+                       
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+                       <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Commit USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.OPENFORECASTREVENUE_C}"/></apex:outputText>
+                       </apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+                       <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Won USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.WONREVENUE_C}"/></apex:outputText>
+                       </apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}">
+                       <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Upside USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.UPSIDEREVENUE_C}"/></apex:outputText>
+                       </apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}" style="background-color:#C0C0C0">
+                       <apex:facet name="header"><center><font size='2'>Total<br/>K$ Open USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.OPENREVENUE_T}"/></apex:outputText>
+                       </apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}" style="background-color:#C0C0C0">
+                       <apex:facet name="header"><center><font size='2'>Total<br/>K$ Commit USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.OPENFORECASTREVENUE_T}"/></apex:outputText>
+                       </apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}" style="background-color:#C0C0C0">
+                       <apex:facet name="header"><center><font size='2'>Total<br/>K$ Won USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.WONREVENUE_T}"/></apex:outputText>
+                       </apex:column>
+                       
+                       <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report1'}" style="background-color:#C0C0C0">
+                       <apex:facet name="header"><center><font size='2'>Total<br/>K$ Upside USD</font></center></apex:facet>
+                       <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep1.UPSIDEREVENUE_T}"/></apex:outputText>
+                       </apex:column>
+            
+         </apex:pageBlockTable> 
+  </apex:pageBlockSection>
+  <br/>
+
+  <apex:pageBlockSection id="Report3" showHeader="false" columns="1" rendered="{!reportName=='Report3'}">
+  <b>Summary by Reporting Person by Product by Book Ship Date</b><br/>
+    <apex:pageBlockTable value="{!salesManagerResults2}" var="iv"  title="Summary by Reporting Person by Product by Book Ship Date" border="1" rendered="{!reportName=='Report3'}">
+          
+          <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                             <apex:facet name="header"><center><font size='2'>Business Group Description</font></center></apex:facet>
+                                          {!iv.BUSINESS_GROUP}
+                      </apex:column>
+                      
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>Global Business Unit Description</font></center></apex:facet>
+                                          {!iv.GLOBAL_BUSINESS_UNIT}
+                      </apex:column>
+                                       
+                      
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Open USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.OPENREVENUE_P}"/></apex:outputText>
+                      </apex:column>
+                     
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Commit USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.OPENFORECASTREVENUE_P}"/></apex:outputText>
+                      </apex:column>
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Won USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.WONREVENUE_P}"/></apex:outputText>
+                      </apex:column>
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Upside USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.UPSIDEREVENUE_P}"/></apex:outputText>
+                      </apex:column>
+                      
+                      
+                      
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Open USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.OPENREVENUE_C}"/></apex:outputText>
+                      </apex:column>
+                      
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Commit USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.OPENFORECASTREVENUE_C}"/></apex:outputText>
+                      </apex:column>
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Won USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.WONREVENUE_C}"/></apex:outputText>
+                      </apex:column>
+
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}">
+                            <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Upside USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.UPSIDEREVENUE_C}"/></apex:outputText>
+                      </apex:column>
+                      
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}" style="background-color:#C0C0C0">
+                            <apex:facet name="header"><center><font size='2'>Total<br/>K$ Open USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.OPENREVENUE_T}"/></apex:outputText>
+                      </apex:column>
+                      
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}" style="background-color:#C0C0C0">
+                            <apex:facet name="header"><center><font size='2'>Total<br/>K$ Commit USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.OPENFORECASTREVENUE_T}"/></apex:outputText>
+                      </apex:column>
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}" style="background-color:#C0C0C0">
+                            <apex:facet name="header"><center><font size='2'>Total<br/>K$ Won USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.WONREVENUE_T}"/></apex:outputText>
+                      </apex:column>
+
+                      <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report3'}" style="background-color:#C0C0C0">
+                            <apex:facet name="header"><center><font size='2'>Total<br/>K$ Upside USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!iv.UPSIDEREVENUE_T}"/></apex:outputText>
+                      </apex:column>          
+         </apex:pageBlockTable> 
+  
+  </apex:pageBlockSection>
+  <br/>
+
+  <apex:pageBlockSection id="Report4" showHeader="false" columns="1" title="Summary by Sales Representative by Product by Book Ship Date" rendered="{!reportName=='Report4'}">
+    <b>Summary by Sales Representative by Product by Book Ship Date</b><br/>
+   <apex:PageBlockTable value="{!salesManagerResults3 }" var="rep4"  border="1" rendered="{!reportName=='Report4'}">
+                    
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>Reporting Full Name</font></center></apex:facet>
+                                          {!rep4.REPORTINGNAME}
+                      </apex:column>  
+           
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>Business Group</font></center></apex:facet>
+                                          {!rep4.BUSINESS_GROUP}
+                      </apex:column>
+
+                    
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>Global Business Unit</font></center></apex:facet>
+                                          {!rep4.GLOBAL_BUSINESS_UNIT}
+                      </apex:column>
+
+
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Open USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.OPENREVENUE_P}"/></apex:outputText>
+                      </apex:column>
+                    
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Commit USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.OPENFORECASTREVENUE_P}"/></apex:outputText>
+                      </apex:column>
+
+                    
+                    
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Won USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.WONREVENUE_P}"/></apex:outputText>
+                      </apex:column>
+                    
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>{!previousQuarter}<br/>K$ Upside USD</font></center></apex:facet>
+                                         <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.UPSIDEREVENUE_P}"/></apex:outputText>
+                      </apex:column>
+                       
+                   <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                   <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Open USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.OPENREVENUE_C}"/></apex:outputText>
+                      </apex:column>
+
+                                     
+                                      
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Commit USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.OPENFORECASTREVENUE_C}"/></apex:outputText>
+                      </apex:column>
+
+                    
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Won USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.WONREVENUE_C}"/></apex:outputText>
+                      </apex:column>
+                       
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}">
+                    <apex:facet name="header"><center><font size='2'>{!currentQuarter}<br/>K$ Upside USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.UPSIDEREVENUE_C}"/></apex:outputText>
+                      </apex:column>
+
+                       
+                   <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}" style="background-color:#C0C0C0">
+                   <apex:facet name="header"><center><font size='2'>Total<br/>K$ Open USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.OPENREVENUE_T}"/></apex:outputText>
+                      </apex:column>
+
+                                      
+                                     
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}" style="background-color:#C0C0C0">
+                    <apex:facet name="header"><center><font size='2'>Total<br/>K$ Commit USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.OPENFORECASTREVENUE_T}"/></apex:outputText>
+                      </apex:column>
+
+                    
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}" style="background-color:#C0C0C0">
+                    <apex:facet name="header"><center><font size='2'>Total<br/>K$ Won USD</font></center></apex:facet>
+                                          <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.WONREVENUE_T}"/></apex:outputText>
+                      </apex:column>
+                       
+                    <apex:column styleClass="tbBorderColor" rendered="{!reportName=='Report4'}" style="background-color:#C0C0C0">
+                    <apex:facet name="header"><center><font size='2'>Total<br/>K$ Upside USD</font></center></apex:facet>
+                         <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!rep4.UPSIDEREVENUE_T}"/></apex:outputText>
+                      </apex:column>                    
+            
+         </apex:pageBlockTable>
+  </apex:pageBlockSection>
+  </apex:pageBlock>
+  -->
+</apex:page>

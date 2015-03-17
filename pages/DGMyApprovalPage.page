@@ -1,0 +1,102 @@
+<!--
+
+* VF Page Name: DGMyApprovalPage
+* Author: Praveen Kumar Reddy
+* Date: 15-Apr-2013
+* Requirement # Request Id:
+* Description: Page for deiplaying the approval request information for the approvers
+-->
+<apex:page standardController="Approval__c" id="page" extensions="DGApprovalsInfoController" showHeader="true" sideBar="true">
+    
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+    <body class="lookupTab  LookupSearchFrame, marginCls">
+        <apex:form id="frm" >
+            <apex:sectionHeader title="My ApprovalRecords" />
+            <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls"> 
+                <apex:selectList value="{!viewName}" style="width:250px" size="1" id="bgp" onchange="myApprovalInfoselect()">
+                    <apex:selectOptions value="{!viewVals}"/>
+                </apex:selectList>  <br></br><br></br>
+
+
+                <apex:outputLabel value="Search By Opportunity/Account Name" styleClass="searchLabelCls" for="txtSearch" />  &nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:inputText title="SearchByName" value="{!searchByName}" id="SearchByName"/>  
+
+                <apex:outputLabel value="Search By Assigned To" styleClass="searchLabelCls" for="txtSearch1" />  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:inputText title="SearchByAssignedTo" value="{!SearchByAssignedTo}" id="SearchByAssignedTo"/>  <br></br>   
+                <c:noDateLink id="hideDateLink">
+                    <apex:outputLabel value="Search By Submitted Date From" styleClass="searchLabelCls" for="txtSearchDate" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:inputfield id="dateFrom" value="{!Approval__c.Search_Date_From__c}"/>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <apex:outputLabel value="Search By Submitted Date To" styleClass="searchLabelCls" for="txtSearchDate" />  &nbsp;
+                    <apex:inputfield id="dateTo" value="{!Approval__c.Search_Date_To__c}" /> 
+                    <apex:commandButton id="btnGo" value="{!$Label.Go}" onclick="myApprovalInfo('{!$Component.dateFrom}','{!$Component.dateTo}')" rerender="tblResults,SearchByName" />
+                </c:noDateLink>
+            </apex:outputPanel>
+            <apex:pageBlock id="ApprovalRecs">
+                <apex:outputpanel styleClass="resultPanelCls" layout="block"> 
+                    <apex:pageBlockTable value="{!wrapperList}" var="a" id="tblResults">
+                        <apex:column headerValue="Action" rendered="{!isLinksToShow}">
+                        <apex:outputLink value="/{!a.winstanceID}/e?et=REASSIGN&retURL=/{!a.appID}" >Reassign</apex:outputLink> &nbsp;
+                        &nbsp;
+                        <apex:outputLink value="/p/process/ProcessInstanceWorkitemWizardStageManager?id={!a.winstanceID}" >Approve/Reject</apex:outputLink>
+                        </apex:column>
+                        <apex:column >
+                        <apex:facet name="header">
+                        <apex:outputPanel >{!$ObjectType.Approval__c.fields.name.label}</apex:outputPanel>
+                        </apex:facet>
+                        <apex:outputLink value="/{!a.appID}">{!a.approvalName}</apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.Approval__c.fields.Approval_Type__c .label}" value="{!a.approvalType}"/>
+                        <apex:column headerValue="Opportunity Name" value="{!a.opptyName}"/>
+                        <apex:column headerValue="{!$ObjectType.Account.fields.name.label}" value="{!a.AccountName}"/> 
+                        <apex:column headerValue="{!$ObjectType.Account.fields.ShippingState.label}" value="{!a.AccountState}"/> 
+                        <apex:column headerValue="{!$ObjectType.Approval__c.fields.Submitted_Date__c.label}" value="{!a.SubmittedDate}"/>
+                        <apex:column headerValue="{!$ObjectType.Approval__c.fields.Submitter__c.label}" value="{!a.Submitter}"/>
+                        <apex:column headerValue="Assigned To" value="{!a.pi.ActorId}" rendered="{!assignedTo}" />
+                        <apex:column headerValue="Status" value="{!a.pi.StepStatus}" rendered="{!isStatus}" />  
+                        <apex:column headerValue="Approved Date" value="{!a.approvedDate}" rendered="{!isApprovedDate}" />
+                        <apex:column headerValue="Final Approval Status" value="{!a.overAllStatus}" rendered="{!isFinalStatus}"/>
+                        <!--  
+                        <apex:column headerValue="Submitter" value="{!a.pi.OriginalActorId}" />   -->                     
+
+                    </apex:pageBlockTable>
+
+                <apex:outputLabel rendered="{!isResultEmpty}">
+                    <apex:outputText escape="false" value="There are no approval requests" />
+                </apex:outputLabel>  
+            </apex:outputpanel>  
+            </apex:pageBlock>
+
+        <apex:actionFunction name="ApprovalInfo" action="{!myApprovalList}" oncomplete="NullifySearch()" >
+        <apex:param name="firstparam" assignTo="{!dateFrom}" value=""/>
+        <apex:param name="secondparam" assignTo="{!dateTo}" value=""/> 
+        </apex:actionFunction>
+        <apex:actionFunction name="search" action="{!nullifySearch}" />
+        <apex:actionFunction name="ApprovalInfo1" action="{!myApprovalList}" oncomplete="NullifySearch()" />
+        <!-- -->
+
+        </apex:form>
+    </body>
+    <Script>
+        function myApprovalInfo(dateFromId,dateToID){
+    
+            ApprovalInfo(document.getElementById(dateFromId).value,document.getElementById(dateToID).value);
+    
+        }
+        function NullifySearch(){
+    
+            if(document.getElementById("{!$Component.page:frm:hideDateLink:comp:dateFrom}").value!=null)
+            document.getElementById("{!$Component.page:frm:hideDateLink:comp:dateFrom}").value='';
+            if(document.getElementById("{!$Component.page:frm:hideDateLink:comp:dateTo}").value!=null)
+            document.getElementById("{!$Component.page:frm:hideDateLink:comp:dateTo}").value='';
+            search();
+    
+    
+        }
+        function myApprovalInfoselect(){
+    
+            ApprovalInfo1();
+        }
+
+    </Script>
+</apex:page>

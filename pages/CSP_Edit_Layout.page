@@ -1,0 +1,334 @@
+<apex:page standardController="Competitive_Sales_Plan__c" extensions="cspExtensionController" showHeader="False" sidebar="False">
+<style>
+.pgcol {
+vertical-align:text-top;
+}
+
+span.dateFormat{
+    display:none;
+}
+       
+select[title="Search scope"]{
+    display:none;
+}
+
+body {
+    padding: 10px;
+}
+
+.tablestrat {
+    border-collapse:collapse;
+    border-width: 0px;
+    border-style: solid solid;  
+}
+
+.troff {
+    border-width: 1px;
+    border-style: none solid none solid;
+}
+.tdtop {
+    border-width: 1px;
+    border-style: solid solid none solid;
+}
+.tdbottom {
+    border-width: 1px;
+    border-style: none solid solid solid;
+}
+
+
+.rightborder {
+    border-right: solid;
+    border-width: 1px;  
+}
+
+.tdpadding {
+    padding: 5px;
+    text-align:center;
+}
+.tdheader {
+    text-align:center;
+    font-weight:bold;
+    font-size: 10px;
+}
+.offheader {
+    text-align:center;
+    font-weight:bold;
+    font-size: 14px;
+    background-color:#5ABBE8;
+}
+.tdbordertopbottom{
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #000000;
+    border-bottom-style: solid;
+    border-bottom-width:1px;
+    border-bottom-color: #000000;
+}
+.tdtopborder {
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #000000;
+}
+
+.whitebordertop{
+    border-top-style: none;
+}
+
+
+</style>
+<div><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="font-size:28px;color:#5ABBE8;">Competitive Sales Plan Input</h1></div>
+<apex:messages />
+ <hr size="1" />
+    <apex:form >
+        <apex:pageBlock mode="maindetail" >
+            
+            <apex:pageBlockSection title="Tool Instructions" columns="1">
+            <i>Note: Complete one tool for each competitor</i><br></br>
+                1.  Complete the Opportunity Data.<br></br>
+                2.  Write in your Value Proposition.<br></br>
+                3.  Write in your greatest strengths that impact the Value Proposition. Check if the client has validated these strengths and if you have leveraged them.<br></br>
+                4.  Write in your weaknesses that impact the Value Proposition. Check if the customer has validated these weaknesses and if you have countered them.<br></br>
+                5.  List the competitor’s weaknesses. Check if you have exploited them and the client has validated them.<br></br>
+                6.  List your competitor’s strengths. Check if you have countered them and the client has validated them.<br></br>
+                7.  Considering umbers 3, 4, 5 and 6, determine the competitive strategy and its tactics. Identify the owner and timing for each tactic.<br></br>
+                8.  Determine the best countertactics that will strengthen your competitive advantage. Identify the owner and timing.<br></br>
+                9.  Complete the sidebar conversation.
+            </apex:pageBlockSection>
+             <div style="margin-left:auto;margin-right:auto;width:200px;text-align:center;">
+                <apex:commandbutton action="{!customSave}" value="Save" /><apex:commandButton action="{!customCancel}" value="Cancel"/><input type="button" class="btn" value="Help" title="Help"  onclick="window.open('/apex/CSPHelp','CSP_Help','width=600,height=600,scrollbars=yes,resizable=yes')"/>
+            </div>
+            
+            <apex:pageBlockSection title="Sales Objective" columns="1" >
+            <apex:pageBlockSection columns="4" >
+                <apex:outputPanel ><b>Competitor</b></apex:outputPanel>
+                <apex:outputPanel >{!Competitive_Sales_Plan__c.Competitor__c}</apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ><b>Solution</b></apex:outputPanel>
+                <apex:outputPanel >{!Competitive_Sales_Plan__c.Solution__c}</apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ><b>Close Date</b></apex:outputPanel>
+                <apex:outputPanel >{!TEXT(Competitive_Sales_Plan__c.Est_Close_Date__c)}</apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ><b>Primary Decision Maker(s)&nbsp;</b><i>(from Relationship Suite)</i></apex:outputPanel>
+                <apex:outputPanel >
+                    <apex:repeat value="{!DecisionMakers}" var="dm"><li><apex:outputtext value="{!dm.Contact__r.Name}"></apex:outputtext><apex:outputtext value="{!dm.Contact__r.Title}">,&nbsp;</apex:outputtext></li>
+                    </apex:repeat>
+                </apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+
+                <apex:outputPanel ><b>Buying Criteria</b> <i>(from Decision Grid)</i></apex:outputPanel>
+                
+                <apex:repeat value="{!BuyingCriteria}" var="bc">
+                <apex:outputPanel ><li><apex:outputtext value="{!bc.Criteria__c}"></apex:outputtext></li></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                </apex:repeat>
+                
+                
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ><b>Primary</b></apex:outputPanel>
+                <apex:outputPanel ><apex:outputField value="{!Competitive_Sales_Plan__c.Opportunity_Plan__r.Opportunity__r.Primary_Competitor__c}"/></apex:outputPanel>
+                <apex:outputPanel /><apex:outputPanel />
+                <apex:outputPanel ><b>Incumbent</b></apex:outputPanel>
+                <apex:outputPanel ><apex:outputField value="{!Competitive_Sales_Plan__c.Opportunity_Plan__r.Opportunity__r.Incumbent_Competitor__c}"/></apex:outputPanel>
+                
+                
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ><b>Opportunity Gauge Results</b></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel >Will They Buy?</apex:outputPanel>
+                <apex:outputPanel >{!Competitive_Sales_Plan__c.WTB_CBP__c}</apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel >Will They Buy Ours?</apex:outputPanel>
+                <apex:outputPanel >{!Competitive_Sales_Plan__c.WTBO_CBP__c }</apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel ></apex:outputPanel>
+                <apex:outputPanel >Combined Buying Potential</apex:outputPanel>
+                <apex:outputPanel >{!Competitive_Sales_Plan__c.Combined_Buying_Potential__c}%</apex:outputPanel>
+            </apex:pageBlockSection>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Value Proposition">
+                <apex:outputPanel >{!Competitive_Sales_Plan__c.Opportunity_Plan__r.VP_value_proposition__c}</apex:outputPanel>
+            </apex:pageBlockSection>
+       </apex:pageBlock>    
+
+            
+<apex:outputpanel id="ov_table" style="width:100%;">
+<table  width="100%" border="0" cellspacing="0" cellpadding="0" class="tablestrat">
+  <apex:variable value="{!1}" var="offRowNum"/>
+  <tr  class="troff">
+    <td colspan="3" class="rightborder tdpadding offheader tdbordertopbottom">HP Strength</td>
+    <td rowspan="{!off_count+2}" style="padding:0px;margin:0px;" class="rightborder whitebordertop"><img src="/img/arrowRight.gif" height="20px"/></td>
+    <td colspan="3" class="rightborder tdpadding offheader tdbordertopbottom">Competitor Weakness</td>
+    <td rowspan="{!off_count+2}" style="padding:0px;margin:0px;" class="rightborder "><img src="/img/arrowRight.gif" height="20px"/></td>
+    <td class="rightborder tdpadding offheader tdbordertopbottom" width="140px">Offensive Strategy</td>
+    <td rowspan="{!off_count+2}" style="padding:0px;margin:0px;" class="rightborder "><img src="/img/arrowRight.gif" height="20px"/></td>
+    <td colspan="4" class="rightborder tdpadding offheader tdbordertopbottom">Tactics</td>
+    
+  </tr>
+  <tr class="troff">
+     <td class="tdpadding tdheader">Leveraged?</td>
+    
+    <td class="tdpadding tdheader">&nbsp;</td>
+    <td class="tdpadding tdheader">Customer Validated?</td>
+    <td class="tdpadding tdheader">Exploited?</td>
+    
+    <td class="tdpadding tdheader">&nbsp;</td>
+    <td class="tdpadding tdheader">Customer Validated?</td>
+    <td class="rightborder tdpadding tdheader" rowspan="{!off_count+1}" style="text-align:center;background-color:#f3f3f3;">
+        <div style="width:90px;text-align:right;align:right;display:inline-block;">
+        Frontal:<apex:inputField value="{!Competitive_Sales_Plan__c.Frontal__c}" />&nbsp;
+        <br />Flank:<apex:inputField value="{!Competitive_Sales_Plan__c.Flank__c}" />&nbsp;
+        <br />Fractional:<apex:inputField value="{!Competitive_Sales_Plan__c.Fractional__c}"/>&nbsp;
+        <br />Stall:<apex:inputField value="{!Competitive_Sales_Plan__c.Stall__c}"/>&nbsp;
+        <br />Disengage:<apex:inputField value="{!Competitive_Sales_Plan__c.Disengage__c}"/>&nbsp;
+        <br /></div></td>
+    <td class="tdpadding tdheader">Tactic</td>
+    <td class="tdpadding tdheader">Owner</td>
+    <td class="tdpadding tdheader">Timing</td>
+    <td class="rightborder tdpadding tdheader">&nbsp;</td>
+  </tr>
+
+  <apex:repeat value="{!RelatedOffensiveStrategies}" id="offensive_values" var="off" >
+  <tr class="troff" style="background-color:#f3f3f3;">
+  <td class="tdpadding"><apex:inputField value="{!off.strength_leveraged__c}" /></td>
+   
+    <td class="tdpadding"><apex:inputField value="{!off.strength_text__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!off.strength_customer_validated__c}" /></td>
+    <td class="rightborder tdpadding"><apex:inputField value="{!off.their_weakness_customer_validated__c}" /></td>
+    
+    <td class="tdpadding"><apex:inputField value="{!off.their_weakness_text__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!off.their_weakness_exploited__c}" /></td>
+    
+    
+
+    
+    <td class="tdpadding"><apex:inputField value="{!off.tactic_text__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!off.tactic_owner__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!off.tactic_timing__c}" /></td>
+    <td class="rightborder tdpadding">
+        [<apex:commandlink value="Delete" action="{!removeOffRow}" reRender="ov_table">
+        <apex:param name="offrowId" value="{!off.id}" assignTo="{!chosenOffId}" />
+    </apex:commandlink>]</td>
+  </tr>
+  <apex:variable var="offRowNum" value="{!offRowNum + 1}"/>
+  </apex:repeat>
+  <tr>
+    <td class="tdtopborder" colspan="3">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td colspan="3" class="tdtopborder" style="text-align:center;"></td>
+    <td>&nbsp;</td>
+    <td class="tdtopborder">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td class="tdtopborder" colspan="4">&nbsp;</td>
+  </tr>
+
+
+  <tr >
+    <td colspan="3" >&nbsp;</td>
+    <td colspan="1" >&nbsp;</td>
+    <td colspan="3" style="text-align:center;" ><apex:commandbutton action="{!addOffRow}" value="Add Rows" reRender="ov_table"><apex:param name="offRowsAdd" value="2" assignTo="{!rows}" />
+</apex:commandbutton><br/>&nbsp;</td>
+    <td colspan="1" >&nbsp;</td>
+    <td colspan="1" >&nbsp;</td>
+    <td colspan="1" >&nbsp;</td>
+    <td colspan="4" >&nbsp;</td>
+    
+  </tr>
+
+  <apex:variable value="{!1}" var="defRowNum"/>
+  <tr  class="troff">
+    <td colspan="3" class="rightborder tdpadding offheader tdbordertopbottom tdtopborder">Competitor Strength</td>
+    <td rowspan="{!def_count+2}" class="rightborder whitebordertop"><img src="/img/arrowRight.gif" height="20px"/></td>
+    <td colspan="3" class="rightborder tdpadding offheader tdbordertopbottom">HP Weakness</td>
+    <td rowspan="{!def_count+2}" class="rightborder" style="border-top-style:none;"><img src="/img/arrowRight.gif" height="20px"/></td>
+    <td class="rightborder tdpadding offheader tdbordertopbottom" width="140px">Defensive Strategy</td>
+    <td rowspan="{!def_count+2}" class="rightborder "><img src="/img/arrowRight.gif" height="20px"/></td>
+    <td colspan="4" class="rightborder tdpadding offheader tdbordertopbottom">CounterTactics</td>
+    
+  </tr>
+  <tr class="troff">
+    <td class="tdpadding tdheader">Countered?</td>
+    <td class="tdpadding tdheader">&nbsp;</td>
+    <td class="rightborder tdpadding tdheader">Customer Validated?</td>
+    <td class="tdpadding tdheader">Customer Validated?</td>
+    <td class="tdpadding tdheader">&nbsp;</td>
+    <td class="rightborder tdpadding tdheader">Countered?</td>
+    <td class="rightborder tdpadding tdheader" rowspan="{!def_count+1}" style="text-align:center;background-color:#f3f3f3;">
+        <div style="width:90px;text-align:right;align:right;display:inline-block;">
+        Stop: <apex:inputField value="{!Competitive_Sales_Plan__c.Stop__c}"/>&nbsp;
+        <br />Slow: <apex:inputField value="{!Competitive_Sales_Plan__c.Slow__c}"/>&nbsp;
+        <br />Silence: <apex:inputField value="{!Competitive_Sales_Plan__c.Silence__c}"/>&nbsp;
+        <br />Shame: <apex:inputField value="{!Competitive_Sales_Plan__c.Shame__c}" />&nbsp;
+        <br /></div>
+    </td>
+    <td class="tdpadding tdheader">CounterTactic</td>
+    <td class="tdpadding tdheader">Owner</td>
+    <td class="tdpadding tdheader">Timing</td>
+    <td class="rightborder tdpadding tdheader">&nbsp;</td>
+  </tr>
+
+  <apex:repeat value="{!RelatedDefensiveStrategies}" id="defensive_values" var="def" >
+  <tr class="troff" style="background-color:#f3f3f3;">
+    <td class="tdpadding"><apex:inputField value="{!def.their_strength_countered__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!def.their_strength_text__c}" /></td>
+    <td class="rightborder tdpadding"><apex:inputField value="{!def.their_strength_customer_validated__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!def.our_weakness_customer_validated__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!def.our_weakness_text__c}" /></td>
+    <td class="rightborder tdpadding"><apex:inputField value="{!def.our_weakness_countered__c}" /></td>
+    
+
+    
+    <td class="tdpadding"><apex:inputField value="{!def.ct_countertactic__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!def.ct_owner__c}" /></td>
+    <td class="tdpadding"><apex:inputField value="{!def.ct_timing__c}" /></td>
+    <td class="rightborder tdpadding">
+        [<apex:commandlink value="Delete" action="{!removeDefRow}" reRender="ov_table">
+        <apex:param name="defrowId" value="{!def.id}" assignTo="{!chosenDefId}" />
+    </apex:commandlink>]</td>
+  </tr>
+  <apex:variable var="defRowNum" value="{!defRowNum + 1}"/>
+  </apex:repeat>
+  <tr>
+    <td class="tdtopborder" colspan="3">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td colspan="3" class="tdtopborder" style="text-align:center;"></td>
+    <td>&nbsp;</td>
+    <td class="tdtopborder">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td class="tdtopborder" colspan="4">&nbsp;</td>
+  </tr>
+    <tr >
+    <td colspan="3" >&nbsp;</td>
+    <td colspan="1" >&nbsp;</td>
+    <td colspan="3" style="text-align:center;" ><apex:commandbutton action="{!addDefRow}" value="Add Rows" reRender="ov_table"><apex:param name="defRowsAdd" value="2" assignTo="{!rows}" /></apex:commandbutton>
+<br/>&nbsp;</td>
+    <td colspan="1" >&nbsp;</td>
+    <td colspan="1" >&nbsp;</td>
+    <td colspan="1" >&nbsp;</td>
+    <td colspan="4" >&nbsp;</td>
+    
+  </tr>
+</table>
+
+</apex:outputpanel>
+<br />
+ <div style="margin-left:auto;margin-right:auto;width:200px;text-align:center;">
+                <apex:commandbutton action="{!customSave}" value="Save" /><apex:commandButton action="{!customCancel}" value="Cancel"/><input type="button" class="btn" value="Help" title="Help"  onclick="window.open('/apex/CSPHelp','CSP_Help','width=600,height=600,scrollbars=yes,resizable=yes')"/>
+            </div>
+<br />
+    </apex:form>
+Copyright © 2001–2013 Revenue Storm Corporation. All rights reserved    
+</apex:page>

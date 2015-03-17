@@ -1,0 +1,143 @@
+<apex:page standardController="Support_Request__c" sidebar="false" showHeader="false">
+
+  Hi,
+    <!--Commenting below description as per the defect 3762-->
+   <!--<p> Support Request {!Support_Request__c.Name} for Support Request Functional Support-Engineer Resource Support Request </P>-->
+   
+   <br></br>
+  
+  <!--<apex:outputLabel style=""> Support Request Information</apex:outputLabel>-->
+    <br></br>
+             <apex:outputLabel ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Support Request Information</Div></caption></b></apex:outputLabel>
+             <!--<b><caption>Support Request Information</caption></b>-->
+             <br></br>
+             <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Support_Request_Information}" var="sr" id="srinfo">
+             <tr>
+                <td> <B><apex:outputText value="{!sr.label}" id="thesrValue"/></B></td>
+                &nbsp; &nbsp; -  &nbsp;
+                <td> <apex:outputText value="{!Support_Request__c[sr]}" id="thesrTypeValue"/></td>
+                <br></br>
+             </tr>
+             </apex:repeat>
+    <br></br> 
+   <!-- <apex:outputLabel style="font-bold"> Opportunity Information</apex:outputLabel>-->
+     <br></br>
+       
+       <apex:outputLabel ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Opportunity Information</Div></caption></b></apex:outputLabel>
+       <!--<b><caption>Opportunity Information</caption></b>-->
+       <br></br>
+       
+         <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Opty_info}" var="opp" id="Opc">
+              <tr>
+                 <td> <B><apex:outputText value="{!opp.label}" id="theopValue" /></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                 <td> <apex:outputText value="{!Support_Request__c[opp]}" id="theopTypeValue"/></td>
+                 <br></br>
+              </tr>
+              </apex:repeat>
+<br></br>  
+      <apex:outputLabel ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Requestor Information</Div></caption></b></apex:outputLabel>
+      <!--<b><caption>Requestor Information</caption></b>-->
+       <br></br>
+        <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Requestorinfo}" var="Req" id="R">
+              <tr>
+                 <td> <B><apex:outputText value="{!Req.label}" id="theopValue"/></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                <td> <apex:outputText value="{!Support_Request__c[Req]}" id="theopTypeValue"/></td>
+                 <br></br>
+              </tr>
+            </apex:repeat>
+<br></br> 
+     <apex:outputLabel ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Opportunity Owner Information</Div></caption></b></apex:outputLabel>
+     <!--<b><caption>Opportunity Owner Information</caption></b>-->
+       <br></br>
+        <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.OpportunityOwner_Info}" var="Own" id="Opowner">
+              <tr>
+                 <td> <B><apex:outputText value="{!Own.label}" id="theopValue"/></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                 <td> <apex:outputText value="{!Support_Request__c[Own]}" id="theopTypeValue"/></td>
+                 <br></br>
+            </tr>
+            </apex:repeat>
+       <br></br>
+<br></br>
+      <apex:outputLabel ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Account Information</Div></caption></b></apex:outputLabel>
+      <!--<b><caption>Account Information</caption></b>-->
+       <br></br>
+        <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Opportunity_Account_Info}" var="acc" id="Accinfo">
+              <tr>
+                 <td> <B><apex:outputText value="{!Acc.label}" id="theAccValue"/></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                 <td> <apex:outputText value="{!Support_Request__c[Acc]}" id="theAccInfoValue"/></td>
+                 <br></br>
+            </tr>
+            </apex:repeat>
+<br></br>
+<br></br>
+       <apex:outputLabel ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Customer Contact Information</Div></caption></b></apex:outputLabel>
+      <!--<b><caption>Customer Contact Information</caption></b>-->
+       <br></br>
+        <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Customer_Information}" var="cus" id="cusinfo">
+              <tr>
+                 <td> <B><apex:outputText value="{!cus.label}" id="thecusValue"/></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                 <td> <apex:outputText value="{!Support_Request__c[cus]}" id="thecusinfoValue"/></td>
+                 <br></br>
+            </tr>
+            </apex:repeat>
+<br></br>
+<br></br>
+      <apex:outputLabel rendered="{!IF(Contains($CurrentPage.parameters.requestType,'B2B Portal Quote (Product/Configuration exist)') ||Contains($CurrentPage.parameters.requestType,'Configuration only') ||Contains($CurrentPage.parameters.requestType,'Special Pricing Only (New OPG)') ||Contains($CurrentPage.parameters.requestType,'Manual Quote') ||Contains($CurrentPage.parameters.requestType,'Configuration only (with list price)') ||Contains($CurrentPage.parameters.requestType,'B2B Portal Quote (Products/Configuration exist)') ||Contains($CurrentPage.parameters.requestType,'B2B Portal Update (Products/Configuration/Pricing Update)') ||Contains($CurrentPage.parameters.requestType,'B2B Portal Set-Up(new)'),false,true)}" ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">DEMO Informaiton</Div></caption></b></apex:outputLabel>
+      <!--<b><caption>DEMO Informaiton (AMS Only)</caption></b>-->
+       <br></br>
+        <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Demo_Info_AMS}" var="demo" id="demoinfo" rendered="{!IF(Contains($CurrentPage.parameters.requestType,'B2B Portal Quote (Product/Configuration exist)') ||Contains($CurrentPage.parameters.requestType,'Configuration only') ||Contains($CurrentPage.parameters.requestType,'Special Pricing Only (New OPG)') ||Contains($CurrentPage.parameters.requestType,'Manual Quote') ||Contains($CurrentPage.parameters.requestType,'Configuration only (with list price)') ||Contains($CurrentPage.parameters.requestType,'B2B Portal Quote (Products/Configuration exist)') ||Contains($CurrentPage.parameters.requestType,'B2B Portal Update (Products/Configuration/Pricing Update)') ||Contains($CurrentPage.parameters.requestType,'B2B Portal Set-Up(new)'),false,true)}" >
+              <tr>
+                 <td> <B><apex:outputText value="{!demo.label}" id="thedemoValue"/></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                 <td> <apex:outputText value="{!Support_Request__c[demo]}" id="thedemoinfoValue"/></td>
+                 <br></br>
+            </tr>
+            </apex:repeat>
+<br></br>
+<br></br>
+       <apex:outputLabel ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Pricing</Div></caption></b></apex:outputLabel>
+       <!--<caption>Pricing</caption>-->
+       <br></br>
+        <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Pricing}" var="Pr" id="Prinfo">
+              <tr>
+                 <td> <B><apex:outputText value="{!Pr.label}" id="thePrValue"/></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                 <td> <apex:outputText value="{!Support_Request__c[Pr]}" id="thePrinfoValue"/></td>
+                 <br></br>
+            </tr>
+            </apex:repeat>
+<br></br>
+<br></br>
+       <apex:outputLabel rendered="{!IF(Contains($CurrentPage.parameters.requestType,'Special Pricing Only') ||Contains(Support_Request__c.Owner_BG__c,'PPS')||Contains(Support_Request__c.Owner_BG__c,'IPG')||Contains(Support_Request__c.Owner_BG__c,'PSG'),false,true)}" ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Services, Support and Installation</Div></caption></b></apex:outputLabel>
+       <br></br>
+        <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Services_Support}" var="Servi" id="Serviinfo" rendered="{!IF(Contains($CurrentPage.parameters.requestType,'Special Pricing Only') ||Contains(Support_Request__c.Owner_BG__c,'PPS')||Contains(Support_Request__c.Owner_BG__c,'IPG')||Contains(Support_Request__c.Owner_BG__c,'PSG'),false,true)}">
+              <tr>
+                 <td> <B><apex:outputText value="{!Servi.label}" id="theServiValue"/></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                 <td> <apex:outputText value="{!Support_Request__c[Servi]}" id="theServiinfoValue"/></td>
+                 <br></br>
+            </tr>
+            </apex:repeat>
+<br></br>
+<br></br>
+    <apex:outputLabel rendered="{!IF(Contains($CurrentPage.parameters.requestType,'B2B Portal Quote (Product/Configuration exist)') ||Contains($CurrentPage.parameters.requestType,'Configuration only (with list price)'),false,true)}" ><b><caption><div style="font-size: 18px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;">Special Pricing</Div></caption></b></apex:outputLabel>
+      <!--<b><caption>Special Pricing</caption></b>-->
+       <br></br>
+        <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Special_Pricing}" var="Spe" id="Speinfo" rendered="{!IF(Contains($CurrentPage.parameters.requestType,'B2B Portal Quote (Product/Configuration exist)') ||Contains($CurrentPage.parameters.requestType,'Configuration only (with list price)') ,false,true)}">
+              <tr>
+                 <td> <B><apex:outputText value="{!Spe.label}" id="theSpeValue"/></B></td>
+                  &nbsp; &nbsp; -  &nbsp;
+                 <td> <apex:outputText value="{!Support_Request__c[Spe]}" id="theSpeinfoValue"/></td>
+                 <br></br>
+            </tr>
+            </apex:repeat>
+<br></br>
+<br></br>       
+         Regards,<br></br>
+         HP Sales Operation
+</apex:page>

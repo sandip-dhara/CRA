@@ -1,0 +1,137 @@
+<apex:page standardController="Opportunity" extensions="ManageContractsController" showHeader="false" sidebar="false" id="page">
+    <font color='RED'> <apex:messages /> </font>
+    <apex:form id="form">
+    <apex:pageBlock title="Conract Reference" id="block">
+
+    <center>
+        <apex:commandButton value="Associate to New Renewal" action="{!associateToNew}" />
+        <apex:commandButton value="Associate to Existing Renewal" action="{!associateToExisting}"/>
+        <apex:commandButton value="Remove" action="{!Remove}" />
+        <apex:commandButton value="Cancel" action="{!Cancel}" />
+    </center>
+   <!-- {!conList} -->
+            <br/> <br/>
+            <apex:actionStatus id="showStatus1">
+                             <apex:facet name="start">
+                                <img src="{!$Resource.AjaxAnimation}" />
+                             </apex:facet>
+                        </apex:actionStatus>
+            <apex:pageBlockTable value="{!contractWrapperList}" var="conn" width="100%" id="table">
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:inputCheckbox value="{!masterCheckbox}" onclick="checkAll(this)" id="master"/>
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!conn.choice}" onClick="unCheckMaster(this)"/>
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$ObjectType.Contract_Reference__c.Fields.Name.Label}" action="{!doSort}" rerender="table" status="showStatus1">
+                            <apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                        
+                    </apex:facet>
+                    {!conn.cont.Name}
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$ObjectType.Contract_Reference__c.Fields.AMP_ID__c.Label}" action="{!doSort}" rerender="table" status="showStatus1">
+                            <apex:param name="sortField" value="AMP_ID__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    {!conn.cont.AMP_ID__c}
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$ObjectType.Contract_Reference__c.Fields.Functional_Location__c.Label}" action="{!doSort}" rerender="table" status="showStatus1">
+                            <apex:param name="sortField" value="Functional_Location__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    {!conn.cont.Functional_Location__c}
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$ObjectType.Account.Fields.Name.Label}" action="{!doSort}" rerender="table" status="showStatus1">
+                            <apex:param name="sortField" value="Accounts__r.Name" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    {!conn.cont.Accounts__r.Name}
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$ObjectType.Contract_Reference__c.Fields.SAID__c.Label}" action="{!doSort}" rerender="table" status="showStatus1">
+                            <apex:param name="sortField" value="SAID__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    {!conn.cont.SAID__c}
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$ObjectType.Contract_Reference__c.Fields.Customer_Address__c.Label}" action="{!doSort}" rerender="table" status="showStatus1">
+                            <apex:param name="sortField" value="Customer_Address__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    {!conn.cont.Customer_Address__c}
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$ObjectType.Contract_Reference__c.Fields.Renewal_Status_Description__c.Label}" action="{!doSort}" rerender="table" status="showStatus1">
+                            <apex:param name="sortField" value="Renewal_Status_Description__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    {!conn.cont.Renewal_Status_Description__c}
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$ObjectType.Contract_Reference__c.Fields.Total_Contract_Value__c.Label}" action="{!doSort}" rerender="table" status="showStatus1">
+                            <apex:param name="sortField" value="Total_Contract_Value__c" assignTo="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    {!conn.cont.Total_Contract_Value__c}
+                </apex:column>
+
+            </apex:pageBlockTable>
+            <br/>
+    <center>
+        <div id="panel" >
+
+          <apex:commandLink styleClass="btn" action="{!first}" rendered="{!hasPrevious}" rerender="block" status="showStatus2" id="first">First</apex:commandlink>
+          <apex:commandLink styleClass="btn" action="{!previous}" rendered="{!hasPrevious}" rerender="block" status="showStatus2" id="previous">Previous</apex:commandlink>
+          <apex:commandLink styleClass="btn" action="{!next}" rendered="{!hasNext}" rerender="block" status="showStatus2" id="next">Next</apex:commandlink>
+          <apex:commandLink styleClass="btn" action="{!last}" rendered="{!hasNext}" rerender="block" status="showStatus2" id="last">Last</apex:commandlink>
+          <apex:actionStatus id="showStatus2">
+               <apex:facet name="start">
+                   <img src="{!$Resource.AjaxAnimation}" />
+               </apex:facet>
+          </apex:actionStatus>
+        </div>
+        
+    </center>
+    </apex:pageBlock>
+    </apex:form>
+    
+    <script language="javascript">
+        function checkAll(master){
+            var checked = master.checked;
+            var col = document.getElementsByTagName("INPUT");
+            for (var i=0;i<col.length;i++) {
+                col[i].checked= checked;
+            }
+        }
+        
+        function unCheckMaster(slave){
+            var checked = slave.checked;
+            var col = document.getElementById("page:form:block:table:master");
+            if(checked == false)
+                col.checked=checked;
+        
+        }
+    </script>
+</apex:page>

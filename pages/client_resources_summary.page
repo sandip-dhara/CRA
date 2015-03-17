@@ -1,0 +1,130 @@
+<apex:page standardController="Opportunity_Plan__c" showheader="false" sidebar="false">
+<script>
+function alertMe(){
+    alert('test');
+}
+</script>
+
+<style>
+table.crs {
+   border-width: 0px;
+    border-spacing: 0px;
+    border-style: none;
+    border-color: gray;
+    border-collapse: collapse;
+    background-color: white;
+    width: 1000px;
+    text-align:left
+}
+
+table.crs th {
+    border-width: 0px;
+    padding: 1px;
+    border-style: inset;
+    border-color: gray;
+    background-color: white;
+    -moz-border-radius: ;
+      height: 60px   
+      
+}
+table.crs td {
+    border-width: 1px;
+    padding: 1px;
+    border-style: inset;
+    border-color: gray;
+    background-color: white;
+    -moz-border-radius: ;
+    text-align:left;
+    height: 50px;
+    
+}
+
+.postEdit {
+    color: #FF0000;
+}
+
+body {
+    padding:10px;
+}
+
+</style>
+<apex:form >
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px;">Client Resources</h1>
+<hr size="1"></hr> 
+<br />
+<div style="width:200px;margin-left:auto;margin-right:auto;text-align:center;">
+<input type="button" class="btn" value="Begin/Edit" onclick="location.href='/apex/client_resources_edit?id={!Opportunity_Plan__c.id}&retURL=/apex/client_resources_summary?id={!Opportunity_Plan__c.id}'" />
+<input type="button" class="btn" value="Print" onclick="window.open('/apex/client_resources_print?id={!Opportunity_Plan__c.id}','dhc_print','width=780,height=925')" />
+<input type="button" class="btn" value="Help" onclick="window.open('/apex/client_resource_help?id={!Opportunity_Plan__c.id}','dhc_print','width=780,height=925')" />
+</div>
+
+<table class="crs" align="middle">
+<tr>
+<th valign="Bottom">Time:
+</th>
+
+</tr>
+<tr>
+<td><apex:outputField value="{!Opportunity_Plan__c.DG_Time__c}"/>
+</td>
+</tr>
+<tr>
+<th valign="Bottom">People:
+</th>
+</tr>
+<tr>
+<td ><apex:outputField value="{!Opportunity_Plan__c.DG_People__c}" />
+</td>
+</tr>
+<tr>
+<th valign="Bottom">Money:
+</th>
+</tr>
+<tr>
+<td><apex:outputField value="{!Opportunity_Plan__c.DG_Money__c}" />
+</td>
+</tr>
+</table>
+<br /><br />
+<table class="crs" style="width:5%; height: 5px">
+<tr>
+<th class="trquestion">How is the customer going to pay for the solution ? </th>
+</tr>
+<tr>
+<td><apex:outputField value="{!Opportunity_Plan__c.CR_CustPay_Q1__c}"  />
+</td>
+</tr>
+
+<tr>
+<th class="trquestion">What is the customer planning to do with existing equipment ? </th>
+</tr>
+<tr>
+<td><apex:outputField value="{!Opportunity_Plan__c.CR_CustEquip_Q2__c}"/>
+</td>
+</tr>
+</table>
+
+<br /><br /> <!--
+<apex:panelgrid columns="2" border="0" style="width:100%;table-layout:fixed;background-color:#FFFFFF">
+<apex:panelGrid columns="1">
+<apex:panelGroup >
+<B>Last Modified By: </b><apex:outputfield value="{!Opportunity_Plan__c.CR_last_updated_by__c}"/>
+</apex:panelGroup>
+</apex:panelGrid>
+
+<apex:panelGrid columns="2" cellpadding="3">
+<apex:panelGroup >
+<B>Last Modified Date: </b><apex:outputfield value="{!Opportunity_Plan__c.CR_last_modified__c}"/>
+</apex:panelGroup>
+</apex:panelGrid>
+</apex:panelGrid>
+-->
+
+<apex:panelGrid columns="1" cellpadding="3">
+<apex:panelGroup >
+<B>Last Modified By: </b><apex:outputfield value="{!Opportunity_Plan__c.CR_Last_Modified_By__c}"/>
+</apex:panelGroup>
+</apex:panelGrid>
+</apex:form>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

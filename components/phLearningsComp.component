@@ -1,0 +1,46 @@
+<apex:component Controller="phLearnings" access="global">
+
+<apex:attribute name="LearningId" assignTo="{!leId}" type="id" description="Learnings"/>
+<apex:attribute name="LearningName" type="String" description="Learning Name"/>
+<apex:attribute name="LearningDescription" type="String" description="Learning Description"/>
+<!--<apex:panelgrid columns="2" border="0" cellpadding="1px" CellSpacing="1px" width="50%">
+      <apex:panelgroup >         
+      <center><bold><apex:OutputText value="{!LearningName}" /></bold></center><br></br>
+      <center><bold><apex:OutputText value="{!LearningDescription}" /></bold></center><br></br>
+      <apex:OutputField value="{!AttchmentDetail.Name}" width="90%"/><br></br>
+      <apex:OutputField value="{!AttchmentDetail.BodyLength}" /><br></br>
+      <apex:OutputField value="{!AttchmentDetail.CreatedBy.Name}"/><br></br>
+      </apex:panelgroup>
+      <apex:panelgroup >
+      <video width="320" height="240" controls="True" autoplay="False">
+      <source src="/servlet/servlet.FileDownload?file={!AttchmentDetail.id}" />
+      </video>
+      </apex:panelgroup>
+</apex:panelgrid>-->
+<table border="1" cellpadding="0" cellspacing="0">
+<tr>
+<td>
+      <apex:panelgroup >         
+      <center><bold><apex:OutputText value="{!LearningName}" style="Width:90%;white-space: nowrap"/></bold></center><br></br>
+      <center><bold><apex:OutputText value="{!LearningDescription}" style="Width:90%;white-space: nowrap"/></bold></center><br></br>
+      <center><bold><apex:OutputText value="{!AttchmentDetail.Name}" style="Width:90%;white-space: nowrap"/></bold></center><br></br>
+      <center><bold><apex:OutputText value="{!AttchmentDetail.BodyLength}" style="Width:90%;white-space: nowrap"/></bold></center><br></br>
+      <center><bold><apex:OutputText value="{!AttchmentDetail.CreatedBy.Name}" style="Width:90%;white-space: nowrap"/></bold></center><br></br>
+      </apex:panelgroup>
+</td>
+<td>
+      <apex:panelgroup >
+      <video width="320" height="240" controls="True" autoplay="False">
+      <source src="/servlet/servlet.FileDownload?file={!AttchmentDetail.id}" type="video/mp4"/>
+      </video>
+      <video width="320" height="240" controls="True" autoplay="False">
+        <source src="/servlet/servlet.FileDownload?file={!AttchmentDetail.id}" type="video/3gp" />
+        <object data="/servlet/servlet.FileDownload?file={!AttchmentDetail.id}" width="320" height="240">
+     <embed src="HPES_Cloud.swf" width="320" height="240" />
+   </object> 
+</video>
+      </apex:panelgroup>
+</td>
+</tr>  
+</table>      
+</apex:component>

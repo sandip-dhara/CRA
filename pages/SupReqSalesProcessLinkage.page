@@ -1,0 +1,26 @@
+<!-- 
+/**********************************************************
+* Page Name: SupReqSalesProcessLinkage
+* Author: Accenture
+* Date: 12-June-2012 
+* Requirement # Request Id :
+* Description: UI to display opty Saleslinakge on support request detail page
+***********************************************************/
+-->
+<apex:page standardController="Support_Request__c" extensions="SupReqSalesProcessLinkageController">
+    <apex:form >
+        <apex:inputHidden value="{!Support_Request__c.Opportunity__c}"/>
+        <apex:pageBlock >
+            <apex:outputpanel >
+            <apex:pageBlockTable value="{!SalesproclinkageList}" rendered="{!Not(isSalesproclinkageListEmpty)}" var="splinkage">
+                <apex:column value="{!splinkage.Name}"/>
+                <apex:column value="{!splinkage.ID_Type__c}"/>
+                <apex:column value="{!splinkage.ID__c}"/>
+                </apex:pageBlockTable>
+                <apex:outputLabel rendered="{!isSalesproclinkageListEmpty}">
+                {!$Label.No_records_to_display}
+            </apex:outputLabel>
+            </apex:outputpanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

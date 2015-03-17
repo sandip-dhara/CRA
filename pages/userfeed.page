@@ -1,0 +1,12 @@
+<apex:page controller="UserFeedItem">
+    <apex:form >
+    <apex:actionFunction name="comment_count" action="{!get_comment_count}" reRender="comments">
+    <apex:param name="lid" value=""/>
+    </apex:actionFunction>
+    <apex:outputPanel id="comments">Comment Count {!LCommentCount}</apex:outputPanel>
+    </apex:form>
+    <chatter:feed entityid="a6tZ00000008REE" />
+    <script>
+        document.getElementById('publishersharebutton').onclick = function() {chatter.getPublisher().submit();setTimeout(function(){comment_count('a6tZ00000008REE')},4000);};
+    </script>
+</apex:page>

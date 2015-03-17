@@ -1,0 +1,363 @@
+<apex:page standardController="Relationship_Suite__c" extensions="RelExtnController" tabstyle="Opportunity_Plan__c" showHeader="False" sidebar="False">
+<apex:form >
+      <apex:pageblock mode="edit" id="pgB">
+      <!--Heading of Relationshiop Suite-->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="24" /><BR>&nbsp;</BR><apex:OutputText value="Relationship Suite"  style="size:100%;color: #000000; font-size: 16pt; width: 25%; font-weight:bold;text-align:left"/>
+    </apex:panelgrid>
+    <hr size="2"></hr>
+    <!--End-->
+    <apex:pageBlockButtons >
+          <apex:commandButton value="Save" action="{!save}"/>
+          <apex:commandButton value="Cancel" action="{!cancel}"/>          
+          <input type="button" class="btn" value="Help" title="Add"  onclick="window.open('/apex/RelationshipSuiteHelp','RelationshipSuiteHelp','width=600,height=400,scrollbars=yes,resizable=yes')"/>
+          </apex:pageBlockButtons>
+          <apex:messages />
+      <apex:panelgrid columns="2" border="0" style="width:100%;table-layout:fixed">      
+        <apex:panelgrid columns="2" style="width:100%; background-color:#66CCFF" cellPadding="3">
+            <apex:OutputLabel value="Contact Information" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+           
+        </apex:panelGrid>
+        <apex:panelgrid columns="2" style="width:100%; background-color:#66CCFF" cellPadding="3">
+           
+            <apex:OutputLabel value="Relationship Map" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+        </apex:panelGrid>
+        <apex:panelgrid columns="2" style="width:50%" cellPadding="3">
+            
+            <apex:OutputLabel value="Contact:" style="font-weight:bold"/>
+            <apex:OutputField value="{!Relationship_Suite__c.Contact__c}" />
+            
+            <apex:OutputLabel value="Title:" style="font-weight:bold"/>
+            <apex:OutputField value="{!Relationship_Suite__c.Contact__R.title}" />
+            
+            <apex:OutputLabel value="Role:" style="font-weight:bold"/>
+            <apex:OutputLabel value="{!OppContactRole}" />
+
+            <apex:OutputLabel value="Reports to:" style="font-weight:bold"/>
+            <apex:selectList id="rt" value="{!Relationship_Suite__c.Parent_Contact__c}" multiselect="false" size="1">
+                <apex:selectOptions value="{!OppContacts}" />
+            </apex:selectList>
+            
+
+            <apex:OutputLabel value="Reports to Person Not in List:" style="font-weight:bold"/>
+            <apex:inputfield value="{!Relationship_Suite__c.Reports_To_Person_Not_in_List__c}" />
+            
+        </apex:panelgrid>
+            
+        <apex:panelgrid columns="2" style="width:100%" cellPadding="3">
+            <!--<apex:OutputLabel value="Relationship Map:" style="font-weight:bold"/>-->
+            <apex:inputField value="{!Relationship_Suite__c.Relationship_map__c}" />
+        </apex:panelgrid>
+        <apex:panelgrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3">
+           
+            <apex:OutputLabel value="Relationship Meter" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+            
+
+        </apex:panelGrid>
+       
+        
+        <apex:panelgrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3">
+           
+            <apex:OutputLabel value="Political Power Radar" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+            
+            
+        </apex:panelGrid>
+        
+         <apex:panelgrid columns="1" style="width:100%; background-color:#FFF6B3" cellPadding="3">
+           
+            <apex:OutputLabel value="Meter Scale: 1 - Disagree | 2 - Somewhat Disagree | 3 - Somewhat Agree | 4 - Agree" style="color: #000000; font-size: 10pt; width: 300px"/>
+            
+        </apex:panelGrid>
+        <apex:panelGrid columns="1" style="width:100%; background-color:#FFF6B3" cellPadding="3">
+        
+        <apex:OutputLabel value="Radar Scale: 1 - Disagree | 2 - Somewhat Disagree | 3 - Somewhat Agree | 4 - Agree" style="color: #000000; font-size: 10pt; width: 300px"/>
+        
+        </apex:panelGrid>
+        
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="{!$Label.RS_RM_Q1}" style=""/> 
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S1__c}" style="text-align:center;width: 150px"/>
+          </apex:panelGrid>
+          
+           <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+                       <apex:outputlabel value="1. {!$Label.RS_PP_Q1}" style=""/> 
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S1__c}" style="text-align:center;width: 150px;height:20px"/>
+          </apex:panelgrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="2. {!$Label.RS_RM_Q2}" style=""/> 
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S2__c}" style="text-align:center;width: 150px"/>
+          </apex:panelGrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+                    <apex:outputlabel value="2. {!$Label.RS_PP_Q2}" style=""/> 
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S2__c}" style="text-align:center;width: 150px;height:20px"/>
+          </apex:panelgrid>
+          
+       <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="3. {!$Label.RS_RM_Q3}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S3__c}" style="text-align:center;width: 150px"/>
+          </apex:panelGrid>
+          
+          
+         <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="3. {!$Label.RS_PP_Q3}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S3__c}"  style="text-align:center;width: 150px;height:20px"/>
+          </apex:panelgrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="4. {!$Label.RS_RM_Q4}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S4__c}" style="text-align:center;width: 150px"/>
+          </apex:panelGrid>
+          
+            
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="4. {!$Label.RS_PP_Q4}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S4__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+          
+          
+         
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="5. {!$Label.RS_RM_Q5}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S5__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="5. {!$Label.RS_PP_Q5}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S5__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+           
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputLabel value="6. {!$Label.RS_RM_Q6}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S6__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputLabel value="6. {!$Label.RS_PP_Q6}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S6__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="7. {!$Label.RS_RM_Q7}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S7__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+             <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="7. {!$Label.RS_PP_Q7}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S7__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="8. {!$Label.RS_RM_Q8}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S8__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+           <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="8. {!$Label.RS_PP_Q8}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S8__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="9. {!$Label.RS_RM_Q9}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S9__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+            
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="9. {!$Label.RS_PP_Q9}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S9__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="10. {!$Label.RS_RM_Q10}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S10__c}" style="text-align:center;width: 150px"/> 
+           </apex:panelGrid>
+           
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="10. {!$Label.RS_PP_Q10}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S10__c}" style="text-align:center;width: 150px"/> 
+          </apex:panelgrid>
+          
+          <!--apex:outputlabel value="." /-->
+             <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px" cellPadding="3">
+          <apex:inputhidden value="{!Relationship_Suite__c.Opportunity_Plan__c}" />
+          <apex:inputhidden value="{!Relationship_Suite__c.Opportunity_Plan__r.Opportunity__c}" />
+          </apex:panelgrid>
+          
+          
+        
+                
+          
+           
+          
+        
+          
+          
+        
+          
+          
+         
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="11. {!$Label.RS_PP_Q11}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S11__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+          
+           <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px" cellPadding="3">
+          <apex:inputhidden value="{!Relationship_Suite__c.Opportunity_Plan__c}" />
+          <apex:inputhidden value="{!Relationship_Suite__c.Opportunity_Plan__r.Opportunity__c}" />
+          </apex:panelgrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="12. {!$Label.RS_PP_Q12}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S12__c}" style="text-align:center;width: 150px"/> 
+        </apex:panelgrid>
+                
+    </apex:panelgrid>
+          
+    
+    
+   
+    
+    
+          <!--<apex:pageBlockSection title="Information">
+          <apex:OutputField value="{!Relationship_Suite__c.Opportunity_Plan__c}"/>
+          <apex:inputField value="{!Relationship_Suite__c.Contact__c}"/>
+          </apex:pageBlockSection>
+          <apex:pageBlockSection title="Relationship Map" columns="2">
+          <apex:inputField value="{!Relationship_Suite__c.Relationship_map__c}"/>
+          <apex:inputfield value="{!Relationship_Suite__c.Parent_Contact__c}"/>
+          </apex:pageBlockSection>
+          <apex:pageBlockSection columns="2" title="Relationship Meter">
+          <apex:panelgrid columns="4" style="background-color:#F2F5A9" Cellpadding="3">
+          <apex:outputText value="1 - Disagree | " />
+          <apex:outputText value="1 - Somewhat disagree | " />
+          <apex:outputText value="3 - Somewhat agree | " />
+          <apex:outputText value="4 - Agree" />
+          </apex:panelgrid>
+          <BR></BR>
+          <apex:outputlabel value="1. {!$Label.RS_RM_Q1}" style=""/> 
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S1__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="2. {!$Label.RS_RM_Q2}" style=""/> 
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S2__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="3. {!$Label.RS_RM_Q3}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S3__c}"  style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="4. {!$Label.RS_RM_Q4}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S4__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="5. {!$Label.RS_RM_Q5}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S5__c}" style="text-align:center;width: 40px"/>
+          <apex:outputLabel value="6. {!$Label.RS_RM_Q6}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S6__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="7. {!$Label.RS_RM_Q7}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S7__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="8. {!$Label.RS_RM_Q8}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S8__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="9. {!$Label.RS_RM_Q9}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S9__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="10. {!$Label.RS_RM_Q10}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.RM_S10__c}" style="text-align:center;width: 40px"/>-->
+         <!-- <apex:inputField label="{!$Label.RS_RM_Q1}" value="{!Relationship_Suite__c.RM_S1__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q2}" value="{!Relationship_Suite__c.RM_S2__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q3}" value="{!Relationship_Suite__c.RM_S3__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q4}" value="{!Relationship_Suite__c.RM_S4__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q5}" value="{!Relationship_Suite__c.RM_S5__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q6}" value="{!Relationship_Suite__c.RM_S6__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q7}" value="{!Relationship_Suite__c.RM_S7__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q8}" value="{!Relationship_Suite__c.RM_S8__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q9}" value="{!Relationship_Suite__c.RM_S9__c}"/>
+          <apex:inputField label="{!$Label.RS_RM_Q10}" value="{!Relationship_Suite__c.RM_S10__c}"/> -->
+          <!--</apex:pageBlockSection>
+          <apex:pageBlockSection title="Political Power Radar" columns="2">
+          <apex:panelgrid columns="4" style="background-color:#F2F5A9" Cellpadding="3">
+          <apex:outputText value="1 - Disagree | " />
+          <apex:outputText value="1 - Somewhat disagree | " />
+          <apex:outputText value="3 - Somewhat agree | " />
+          <apex:outputText value="4 - Agree" />
+          </apex:panelgrid>
+          <BR></BR>
+          <apex:outputlabel value="{!$Label.RS_PP_Q1}" style=""/> 
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S1__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="2. {!$Label.RS_PP_Q2}" style=""/> 
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S2__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="3. {!$Label.RS_PP_Q3}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S3__c}"  style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="4. {!$Label.RS_PP_Q4}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S4__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="5. {!$Label.RS_PP_Q5}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S5__c}" style="text-align:center;width: 40px"/>
+          <apex:outputLabel value="6. {!$Label.RS_PP_Q6}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S6__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="7. {!$Label.RS_PP_Q7}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S7__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="8. {!$Label.RS_PP_Q8}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S8__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="9. {!$Label.RS_PP_Q9}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S9__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="10. {!$Label.RS_PP_Q10}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S10__c}" style="text-align:center;width: 40px"/> 
+          <apex:outputlabel value="11. {!$Label.RS_PP_Q11}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S11__c}" style="text-align:center;width: 40px"/>
+          <apex:outputlabel value="12. {!$Label.RS_PP_Q12}" style=""/>
+          <apex:inputField label="" value="{!Relationship_Suite__c.PP_S12__c}" style="text-align:center;width: 40px"/>    -->
+             <!-- <apex:outputPanel >
+                  {!$Label.RS_PP_Q1} &nbsp;<apex:inputField label="" value="{!Relationship_Suite__c.PP_S1__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q2} &nbsp;<apex:inputField label="" value="{!Relationship_Suite__c.PP_S2__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q3} &nbsp; <apex:inputField label="" value="{!Relationship_Suite__c.PP_S3__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q4} &nbsp;<apex:inputField label="" value="{!Relationship_Suite__c.PP_S4__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q5} &nbsp;<apex:inputField label="" value="{!Relationship_Suite__c.PP_S5__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q6} &nbsp; <apex:inputField label="" value="{!Relationship_Suite__c.PP_S6__c}"/> 
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q7} &nbsp;<apex:inputField label="" value="{!Relationship_Suite__c.PP_S7__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q8} &nbsp;<apex:inputField label="" value="{!Relationship_Suite__c.PP_S8__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q9} &nbsp; <apex:inputField label="" value="{!Relationship_Suite__c.PP_S9__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q10} &nbsp;<apex:inputField label="" value="{!Relationship_Suite__c.PP_S10__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q11} &nbsp; <apex:inputField label="" value="{!Relationship_Suite__c.PP_S11__c}"/>
+              </apex:outputPanel>
+              <apex:outputPanel >
+                  {!$Label.RS_PP_Q12} &nbsp;<apex:inputField label="" value="{!Relationship_Suite__c.PP_S12__c}"/>
+              </apex:outputPanel> 
+          </apex:pageBlockSection>-->
+          
+          <apex:panelgrid columns="2" style="width:100%; background-color:#66CCFF" cellPadding="3">
+           
+            <apex:OutputLabel value="Power Matrix Tools" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+        </apex:panelGrid>
+        
+        <apex:panelgrid columns="3" style="width:100%;vertical-align:top; height:80px" cellPadding="3">
+          <apex:panelgroup >
+          <apex:OutputLabel value="Social Style:" style="width: 100 px;font-weight:bold"/><BR/><BR/>
+          <apex:inputField label="Social Style" value="{!Relationship_Suite__c.PowerMatrix__c}" style="width: 100 px"/><BR/><BR/>
+          <apex:commandLink value="Style Estimator Tool" onclick="window.open('https://www.socialstylenavigator.com/')"/><BR/><BR/>
+         <!-- <a href="https://www.socialstylenavigator.com/">Style Estimator Tool</a><BR/><BR/>-->
+          <apex:OutputLabel value="This tool is only available for individuals who have competed a SOCIAL STYLE profile " style="width: 100 px"/><BR/><BR/>
+          </apex:panelgroup>
+          
+          <apex:image url="{!URLFOR($Resource.OPBar, 'SSM.jpg')}" width="350Px" height="350Px"/>
+        </apex:panelGrid> 
+      
+      </apex:pageblock>
+</apex:form>
+</apex:page>

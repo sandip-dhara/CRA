@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <content>Apts_OverwriteLegalIssueEditDelete</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>Apts_OverwriteLegalIssueEditDelete</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Additional_Legal_Dept_Reviewer__c</fullName>
+        <defaultValue>&quot;[State name of escalation attorney, if, any, who has reviewed this opinion.  This is mandatory in the U.S. for all deals with an overall risk rating of High or Very High.]&quot;</defaultValue>
+        <externalId>false</externalId>
+        <label>Additional Legal Dept. Reviewer</label>
+        <length>2000</length>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Agreement__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Agreement</label>
+        <referenceTo>Apttus__APTS_Agreement__c</referenceTo>
+        <relationshipLabel>Legal Issues</relationshipLabel>
+        <relationshipName>Legal_Issues</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Final_Content__c</fullName>
+        <externalId>false</externalId>
+        <label>Risk Ratings</label>
+        <length>3000</length>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Initial_Content__c</fullName>
+        <externalId>false</externalId>
+        <label>HP&apos;s Response</label>
+        <length>3000</length>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Legal_Recommendation__c</fullName>
+        <defaultValue>&quot;[State whether you recommend or do not recommend and overall legal risk rating, based on your analysis of the risks in this opinion.                                                                                  The recommendation and legal risk rating assume that the mitigation strategies recommended by legal have been incorporated by the pursuit team in the bid.  If you do not recommend, summarize reasons.]&quot;</defaultValue>
+        <externalId>false</externalId>
+        <label>Legal Recommendation</label>
+        <length>2000</length>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Not_Applicable__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Not Applicable</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Number_of_times_HP_Response_Changed__c</fullName>
+        <defaultValue>0</defaultValue>
+        <description>Field updates every time when HP Response Changed</description>
+        <externalId>false</externalId>
+        <label>Number of times HP Response Changed</label>
+        <precision>5</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Paragraph__c</fullName>
+        <externalId>false</externalId>
+        <label>Customer Non Standard Positions</label>
+        <length>3000</length>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Category__c</fullName>
+        <externalId>false</externalId>
+        <label>Risk Category</label>
+        <length>1500</length>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Risk_Rating__c</fullName>
+        <externalId>false</externalId>
+        <label>Risk Rating</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Low</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medium</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Very High</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Sequence__c</fullName>
+        <description>Make Risk Category in Sequence..</description>
+        <externalId>false</externalId>
+        <label>Sequence</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <label>Legal Issue</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>Risk_Category__c</columns>
+        <columns>Sequence__c</columns>
+        <columns>Agreement__c</columns>
+        <columns>Paragraph__c</columns>
+        <columns>Initial_Content__c</columns>
+        <columns>Number_of_times_HP_Response_Changed__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+        <language>en_US</language>
+    </listViews>
+    <nameField>
+        <displayFormat>LI-{000000}</displayFormat>
+        <label>Legal Issue Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Legal Issues</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

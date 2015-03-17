@@ -1,0 +1,513 @@
+<apex:page standardController="Offering_Release__c" extensions="ODP_Extension_OfferingRelease_Upsert">
+<!-- jquery  -->
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM_SelectMenu,'jquery-ui-selectmenu/jquery.ui.selectmenu.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM_SelectMenu,'jquery-ui-selectmenu/jquery.ui.selectmenu.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.searchHPapp,'searchapp.js')}"/>
+<!--Tovid -alertfiy plugin -->
+<apex:includeScript value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.default.css')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.core.css')}"/>
+<!-- hunter bootstrap  -->
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/> 
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" /> 
+<!-- athena style -->
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />   
+<style>
+.loading {
+    display: none;
+    opacity: 0.7;
+    filter:alpha(opacity=70); 
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1000px;
+    height: 100%;
+    background-color: #FFFFFF;
+    z-index: 1000;
+}
+
+.loading_img {
+    position: absolute;
+    left: 470px;
+    top: 300px;
+    width: 60px;
+    height: 60px;
+    background: url("{!URLFOR($Resource.HPLoading, 'HPLoadingImage/HPLoading.gif')}") no-repeat scroll left top white;
+}
+{!URLFOR($Resource.img_athena, 'img_athena/YJHLogo.jpg')}
+.loading_small {
+    display: block;
+    opacity: 1;
+    filter:alpha(opacity=100); 
+    position: absolute;
+    width: 1000px;
+    height: 104px;
+    background-color: #FFFFFF;
+    z-index: 1000;
+}
+
+.loading_small_img {
+    position: absolute;
+    left: 470px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url("{!URLFOR($Resource.HPLoading, 'HPLoadingImage/HPLoading.gif')}") no-repeat scroll left top white;
+}
+
+   .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 300 !important;
+        border-radius: 0px  !important;
+        border-bottom-left-radius:6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .pbSubheader H3, .alertify-button{
+        color: white !important;
+    }
+    body .bPageBlock .pbBody .pbSubheader img {
+        height: 15px;
+        width: 15px;
+    }
+   .apexp .bPageBlock .apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:16px !important; /* this controls the blue bar font-sizes */
+    }
+
+    .myButtons{
+        background: none  !important;
+        border: 0px  !important;
+        background-color: #007DBA  !important;
+        color: #fff !important;
+        font-size: 13px  !important;
+        border-radius: 0px  !important;
+        padding: 6px 6px 6px 6px  !important;
+        border-bottom-left-radius: 6px  !important;
+        border-top-right-radius: 6px  !important;
+      }
+   .myButtons:hover{
+       background-color: #D7410B !important;
+     }
+   .myDisabledButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: gray !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+   .parentDisable{
+    //{!IF(myEditStates=='Update','width:58%; float:left;',';')}
+       overflow:hidden;
+        width:100%;
+       //height:550px;
+       clear: both;
+   }
+   #chatterDisplay{
+        position:relative;
+        top:7px;
+        width: 38%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+   }
+   #chatterWrapper{
+       height:450px;
+       overflow-y: auto;
+       border: 1px solid #ccc;
+       padding:10px !important;
+   }
+    
+  
+    #ActionDiv{
+        position:relative;
+        top:20px;
+        width: 38%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+    
+    #Divtext{
+        width: 30%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 0px;
+    }
+    #DivDelLink{
+        width: 68%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+        margin-right: 0px;
+    }
+   
+   /* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:HPSimplified, Helvetica, Arial, sans-serif; !important;
+            border-top:0px;
+        }
+    .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+        border-top: 0px solid #3044b5;
+     }
+     
+    .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+    .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+        padding: 2px 8px;
+        color: #333;
+        border-bottom: 1px solid #e3deb8;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:13px !important;
+     }
+    /* table row highlight */     
+    body .pbBody table.list tr.dataRow.highlight td{
+    background-color:#ecf4f8;
+    }
+    body .pbBody table.list tr.headerRow th{
+        background:#fff !important;
+        color:#007DBA !important;
+        border:1px solid #ccc;
+    }
+    /* for Header */
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 300 !important;
+    }
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:14px !important; /* this controls the blue bar font-sizes */
+    }
+    /* done header */
+    .bPageBlock .detailList .data2Col{
+    padding-left:0px;
+    }
+    body .pbBody table.list tr.headerRow th{
+        padding: 4px 8px;
+    }
+    
+    /* Detail Table Style */
+    
+    .detailList td{
+        line-height:20px;
+    }
+    body .bPageBlock .pbBody .labelCol {
+        color: #4a4a56;
+        line-height: 20px;
+    }
+    .Custom64Tab .secondaryPalette, .individualPalette .Custom64Block .secondaryPalette{
+    border:0px;
+    }
+    
+    /* Textboxes, Textareas sytle */
+    
+    input,textarea{
+        border: 2px solid #CCCCCC;
+        background:#f2f2f2;
+    }
+   
+   /* Other review / Contribute */
+   
+   #otherReview{
+       width:49%;
+       float:left;
+       margin-left:10px;
+   }
+   #contrib{
+       width:49%;
+       float:left;
+   }
+   
+   /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 14px;
+        border-radius: 0px;
+        padding: 8px 8px 8px 8px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    
+    .linkBtn {
+        background: none !important;
+        border: 0px !important;
+        background-color: #007DBA !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        border-radius: 0px !important;
+        padding: 8px 8px 8px 8px !important;
+        border-bottom-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .clear{clear:both}
+    #positionToggle{position:absolute; top:9px; left:9px; }
+    #showHideList{display:none; position:absolute; top:10px; left:10px; border-radius: 5px; border:1px solid #cccccc; background-color:#eeeeee; }
+    #ListInner{padding:10px 10px 10px 10px; }
+    
+    .clearfix {
+    *zoom: 1;
+}
+
+    .clearfix:before, .clearfix:after {
+        display: table;
+        line-height: 0;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    /*label,select,.ui-select-menu { float: left; margin-right: 10px; }
+    .wrap ul.ui-selectmenu-menu-popup li a { font-weight: bold; }*/
+    .ui-selectmenu{
+        height: 1.5em;
+    }
+    .ui-selectmenu-status {
+        line-height: 1.0em;
+    }
+    
+</style>
+<script>
+var flag=false;
+var projectName;
+   $j = jQuery.noConflict();
+   $j(document).ready(function() {
+      $j("select[id$=Facilitator_mlktp]").hide();
+      $j("select[id$=PrimaryContact_mlktp]").hide()
+      //$j("select[id$=OROwner_mlktp]").hide();
+      $("select[id$=FlightPlan]").selectmenu({
+            style:'popup',
+            width: 180,
+            format: addressFormatting
+        });
+      $("ul[id$=FlightPlan-menu]").height(400);
+      $("ul[id$=FlightPlan-menu]").width(400);
+      $("ul[id$=FlightPlan-menu]").parent("div").css("z-index","99");
+      $(".parentDisable").click(function(){
+          $("ul[id$=FlightPlan-menu]").parent("div").hide();
+      });
+      // add by june.
+      $("select[id$=FlightPlan]").change(function () {
+          flag=true;
+      });
+      
+      //alertify.alert('{!myEditStates}');
+   });
+   //a custom format option callback
+var addressFormatting = function(text, opt){
+    var newText = text;
+    //array of find replaces
+    var findreps = [
+        {find:/^([^\-]+) \- /g, rep: '<span class="ui-selectmenu-item-header">$1</span>'},
+        {find:/([^\|><]+) \| /g, rep: '<span class="ui-selectmenu-item-content">$1</span>'},
+        {find:/([^\|><\(\)]+) (\()/g, rep: '<span class="ui-selectmenu-item-content">$1</span>$2'},
+        {find:/([^\|><\(\)]+)$/g, rep: '<span class="ui-selectmenu-item-content">$1</span>'},
+        {find:/(\([^\|><]+\))$/g, rep: '<span class="ui-selectmenu-item-footer">$1</span>'}
+    ];
+
+    for(var i in findreps){
+        newText = newText.replace(findreps[i].find, findreps[i].rep);
+    }
+    return newText;
+}
+ //Add by June;
+var createProjectSave = function(){         
+    var name = $("input[id$=projectName]").val();
+    if('{!myEditStates}'=='Create'){
+        alertify.confirm("Note: Confirm to create "+name+" opportunity?",function(e){
+             if(e){
+                 $('#loading_Modal').modal('show');
+                 saveProject();
+             }
+             return false;
+         });
+    }else{
+        
+        alertify.confirm("Note: Confirm to update "+name+" opportunity?",function(e){
+             if(e){
+                 $('#loading_Modal').modal('show');
+                 saveProject();
+             }
+             return false;
+        });
+    }
+        
+    return false;
+}
+
+var confirmContineSave = function(){
+        
+        //Add by June;
+        if(!flag){
+             alertify.confirm("Note: Flight plan has not been changed. Do you want to save?",function(e){
+                 if(e){
+                     $('#loading_Modal').modal('show');
+                     saveProject();
+                 }
+             });
+             flag=false;
+             return false;
+         }
+
+
+        if($j("select[id$=FlightPlan]").val() != '{!SelectFlightPlan}')
+        {
+            //return window.confirm("Re-select flight plan will erase all your previous work, confirm to continue?");
+            //myConfirm("Re-select flight plan will erase all your previous work, confirm to continue??","SaveProject"); return false;
+            
+            // Modify by june.
+            //alertify.alert("Re-select flight plan will erase all your previous work except Start Up Stage, confirm to continue?");
+            alertify.confirm("Flight Plan has been reselected, Please confirm to continue?",function(e){
+                     if(e){
+                         $('#loading_Modal').modal('show');
+                         saveProject();
+                         
+                     }
+                 });
+                 return false;
+        }
+        else{
+            return true;
+        }
+}
+
+    function myAlter(err) {
+        $('#myAlterMessage').html(err);
+        $('#DivMyAlter').modal('show');
+    }
+    function myConfirm(msg,actionId) {
+        $('#myConfirmMessage').html(msg);
+        $('#DivMyConfirm').modal('show');
+        $('#myConfirmSubmit').unbind();
+        $('#myConfirmSubmit').click(function(){
+            $('#DivMyConfirm').hide();
+            $('[id$='+actionId+']').click();
+        });
+    }
+    function myConfirmWithParm(msg,actionId,parm){
+        $('#myConfirmMessage').html(msg);
+        $('#DivMyConfirm').modal('show');
+        $('#myConfirmSubmit').unbind();
+        $('#myConfirmSubmit').click(function(){
+            $('#DivMyConfirm').hide();
+            $('[id$='+actionId+']').each(function(k){
+                if($(this).text() == parm){
+                    $(this).click();
+                    return;
+                }
+            });
+        });
+    }
+
+</script>
+<div class="parentDisable">
+
+<apex:form >
+<apex:pageBlock title="{!myEditStates} Opportunity">
+    <apex:pagemessages />
+    <apex:pageBlockSection title="Information: Please provide related supporting documents for this opportunity in opportunity detail screen" columns="2" collapsible="false" >
+        <apex:inputField value="{!OffR.Name__c}" id="projectName"/>
+         <apex:inputField value="{!OffR.Facilitator__c}" id="Facilitator" required="true" label="Business Engagement Partner"/>
+       
+        <apex:inputField value="{!OffR.Offering_Version__c}"/>
+        <!-- <apex:inputField value="{!OffR.Flight_Plan_ID__c}" rendered="false"/>-->
+        <apex:pageBlockSectionItem rendered="{!CanSelFP}">
+            <apex:outputLabel value="Flight Plan"></apex:outputLabel>
+            <!-- <select name="speedB" id="j_id0:j_id7:j_id8:j_id35:j_id38:FlightPlan">
+                <option>Jane Doe - 78 West Main St Apt 3A Bloomsburg, PA 12345 (footer text)</option>
+                <option>Joseph Doe - 78 West Main St Apt 3A Bloomsburg, PA 12345 (footer text)</option>
+                <option selected="selected">Mad Doe Kiiid - 78 West Main St Apt 3A Bloomsburg, PA 12345 (footer text)</option>
+            </select> -->
+            <apex:selectList value="{!SelectFlightPlan}" multiselect="false" size="1" label="Flight Plan" id="FlightPlan">
+                <apex:selectOptions value="{!FlightPlans}"></apex:selectOptions>
+            </apex:selectList>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!OffR.Offering_Category__c}" required="true"/>
+        <apex:outputField value="{!OffR.Flight_Plan_Name__c}" rendered="{!myEditStates=='Update' && !CanSelFP}" label="Flight Plan"/>
+        <!-- apex:inputField value="{!OffR.Release_Type__c}" required="true"/ -->
+        <apex:inputField value="{!OffR.Status__c}" rendered="{!CanSelStatus}"/>
+        <apex:inputField value="{!OffR.Practice__c}" required="true"/>
+        <!-- <apex:inputField value="{!OffR.Facilitator__c}" id="Facilitator" required="true"/> -->
+       
+        <apex:inputField value="{!OffR.Primary_Business_Contacts__c}" />
+        
+        <!-- apex:inputField value="{!OffR.PPMC_Project_ID__c}" / -->
+        <apex:inputField value="{!OffR.BVP__c}" />
+        <!-- <apex:outputLink value="{!URLFOR($Action.Offering_Release__c.ChangeOwner,OffR.id)}">Change Owner</apex:outputLink> -->
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection columns="1" collapsible="false">
+        <apex:inputField value="{!OffR.Release_Description__c}" required="true" style="width:98%;height:100px;"/>
+        <apex:inputField value="{!OffR.Assumptions__c}"/>
+        <apex:inputhidden value="{!OffR.OwnerId}" id="OROwner"  />
+    </apex:pageBlockSection>
+  
+    <apex:pageBlockButtons location="Bottom">
+        <!--modify by June-->
+         <apex:actionFunction name="saveProject" action="{!Save}"/> 
+        <apex:commandButton value="Save"   styleclass="myButtons" onclick="javascript:return {!IF(CanSelFP,'confirmContineSave();','createProjectSave();')}"/>
+        <apex:commandButton value="Cancel" action="{!cancel}" styleclass="myButtons" />
+    </apex:pageBlockButtons>
+</apex:pageBlock>
+<!-- <apex:commandLink style="display:none" action="{!Save}" value="Send" id="SaveProject"></apex:commandLink>  -->
+</apex:form>  
+</div>
+
+<!--    
+<div id="chatterDisplay" style="{!IF(myEditStates=='Update','','display:none;')}">
+    <apex:pageBlock >
+        <div class="pbSubheader brandTertiaryBgr first tertiaryPalette"><h3 style="float:left;">Collaborate</h3>
+            <div id="followme" style="text-align:right; padding-bottom:0px;float:right;font-size:12px;"><chatter:follow entityID="{!OffR.Id}"/></div>
+         </div>    
+            
+        <div >
+            <div id="chatterWrapper" style="display:block; min-height:350px; overflow:auto; margin:0px; padding:0px;">
+                <chatter:feed entityId="{!OffR.Id}"></chatter:feed>
+            </div>
+        </div>
+    </apex:pageBlock>
+</div>
+-->
+    
+<div id="loading_Modal" class="modal hide fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="width:100px;margin:0 auto;margin-top:20%;">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-body">
+                    <img  src = "{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />                       
+            </div>                     
+        </div>
+    </div>
+</div>
+</apex:page>

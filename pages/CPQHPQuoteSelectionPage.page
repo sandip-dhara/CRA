@@ -1,0 +1,39 @@
+<apex:page standardController="Opportunity" extensions="HPQuoteController" id="pg">
+  <!--<apex:image url="/resource/UnderConstruction"/>-->
+  <style>
+      .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+            border-top: 0;
+            color: white;
+            background: #4BACC6;
+      }
+  </style>
+  <apex:form >
+  <apex:inputHidden value="{!typeOfQuote }" id="hidden"/>
+  <apex:pageBlock >
+            
+            <apex:pageblockButtons >
+                <apex:commandButton value="Create Quote" action="{!redirctToSelectedQuoteType}" reRender="hidden">
+                    <apex:param assignTo="{!typeOfQuote }" name="buttonClicked" value="SelfService"/>
+                </apex:commandButton>
+                <apex:commandButton value="Request Quote" alt="Assisted Quote, Use this Option if the Request Form Criteria is met" action="{!redirctToSelectedQuoteType}" reRender="hidden">
+                    <apex:param assignTo="{!typeOfQuote }" name="buttonClicked" value="Assisted"/>
+                </apex:commandButton>
+                
+                <apex:commandButton value="Cancel" action="{!redirctToSelectedQuoteType}" reRender="hidden">
+                    <apex:param assignTo="{!typeOfQuote }" name="buttonClicked" value="cancel"/>
+                </apex:commandButton>
+            </apex:pageblockButtons>      
+            <apex:pageblockSection >
+                <apex:pageBlockSection columns="1" title="Create Quote Criteria" collapsible="false">
+                    <apex:iframe src="{!URLFOR($Resource.CPQGuidedNavigation,'Guided/BMIFormCriteria.htm')}" scrolling="true" height="300"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" title="Request Quote Criteria" collapsible="false">
+                    <apex:iframe src="{!URLFOR($Resource.CPQGuidedNavigation,'Guided/RequestFormCriteria.htm')}" scrolling="true" height="300"/>
+                </apex:pageBlockSection>
+            </apex:pageblockSection>
+            
+            <!--<apex:image url="/resource/WorkInProgress"/>-->
+      
+    </apex:pageBlock>
+ </apex:form>   
+</apex:page>

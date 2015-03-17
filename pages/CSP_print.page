@@ -1,0 +1,96 @@
+<apex:page standardController="Opportunity_Plan__c" showHeader="false" sidebar="false"  >
+
+
+<style>
+
+.colheaders{
+background-color:#66CCFF;text-align:center;width:100%;height:100%;
+}
+
+
+body {
+    padding: 10px;
+
+}
+
+.col1 {
+    width:19%;
+    font-weight:bold;
+    height:40px;
+    font-size:12px;
+
+    
+}
+.col2 {
+    width:1%;
+        height:40px;
+            font-family: arial;
+    font-size:12px;
+}
+.col3 {
+    width:40%;
+    height:40px;
+        font-family: arial;
+    font-size:12px;
+}
+.col4 {
+    width:40%;
+    height:40px;
+        font-family: arial;
+    font-size:12px;
+}
+
+.maincol {
+            font-family: arial;
+    font-size:14px;
+}
+
+</style>
+<script language="javascript">          
+              function validate(){
+    var del = confirm("Are you sure?");
+    if (del == true) {
+    return true;
+    }else {
+    return false;  
+    }        
+} 
+ 
+               
+     </script>
+
+<body onload="window.print();">
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px;">Competitive Sales Plans</h1>
+<hr size="1"></hr>
+<br />
+
+   <apex:iframe src="apex/oppheader?id={!Opportunity_Plan__c.Id}" height="110" width="100%"/>
+
+<br />
+<br />
+<br />
+<br />
+<apex:pageblock mode="maindetail" >
+
+<!--End-->
+<apex:pageblocktable value="{!Opportunity_Plan__c.Competitive_Sales_Plan__r}" var="item" >
+    <apex:column headerValue="Action" style="width:100px;">
+    <apex:outputlink value="/apex/CSP_Edit_Layout?id={!item.id}&oppPlanId={!Opportunity_Plan__c.id}&cspName={!item.id}" target="_self">
+                Edit
+    </apex:outputLink>&nbsp;|&nbsp;
+    <apex:outputlink value="{!URLFOR($Action.Competitive_Sales_Plan__c.Delete,item.id,[retURL='/apex/CSP_List?id='+Opportunity_Plan__c.id])}" onclick="return validate()" target="_self">Del
+    </apex:outputLink>
+    </apex:column>
+    <apex:column Headervalue="Competitor">
+    <apex:outputlink value="/apex/CSP_View_Layout?id={!item.id}&oppPlanId={!Opportunity_Plan__c.id}&cspName={!item.id}" target="_self">
+       {!item.Competitor__c} 
+    </apex:outputLink>
+    </apex:column>
+
+</apex:pageBlockTable>
+
+
+</apex:pageblock>
+</body>
+Copyright © 2001–2013 Revenue Storm Corporation. All rights reserved
+</apex:page>

@@ -1,0 +1,23 @@
+<apex:page controller="querycls">
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!bi}" var="BusinessImpact">
+            <apex:column headerValue="Business Impact">
+                {!BusinessImpact.Name}
+            </apex:column>
+            <apex:column headerValue="RootCause">
+                <apex:repeat value="{!tempBusMap[BusinessImpact.id]}" var="rootCause">
+                    {!rootCause.Root_Cause_ID__r.name}<br/>
+                </apex:repeat>
+            </apex:Column>
+            <apex:column headerValue="Potential Risk">
+                <apex:repeat value="{!tempBusMap[BusinessImpact.id]}" var="rootCause">
+                    {!rootCause.Root_Cause_ID__r.name} :->
+                    <apex:repeat value="{!tempRootCauseMap[rootCause.Root_Cause_ID__c]}" var="potRist">
+                        {!potRist.Process_Control_ID__r.Name}<br/>
+                    </apex:repeat><br/>
+                </apex:repeat>
+            </apex:column>
+        </apex:pageBlockTable>
+            
+    </apex:pageBlock>
+</apex:page>

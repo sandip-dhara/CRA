@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>ChannelPartner</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Channel_Partner__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Partner</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Associated Opportunities</relationshipLabel>
+        <relationshipName>Channel_Partners</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Location_City__c</fullName>
+        <externalId>false</externalId>
+        <formula>Location__r.City__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>City</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Location_Country__c</fullName>
+        <externalId>false</externalId>
+        <formula>Location__r.Country__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Country</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Location_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Location__r.Location_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Location Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Location__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>&quot;Lookup to a Location object&apos;s record.
+This field is a lookup to an existing Location child record when a parent Business Relationship record is selected in the existing &quot;&quot;Partner&quot;&quot; field.This is in support to attaching an Opportunity to a Partner Site.&quot;</description>
+        <externalId>false</externalId>
+        <label>Location</label>
+        <referenceTo>Location__c</referenceTo>
+        <relationshipLabel>Associated Opportunities</relationshipLabel>
+        <relationshipName>Alliance_and_Channel_Partners</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Opportunity__c</fullName>
+        <externalId>false</externalId>
+        <label>Opportunity</label>
+        <referenceTo>Opportunity</referenceTo>
+        <relationshipLabel>Alliance and Channel Partners</relationshipLabel>
+        <relationshipName>Channel_Partners</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>true</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Partner_Account_Role1__c</fullName>
+        <externalId>false</externalId>
+        <formula>Channel_Partner__r.MDCP_Business_Relationship__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Business Relationship</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Partner_Account_Role2__c</fullName>
+        <externalId>false</externalId>
+        <label>Business Relationship</label>
+        <length>50</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Partner_Account_Role__c</fullName>
+        <externalId>false</externalId>
+        <label>Partner Account Role</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Implementer</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Influencer</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Outsourcer</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Referral</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Partner_Status__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT( Channel_Partner__r.Partner_Status__c )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Partner Status</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Partner_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Partner Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Alliance Partner</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Channel Partner</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Primary__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Primary</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Regions__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(INCLUDES(Channel_Partner__r.Regions__c,&quot;EMEA&quot;), &quot;EMEA,&quot;, &quot;&quot;) &amp;
+IF(INCLUDES(Channel_Partner__r.Regions__c,&quot;APJ&quot;), &quot;APJ,&quot;, &quot;&quot;) &amp;
+IF(INCLUDES(Channel_Partner__r.Regions__c,&quot;AMS&quot;), &quot;AMS,&quot;, &quot;&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Regions</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sourced__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <inlineHelpText>Please select if this partner sourced the deal AND the &quot;deal source&quot; field is identified as &quot;partner&quot;</inlineHelpText>
+        <label>Sourced</label>
+        <type>Checkbox</type>
+    </fields>
+    <label>Alliance and Channel Partners</label>
+    <nameField>
+        <displayFormat>P-{000000}</displayFormat>
+        <label>Partner ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Alliance and Channel Partners</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Alliance_Partner_Cannot_Primary</fullName>
+        <active>true</active>
+        <description>Alliance partner cannot be primary</description>
+        <errorConditionFormula>IF( $Setup.Global_Config__c.Mute_Validation_Rule__c==true,false,if(Text( Partner_Type__c) ==&apos;Alliance Partner&apos; &amp;&amp;  Primary__c ==true, true,false))</errorConditionFormula>
+        <errorMessage>Alliance Partner Cannot be Primary</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Add_Partner</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>url</linkType>
+        <masterLabel>Add Partner</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>false</requireRowSelection>
+        <url>/{!$ObjectType.Channel_Partner__c}/e?oppId={!Opportunity.Id}&amp;oppName={!Opportunity.Name}&amp;retURL=/{!Opportunity.Id}</url>
+    </webLinks>
+</CustomObject>

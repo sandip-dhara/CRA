@@ -1,0 +1,108 @@
+<apex:page standardController="Call_Plan__c" sidebar="false" showHeader="false" >
+<style>
+
+body {
+    padding:10px;
+}
+
+</style>
+
+<body Onload="function_load()">
+<script>
+function function_load()
+{
+if({!$CurrentPage.parameters.printView != 'true'})
+{
+}
+else
+{
+window.print();
+}
+}
+</script>
+
+
+
+
+<div>
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="font-size:28px;color:#5ABBE8;">Call Plans<apex:outputText value="{!Call_Plan__c.Customer__c}" /></h1></div>
+<hr size="1"/>
+<apex:outputpanel rendered="{!$CurrentPage.parameters.printView != 'true'}">
+<div style="margin-left:auto;margin-right:auto;width:250px;text-align:center;">
+<input type="button" class="btn" value="Back" onclick="location.href='/apex/cp_list?id={!Call_Plan__c.Opportunity_Plan__r.id}'"/>
+<input type="button" class="btn" value="Edit" onclick="location.href='/apex/Call_Plan_Edit?id={!Call_Plan__c.id}&retURL=/apex/Call_Plan_View?id={!Call_Plan__c.id}'"/>
+<input type="button" class="btn" value="Print" onclick="window.open('/apex/Call_Plan_View?id={!Call_Plan__c.id}&printView=true','cp_print','width=780,height=800,scrollbars=true')" />
+</div>
+</apex:outputpanel>
+<br />
+
+<apex:pageBlock mode="maindetail">
+<apex:pageblocksection collapsible="false"  title="Call Plan Info" >
+<apex:iframe src="apex/Oppheaderforcallplan?id={!Call_Plan__c.Id}" width="263%" height="40%" rendered="{!$CurrentPage.parameters.printView == 'true'}" scrolling="false"/>
+</apex:pageblocksection>
+<apex:pageblocksection collapsible="false" columns="2">
+<apex:outputField value="{!Call_Plan__c.HP_Participants__c}"/>
+<apex:outputField Label="Duration(Hours)" value="{!Call_Plan__c.Duration_of_Call__c}"/>
+<apex:outputField Label="Date of Meeting" value="{!Call_Plan__c.Meeting_Date__c}"/>
+<apex:outputField value="{!Call_Plan__c.Customer_Participants__c}"/>
+<apex:outputField value="{!Call_Plan__c.Opportunity_Plan__c}"/>
+<apex:outputField Label="Phone or live?" value="{!Call_Plan__c.Call_Plan_Type__c}"/>
+<apex:outputField value="{!Call_Plan__c.Name}"/>
+
+</apex:pageblocksection>
+
+<apex:pageblocksection collapsible="false" columns="1" title="Value Proposition & EIM" >
+
+    <apex:outputField Label="Articulate customer view of the Opportunity" value="{!Call_Plan__c.Value_Proposition__c}" />
+    <apex:outputField Label="Clearly define Meeting Objectives (What needs  to be accomplished by  the end of the meeting)" value="{!Call_Plan__c.End_In_Mind__c}"/>
+    <apex:outputField Label="What you will say to introduce and position your EIM?" value="{!Call_Plan__c.Introduction__c}"/>
+    
+
+</apex:pageblocksection>
+
+
+<apex:pageblocksection collapsible="false" columns="2" title="Key Beliefs" >
+
+
+    <apex:outputField Label="What key beliefs must the customer hold to agree with the objectives?" value="{!Call_Plan__c.Key_Beliefs__c}" />
+    <apex:outputField Label="What will we do to address and satisfy the key beliefs?" value="{!Call_Plan__c.Actions_to_Key_Beliefs__c}"/>
+
+
+</apex:pageblocksection>
+
+<apex:pageblocksection collapsible="false" columns="1" title="Agenda/Critical Path" >
+
+
+    <apex:outputField Label="What is the high level agenda for the meeting?" value="{!Call_Plan__c.Agenda__c}"/>
+
+</apex:pageblocksection>
+
+<apex:pageblocksection collapsible="false" columns="1" title="End of Meeting" >
+
+    <apex:outputField Label="What will you say at the end of the meeting to execute your EIM?" value="{!Call_Plan__c.End_of_Meeting_Dialog__c}" />
+    <apex:outputField Label="What next steps might you suggest to the customer at the end of the metting?" value="{!Call_Plan__c.Next_Steps__c}" />
+    <apex:outputField Label="What will be said to open the meeting succinctly with the customer to gain their interest, engagement and agreement that this is a useful spend of their time?" value="{!Call_Plan__c.Putting_it_all_together__c}"/>
+
+</apex:pageblocksection>
+
+<apex:pageblocksection collapsible="false" columns="2" title="Checklist for Success" >
+
+    <apex:outputField Label="The intent driving our meeting is..." value="{!Call_Plan__c.Intent__c}"/>
+    <apex:outputField Label="Are the right people(Customer) attending the meeting?" value="{!Call_Plan__c.Customer_attending_meeting__c}"/>   
+    <apex:outputField Label="Our team's roles and responsibilities are..." value="{!Call_Plan__c.Roles_and_Responsibilities__c}"/>
+    <apex:outputField Label="Do we have adequate time(too much or too little)?" value="{!Call_Plan__c.Adequate_Time__c}"/>    
+    <apex:outputField Label="What topics, issues,questions, or behaviors are inappropriate for meeting?" value="{!Call_Plan__c.Topics_issues_questions__c}"/>
+    <apex:outputField Label="Have we set the right expectations for the meeting?" value="{!Call_Plan__c.Right_Expectations__c}"/>   
+    <apex:panelgroup ></apex:panelgroup> 
+    <apex:outputField Label="Is the environment or venue appopriate?" value="{!Call_Plan__c.Environment_Appropriate__c}"/>
+    <apex:panelgroup ></apex:panelgroup>    
+    <apex:outputField Label="Have we scrutinized our visual aids to be sure they support our EIM?" value="{!Call_Plan__c.Support_EIM__c}"/>
+    <apex:panelgroup >Last Modified by:&nbsp;<apex:outputField value="{!Call_Plan__c.LastModifiedById}" />&nbsp;<apex:outputField value="{!Call_Plan__c.LastModifiedDate}" /></apex:panelgroup>
+    
+
+</apex:pageblocksection>
+
+</apex:pageBlock>
+</body>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

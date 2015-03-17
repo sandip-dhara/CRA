@@ -1,0 +1,38 @@
+<apex:page >
+    <script type="text/javascript" src="/js/function.js"></script>
+    <script src="/soap/ajax/17.0/connection.js"></script>
+    <script src="/soap/ajax/17.0/apex.js"></script>
+    <script type="text/javascript">
+
+        function callWS(){
+            alert("{!$Api.Session_ID}" + "{!$Api.Partner_Server_URL_140}");
+            var connResult;
+            //var success = new List<sobject>();
+            try{
+                sforce.connection.init("{!$Api.Session_ID}", "{!$Api.Partner_Server_URL_140}");
+                var dgResults = sforce.connection.describeGlobal();
+                alert(dgResults);
+                //var queryResult = sforce.connection.query("select Id, Name from offering_Release__c limit 2");
+                //alert(queryResult.getArray('records')[0].Name);
+                //connResult = sforce.connection.login("nkang@hp.com.esit", "dot.cry.can-123sg4bGfdnQleW6SYeE8GCJvZT");
+                //alert(connResult);
+                success = sforce.apex.execute("RestWSOfferingReleaseRelatedInfo", "Post", {method:"GetFollowerByOFFRELID", parameterID:"a6yZ0000000CxgR"});
+                alert(success);
+            }
+            catch(e){
+                alert(e);
+                sforce.debug.open();
+                sforce.debug.log(e);
+                
+            }
+        }
+    </script>
+<apex:form >   
+<apex:pageBlock >
+    <apex:pageBlockButtons >
+        <apex:commandButton value="Call WS" onclick="javascript:callWS();"/>    
+    </apex:pageBlockButtons> 
+</apex:pageBlock>
+</apex:form>     
+    
+</apex:page>

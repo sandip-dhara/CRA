@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>ODP_Page_OfferingRelease_Upsert</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>ODP_Page_OfferingRelease_Upsert</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <content>ODP_Page_VisualPortal</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>ODP_Page_ProjectDetail</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>true</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Approve_Due_Date__c</fullName>
+        <externalId>false</externalId>
+        <formula>LastModifiedDate + 5</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Approve Due Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Assumptions__c</fullName>
+        <externalId>false</externalId>
+        <label>Assumptions</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>BVP__c</fullName>
+        <externalId>false</externalId>
+        <label>BVP</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Facilitator__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Business Engagement Partner</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Offering_Release</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Flight_Plan_ID__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Flight Plan ID</label>
+        <referenceTo>Flight_Plan__c</referenceTo>
+        <relationshipName>Offering_Release</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Flight_Plan_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Flight_Plan_ID__r.Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Flight Plan Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Name__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>false</externalId>
+        <label>Opportunity Name</label>
+        <length>100</length>
+        <required>true</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Offering_Category__c</fullName>
+        <externalId>false</externalId>
+        <label>Opportunity Category</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Standard</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IT Innovation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IT Optimization</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Escalation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Offering_Version__c</fullName>
+        <externalId>false</externalId>
+        <label>Opportunity Version</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Owner__c</fullName>
+        <externalId>false</externalId>
+        <formula>Owner:User.Last_First_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Owner</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PPMC_Project_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>PPMC Project ID</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Practice__c</fullName>
+        <description>The Practice is a category to classify the current area of the Offering Release.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Practice is a category to classify the current area of the Offering Release.</inlineHelpText>
+        <label>Exec Sponsor</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Mahesh Shah</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Dick Steiner</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Eric Harmon</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Tom Egan</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Kreg Nichols</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Russ Krauss</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Joe Tautges</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Christine Reischl</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Kathy Garcia</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Larry Stack</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Primary_Business_Contacts__c</fullName>
+        <externalId>false</externalId>
+        <label>Primary Business Contact</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Release_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Opportunity Description</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Release_Type__c</fullName>
+        <description>A Opportunity Type is a category to classify the type of
+Offering Release.</description>
+        <externalId>false</externalId>
+        <label>Opportunity Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Protype</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MVP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Full-Agile</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Full-Waterfall</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Enhancement</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Not Started</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Start Up</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Development</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Cancelled</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>On Hold</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Complete</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <label>Opportunity</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Name__c</columns>
+        <columns>Status__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+        <language>en_US</language>
+    </listViews>
+    <listViews>
+        <fullName>Test_Project_Ullas</fullName>
+        <columns>NAME</columns>
+        <columns>Name__c</columns>
+        <columns>Release_Type__c</columns>
+        <columns>Status__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>Test Project Ullas</label>
+        <language>en_US</language>
+    </listViews>
+    <nameField>
+        <displayFormat>OPP-{0000000000}</displayFormat>
+        <label>Opportunity ID</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Opportunity</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Offering_Category__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Flight_Plan_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Practice__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Status__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Release_Type__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Offering_Category__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Flight_Plan_Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Practice__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Facilitator__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Status__c</lookupDialogsAdditionalFields>
+        <searchResultsAdditionalFields>Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Release_Type__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Practice__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Flight_Plan_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Facilitator__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Status__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>Private</sharingModel>
+    <webLinks>
+        <fullName>Add_Potential_Risk</fullName>
+        <availability>online</availability>
+        <description>Adding potential risk</description>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Add Potential Risk</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT(&apos;/soap/ajax/30/connection.js&apos;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/30/apex.js&quot;)}
+ 
+
+var offrelStatus = &quot;{!Offering_Release__c.Status__c}&quot;; 
+if(offrelStatus != &apos;Not Started&apos;){ 
+  //navigateToUrl(&apos;/apex/ODP_PotentialRisk?OFID={!Offering_Release__c.Id}&apos;); 
+ navigateToUrl(&apos;/apex/Pavithra_PotentialRisks?OFID={!Offering_Release__c.Id}&apos;); 
+
+}
+else
+{
+  alert(&apos;Project is &quot;Not Started&quot;. Cannot associate risks.&apos;);
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Change_Owner</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <linkType>url</linkType>
+        <masterLabel>Change Owner</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <url>/apex/ODP_CustomizedChangeOwner?OFID={!Offering_Release__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Submit_Offering_Release_For_Approval</fullName>
+        <availability>online</availability>
+        <description>The Customized Submit for Approval button of offering release</description>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Submit To BEP For Review</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>var offrelStatus = &quot;{!Offering_Release__c.Status__c}&quot;; 
+var offrelfacilitator = &quot;{!Offering_Release__c.Facilitator__c}&quot;;
+var offrelFPName = &quot;{! Offering_Release__c.Flight_Plan_Name__c }&quot;;
+var offrelOwner = &quot;{! Offering_Release__c.OwnerId }&quot;;
+var currentUser = &quot;{!$User.Id}&quot;;
+
+if(offrelOwner == currentUser ){
+
+if(offrelStatus == &apos;Start Up&apos; &amp;&amp; offrelfacilitator != &apos;&apos; &amp;&amp; offrelFPName != &apos;Startup&apos;){ 
+
+var c = confirm(&apos;Once you submit this record for approval, you might not be able to edit it or recall it from the approval process depending on your settings. Continue?&apos;); 
+
+if(c) 
+{ 
+navigateToUrl(&apos;/p/process/Submit?retURL=%2F{!Offering_Release__c.Id}&amp;id={!Offering_Release__c.Id}&apos;,&apos;DETAIL&apos;,&apos;submit&apos;); 
+} 
+
+} 
+else if(offrelStatus != &apos;Start Up&apos;)
+{ 
+
+alert(&quot;Unable to Submit for Approval\nPlease make sure \n --Current Opportunity status is Start Up&quot;); 
+
+}
+
+else if(offrelfacilitator == &apos;&apos;)
+{
+alert(&quot;Unable to Submit for Approval\nPlease make sure \n --BEP Consultant must be provided&quot;); 
+
+}
+
+else if(offrelFPName == &apos;Startup&apos;){
+alert(&quot;Unable to Submit for Approval\nPlease make sure \n --Startup is the default flight plan. Please select suitable flight plan for the current Opportunity&quot;); 
+
+}
+
+}else {
+confirm(&apos;Only Opportunity owner can submit.&apos;); 
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Team_Overview</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Manage Team Members</masterLabel>
+        <openType>noSidebar</openType>
+        <protected>false</protected>
+        <url>/apex/ODP_CustomizedTeamMemberOverView?OffRelID={!Offering_Release__c.Id}</url>
+    </webLinks>
+</CustomObject>

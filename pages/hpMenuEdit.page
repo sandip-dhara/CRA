@@ -1,0 +1,114 @@
+<apex:page id="pg" standardController="HPMenu__c">
+    <script type="text/javascript" src="{!URLFOR($Resource.CMSForce, '/FCKEditor/fckeditor.js')}"/>
+    <script type="text/javascript">
+        window.onload = function()
+        {
+            var sBasePath = "{!URLFOR($Resource.CMSForce, '/FCKEditor/')}" ;
+        
+            var oFCKeditor = new FCKeditor( '{!$Component.pg.frm.pb.pbsShortDescription.pbsiShortDescription.txtShortDescription}' ) ;
+            oFCKeditor.BasePath = sBasePath ;
+            oFCKeditor.Config["CustomConfigurationsPath"] = sBasePath + "cmsforcefckconfig.js"  ;
+            oFCKeditor.Config['SkinPath'] = sBasePath + 'editor/skins/silver/' ;
+            oFCKeditor.Config['ImageBrowserURL'] = '/apex/DocumentManager' ;
+            oFCKeditor.Config['LinkBrowserURL'] = '/apex/PageBrowser' ;
+            oFCKeditor.Config['FlashBrowser'] = false;
+            oFCKeditor.Config['FlashUpload'] = false;
+            oFCKeditor.Config['ImageUpload'] = false;
+            oFCKeditor.Config['LinkUpload'] = false;
+            oFCKeditor.Config['ImageLink'] = false;
+            oFCKeditor.Height = '{!IF($CurrentPage.Parameters.console == 'true', '500', '350')}' ;
+            oFCKeditor.ReplaceTextarea();
+            
+            
+            var oFCKeditor1 = new FCKeditor( '{!$Component.pg.frm.pb.pbsDescription.pbsiDescription.txtDescription}' ) ;
+            oFCKeditor1.BasePath = sBasePath ;
+            oFCKeditor1.Config["CustomConfigurationsPath"] = sBasePath + "cmsforcefckconfig.js"  ;
+            oFCKeditor1.Config['SkinPath'] = sBasePath + 'editor/skins/silver/' ;
+            oFCKeditor1.Config['ImageBrowserURL'] = '/apex/DocumentManager' ;
+            oFCKeditor1.Config['LinkBrowserURL'] = '/apex/PageBrowser' ;
+            oFCKeditor1.Config['FlashBrowser'] = false;
+            oFCKeditor1.Config['FlashUpload'] = false;
+            oFCKeditor1.Config['ImageUpload'] = false;
+            oFCKeditor1.Config['LinkUpload'] = false;
+            oFCKeditor1.Config['ImageLink'] = false;
+            oFCKeditor1.Height = '{!IF($CurrentPage.Parameters.console == 'true', '500', '500')}' ;
+            oFCKeditor1.ReplaceTextarea();
+        }
+        
+        function OpenFileBrowser( url, width, height )
+        {
+            // oEditor must be defined.
+            var myWidth = 0, myHeight = 0;
+            if( typeof( window.innerWidth ) == 'number' ) {
+                //Non-IE
+                myWidth = window.innerWidth;
+                myHeight = window.innerHeight;
+            } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+                //IE 6+ in 'standards compliant mode'
+                myWidth = document.documentElement.clientWidth;
+                myHeight = document.documentElement.clientHeight;
+            } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+                //IE 4 compatible
+                myWidth = document.body.clientWidth;
+                myHeight = document.body.clientHeight;
+            }
+            var iLeft = (myWidth  - width ) / 2 ;
+            var iTop  = (myHeight - height ) / 2 ;
+            
+            var sOptions = "toolbar=no,status=no,resizable=yes,dependent=yes,scrollbars=yes" ;
+            sOptions += ",width=" + width ;
+            sOptions += ",height=" + height ;
+            sOptions += ",left=" + iLeft ;
+            sOptions += ",top=" + iTop ;
+        
+            window.open( url, 'FCKBrowseWindow', sOptions ) ;
+        }
+        
+        function SetUrl(url){
+            alert(url);
+            document.getElementById('{!$Component.frm.pb.pbsInformation.pbsiSiteUrl.pbsiSiteUrl2.inpSiteUrl}').value = url;
+        }
+    </script>
+    <apex:form id="frm">
+        
+        <apex:sectionHeader title="HP Menu Edit" subtitle="{!IF($CurrentPage.Parameters.ID == null, 'New HP Menu', 'HPMenu__c.Name')}"/>
+        
+        <apex:pageBlock id="pb" title="HP Menu Edit">
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!Save}"/>
+                <apex:commandButton value="Cancel" action="{!Cancel}"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection id="pbsInformation" title="Information">
+                <apex:inputField value="{!HPMenu__c.Name}" required="true"/>
+                <apex:inputField value="{!HPMenu__c.Order__c}" required="true"/>
+                <apex:inputField value="{!HPMenu__c.SubMenu__c}" required="false"/>
+                <apex:inputField value="{!HPMenu__c.Active__c}" required="false"/>
+                <apex:pageBlockSectionItem id="pbsiSiteUrl">
+                    <apex:outputLabel >Site URL</apex:outputLabel>
+                    <apex:pageBlockSectionItem id="pbsiSiteUrl2">
+                        <apex:inputField value="{!HPMenu__c.SiteURL__c}" id="inpSiteUrl"/>
+                        <input type="button" value="Browse Server" fcklang="DlgBtnBrowseServer" onclick="OpenFileBrowser('/apex/PageBrowser',1000,600);return false;"/>
+                    </apex:pageBlockSectionItem>    
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection id="pbsShortDescription" title="Short Description" columns="1">
+                <apex:pageBlockSectionItem id="pbsiShortDescription">
+                    <apex:inputTextArea id="txtShortDescription" value="{!HPMenu__c.ShortDescription__c}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection id="pbsDescription" title="Description" columns="1">
+                <apex:pageBlockSectionItem id="pbsiDescription">
+                    <apex:inputTextArea id="txtDescription" value="{!HPMenu__c.Description__c}"/>
+                    
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

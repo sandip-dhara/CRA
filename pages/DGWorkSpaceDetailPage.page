@@ -1,0 +1,125 @@
+<!--
+Author: Praveen Kumar Reddy N
+Relese : R6
+Date: 11/July/2013
+-->
+<apex:page standardController="Reviewer_Workspace__c" extensions="DGWorkSpaceDetailPageController">
+    <apex:form >
+        <apex:sectionHeader title="Workspace" subtitle="{!Reviewer_Workspace__c.name}"/>
+          <apex:pageBlock title="Workspace Detail" mode="maindetail">
+               <apex:pageBlockButtons location="Top">
+                   <apex:commandButton value="Edit" action="{!Edit}"/>  
+                   <apex:commandButton value="Delete" action="{!Delete}"/>   
+               </apex:pageBlockButtons>
+               <apex:pageMessages ></apex:pageMessages>
+               <apex:pageBlockSection columns="2" title="Opportunity Information" id="opportunitysection"> 
+                    <apex:outputField value="{!Reviewer_Workspace__c.Opportunity_ID__c}"/>
+                    <apex:outputField value="{!Reviewer_Workspace__c.Opportunity_Name__c}"/>
+                    <apex:outputField value="{!Reviewer_Workspace__c.Account_Name__c}"/>  
+                    <apex:outputField value="{!Reviewer_Workspace__c.Opportunity_Owner__c}"/>                                      
+                    <apex:outputField value="{!Reviewer_Workspace__c.Total_Opportunity_Value__c}"/>    
+              </apex:pageBlockSection>
+              
+              <apex:pageBlockSection columns="2" title="Workspace Information" id="workspacesection"> 
+                    <apex:outputField value="{!Reviewer_Workspace__c.Approval_Level__c}"/>
+                    <apex:outputField value="{!Reviewer_Workspace__c.CreatedByID}"/>
+                    <apex:outputField value="{!Reviewer_Workspace__c.Approval__c}"/>
+                    <apex:outputField value="{!Reviewer_Workspace__c.Status__c}"/> 
+               
+              </apex:pageBlockSection>
+              
+              
+         
+         
+      </apex:pageBlock>
+      
+      
+        <apex:pageBlock Title="Attachments">
+
+         <apex:pageblockButtons location="top">
+                 <apex:commandButton value="Attach" title="Attach" action="/apex/UploadAttachment?Approvalid={!Reviewer_Workspace__c.id}&Page=DGWorkSpaceDetailPage&context=Workspace" />
+                  <apex:param id="VF" name="VFPage" value="$CurrentPage.Name"/>
+         </apex:pageblockButtons>
+                  <apex:pageBlockTable value="{!Attachments}" var="att" id="at" width="100%" columns="8">
+                    <apex:column headerValue="Action">
+                       <apex:CommandLink value="Check Out" action="{!LockAttachment}" rendered="{!IF(att.checkedOutBy!=loggedInUserName,true,false)}">
+                        <apex:param name="lastmodified" value="{!att.checkedOutBy}" assignTo="{!lastmodified}"/>
+                        <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+                        <apex:param name="bLock" value="true" assignTo="{!block}" />
+                    </apex:commandLink>
+                    <apex:outputtext value=" | " rendered="{!IF(att.checkedOutBy!=loggedInUserName,true,false)}"/> 
+                    <apex:CommandLink value="Edit" rendered="{!IF(att.isChecked== true && att.checkedOutBy==loggedInUserName,true,false)}" action="{!customAttachmentEdit}"> <!-- && att.LastModifiedById== $User.Id  -->
+                        <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+                        <!--<apex:param name="lastmodifiedBy" value="{!att.LastModifiedBy}" assignTo="{!lastmodifiedBy}"/>-->
+                        <apex:param name="filename" value="{!att.at.name}" assignTo="{!filename}"/>
+                    </apex:commandLink>                 
+                    <apex:outputtext value=" | " rendered="{!IF(att.isChecked== true && att.checkedOutBy==loggedInUserName,true,false)}"/>
+                       <apex:CommandLink value="Delete" action="{!DeleteAttachment}" rendered="{!IF(att.isChecked== false,true,false)}">
+                       <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+                       </apex:commandLink>
+                    <apex:outputtext value=" | " rendered="{!IF(att.isChecked== false,true,false)}"/>
+                    <apex:CommandLink value="Version History" onclick="window.open('/apex/DGAttachmentVersionHistoryPage?filename={!att.at.name}&ApprovalWorkspaceID={!att.at.parentID}&page=DGWorkSpaceDetailPage','Popup','width=700px,height=400px,resizable=yes,scollbars=yes,toolbar=no,status=no')">
+                        
+                    </apex:commandLink>
+                        </apex:column>
+                    <apex:column headerValue="Description">
+                         <apex:outputField value="{!att.at.Description}"/>
+                    </apex:column>
+                    <apex:column headerValue="Attachment">
+                        <apex:outputLink value="{!URLFOR($Action.Attachment.Download, att.at.id)}" target="_blank">{!att.at.name}</apex:outputLink>
+                        </apex:column>
+                         <apex:column headerValue="Version Number">
+                         <apex:outputText value="{!att.VersionNumber}"/>
+                         </apex:column>
+                        <apex:column headerValue="Created By">
+                         <apex:outputField value="{!att.at.CreatedById}"/>
+                         </apex:column>
+                    <apex:column headerValue="Created Date">
+                         <apex:outputField value="{!att.at.CreatedDate}"/>
+                         </apex:column>
+                    
+                         <apex:column headerValue="Check-Out By">
+                         <apex:outputText value="{!att.checkedOutBy}" rendered="{!IF(att.isChecked== true,true,false)}"/>
+                         </apex:column>
+                         <apex:column headerValue="Check-Out Date">
+                         <apex:outputField value="{!att.at.LastModifiedDate}" rendered="{!IF(att.isChecked== true,true,false)}"/>
+                         </apex:column>
+                     </apex:pageBlockTable>
+                     
+         
+    </apex:pageBlock> 
+<apex:pageBlock Title="Notes">
+
+         <apex:pageblockButtons location="top">
+                 <apex:commandButton value="Add Notes" title="Add Notes" action="/002/e?parent_id={!(LEFT(Reviewer_Workspace__c.id,15))}&retURL={!Reviewer_Workspace__c.id}" />                  
+         </apex:pageblockButtons>
+                  <apex:pageBlockTable value="{!WSNotes}" var="Note" id="Notes" width="100%" columns="8">
+                    <apex:column headerValue="Action">
+                       <apex:CommandLink value="Delete" action="{!DeleteWS}" >
+                            <apex:param name="NoteDelId" value="{!Note.Id}" assignTo="{!sNoteId}" />                                 
+                           </apex:commandLink>
+                    </apex:column>
+                    <apex:column headerValue="Title">
+                         <a href="/{!Note.id}"><apex:outputText value="{!Note.Title}"/></a>
+                    </apex:column>
+                    <apex:column headerValue="Is Private">
+                         <apex:outputField value="{!Note.IsPrivate}"/>
+                    </apex:column>
+                    <apex:column headerValue="Last Modified By">
+                         <apex:outputField value="{!Note.LastModifiedById}"/>
+                    </apex:column>
+                    <apex:column headerValue="Last Modified Date">
+                         <apex:outputField value="{!Note.LastModifiedDate}"/>
+                    </apex:column>          
+                  </apex:pageBlockTable>
+                     
+         
+    </apex:pageBlock>         
+
+   </apex:form>
+   
+   
+   <apex:relatedList list="Approvers__r"/>
+   <apex:relatedList list="Reviewers__r"/>
+ 
+</apex:page>

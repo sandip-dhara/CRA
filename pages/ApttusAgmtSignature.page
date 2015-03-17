@@ -1,0 +1,184 @@
+<apex:page standardController="Apttus__APTS_Agreement__c"   
+extensions="ApttusAgmtSignatureController"           
+           showHeader="true" > 
+           
+    <script type="text/javascript" src="/soap/ajax/16.0/connection.js"></script>
+    <script type="text/javascript" src="/soap/ajax/16.0/apex.js"></script>
+    <script type="text/javascript" src="{!$Resource.Apttus__ComplyJSLib}" />
+    <script type="text/javascript">
+     
+    var hasValidationError = false; 
+    var agreement = "Apttus__APTS_Agreement__c";  
+    var orgAgreementId = ""; 
+
+   
+   var accountId = "";
+   var accountName = "";
+   var accountPlaceOfInc = "";
+   var accountIncorporationType = "";
+         
+   var profileName = "";
+   var signatureOptions = "";
+   
+    var approvalStatus = "";
+   var termExceptionApprovalStatus = "";
+   var creditApprovalStatus= ""
+   
+   
+    /**
+     * Initializes the call
+     */
+    function initCall() {    
+        try {
+       
+            sforce.connection.sessionId = "{!$Api.Session_ID}"; //to avoid session timeout
+            orgAgreementId  = "{!Apttus__APTS_Agreement__c.Id}";
+            doValidate();
+        } catch(e) {
+            erroralert(cERROR_UNKNOWN,e);
+        }    
+    }
+    
+    /**
+     * Callback invoked after the page is loaded
+     */
+    function afterLoad() {
+        // STEP I - initialize the call
+        initCall();  
+        
+        try {
+            
+        } catch(ex) {
+            erroralert(cERROR_UNKNOWN, ex);
+        } finally {
+             
+        }
+    }
+   
+    
+    // register to invoke the function after the page load
+    window.onload = function() {     
+        // display progress message
+        //showMsgProgress("Validating agreement....");
+    
+        // delay to allow the progress message to show  
+        setTimeout(function() {
+            try {
+                // afer load
+                afterLoad();
+            } catch (ex) {
+                erroralert("afterLoad():", ex);
+                // back to the detail page
+                navigateTo("/{!Apttus__APTS_Agreement__c.Id}");
+            } 
+        }, 0);     
+    }
+        function doValidate() { 
+        try {
+                var validationMessage = "";
+                hasValidationError = false;             
+                var agmtStatus = "{!Apttus__APTS_Agreement__c.Apttus__Status__c}";
+				var custLegalContact = "{!Apttus__APTS_Agreement__c.Customer_Legal_Contact__c}";
+				var baseTerm = "{!Apttus__APTS_Agreement__c.Base_Term__c}";
+				var geographic = "{!Apttus__APTS_Agreement__c.Contract_Geographic_Scope__c}";
+				var perpetual = "{!Apttus__APTS_Agreement__c.Apttus__Perpetual__c}";
+				var term = "{!Apttus__APTS_Agreement__c.Apttus__Term_Months__c}";
+				
+				//alert(custLegalContact+" -- "+baseTerm+" -- "+geographic);
+                if (agmtStatus == 'In Request Approval') {
+                        hasValidationError = true; 
+                        validationMessage += "Agreement is in Request Approval \n";
+                } 
+                else if(custLegalContact == '' || custLegalContact == null || baseTerm == '' || baseTerm == null || geographic == null || geographic == '' || ((term != null || term != '') && perpetual == 'TRUE') || ((term == '' || term == null) && perpetual == 'FALSE'))
+                {
+                	hasValidationError = true; 
+                    validationMessage += "Customer Legal Contact, Base Term,Evergreen or Term(in months) and Contract Geographic Scope Should not blank.\n";
+                }
+ 
+                    if (hasValidationError == true) {
+                        alert("Can't send for signatures:"+validationMessage);
+                        navigateTo("/"+orgAgreementId);
+                    }
+        } catch (ex) { 
+            alert("Error validating Signatures: " + ex); 
+            navigateTo("/"+orgAgreementId);
+        } 
+    }   
+    
+    </script>
+    
+    <apex:form >     
+        <apex:pageBlock id="idAgreementDetailBlock" title="{!name}" mode="detail">
+        <apex:pageBlockSection title="Agreement Details" columns="1">
+            <apex:outputField value="{!Apttus__APTS_Agreement__c.Apttus__FF_Agreement_Number__c}"/>
+            <apex:outputField value="{!Apttus__APTS_Agreement__c.Apttus__Account__c}"/>
+        </apex:pageBlockSection>    
+        </apex:pageBlock>
+
+          <table width="98%" border="0" cellpadding="0" cellspacing="0">
+ <!--   <tr align="left">
+    <td><apex:image value="{!$Resource.ApttusLogo}" style="align:left" width="120" height="30"/></td>
+   </tr>    -->
+   </table>    
+        <apex:pageBlock id="idPresentAttachmentBlock"  mode="detail">
+            <apex:pageMessages />
+            <apex:pageBlockSection title="Select Attachments to Convert to PDF" columns="1" collapsible="false">
+                
+                <apex:pageBlockTable value="{!attachments}" 
+                                         var="attInfo" 
+                                         columns="5" 
+                                         width="100%" 
+                                         rendered="{!hasAttachments}">
+                                         
+                    <apex:column >
+                        <apex:inputCheckbox value="{!attInfo.selected}" >
+                            <apex:actionSupport event="onclick" action="{!doSelect}" rerender="idButtonSection"> 
+                                 <apex:param name="sessionId" assignTo="{!apiSessionId}" value="{!$Api.Session_ID}" />
+                                 <apex:param name="serverURL" assignTo="{!apiServerURL}" value="{!$Api.Partner_Server_URL_140}" />
+                            </apex:actionSupport>
+                        </apex:inputCheckbox>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.Attachment.Fields.Name.Label}" >
+                        <apex:outputField value="{!attInfo.attSO.Name}" />
+                    </apex:column>
+                                        
+                    <apex:column headerValue="{!$ObjectType.Attachment.Fields.LastModifiedDate.Label}" >
+                        <apex:outputField value="{!attInfo.attSO.LastModifiedDate}" />
+                    </apex:column>
+                                         
+                </apex:pageBlockTable>
+                <apex:outputText value="No Attachments to Display" rendered="{!NOT(hasAttachments)}" />
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+            <apex:pageBlock id="idButtonSection">
+            <apex:pageBlockButtons location="bottom" id="actionsBlock">
+                <apex:outputpanel id="idPageButtons">
+                    <apex:commandButton value="Continue" action="{!sendForEsginature}" title="Click 'Continue' to convert the selected documents to PDF"
+                        
+                        disabled="{!NOT(hasSelectedAttachmentIds)}" 
+                        style="padding:2px 5px 2px 5px; text-decoration:none;">
+                         <apex:param name="sessionId" assignTo="{!apiSessionId}" value="{!$Api.Session_ID}" />
+                         <apex:param name="serverURL" assignTo="{!apiServerURL}" value="{!$Api.Partner_Server_URL_140}" />
+                        
+                    </apex:commandButton>   
+                    
+                    <apex:commandButton value="Cancel" 
+                                    action="{!doCancel}" 
+                                    immediate="true" />                 
+                </apex:outputpanel>
+            </apex:pageBlockButtons>
+            </apex:pageBlock>
+           
+    <apex:outputText value="{!Apttus__APTS_Agreement__c.Id}" rendered="false"/>
+    <apex:outputText value="{!Apttus__APTS_Agreement__c.Name}" rendered="false"/>
+    <apex:outputText value="{!Apttus__APTS_Agreement__c.Apttus__Account__c}" rendered="false"/>
+    <apex:outputText value="{!Apttus__APTS_Agreement__c.Apttus__Status__c}" rendered="false"/>
+    <apex:outputText value="{!Apttus__APTS_Agreement__c.Apttus__Status_Category__c}" rendered="false"/>
+    <apex:outputText value="{!Apttus__APTS_Agreement__c.Apttus__FF_Agreement_Number__c}" rendered="false"/>
+    
+
+    </apex:form>
+    
+</apex:page>

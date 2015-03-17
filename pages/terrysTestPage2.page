@@ -1,0 +1,1521 @@
+<apex:page controller="SLP_GlobalSearch" extensions="mobileUserData,DonalTestCanvas" action="{!getInsertIt}" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+     <!--<apex:includeScript value="{!URLFOR($Resource.SessionTkGwLoginMinJs)}"/>   
+     <script type="text/javascript">
+            GWSessionTk.login();
+            if (GWSessionTk.errorStatus) {
+                alert(GWSessionTk.errorStatus + ' Please refresh your page and try again.');
+            }
+        </script>--> 
+         
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+       <!-- <script>
+          $(function() {
+            $( "#tabs" ).tabs();
+          });
+        </script>--> 
+    </head>
+    
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile132, 'jquery.mobile-1.3.2/jquery.mobile-1.3.2.min.css')}" />
+    <!-- <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery-ui-1.11.1/jquery-ui.min.css')}" /> -->
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jqm-inlinetabs-master/jqm-inlinetabs.css')}" />
+     
+    <apex:stylesheet value="{!URLFOR($Resource.mslp_res, 'fonts/icomoon/style.css')}" />
+    
+    <!--<apex:includeScript value="{!$Resource.JQuery203}"/> -->
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery203/jquery-1.11.1.js')}" /> 
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile132, 'jquery.mobile-1.3.2/jquery.mobile-1.3.2.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery203/jquery-migrate-1.2.1.min.js')}" />   
+    
+    <!-- <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery-ui-1.11.1/jquery-ui.min.js')}" /> -->
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jqm-inlinetabs-master/jqm-inlinetabs.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>  
+     
+    <script type="text/javascript">
+         var memberList = new Array();
+         var expertList = new Array();
+         //Array for Topic Ids
+         var listTopic = new Array();
+     </script>
+
+<body>  
+    <div data-role="page" id="searchPage">
+        <!-- Header -->        
+            
+        <div data-role="header" style="background:#404040; vertical-align: middle;height: 79px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+                <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+            </div>
+            <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+                  <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+            </div>
+            <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -22px;">
+                <h3 style="margin-top:-15px;">Search</h3>
+            </div>
+        </div>
+        <!-- /Header -->
+
+        <div id="fuck" style="width: 96%; margin-left: auto; margin-right: auto; display: block; padding-top:12px">
+            
+            <form data-ajax="false">            
+                <a href="#popupDialog" style="float: left; z-index: 5; position: relative;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" style="min-width:20%; padding-left:10px; padding-top:12px;"/></a>
+               <!-- <a href="#popupDialog" data-rel="popup" data-position-to="window" data-transition="pop" style="float: right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Filter.png')}" style="min-width:20%; padding-right:10px; padding-top:12px; height:22px; z-index: 5; position: relative;" id="filterImage"/></a>-->
+                <div data-role="popup" id="popupDialog" data-overlay-theme="a" data-dismissible="true" style="min-width: 100%;">
+                    <div data-role="header" data-theme="a">
+                        <h1>Filter by</h1>
+                    </div>
+                    <div role="main" class="ui-content">                    
+                        <fieldset data-role="controlgroup" data-iconpos="right" data-corners="false"  >
+                            <input type="checkbox" name="all_box" id="all_box" checked="true" onclick="updateCheckboxes();"/>
+                            <label for="all_box">All</label>
+                            <input type="checkbox" name="community_box" id="community_box" checked="true"/>
+                            <label for="community_box">Community</label>
+                            <input type="checkbox" name="boards_box" id="boards_box" checked="true"/>
+                            <label for="boards_box">Boards</label>
+                            <input type="checkbox" name="topics_box" id="topics_box" checked="true"/>
+                            <label for="topics_box">Content</label>
+                            <input type="checkbox" name="people_box" id="people_box" checked="true"/>
+                            <label for="people_box">People</label>
+                        </fieldset>
+                        <a href="#" data-role="button" data-rel="back" onclick="doFilter();" style="background:#F9A006;color:#ffffff;line-height:30px; text-shadow:none;">Filter</a>
+                    </div>                
+                </div> 
+                      
+                    <input type="text"  name="search" id="search-basic-expert" value="{!searchText}" data-theme="b" /> 
+                         
+            </form>
+        </div>
+        <br/>
+
+       
+  <div data-role="inlinetabs" data-scroll="true" style="position: relative; top: -38px; left:-10px;">
+    <ul class="tabsBackground">
+        <li data-tab="1">Community</li>
+        <li data-tab="2">Boards</li>
+        <li data-tab="3">Content</li>
+        <li data-tab="4">People</li>
+        <li data-tab="5">Experts</li>
+        
+    </ul>
+
+    <div data-tab="1">           
+       <ul data-role="listview" data-icon="false" id="commList" style="position: relative; left: -6px; width: 110%;">
+            <apex:repeat value="{!CommunityResult}" var="brdRslt">
+                <li>
+                    <a href="/apex/mobileCommunityMockup?id={!brdRslt.Id}" onclick="LogMetrics('{!brdRslt.Id}','{!brdRslt.LBName}','/apex/mobileCommunityMockup?id={!brdRslt.Id}','Communities Tab');" data-ajax="false" class="ui-btnList-element">
+
+                    <apex:outputPanel rendered="{!!brdRslt.StaticImage}" style="mmin-height:90px; max-height:90px;">
+                    <apex:image url="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" style="min-height:90px; max-height:90px; min-width:80px; max-width:80px; float: left; margin: -15px -15px -15px -15px; "/>
+                    <h3 style="background-color:rgba(0, 0, 0, 0.0); padding-left: 35px;">{!brdRslt.LBName}</h3>
+                    <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt; padding-left:35px;">by {!brdRslt.LBOwnerName}</p>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!brdRslt.StaticImage}" style="min-height:90px; max-height:90px;">
+                    <img src='{!brdRslt.DefaultImageName}' style="min-height:90px; max-height:90px; min-width:80px; max-width:80px; float: left; margin: -15px -15px -15px -15px; "/>                        
+                    <h3 style="background-color:rgba(0, 0, 0, 0.0); padding-left: 35px;">{!brdRslt.LBName}</h3>
+                    <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt; padding-left:35px;">by {!brdRslt.LBOwnerName}</p>
+                    </apex:outputPanel>
+                        
+                        
+                    </a>
+                </li>
+            </apex:repeat>
+        </ul>
+        <div id="outter"><div id="emptyResultMsg1"><h3 style="color:white; text-shadow:none;">No results found</h3></div></div>
+      </div>
+      
+     <div data-tab="2">
+       <ul data-role="listview" data-icon="false" id="boardList" style="position: relative; left: -6px; width: 110%;">
+            <apex:repeat value="{!BoardResult}" var="brdRslt">
+                <li>
+                    <a href="/apex/mobileLearningBoardMockup?id={!brdRslt.Id}" onclick="LogMetrics('{!brdRslt.Id}','{!brdRslt.LBName}','/apex/mobileLearningBoardMockup?id={!brdRslt.Id}','Learning Board Tab');" data-ajax="false" class="ui-btnList-element">
+                        <!--<img src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" onError="this.onerror=null;this.src='{!brdRslt.DefaultImageName}';" style="min-height:100%;"/>
+                        -->
+
+                    <apex:outputPanel rendered="{!!brdRslt.StaticImage}" style="mmin-height:90px; max-height:90px;">
+                    <apex:image url="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" style="min-height:90px; max-height:90px; min-width:80px; max-width:80px; float: left; margin: -15px -15px -15px -15px; "/>
+                    <h3 style="background-color:rgba(0, 0, 0, 0.0); padding-left: 35px;">{!brdRslt.LBName}</h3>
+                    <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt; padding-left:35px;">by {!brdRslt.LBOwnerName}</p>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!brdRslt.StaticImage}" style="min-height:90px; max-height:90px;">
+                    <img src='{!brdRslt.DefaultImageName}' style="min-height:90px; max-height:90px; min-width:80px; max-width:80px; float: left; margin: -15px -15px -15px -15px; "/>                        
+                    <h3 style="background-color:rgba(0, 0, 0, 0.0); padding-left: 35px;">{!brdRslt.LBName}</h3>
+                    <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt; padding-left:35px;">by {!brdRslt.LBOwnerName}</p>
+                    </apex:outputPanel>
+                    </a>
+                </li>
+            </apex:repeat>
+        </ul>
+        <div id="outter"><div id="emptyResultMsg2"><h3 style="color:white; text-shadow:none;">No results found</h3></div></div>
+       </div>
+       
+       <div data-tab="3">
+        <ul data-role="listview" data-icon="false" id="topicsList" style="position: relative; left: -6px; width: 110%;">
+            <apex:repeat value="{!TopicsResult}" var="brdRslt">
+                        <script>
+                        var RatingNbr = '{!brdRslt.AvgRating}';
+                        var docType = '{!brdRslt.TopicDocType}';
+                        var isIdolSearch = '{!brdRslt.IsIdolSearch}';
+                        var Id = '{!brdRslt.LBId}';
+                        var URL = '{!brdRslt.TopicURL}';
+                        
+                        listTopic.push({ "ID": Id, "RatingNbr": RatingNbr, "topicDocType":docType, "isIdolSearch":isIdolSearch, "topicURL":URL });
+ 
+                      </script>
+                <li> 
+<!--                    <a onclick="LogMetrics('{!brdRslt.TopicId}','{!brdRslt.LBName}','{!brdRslt.LBName}','Content Tab'); sendMyRequest('{!brdRslt.TopicURL}','{!brdRslt.IsIdolSearch}', '{!brdRslt.LBId}', '{!brdRslt.BoardCommunityIdolTopicstype}', '{!brdRslt.TopicName}', '{!brdRslt.LBName}', '{!brdRslt.TopicDocType}');" id="li_img" data-ajax="false" class="ui-btnList-element">
+-->
+                    <a onclick="LogMetrics('{!brdRslt.TopicId}','{!brdRslt.LBName}','{!brdRslt.LBName}','Content Tab'); sendMyRequestDownload('{!brdRslt.TopicURL}', '{!brdRslt.TopicName}', '{!brdRslt.TopicDocType}');" id="li_img" data-ajax="false" class="ui-btnList-element">
+                        <apex:outputPanel rendered="{!!(brdRslt.IsVideo)}">
+                              <apex:outputPanel rendered="{!(brdRslt.StaticImage)}">
+                                  <img id="li_img" src="{!brdRslt.DefaultImageName}" onError="this.onerror=null;this.src='{!URLFOR($Resource.mslp_pic, 'pic/9.png')}';" style="min-height: 132px;max-height: 132px;min-width: 80px;max-width: 80px;float: left;margin-top:-15px;margin-left:-15px;margin-right:15px;margin-bottom:-15px;"/>
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!!brdRslt.StaticImage}">
+                              <apex:outputPanel rendered="{!brdRslt.IsContentAttchment}" >
+                                 <img id="li_img" src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" onError="this.onerror=null;this.src='{!URLFOR($Resource.mslp_pic, 'pic/9.png')}';"  style="min-height: 132px;max-height: 132px;min-width: 80px;max-width: 80px;float: left;margin-top:-15px;margin-left:-15px;margin-right:15px;margin-bottom:-15px;"/>
+                                </apex:outputPanel> 
+                              </apex:outputPanel>  
+                              </apex:outputPanel>              
+                        <h3>
+                            <apex:outputPanel rendered="{!brdRslt.IsIdolSearch}">{!brdRslt.LBName}</apex:outputPanel>
+                            <apex:outputPanel rendered="{!!brdRslt.IsIdolSearch}">{!brdRslt.TopicName}</apex:outputPanel>
+                        </h3>    
+                        
+                        
+                            <apex:outputPanel rendered="{!!brdRslt.IsIdolSearch}"> <div data-type="horizontal" data-role="controlgroup"><!--<span style="vertical-align:middle;"><img class="circular-image-inset" style="vertical-align:middle;" src="{!brdRslt.LBOwnerURL}" /></span><span>  </span>--><span style="vertical-align:middle;background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt;font-weight: 100;">by {!brdRslt.LBOwnerName}</span></div></apex:outputPanel>
+                            <apex:outputPanel rendered="{!brdRslt.IsIdolSearch}"><p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt;">{!brdRslt.LBDescription}</p></apex:outputPanel>
+
+                        <apex:outputPanel rendered="{!!brdRslt.IsIdolSearch}"><div id='ratingTopic_{!brdRslt.LBId}_{!brdRslt.TopicCount}'></div></apex:outputPanel>
+                        <apex:outputPanel rendered="{!brdRslt.IsIdolSearch}"><div id='ratingTopic_{!brdRslt.TopicURL}_{!brdRslt.TopicCount}'></div></apex:outputPanel>
+                    </a>                      
+                </li>
+            </apex:repeat>
+        </ul>
+        <div id="outter"><div id="emptyResultMsg3"><h3 style="color:white; text-shadow:none;">No results found</h3></div></div>
+       </div> 
+       
+       <div data-tab="4"> 
+        <ul data-role="listview" data-icon="false" id="peopleList" style="position: relative; left: -6px; width: 110%;">
+            <apex:repeat value="{!PeopleResult}" var="brdRslt">
+                <li>
+                    <!--<a href="/apex/mobileCommunityActivity?id={!brdRslt.Id}" data-ajax="false" style="background-color: rgba(0,0,0, 0.4); color: #ffffff; text-shadow: none; border-color: rgba(0,0,0,0.5);">
+                        <img src='{!brdRslt.SmallImageName}' class="circular-image-container"/>
+                        <h2 style="background-color:rgba(0, 0, 0, 0.0);">{!brdRslt.name}</h2>
+                        <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt;">{!brdRslt.Title}</p>
+                    </a>-->
+                    
+                    <a href="#" onclick="LogMetrics('{!brdRslt.id}','{!brdRslt.Name}','/apex/mobileProfileNew?id={!brdRslt.id}','People Tab');" class="ui-btnList-element">
+                        <img src='{!brdRslt.SmallImageName}' class="circular-image-container"/>
+                        <h3 style="background-color:rgba(0, 0, 0, 0.0); display:inline-block;">{!brdRslt.name}</h3>
+                            <apex:outputPanel rendered="{!brdRslt.IsSecondaryIndImg}">
+                                <apex:image url="{!URLFOR($Resource.iconassets, 'icons/Expert_Icon.png')}" alt="Expertise" title="Expertise" style=""/>
+                            </apex:outputPanel>
+                        <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt; margin-top:0px;">{!brdRslt.RoleName}</p>
+                        <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt; display:block;">{!brdRslt.Region}{!IF((brdRslt.Region == null || brdRslt.BusinessGroup == null), '',' | ')}{!brdRslt.BusinessGroup}</p>
+                        
+                        
+                        <script>memberList.push({'id':'{!brdRslt.Id}'});</script>
+                    </a>
+                </li>
+            </apex:repeat>
+        </ul>
+        <div id="outter"><div id="emptyResultMsg4"><h3 style="color:white; text-shadow:none;">No results found</h3></div></div>
+       </div>
+       
+       <div data-tab="5">
+        <ul data-role="listview" data-icon="false" id="expertList" style="position: relative; left: -6px; width: 110%;">
+            
+            <apex:repeat value="{!ExpertResult}" var="brdRslt">
+                <li>
+                    <!--<a href="/apex/mobileCommunityActivity?id={!brdRslt.Id}" data-ajax="false" class="ui-btnList-element">
+                        <img src='{!brdRslt.SmallImageName}' class="circular-image-container"/>
+                        <h2 style="background-color:rgba(0, 0, 0, 0.0);">{!brdRslt.name}</h2>
+                        <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt;">{!brdRslt.Title}</p>
+                    </a>-->
+                    
+                    <a href="#" onclick="LogMetrics('{!brdRslt.id}','{!brdRslt.Name}','/apex/mobileProfileNew?id={!brdRslt.id}','Expert Tab');" class="ui-btnList-element">
+                        <img src='{!brdRslt.FullImageName}' class="circular-image-container"/>
+                        <h3 style="background-color:rgba(0, 0, 0, 0.0); display:inline-block;">{!brdRslt.Name}</h3>
+                            <apex:outputPanel rendered="{!brdRslt.IsExperts}">
+                                <apex:image url="{!URLFOR($Resource.iconassets, 'icons/Expert_Icon.png')}" alt="Expertise" title="Expertise" style=""/>
+                            </apex:outputPanel>
+                        <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt; margin-top:0px;">{!brdRslt.RoleName}</p>
+                        <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt; display:block;">{!brdRslt.Region}{!IF((brdRslt.Region == null || brdRslt.BusinessGroup == null), '',' | ')}{!brdRslt.BusinessGroup}</p>
+                        
+                        
+                        <script>expertList.push({'id':'{!brdRslt.Id}'});</script>
+                    </a>
+                </li>
+            </apex:repeat>
+            <script>
+                if( expertList.length <= 0 ) {
+                    $( '#expertHeader' ).text('');
+                }
+                else {
+                    $( '#expertHeader' ).text('Experts');
+                }
+            </script>
+        </ul>
+        <div id="outter"><div id="emptyResultMsg5"><h3 style="color:white; text-shadow:none;">No results found</h3></div></div>
+      </div> 
+  </div>   
+     
+<!-- START PEOPLE PANEL -->
+
+    <div data-role="panel" id="peoplePanel" data-position="right" data-display="overlay" style="background:#f3f3f3;">
+        <div id="peoplePanelContent">
+         <a href="#peoplePanel" style="text-decoration:none;text-shadow:none;"><span id="icoCloseButton"  class="icon-caret-right" style="font-size:32pt;text-align:center;color:rgb(135, 136, 138);margin-left:10px;"></span></a>
+        </div>
+
+    </div><!-- /panel -->
+
+<!-- END PEOPLE PANEL --> 
+      
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+            <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.SmallPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <a href="#popupDialog" style="float: left; z-index: 5; position: relative;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" style="min-width:20%; padding-left:10px; padding-top:12px; -webkit-filter: invert(40%);"/></a>
+                <input data-corners="false" class="search" type="text" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mSLPLanding0" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+      
+       <div data-role="popup" id="popupDownloadErr" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <p style="margin:20px;">Downloading of documents is only supported on Chrome for Android at this time.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.android.chrome" class="ui-btn" style="margin:15px;background:#F9A006;color:#ffffff;">Get Chrome</a>
+        </div>
+        
+        <div data-role="popup" id="popupDownloadMissing" data-overlay-theme="a" data-dismissible="false">
+        <p style="margin:20px;">The document you were searching for cannot be found, please try again later.</p>
+        <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+      
+      <!--<div id="outter"><div id="emptyResultMsg"><h3 style="color:white; text-shadow:none;">No results found</h3></div></div>-->
+        
+    </div>  
+</body>    
+<style>
+
+    /**** css for tabs ****/
+    
+    .ui-inlinetabs-tab .ui-btn-inner {
+    margin: 0;
+    }
+    .ui-fullsize .ui-btn-inner, .ui-fullsize .ui-btn-inner {
+    font-size: 16px;
+    padding: .6em 10px;
+    }
+    
+    .ui-inlinetabs-tab {
+    margin: 0;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    }
+    
+    .ui-btn-up-c {
+    border: 1px solid #939498;
+    background: #939498;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: none;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#404040),to(#404040));
+    background-image: -webkit-linear-gradient(#404040,#404040);
+    background-image: -moz-linear-gradient(#404040,#404040);
+    background-image: -ms-linear-gradient(#404040,#404040);
+    background-image: -o-linear-gradient(#404040,#404040);
+    background-image: linear-gradient(#404040,#404040);
+    }
+    
+    .ui-btn {   
+        border-radius: 0 !important;
+    }
+    
+    .ui-btn-active {
+        border: 1px solid #767676;
+        background: #767676;
+        font-weight: 700;
+        color: #fff;
+        cursor: pointer;
+        text-shadow: 0 1px 0 #767676;
+        text-decoration: none;
+        /* background-image: -webkit-gradient(linear,left top,left bottom,from(#767676),to(#767676)); */
+        /* background-image: -webkit-linear-gradient(#767676,#767676); */
+        background-image: -moz-linear-gradient(#767676,#767676);
+        background-image: -ms-linear-gradient(#767676,#767676);
+        background-image: -o-linear-gradient(#767676,#767676);
+        /* background-color: #767676; */
+        /* font-family: Helvetica,Arial,sans-serif; */
+    }
+    
+    .ui-btn-inner {
+        border-top: 0;
+        border-color: transparent;
+    }
+    
+  
+    
+     /**** end for tabs ****/  
+     
+     .tabsBackground{
+         border-radius: 0 !important; 
+         background-color: transparent; 
+         width:100%; 
+         position: relative; 
+         top: 10px;
+     }
+     
+     @media only screen and (min-width : 321px) {
+        .tabsBackground{
+             width:100%;             
+         }
+     }
+         
+    .ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl {
+    border-top-left-radius: 8px;
+    }
+    .ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr {
+    border-top-right-radius: 8px;
+    }
+    .ui-corner-all, .ui-corner-bottom, .ui-corner-left, .ui-corner-bl {
+    border-bottom-left-radius: 8px;
+    }
+    .ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br {
+    border-bottom-right-radius: 8px;
+    }
+    
+   
+    .ui-btn, label.ui-btn {
+    font-weight: normal !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-top-style: hidden !important;
+    border-left-style: hidden !important;
+    border-right-style: hidden !important;
+    }
+    
+    .ui-btnList-element{
+        background-color: #767676 !important;
+        color: #ffffff !important;
+        text-shadow: none !important;        
+    }
+    
+    .ui-body-b, .ui-page-theme-b .ui-body-inherit, html .ui-bar-b .ui-body-inherit, html .ui-body-b .ui-body-inherit, html body .ui-group-theme-b .ui-body-inherit, html .ui-panel-page-container-b {
+    background-color: #58595B;
+    border-color: #58595B;
+    color: #9E9E9E;
+    text-shadow: 0 1px 0 #111;    
+    }
+    
+    .ui-input-text input, .ui-input-search input, textarea.ui-input-text {        
+        width: 77% !important; 
+        padding: .6em !important;       
+    }
+    #outter {
+        padding-top:10px;
+        height:50vh;
+        min-width:160px;
+    }
+
+    #emptyResultMsg1 {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -65px;
+        width: 160px;
+        height: 100px;
+    }
+    #emptyResultMsg2 {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -65px;
+        width: 160px;
+        height: 100px;
+    }
+    #emptyResultMsg3 {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -65px;
+        width: 160px;
+        height: 100px;
+        
+    }
+    #emptyResultMsg4 {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -65px;
+        width: 160px;
+        height: 100px;
+    }
+    #emptyResultMsg5 {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -65px;
+        width: 160px;
+        height: 100px;
+    }
+
+    .circular-image-container {
+        margin-left: 8px !important;
+        margin-top: 12px !important;
+        padding: 1px;
+        border-radius: 50px;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        background-color: #000000;
+    }
+    
+        .circular-image-inset{
+        padding: 1px;
+        width:35px;
+        height:35px;
+        border-radius: 30px;
+        -webkit-border-radius: 30px;
+        -moz-border-radius: 30px;
+        border-top-left-radius: 30px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        border-bottom-left-radius: 30px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        background-color: #ffffff;
+    }
+
+    #popupDialog-popup {
+        width: 80%;
+        left: 10%;
+        right: 10%
+    }
+
+    #searchHeader {
+        height: 25px;
+        width: 100%;
+        background-color: #f9a006;
+        position: fixed;
+        z-index:1;
+    }
+    #searchHeader h3 {
+        padding: 0px 0px 0px 0px;
+        margin: 0px 0px 0px 0px;
+        border: none;
+        width: 100%;
+        background-color: #f9a006;
+        color: #ffffff;
+        text-shadow: none;
+        text-align: center;
+    }
+
+    #listHeader {
+        height:40px;
+        width: 100%;
+        /*background-color: green;*/
+        overflow: hidden;
+    }
+
+    #searchPage {
+        background: #939498;
+        /*
+        background: -webkit-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: -o-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: -moz-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        */
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    
+    .communityOwnerImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border: 2px solid white;
+}
+
+
+@font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            .ui-body-c, .ui-body-c input, .ui-body-c select, .ui-body-c textarea, .ui-body-c button {
+                font-family:"HP Simplified",sans-serif;
+                color:#939498;
+                border-radius:0;
+            }
+            
+            .ui-body-c, .ui-overlay-c {
+            color: #333;
+            text-shadow: none;
+            background: #f9f9f9;
+            background-image: none;
+            background-image: none;
+            background-image: none;
+            background-image: none;
+            background-image: -o-linear-gradient(#404040,#404040);
+            background-image: none;            
+            }
+            
+            .ui-btn-up-b {
+            border: 1px solid #fff;
+            background: #404040;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: none;
+            background-image: none;
+            background-image: none;
+            background-image: none;
+            background-image: none;
+            background-image: none;
+            background-image: linear-gradient(#404040,#404040);
+            }   
+            
+            .ui-btn-hover-b {
+            border: 1px solid #fff;
+            background: #404040;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: none;
+            background-image: -webkit-gradient(linear,left top,left bottom,from(#404040),to(#404040));
+            background-image: -webkit-linear-gradient(#404040,#404040);
+            background-image: -moz-linear-gradient(#404040,#404040);
+            background-image: -ms-linear-gradient(#404040,#404040);
+            background-image: -o-linear-gradient(#404040,#404040);
+            background-image: linear-gradient(#404040,#404040);
+            }  
+            
+            .ui-icon-searchfield:after {
+           
+            left: 4px;
+            
+            } 
+            
+            .ui-icon, .ui-icon-searchfield:after {
+           
+            -webkit-filter: invert(100%);
+            }      
+            
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .ui-content{
+                padding-top: 30px;
+                background-color: #939498;
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif;
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                    .infoFld .menu_button{
+                    position:absolute;
+                    top:14px;
+                    right:6px;
+                    width:24px;
+                    height:24px;
+                    z-index:3;
+                }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:30px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:39px;
+            }
+         .ui-panel-inner{padding: 0}
+         .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+         starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+        
+    .ui-controlgroup-horizontal .ui-controlgroup-controls{
+        display: block;   
+        height: 20px; 
+    }    
+         
+    .column1{
+        float:left;
+        line-height:55px;
+        margin-top:5px;
+    }
+    
+    .column2{
+        float:left;
+        margin-top:5px;
+        margin-left:5px;
+    }
+    
+    .column3{
+        float:right;
+        line-height:55px;
+        margin-right:15px;
+        margin-top:5px;
+    }
+    
+    .circular-image-container {
+            width:65px;
+            height:65px;
+            margin: 1px;
+            padding: 1px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #000000;
+        }
+    
+    .blue-font {
+        color: #0096D6; /* HP blue font */
+        font-size:1.2em;
+        background:transparent !important;
+    }
+    
+    
+
+</style>
+<script type="text/javascript" src="https://hp--esit.cs11.my.salesforce.com/canvas/sdk/js/30.0/controller.js"  />
+<script>
+
+function ShowDOCTest(docType, docURL, docTitle, isDoc, dId) {
+    // Find doc
+    //window.location = '';
+        
+    $.ajax({
+        url: "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&matchreference=https://ensv.hp.com/sales/sam/docs/sam-1-2944/en/c03905835.docx",
+        dataType: "xml",
+        success: function (data) {
+        console.log(data)
+        alert(data);
+        }
+    });
+    
+    
+}
+
+$(document).ready(function(){
+    window.domainSP = 'prime31.sharepoint.hp.com';
+    window.domainWWS = 'ensv.hp.com';
+    window.domainSP2013 = 'ea2013.sharepoint.hp.com';
+    window.domainEXO = 'it-services-gw-itg.external.hp.com';
+    
+    //alert(window.location.href);
+    
+    $('#buttonSearch').on('ontap click', function(e){
+            setTimeout(function(){
+                $('#search-basic').focus();
+            }, 200);
+     });
+     initTriggers();  
+     noResultMsg();  
+        
+ 
+        // Displaying Topic Result's Rating
+          for (var i = 0; i < listTopic.length; i++) {
+                  
+                  if(listTopic[i].isIdolSearch=="false"){
+                      if(selectDocIcon(listTopic[i].topicDocType)!= undefined)
+                       $('#ratingTopic_' + listTopic[i].ID+ '_' + i).append(' <div data-type="horizontal" data-role="controlgroup" style="line-height:40px;"><span style="vertical-align:middle;">'+selectDocIcon(listTopic[i].topicDocType)+'</span><span style="vertical-align:middle;float:right;">'+renderRating(listTopic[i].RatingNbr)+'</span></div>'); 
+                      else
+                       $('#ratingTopic_' + listTopic[i].ID+ '_' + i).append(' <div data-type="horizontal" data-role="controlgroup" style="line-height:40px;"><span style="vertical-align:middle;"></span><span style="vertical-align:middle;float:right;">'+renderRating(listTopic[i].RatingNbr)+'</span></div>'); 
+                  }
+                  else{
+                      //$('#ratingTopic_' + listTopic[i].topicURL).append('<span>'+selectDocIcon(listTopic[i].topicDocType)+'</span>');
+                  }
+          }
+          
+          if (!($( "#all_box" ).attr("checked"))) {
+              doFilter();
+          }
+          showInitalTab();
+    });
+    
+    function noResultMsg() {
+        if($('#commList li').size() === 0 && $('#search-basic-expert').val() !== ''){
+           $('#outter').show();
+           $('#emptyResultMsg1').show();
+        }
+        else {
+           $('#outter').hide();
+           $('#emptyResultMsg1').hide();
+        }
+        
+        if($('#boardList li').size() === 0 && $('#search-basic-expert').val() !== ''){
+           $('#outter').show();
+           $('#emptyResultMsg2').show();
+        }
+        else {
+           $('#outter').hide();
+           $('#emptyResultMsg2').hide();
+        }
+        
+        if($('#topicsList li').size() === 0 && $('#search-basic-expert').val() !== ''){
+           $('#outter').show();
+           $('#emptyResultMsg3').show();
+        }
+        else {
+           $('#outter').hide();
+           $('#emptyResultMsg3').hide();
+        }
+        
+        if($('#peopleList li').size() === 0 && $('#search-basic-expert').val() !== ''){
+           $('#outter').show();
+           $('#emptyResultMsg4').show();
+        }
+        else {
+           $('#outter').hide();
+           $('#emptyResultMsg4').hide();
+        }
+        
+        if($('#expertList li').size() === 0 && $('#search-basic-expert').val() !== ''){
+           $('#outter').show();
+           $('#emptyResultMsg5').show();
+        }
+        else {
+           $('#outter').hide();
+           $('#emptyResultMsg5').hide();
+        }
+      
+    }  
+    
+    function showInitalTab() {
+    
+        var ls = [$('#commList li').size(), $('#boardList li').size(), $('#topicsList li').size(), $('#peopleList li').size(), $('#expertList li').size()];
+        
+        for (var x in ls) {
+            console.log('Index: ' + x + ', size: ' + ls[x]);
+        }
+    
+        if($('#peopleList li').size() === 0 && 
+        $('#expertList li').size() === 0 &&
+        $('#commList li').size() === 0 &&
+        $('#boardList li').size() === 0 &&
+        $('#topicsList li').size() === 0 &&
+        $('#search-basic-expert').val() !== ''){
+        }
+    }
+    
+    // Read parameter from query string
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+    
+    function doFilter() {   
+        var list = ["#all_box","#community_box","#boards_box","#topics_box","#people_box"];
+        
+        var map = [{"box":"#all_box", "list":""},
+                   {"box":"#community_box", "list":"#commList"},
+                   {"box":"#boards_box", "list":"#boardList"},
+                   {"box":"#topics_box", "list":"#topicsList"},
+                   {"box":"#people_box", "list":"#expertList"},
+                   {"box":"#people_box", "list":"#peopleList"}];
+        
+        if ($(map[0].box).attr("checked")) {
+            $('#resultLabel').text("Results - All");
+        }
+        else {
+            $('#resultLabel').text("Results - filtered");
+        }
+        
+        for (var x=1; x < map.length; x++) {
+            if ($( map[x].box ).attr("checked")) {
+                $( map[x].list ).listview().show();
+            }
+            else {
+                $( map[x].list ).listview().hide();
+            }
+        }
+    }
+    
+    function initTriggers() {
+        var list = ["#community_box","#boards_box","#topics_box","#people_box"];
+        for (var l in list) {
+            $( list[l] ).change(function () {
+                if ($(this).attr("checked")) {
+                    return;
+                }
+                else {
+                    $("#all_box").prop('checked',false).checkboxradio('refresh');
+                }
+            });        
+        }
+    }
+    
+    function updateCheckboxes() {
+        if ($("#all_box").attr("checked")) {
+           checkAllBoxes(true);
+        }
+        else {
+           checkAllBoxes(false);
+        }
+    }
+    
+    function checkAllBoxes(onOff) {
+        //var list = ["#all_box","#community_box","#boards_box","#topics_box","#people_box"];
+        var list = ["#community_box","#boards_box","#topics_box","#people_box"];
+        for (var l in list) {
+            $( list[l] ).prop( "checked", onOff).trigger("create");
+         }
+    }
+    
+    $('#search-basic').live("keypress", function(e) {
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            var searchTerm= $('#search-basic').val();
+            if (searchTerm.length <=2) {
+                alert('A minimum of 3 characters should be entered');
+                return;
+            }
+            if (searchTerm.length >=3998) {
+                alert('A maximum of 3997 characters should be entered');
+                return;
+            }
+            window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal=" + encodeURIComponent(searchTerm);
+            $.mobile.loading( "show", {
+                  text: "Loading...",
+                  textVisible: true,
+                  textOnly: false
+            } ); // Displays load spinner while loading
+        }
+    });
+    
+        $('#search-basic-expert').live("keypress", function(e) {
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            var searchTerm= $('#search-basic-expert').val();
+            if (searchTerm.length <=2) {
+                alert('A minimum of 3 characters should be entered');
+                return;
+            }
+            if (searchTerm.length >=3998) {
+               alert('A maximum of 3997 characters should be entered');
+               return;
+            }
+            window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal=" + encodeURIComponent(searchTerm);
+            $.mobile.loading( "show", {
+                  text: "Loading...",
+                  textVisible: true,
+                  textOnly: false
+            } ); // Displays load spinner while loading
+        }
+    });
+
+    
+    $('#peopleList').delegate('li', 'click', function () {
+        var index = $(this).index();
+       $("#peoplePanelContent #memberFrame").remove();
+            var viewportHeight = $(window).height() - 50;
+        $("#peoplePanelContent").append( '<iframe src="/apex/mobileProfileNew?id=' + memberList[index].id + '" height="' + viewportHeight + '" width="100%;" style="border:0px;" id="memberFrame"></iframe>' );
+        $( "#peoplePanel" ).panel( "open" , "");
+    });
+    
+        $('#expertList').delegate('li', 'click', function () {
+        var index = $(this).index()-1; //Adding minus one because the first in the index is the header
+        $("#peoplePanelContent #memberFrame").remove();
+            var viewportHeight = $(window).height() - 50;
+        $("#peoplePanelContent").append( '<iframe src="/apex/mobileProfileNew?id=' + expertList[index].id + '" height="' + viewportHeight + '" width="100%;" style="border:0px;" id="memberFrame"></iframe>' );
+        $( "#peoplePanel" ).panel( "open" , "");
+    });
+        
+         function highlightRow(elem){
+            $(elem).css({background: '#FF8800'});
+            setTimeout(function(){
+                 $(elem).css({background: 'transparent'});
+            }, 800);
+        }  
+        
+        $('#listviewmenu').on('click tap mousedown', 'li', function() {
+            highlightRow($(this));
+        }); 
+        
+        $('#menuImage').on('click tap mousedown touchstart', '', function() {
+            $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        }); 
+        
+        $('#menuImageList').on('click tap mousedown touchstart', '', function() {
+            $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });     
+        
+        $('#searchImage').on('click tap mousedown touchstart', '', function() {
+            $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+            setTimeout(function(){
+                 $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+            }, 300);
+        }); 
+        
+        $('#filterImage').on('click tap mousedown touchstart', '', function() {
+            $("#filterImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Filter_Pressed.png')}");
+            setTimeout(function(){
+                 $("#filterImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Filter.png')}");
+            }, 300);
+        }); 
+        
+        
+function nth_occurrence (string, char, nth) {
+    var first_index = string.indexOf(char);
+    var length_up_to_first_index = first_index + 1;
+
+    if (nth == 1) {
+        return first_index;
+    } else {
+        var string_after_first_occurrence = string.slice(length_up_to_first_index);
+        var next_occurrence = nth_occurrence(string_after_first_occurrence, char, nth - 1);
+
+        if (next_occurrence === -1) {
+            return -1;
+        } else {
+            return length_up_to_first_index + next_occurrence;  
+        }
+    }
+}                                  
+
+
+function sendMyRequest(url, isIdolSearch, bId, type, title, titleEile, docType) {
+    //console.log("URL: " + url + ", isIdol: " + isIdolSearch + ", bId: " + bId + ", type: " + type + ", title: " + title + ", titleEile: " + titleEile);
+    //console.log(" type = " + type);
+    
+    var sTitle = "";
+    if(title != ""){
+        sTitle = title;
+    }
+    else{
+        sTitle = titleEile;
+    }
+    
+    var sDocType = docType;
+    if (url == '' && isIdolSearch == 'false') {
+        //console.log("this isn't a doc");
+        if (type !== '') {
+            //window.location = type;
+            if (type.search("SLP_ViewCommunity") !== -1) {
+                //console.log("1 " + type + ", " + type.search("SLP_ViewCommunity"));
+                window.location = '/apex/mobileCommunityMockup?id=' + bId;
+            }
+            else if (type.search("AthenaLearningBoardDtls") !== -1) {
+                //console.log("2 " + type);
+                window.location = '/apex/mobileLearningBoardMockup?id=' + bId;
+            }
+        }
+        return;
+    } 
+
+    if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+        if(url.indexOf('http') != 0)
+        {
+            window.location = "http://" + url;
+        }
+        else{
+            window.location = url;
+        }
+        return;
+    }
+    
+    var start = url.lastIndexOf("/");
+    var finish =  nth_occurrence (url, ":", 2);
+    
+    var parentDoc = url.substring(start+1, finish);
+        
+    var sDomain = getDomainName(url);
+    var endpoint = '';
+    if (sDomain == window.domainWWS) {
+        if(nth_occurrence (url, ":", 2) > -1){
+
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+        }
+        else{
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+        }
+    }
+    else if (sDomain == window.domainSP) {
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+        renderMyDoc(url, sTitle);
+        return;
+    }
+    else if(sDomain == window.domainSP2013){
+ 
+        if(nth_occurrence (url, ":", 2) > -1){
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+        }
+        else{
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+        }
+    }
+    else if(sDomain == window.domainEXO){
+        endpoint = url;
+        renderMyDoc(endpoint , sTitle);
+        return;
+    }
+    else {
+        // handle unknown case
+        $('#popupDownloadMissing').popup('open');
+        $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+        return;
+    }
+
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+        console.log($(xml).text());
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    if ($(this).find("numhits").text() == '0') {
+                      $('#popupDownloadMissing').popup('open');
+                      $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                     return;
+                     }
+
+                    var links = [];
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            links.push(link);
+                            renderMyDoc(links, sTitle);
+                        });
+                    });
+                });
+            });
+        },
+        error: function (thrownError) {
+            var er = jQuery.parseJSON(thrownError);
+            alert('Error: Your security session has expired. Please sign out and sign in again');
+        }
+    });
+}
+
+function sendMyRequestDownload(url, doctype, docTitle) {
+    console.log("type - " + doctype);
+     var sDocType = doctype;
+
+    if(sDocType == "OTHER" || sDocType == ""){ //Link is not to a document so we don't need key view just go to the url
+         if(url.indexOf('http') != 0)
+        {
+            window.location = "http://" + url;
+        }
+        else{
+            window.location = url;
+        }
+        return;
+    }
+
+
+    var start = url.lastIndexOf("/");
+    var finish =  nth_occurrence (url, ":", 2);
+    
+    var parentDoc = url.substring(start+1, finish);
+    
+    var sDomain = getDomainName(url);
+    
+    var endpoint = '';
+    if (sDomain == window.domainWWS) {
+        if(nth_occurrence (url, ":", 2) > -1){
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+        }
+        else{
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+        }
+    }
+    else if (sDomain == window.domainSP) {
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+        //renderMyDoc(url, docTitle);
+        window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + url;
+        return;
+    }
+    else if(sDomain == window.domainSP2013){
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + url;
+        return;
+    }
+    else if(sDomain == window.domainEXO){
+        window.location = url;
+        return;
+    }
+    else {
+        // handle unknown case
+        $('#popupDownloadMissing').popup('open');
+        $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+        return;
+    }
+    
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    if ($(this).find("numhits").text() == '0'||$(this).find("numhits").text() == '') {
+                      $('#popupDownloadMissing').popup('open');
+                      $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                     return;
+                     }
+                     
+                     var links = [];
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            links.push(link);
+                        });
+                    });
+                    
+                   for (i = 0; i < links .length; i++) { 
+                       var downloadDoc= links[i];  
+                       doSetTimeout(i, downloadDoc)
+                   }
+       
+               //}
+                   
+                });
+            });
+        },
+        error: function (xhr, status) {
+            //var er = jQuery.parseJSON(thrownError);
+            if(isThisAndroid()&&xhr.status==0){
+                $('#popupDownloadErr').popup('open');
+                $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+            }
+            else{
+                alert('Error: Your security session has expired. Please sign out and sign in again');
+            }  
+        }
+    });
+    
+}
+
+   function doSetTimeout(i, documentTitle) {
+         setTimeout(function() {  
+             window.location= "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + documentTitle; 
+         }, i*1000);
+    }
+
+
+function getDomainName(url) {
+    var r = /:\/\/(.[^/]+)/;
+    return url.match(r)[1];
+}
+
+function renderMyDoc(url, docTitle) {
+    //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+    window.location.href="/apex/mobileDocViewer?docURL=" + url + "&&docTitle=" + docTitle;
+}
+
+// Returns HTML content with star images rendering a given rating
+        function renderRating(avgRating) {
+            // Used to display rating stars
+            var myStarOff = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-UnRated.png')}";
+            var myStarOn = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Rated.png')}";
+            var myStarHalf = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Half.png')}";
+
+            var ratingStarImgs = "";
+            for (var i=1; i<=5; i++) {
+                if (i <= avgRating) {
+                    ratingStarImgs += '<img src="'+myStarOn+'">';
+                } else if ((i - avgRating) <= 0.5){
+                    ratingStarImgs += '<img src="'+myStarHalf+'">';
+                } else {
+                    ratingStarImgs += '<img src="'+myStarOff+'">';
+                }
+            }
+            
+            return ratingStarImgs;
+        }
+        
+            function selectDocIcon(docType){
+            //console.log("Calling doc icon - " + docType);
+                var iconSet;
+                if (docType == 'PDF') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Acrobat.png')}", 'PDF');
+                } else if (docType  == 'PPT') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Powerpoint.png')}", 'PowerPoint');
+                } else if (docType  == 'DOC') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Word.png')}", 'Word');
+                } else if (docType  == 'XLS') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Excel.png')}", 'Excel');
+                } else if (docType  == 'TXT') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_TXT.png')}", 'Text');
+                } else if (docType == 'OTHER') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Web.png')}", 'Link');
+                };
+                
+                return iconSet;
+            }
+
+        function renderIcon(iconURL, description) {
+            return '<img style="display: inline-block; margin-left:5px; margin-right:5px; float:left" id="docType1" src="'+iconURL+'"></img>'
+            //return '<span class="detailDoc"><img src="' + iconURL + '" '+(description?'title="'+description+'" ':' ')+'class="pull-right mrl"/></span>'
+        };
+
+
+      function LogMetrics(boardId,boardName,link,tabSection)
+      {
+          //var url=$('{!getSfInstance}').val()+link;
+          Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.SLP_GlobalSearch.LogMetrics}',
+                          boardId,
+                          boardName, 
+                          link, 
+                          tabSection, 
+                          GetOSName(),
+                          GetBrowserName(), 
+                          'Mobile',               
+                          DoNothingWithResult
+                      );
+      }
+      
+      function DoNothingWithResult(result, event)
+      {
+          //console.log('result> ' + result);
+          //debugger
+          //window.location.href = link;
+          //$('[id$=hdnRedirectUrl]').val(result);
+          //$('[id$=btnRedirectUrl]').click();
+      }
+      
+      function GetOSName()
+      {
+  
+          var ua = navigator.userAgent;
+          var uaindex;
+        
+          // determine OS
+          if ( ua.match(/iPad/i) || ua.match(/iPhone/i) )
+          {
+            mobileOS = 'iOS';
+            uaindex  = ua.indexOf( 'OS ' );
+          }
+          else if ( ua.match(/Android/i) )
+          {
+            mobileOS = 'Android';
+            uaindex  = ua.indexOf( 'Android ' );
+          }
+          else
+          {
+            mobileOS = ua;//'unknown-mobileOS';
+          }
+          return mobileOS;
+      }
+      
+      function GetBrowserName()
+      {
+                 
+      var nVer = navigator.appVersion;
+      var nAgt = navigator.userAgent;
+      var browserName  = navigator.appName;
+      var fullVersion  = ''+parseFloat(navigator.appVersion); 
+      var majorVersion = parseInt(navigator.appVersion,10);
+      var nameOffset,verOffset,ix;
+                                    if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+         browserName = "Opera";
+         fullVersion = nAgt.substring(verOffset+6);
+         if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                      fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In MSIE, the true version is after "MSIE" in userAgent
+      else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+         browserName = "Microsoft Internet Explorer";
+         fullVersion = nAgt.substring(verOffset+5);
+      }
+      // In Chrome, the true version is after "Chrome" 
+      else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+         browserName = "Chrome";
+         fullVersion = nAgt.substring(verOffset+7);
+      }
+      // In Safari, the true version is after "Safari" or after "Version" 
+      else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+         browserName = "Safari";
+         fullVersion = nAgt.substring(verOffset+7);
+         if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                      fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In Firefox, the true version is after "Firefox" 
+      else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+                     browserName = "Firefox";
+                     fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In most other browsers, "name/version" is at the end of userAgent 
+      else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+                     browserName = nAgt.substring(nameOffset,verOffset);
+                     fullVersion = nAgt.substring(verOffset+1);
+                     if (browserName.toLowerCase()==browserName.toUpperCase()) {
+                        browserName = navigator.appName;
+                     }
+      }
+      var fVer = fullVersion.substring(0, fullVersion.indexOf(' '));
+      return browserName + ' ' + fVer;
+      
+     }
+
+
+
+
+</script>
+
+</apex:page>

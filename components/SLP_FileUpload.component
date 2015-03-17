@@ -1,0 +1,41 @@
+<apex:component controller="SLPFileUploadController" allowDML="true">
+<apex:includeScript value="{!URLFOR($Resource.ExoFileUpload)}"/> 
+
+  <div id="dvMessage" class="alert alert-success" style="display:none;"></div>
+  <div id="dvErrorMessage" class="alert alert-error" style="display:none;"></div>
+  <div id="dvFile">
+  <form id="MyForm" method="Post" enctype="multipart/form-data" target='MyIframe'>
+    <div>
+      <h4 style="color:#4A8BC2">Instructions:</h4>
+      1) Click on "Browse" button and wait till the file is read and the file path becomes gray.<br />
+      2) Click on the "Upload" button.<br />
+      3) Once the file is uploded successfully you will be redirected to the details page.
+      <p class="uploadImg"> Note: 1) The supported file formats are
+        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/fileExcelUpload.png')}"  alt="fileExcelUpload"/>
+        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/filePDFUpload.png')}"  alt="filePDFUpload"/>
+        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/fileTextUpload.png')}"  alt="fileTextUpload"/>
+        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/filePPTUpload.png')}"  alt="filePPTUpload"/>
+        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/fileWordUpload.png')}"  alt="fileWordUpload"/>
+      </p>
+    </div>
+    
+    <!--<apex:outputLabel title="Folder Name" value="Folder Name"> <span style="color:red;">*</span></apex:outputLabel>-->
+    <input type="hidden" id="txtFolderName"/>
+    <br/>
+    <br/>
+    <apex:inputfile value="{!UploadValue}" id="UploadFile" styleClass="uploadInput" ></apex:inputfile>
+    <input type="submit" id="btnUpload" value="Upload" class="btnAthena btn-primary btnAthenaPopP"/>
+  </form>
+  </div>  
+    <div id="dvLoading" style="display:none;">
+    <img src="/img/loading32.gif" width="16" height="16"/><span>Uploading In Progress...</span>
+  </div>  
+  <apex:form >
+    <apex:inputhidden id="hdnUrl" value="{!Url}"/>
+    <apex:inputhidden id="hdnCollateralId" value="{!CollateralId}"/>
+    <apex:inputhidden id="hdnTopicId" value="{!TopicId}"/>
+    <apex:inputhidden id="hdnLearningBoardId" value="{!LearningBoardId}"/>
+    <apex:inputhidden id="hdnCommId" value="{!CommunityId}"/>
+    <apex:commandButton id="saveLink" style="display:none;" action="{!UpdateDocUrl}" > </apex:commandButton>
+  </apex:form>
+</apex:component>

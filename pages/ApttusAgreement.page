@@ -1,0 +1,112 @@
+<apex:page standardController="Apttus__APTS_Agreement__c" recordSetvar="approvals" extensions="ApttusAgreement">
+    <script type="text/javascript" src="/soap/ajax/20.0/connection.js"></script>
+    <script type="text/javascript" src="/soap/ajax/20.0/apex.js"></script>
+    <style>
+        .activeTab { background-color: green; color:white; background-image:none; font-weight:bold; font-size:110%}
+        .inactiveTab { background-color: lightgrey; color:black; background-image:none }
+        .disabledTab { background-color: grey; color:black; background-image:none }
+    </style>
+<apex:form >
+<apex:pageMessages /> 
+</apex:form>
+<apex:tabPanel id="idTabPanel" inactiveTabClass="inactiveTab" disabledTabClass="disabledTab" tabClass="activeTab" contentClass="tabContentClass">     
+<apex:tab id="idMyAgreementRequest" label="My Agreements" name="MyAgrReqTab">
+<apex:form id="theForm">
+
+<apex:pageBlock title="Agreements Assigned to you" id="idReqApproval">
+<apex:pageBlockSection columns="1">
+<apex:pageBlockTable style="margin: 5px 0px 5px 0px" value="{!agmtReqPagination1}" var="apprReq" id="apprReq_table" width="100%" rules="rows" rowClasses="odd,even">
+<apex:column headerValue="Action">
+<apex:outputLink value="/{!apprReq.id}/a?retURL=/apex/ApttusAgreement?id={!apprReq.id}">Reassign</apex:outputLink>                          
+</apex:column>     
+<apex:column headerValue="Agreement Name">
+<apex:commandLink value="{!apprReq.Name}" action="{!goAgmt}">
+<apex:param name="agmtID" value="{!apprReq.ID}" assignTo="{!agreementId}"/>
+</apex:commandLink>
+</apex:column>
+<apex:column headerValue="Account" value="{!apprReq.Customer_Legal_Name__c}"/>
+<apex:column headerValue="Lead BU" value="{!apprReq.Lead_BU__c}"/>
+<apex:column headerValue="Total Agreement Value" value="{!apprReq.Apttus__Total_Contract_Value__c}"/>
+<apex:column headerValue="Sales Request Type" value="{!apprReq.Sales_Request_Type__c}"/>
+<apex:column headerValue="Customer Location Country" value="{!apprReq.Customer_Location_Country__c}"/>
+<apex:column headerValue="Customer Location State(if in US)" value="{!apprReq.Customer_State_if_US__c}"/>
+<apex:column headerValue="Public Sector" value="{!apprReq.Public_Sector__c}"/>
+<apex:column headerValue="Global Account" value="{!apprReq.Is_Global_Account__c}"/>
+<apex:column headerValue="Opportunity Owner" value="{!apprReq.Opportunity_Owner__c}"/>
+<apex:column headerValue="Request Date" value="{!apprReq.Request_Date__c}"/>
+<apex:column headerValue="Close Date" value="{!apprReq.Close_Date__c}"/>
+<apex:column value="{!apprReq.CreatedDate}" headerValue="Created Date"/>
+</apex:pageBlockTable>
+</apex:pageBlockSection>
+<!-- 
+<apex:outputPanel id="idResultStatsPanel" styleClass="bNext" layout="block" style="text-align: right;" rendered="{!hasApprovalRequestsAgmt}">
+<font size="1px">Page&nbsp;{!currentPageNumber}&nbsp;of&nbsp;{!totalPages}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<apex:outputPanel id="idNavigationPanel" styleClass="next" layout="block" rendered="{!OR(hasNextPage,hasPreviousPage)}">
+<apex:outputPanel rendered="{!NOT(hasPreviousPage)}" styleClass="greyedLink">&lt;Previous</apex:outputPanel>
+<apex:commandLink rendered="{!hasPreviousPage}" action="{!previousPage}" reRender="idReqApproval">&lt;Previous</apex:commandLink>
+<span> | </span>
+<apex:outputPanel rendered="{!NOT(hasNextPage)}" styleClass="greyedLink">Next&gt;</apex:outputPanel>
+<apex:commandLink rendered="{!hasNextPage}" action="{!nextPage}" reRender="idReqApproval">NextPage&gt;</apex:commandLink>
+</apex:outputPanel> </font>
+</apex:outputPanel>
+ -->
+</apex:pageBlock>
+</apex:form>   
+</apex:tab>
+              
+
+<apex:tab id="idMyTeamAgreementRequest" label="My Team Agreements" name="MyTeamAgrReqTab" rendered="{!showTab}">
+<apex:form id="theForm2"> 
+<apex:pageBlock title="Agreements in your Team" id="idReqApproval">
+<apex:pageBlockSection columns="1">
+<apex:pageBlockTable style="margin: 5px 0px 5px 0px" value="{!AgmtReqPagination2}" var="apprReq" id="apprReq_table" width="100%" rules="rows" rowClasses="odd,even">
+<apex:column headerValue="Action">
+<apex:commandLink title="Click to own the Request" value="Accept" action="{!doAccept}" rerender="apprReq_table" rendered="{!$User.Id!=apprReq.OwnerId}">
+<apex:param name="apprReqId" value="{!apprReq.Id}" assignTo="{!apprReqId}" />
+</apex:commandLink><br></br>
+<apex:outputLink value="/{!apprReq.id}/a?retURL=/apex/ApttusAgreement?id={!apprReq.id}">Reassign</apex:outputLink>                          
+</apex:column>
+<apex:column headerValue="Agreement Name">
+<apex:commandLink value="{!apprReq.Name}" action="{!goAgmt}">
+<apex:param name="agmtID" value="{!apprReq.ID}" assignTo="{!agreementId}"/>
+</apex:commandLink>
+</apex:column>
+
+<apex:column headerValue="Assigned To">
+<apex:outputText value="{!apprReq.Owner.Name}" />
+</apex:column>
+<apex:column headerValue="Contract Type" value="{!apprReq.Agreement_Type_String__c}"/>
+<apex:column headerValue="Account" value="{!apprReq.Customer_Legal_Name__c}"/>
+<apex:column headerValue="Lead BU" value="{!apprReq.Lead_BU__c}"/>
+<apex:column headerValue="Total Agreement Value" value="{!apprReq.Apttus__Total_Contract_Value__c}"/>
+<apex:column headerValue="Status" value="{!apprReq.Apttus__Status_Category__c}"/>
+<apex:column headerValue="Status Progress" value="{!apprReq.Apttus__Status__c}"/>
+<apex:column headerValue="Sales Request Type" value="{!apprReq.Sales_Request_Type__c}"/>
+<apex:column headerValue="Customer Location Country" value="{!apprReq.Customer_Location_Country__c}"/>
+<apex:column headerValue="Customer Location State(if in US)" value="{!apprReq.Customer_State_if_US__c}"/>
+<apex:column headerValue="Public Sector" value="{!apprReq.Public_Sector__c}"/>
+<apex:column headerValue="Global Account" value="{!apprReq.Is_Global_Account__c}"/>
+<apex:column headerValue="Opportunity Owner" value="{!apprReq.Opportunity_Owner__c}"/>
+<apex:column headerValue="Request Date" value="{!apprReq.Request_Date__c}"/>
+<apex:column headerValue="Close Date" value="{!apprReq.Close_Date__c}"/>
+<apex:column value="{!apprReq.CreatedDate}" />
+</apex:pageBlockTable>
+</apex:pageBlockSection>
+ <!-- 
+<apex:outputPanel id="idResultStatsPanel2" styleClass="bNext" layout="block" style="text-align: right;" rendered="{!hasApprovalRequests4}">
+<font size="1px">Page&nbsp;{!currentPageNumber}&nbsp;of&nbsp;{!totalPages}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<apex:outputPanel id="idNavigationPanel" styleClass="next" layout="block" rendered="{!OR(hasNextPage,hasPreviousPage)}">
+<apex:outputPanel rendered="{!NOT(hasPreviousPage)}" styleClass="greyedLink">&lt;Previous</apex:outputPanel>
+<apex:commandLink rendered="{!hasPreviousPage}" action="{!previousPage}" reRender="idReqApproval">&lt;Previous</apex:commandLink>
+<span> | </span>
+<apex:outputPanel rendered="{!NOT(hasNextPage)}" styleClass="greyedLink">Next&gt;</apex:outputPanel>
+<apex:commandLink rendered="{!hasNextPage}" action="{!nextPage}" reRender="idReqApproval">NextPage&gt;</apex:commandLink>
+</apex:outputPanel> </font>
+</apex:outputPanel>
+ -->
+</apex:pageBlock>
+</apex:form>
+ </apex:tab>
+                                       
+         </apex:tabPanel>   
+</apex:page>

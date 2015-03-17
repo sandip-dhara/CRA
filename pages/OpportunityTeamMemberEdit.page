@@ -1,0 +1,28 @@
+<!-- 
+/**********************************************************
+* Page Name: OpportunityTeamMemberEdit
+* Author: Accenture
+* Date: 27-MAR-2012 
+* Requirement # Request Id :
+* Description: To Edit Selected Opportunity selected Team Member
+***********************************************************/
+-->
+<apex:page standardController="OpportunityTeamMember" extensions="OpportunitySalesTeamController" tabStyle="Opportunity" id="page">
+    <apex:sectionHeader title="{!$ObjectType.Opportunity.label}" subtitle="{!$Label.Edit_Sales_Team_Member}" />
+    <apex:form >
+        <apex:pageBlock mode="Edit" >
+            <apex:pageBlockButtons location="Top" >
+                <apex:commandButton action="{!SaveTeamEdit}" value="{!$Label.Save}"/>
+                <apex:commandButton action="{!Cancel}" value="{!$Label.Cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="{!$Label.Team_Member_Information}" columns="1" collapsible="false">
+                <apex:inputField value="{!OpportunityTeamMember.User.Name}"/>
+                <apex:selectList label="{!$ObjectType.OpportunityTeamMember.fields.OpportunityAccessLevel.label}" value="{!SelectedOpportunityAccessLevel}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!OpportunityAccessLevel}"/>
+                </apex:selectList>
+                <apex:inputField value="{!OpportunityTeamMember.TeamMemberRole}" required="True"/>
+                <apex:inputHidden value="{!OpportunityTeamMember.OpportunityAccessLevel}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

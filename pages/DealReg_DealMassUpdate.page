@@ -1,0 +1,96 @@
+<!-- 
+/**********************************************************
+* Page Name: DealReg_DealMassUpdate
+* Author: HP.
+* Date: 10/05/2012
+* Requirement # Request Id : 
+* Description: This page will display selected Deal Registration Records for mass updating L1 Approver Owner
+***********************************************************/
+-->
+<apex:page standardController="Deal_Registration__c" recordSetVar="DealRegistration" extensions="DealReg_DealMassupdate" id="approverPage" >
+<apex:sectionHeader Title="Deal Registrations"  subtitle="Assign L1 Approver Owner"/>
+<script src="/soap/ajax/25.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/25.0/apex.js" type="text/javascript"></script>
+<script>
+
+ var tableId = 'approverPage:approverForm:approverBlock:oliTable:';
+ sforce.connection.sessionId = '{!$Api.Session_ID}';
+
+ // This function used to save the L1 Approver
+ 
+ function getApproverOwnerAndId()
+ {
+    var allDealRecordToUpdate= [];
+    var inputElem = document.getElementsByTagName("input");  
+
+ for(i=0;i<inputElem.length;i++){  
+  try {  
+   if(document.getElementById(tableId +i+':dealId') !=null){ 
+     var e = document.getElementById(tableId +i+':j_id16:j_id17:list'); 
+     var dealId = document.getElementById(tableId +i+':dealId').value; 
+     var approverOwnerName= e.options[e.selectedIndex].value; 
+     
+     if(approverOwnerName!="-- Select --"){
+       var dealRegistrationObject = new sforce.SObject("Deal_Registration__c");      
+       dealRegistrationObject.id = dealId; 
+       dealRegistrationObject.Level_1_Approval_Owner__c =approverOwnerName;
+       allDealRecordToUpdate.push(dealRegistrationObject);   
+           
+       }
+      }
+    }        
+   catch(error)
+     {
+      alert(error.faultstring);
+     }
+   }         
+   
+   try{
+       if(allDealRecordToUpdate.length ==0)
+       {
+         alert("Please select at least one L1 Approver Owner"); 
+         return false;
+       }
+       else
+       {
+         var result = sforce.connection.update(allDealRecordToUpdate);
+            if (result[0].getBoolean("success") == false ) {
+                             alert(result[0].errors.message);
+             }
+            else
+            {
+              redirecDealRegPage();
+            }
+       }      
+     }
+  catch(error)
+    {
+      alert(error.faultstring);
+    }   
+ }
+</script>
+    <apex:form id="approverForm">
+      <apex:actionFunction action="{!redirecDealRegPage}" name="redirecDealRegPage" reRender="none" immediate="true"/>
+        <apex:pageBlock id="approverBlock" >
+            <apex:pageblockButtons >
+               <apex:commandButton value="Save" onclick="getApproverOwnerAndId()" reRender="none"/>
+               <apex:commandButton value="Cancel" action="{!Cancel}"/>
+            </apex:pageblockButtons>
+              <apex:pageBlockTable value="{!selected}" var="reg" id="oliTable">
+                <apex:column headerValue="Deal Registration Name" value="{!reg.Name}"/>
+                <apex:column headerValue="Opportunity" value="{!reg.Opportunity__r.Name}"/>
+                <apex:column headerValue="Customer Account" value="{!reg.Customer_Account__r.Name}" />
+                <apex:column headerValue="Verified Account" value="{!reg.Verified_Account__c}" />
+                <apex:column headerValue="Partner Account" value="{!reg.Partner_Account__r.Name}"/>
+                <apex:column headerValue="Program" value="{!reg.Program__r.Name}"/>
+                <apex:column headerValue="Status" value="{!reg.Status__c}"/>
+                <apex:column headerValue="Expiration Date" value="{!reg.Expiration_Date__c}"/>
+                <apex:column headerValue="Submission Date" value="{!reg.Submission_Date__c}"/>
+                <apex:column headerValue="L1 Approver Owner">
+                <apex:inputHidden value="{!reg.Id}" id="dealId"/>
+                <c:DealReg_GetApproverList DealId="{!reg.Id}"></c:DealReg_GetApproverList>
+             </apex:column>
+           </apex:pageBlockTable>
+           </apex:pageBlock>
+    </apex:form>  
+</apex:page>

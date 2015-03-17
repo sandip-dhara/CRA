@@ -1,0 +1,48 @@
+<apex:page showHeader="false" standardController="LiveChatTranscript" extensions="PostChatFormController" sidebar="true">
+
+<script language="javascript">
+    function ReqTimeFunc(){
+        var  postReqTime = '{!$CurrentPage.parameters.requestTime}';
+        var postreq = new Date();
+        if (postReqTime!=''){
+            postreq.setTime(+postReqTime);
+            var reqUTC = postreq.toUTCString();
+            var x = document.getElementById('{!$Component.reqTime}');
+            x.innerHTML= reqUTC;
+        }
+        //alert (postreq);        
+    }
+    
+    function StartTimeFunc(){
+        var postStartTime = '{!$CurrentPage.parameters.startTime}';
+        var poststr = new Date();
+        if (postStartTime!=''){
+            poststr.setTime(+postStartTime);
+            var strUTC = poststr.toUTCString();
+            var y = document.getElementById('{!$Component.strTime}');
+            y.innerHTML= strUTC;
+        }
+        //alert (poststr);        
+    }
+</script>
+
+<!--{!$CurrentPage.url}-->
+<br/>
+<div><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="50"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <h1 style="font-size:20px;color:#0101DF;">Thank You for contacting Customer Operations Support</h1>
+</div>
+<br/> <br/> <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><apex:outputText value="It was a Pleasure assisting you" style="font-size:15px;background-color:#F778A1;color: #FFFFFF"/></b>
+<br/>
+<br/> <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputText value="Please find Chat Details below, for your reference " style="font-size:15px;color: #000000"/></b>
+<br/><br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Request Time: <apex:outputText value="{!CurrentRequestTime}" escape="false" id="reqTime"/><br/>
+<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: <apex:outputText value="{!CurrentStartTime}" escape="false" id="strTime"/><br/>
+<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chat Closed By: &nbsp; <apex:outputText value="{!CurrentDisconnectedBy}"/><br/>
+<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chat Key: <apex:outputText value="{!$CurrentPage.parameters.id}"/><br/>
+<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transcript: <apex:outputText value="{!$CurrentPage.parameters.transcript}" /><br/>
+
+
+<br/><br/><br/><br/><br/>    
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="15"/>
+<apex:outputText value="HP Confidential  " style="font-size:10px;color: #0000FF"/>
+</apex:page>

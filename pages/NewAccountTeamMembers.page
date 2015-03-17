@@ -1,0 +1,80 @@
+<!-- 
+/**********************************************************
+* Page Name: NewAccountTeamMembers
+* Author: Accenture
+* Date: 06-APR-2012 
+* Requirement # Request Id :
+* Description: To Add New Account Team Members in Account Team
+***********************************************************/
+-->
+<apex:page controller="NewAccountTeamMembers" tabStyle="Account" id="page">
+    <apex:sectionHeader title="{!accountName}" subtitle="{!$Label.NEW_ACCOUNT_TEAM_MEMBERS}"/>
+    <!-- Form to add new account team members -->
+    <apex:form id="frm">
+        <apex:pageBlock id="pb" title="" mode="edit">
+            <apex:pageMessages ></apex:pageMessages>
+            <!-- Command buttons to perform actions -->
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="{!$Label.Save}" action="{!save}" />
+                <apex:commandButton value="{!$Label.Save_More}" action="{!saveAndMore}" />
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}"  />
+            </apex:pageBlockButtons>
+            <!-- Table to display blank rows to add team members -->
+            <table cellspacing="5" id="tb">
+                <tr>
+                    <th>{!$Label.Team_Member}</th>
+                    <th> </th>
+                    <th>{!$Label.ACCOUNT_ACCESS}</th>
+                    <th>{!$Label.OPPORTUNITY_ACCESS}</th>
+                    <th>{!$Label.CASE_ACCESS}</th>
+                    <th>{!$Label.TEAM_ROLE}</th>
+                </tr>
+                <!-- Displayed blank 5 rows to add team members -->
+                <apex:repeat value="{!newAccountTeamMembers}" var="member" id="rpt">
+                    <tr>
+                        <td>
+                            <select name="userType" id="{!$Component.teamMember}_mlktp" size="1" onchange="changeLookupTypeParam('{!$Component.teamMember}');">
+                                <option value="TeamEligibleUserLookup" selected="selected">{!$Label.User}</option>
+                                <option value="PartnerUserLookup">{!$Label.Partner_User}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <apex:inputField value="{!member.accountTeamMember.UserId}" id="teamMember" required="false"/>
+                        </td>
+                        <td>
+                            <apex:selectList id="accountAccess" value="{!member.accountAccessLevel}" multiselect="false" size="1">
+                                <apex:selectOptions value="{!accountAccessOptions}"/>
+                            </apex:selectList>
+                        </td>
+                        <td>
+                            <apex:selectList id="opptyAccess" value="{!member.OpportunityAccessLevel}" multiselect="false" size="1">
+                                <apex:selectOptions value="{!accessLevelOptions}"/>
+                            </apex:selectList>
+                        </td>
+                        <td>
+                            <apex:selectList id="caseAccess" value="{!member.caseAccessLevel}" multiselect="false" size="1">
+                                <apex:selectOptions value="{!accessLevelOptions}"/>
+                            </apex:selectList>
+                        </td>
+                        <td>
+                            <apex:inputField value="{!member.accountTeamMember.TeamMemberRole}" />
+                        </td>
+                    </tr>
+                </apex:repeat>
+            </table>        
+        </apex:pageBlock>
+    </apex:form>
+    <!-- JavaScript -->
+    <script>
+        window.onload = function(){
+            for(var i=0;i<5;i++){
+                changeLookupTypeParam('page:frm:pb:rpt:'+i+':teamMember');
+            }
+        }
+        function changeLookupTypeParam(lookupInputType){
+            var lookupUserType = document.getElementById(lookupInputType+'_mlktp');
+            var lookupTypeParam = document.getElementById(lookupInputType+'_lktp');
+            lookupTypeParam.value = lookupUserType.value;
+        }
+    </script>
+</apex:page>

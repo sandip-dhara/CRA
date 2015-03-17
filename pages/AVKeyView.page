@@ -1,0 +1,28 @@
+<apex:page >
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Page: AVKeyView
+  <!-- End Default Content REMOVE THIS -->
+  
+  <script type="text/javascript">
+    var result;
+    function xmlparser() {
+        debugger;
+       $.ajax({
+    type: "GET",
+    url: "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&matchreference=https://ensv.hp.com/sales/sam/docs/sam-1-2944/en/c03905835.docx",
+    dataType: "xml",
+    success: function(xml) { 
+    alert(xml);
+    parseXml(xml); 
+    }
+});         
+    }        
+</script>   
+
+
+ <apex:form > 
+      <input type='button' onclick="xmlparser();" value="Open PDF" style="padding-left:20px" class="btnAthena btn-primary"/>  
+  </apex:form>
+  
+</apex:page>

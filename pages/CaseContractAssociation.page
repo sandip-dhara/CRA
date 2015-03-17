@@ -1,0 +1,201 @@
+<apex:page standardController="Contract_Reference__c" extensions="CaseContractAssociationController" tabStyle="Contract_Reference__c" id="SearchContracts" sidebar="false" recordSetVar="Contract References" showHeader="true">
+<apex:form id="Contractform">
+ 
+    <apex:pageBlock id="searchfields" title="Contract Reference">          
+     <apex:pageBlockSection title="Search Contract Reference" columns="1" id="searchSection">
+        <apex:outputPanel id="existingSearchPanel" layout="block" style="white-space:nowrap;width:100%">  
+             
+        <apex:outputText value="{!$Label.Search_Contract_Reference}" style="font-style:italic; color: #000000" rendered="{!initialSearch}"/>
+                        
+        <apex:panelGrid frame="box" cellspacing="0" cellpadding="0">
+        <apex:panelGrid columns="20">
+          <tr>
+          <td>
+          <apex:outputLabel style="font-weight:bold;text-align:Left;" value="Country:">
+              <apex:selectList value="{!searchCountry}" style="width:133px" size="1" id="CountrySearch" onkeypress="return GetChar(event)">
+                 <apex:selectOptions value="{!ConPickList}" /> 
+              </apex:selectList>
+          </apex:outputLabel>
+          </td>
+          
+          <td>
+          <apex:inputText id="LLFLSearch" value="{!searchExistingLLFL}" style="width:130px" onkeypress="return GetChar(event)"><b>LLFL :</b></apex:inputText>
+          &nbsp;&nbsp;&nbsp;
+          </td>
+          
+          <td>
+          <apex:inputText id="ConAdminSearch" value="{!searchConAdmin}" style="width:138px" onkeypress="return GetChar(event)"><b>Contract Admin Name :</b></apex:inputText>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </td>
+                    
+          <td>
+          <apex:inputText id="SalesDocNbrSearch" value="{!searchExistingSalsDocNbr}" style="width:133px" onkeypress="return GetChar(event)"><b>Sales Doc Number :</b></apex:inputText>
+          </td>
+          
+          <td>
+          <apex:inputText id="RenewMonYr" value="{!searchExistingRenewMonYr}" style="width:120px" onkeypress="return GetChar(event)"><b>Renewal Month Year:</b></apex:inputText><b>(MM/YYYY)</b>
+          </td>
+          </tr>
+          
+          <tr>        
+          <td>
+          <apex:inputText id="AMPIDSearch" value="{!searchExistingAMPID}" style="width:130px" onkeypress="return GetChar(event)"><b>AMP ID :</b></apex:inputText>
+          &nbsp;&nbsp;&nbsp;
+          </td>
+          
+          <td> 
+          <apex:inputText id="SAIDSearch" value="{!searchExistingSAID}" style="width:130px" onkeypress="return GetChar(event)"><b>SAID :</b></apex:inputText>
+          &nbsp;&nbsp;&nbsp;
+          </td>
+          
+          <td>
+          <apex:inputText id="GrpConNbrSearch" value="{!searchExistingGrpConNbr}" style="width:130px" onkeypress="return GetChar(event)"><b>Group Contract Number :</b></apex:inputText>
+          &nbsp;&nbsp;&nbsp;
+          </td>
+          
+          <td> 
+          <apex:inputText id="SalesOrg" value="{!searchExistingSalesOrg}" style="width:130px" onkeypress="return GetChar(event)"><b>Sales Organization :</b></apex:inputText>
+          </td>
+          
+          <td>
+          <apex:inputText id="AccName" value="{!searchExistingAcc}" style="width:135px" onkeypress="return GetChar(event)"><b>Account Name :</b></apex:inputText>
+          </td>
+          </tr>
+          
+          <BR/>
+          
+         </apex:panelGrid>
+          
+         <apex:panelGrid columns="20"> 
+         <tr>
+         <td>
+            <apex:commandButton id="goSearch" value="{!$Label.Go}" action="{!goSearch}" status="searching" style="width:50px" reRender="searchResultPanel" />      
+                <apex:actionFunction name="entersearchs" action="{!goSearch}" reRender="searchResultPanel" status="searching"/>
+            <apex:commandButton id="ClearSearch" value="{!$Label.Clear}" action="{!ClearSearch}" status="clearing" style="width:50px;" reRender="existingSearchPanel,searchResultPanel" />           
+         </td>
+         </tr> 
+        </apex:panelGrid>
+        
+        </apex:panelGrid>  
+        </apex:outputPanel>
+     </apex:pageBlockSection>
+
+
+        <br/>  
+        <apex:outputPanel id="searchResultPanel" layout="block" style="overflow:auto;width:100%;"> 
+            <apex:actionStatus id="searching">
+              <apex:facet name="start">
+                <img src="{!$Resource.AjaxAnimation}"/>
+                &nbsp;&nbsp;
+                <FONT COLOR="black" SIZE="2"><i>{!$Label.Displaying_Searched_Records}</i></FONT>
+              </apex:facet>
+            </apex:actionStatus>
+        
+            <apex:actionStatus id="clearing">
+              <apex:facet name="start">
+                <img src="{!$Resource.AjaxAnimation}" />
+                &nbsp;&nbsp;
+                <FONT COLOR="black" SIZE="2"><i>{!$Label.Please_Wait}</i></FONT>
+              </apex:facet>
+            </apex:actionStatus>
+           <br/>
+                  
+         <font color='RED'> <apex:messages /> </font>
+         <apex:commandButton value="New Case" action="{!CreateCase}" status="width:50px; font-weight:bold;" />
+         <br/>
+         <br/>
+                                     
+         <apex:pageBlockTable value="{!contacteferencewrapperlist}" var="cref" id="contractTable" style="width:100%;" >
+   
+             <apex:column >
+                 <apex:facet name="header" >
+                     <apex:inputCheckbox id="masterBox" value="{!masterCheckboxFlag}" onclick="checkAll(this)"/> 
+                 </apex:facet>
+                 <apex:inputCheckbox value="{!cref.choice}" id="SelectedCon" onClick="unCheckMaster(this)"/>
+             </apex:column>
+             
+             <apex:column headerValue="{!$Label.Sales_Document_Number}" id="SalesDocNbr" style="width:100px; white-space:nowrap;">            
+                 <apex:outputlink value="/{!cref.con.id}">{!cref.con.Name}</apex:outputlink>
+             </apex:column>    
+             <apex:column headerValue="{!$Label.Renewal_Status}" id="renewstatus" style="width:100px; white-space:nowrap;" value="{!cref.con.Renewal_Status_Description__c}"/>                                
+             <apex:column headerValue="{!$Label.AMP_ID}" id="apmid" style="width:100px;white-space: nowrap;" value="{!cref.con.AMP_ID__c}" />                                          
+             <apex:column headerValue="{!$Label.Group_Contract_Nbr}" id="GrpConNbr" style="width:100px;white-space: nowrap;" value="{!cref.con.Group_Contract_Nbr__c}"/>                                     
+             <apex:column headerValue="{!$Label.AMID2}" id="amid" style="width:100px;white-space: nowrap;" value="{!cref.con.AMID2__c}"/> 
+             <apex:column headerValue="{!$Label.Account_Name}" id="cancelcode" style="width:200px;" value="{!cref.con.Accounts__c}"/>
+             <apex:column headerValue="{!$Label.Contract_Admin_Name}" id="contrAdmn" style="width:100px;white-space: nowrap;" value="{!cref.con.Contract_Admin_Name__c}"/>
+             <apex:column headerValue="{!$Label.Contract_Length_in_Months}" id="contrLM" style="width:100px;white-space: nowrap;" value="{!cref.con.Contract_Length_in_Months__c}"/> 
+             <apex:column headerValue="{!$Label.CO_Renewal_Month_Year}" id="contrRMY" style="width:100px;white-space: nowrap;" value="{!cref.con.Renewal_Month_Year__c}"/>                           
+             <apex:column headerValue="{!$Label.Contract_Start_Date}" id="contrstr" style="width:100px;white-space: nowrap;" value="{!cref.con.Contract_Start_Date__c}"/> 
+             <apex:column headerValue="{!$Label.Contract_End_date}" id="contrEnd" style="width:100px;white-space: nowrap;" value="{!cref.con.Contract_End_date__c}"/>                    
+               
+         
+         </apex:pageBlockTable>
+    
+         <apex:outputLabel id="noResultsPanel" rendered="{!noContractList}">
+             <br/>
+             <b style="color:red;  margin-left:500px;">{!$Label.NoContractReference}</b>        
+             <br/><br/>  
+         </apex:outputLabel>
+         
+        
+        <br/>
+         
+        <center>
+            <div id="panel" >
+            <apex:commandLink styleClass="btn" action="{!first}" rendered="{!hasPrevious}" status="showStatus2" id="first">First</apex:commandlink>
+            <apex:commandLink styleClass="btn" action="{!previous}" rendered="{!hasPrevious}" status="showStatus2" id="previous">Previous</apex:commandlink>
+            <apex:commandLink styleClass="btn" action="{!next}" rendered="{!hasNext}" status="showStatus2" id="next">Next</apex:commandlink>
+            <apex:commandLink styleClass="btn" action="{!last}" rendered="{!hasNext}" status="showStatus2" id="last">Last</apex:commandlink>
+            <apex:actionStatus id="showStatus2">
+                   <apex:facet name="start">
+                       <img src="{!$Resource.AjaxAnimation}" />
+                   </apex:facet>
+            </apex:actionStatus>
+            </div>
+        </center>
+      
+        <br/>
+        </apex:outputPanel>
+ </apex:pageBlock> 
+ </apex:form> 
+
+ <script language="javascript">
+    function checkAll(master){
+        var checked = master.checked;
+        var col = document.getElementsByTagName("INPUT");
+            for (var i=0;i<col.length;i++) {            
+                col[i].checked= checked;                                      
+            }
+            for (var i=0;i<col.length;i++) { 
+                if(col[i].checked= checked)                    
+                    return confirm('All the Contract References in this page are selected');       
+            }
+                
+    }
+    
+    function unCheckMaster(slave){
+            var checked = slave.checked;
+            var col = document.getElementById("SearchContracts:Contractform:searchfields:contractTable:masterBox");
+            if(checked == false)
+                col.checked=checked;        
+    }
+    
+    /*Code to Click search button on click of Enter */    
+         function GetChar(e){  
+            if(window.event){                    
+                key = window.event.keyCode;                 
+                //IE               
+            } 
+            else{                    
+                key = e.which;     //firefox               
+            }               
+            if(key == 13) {                 
+                entersearchs();
+                return false;                              
+            }     
+         } 
+    
+   
+ </script>
+
+</apex:page>

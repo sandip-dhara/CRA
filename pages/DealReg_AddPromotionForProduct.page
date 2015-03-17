@@ -1,0 +1,74 @@
+<!--
+  - Author: HP.  
+  - <b>copyright</b> 2012 Deal Registration 
+  - @version $Revision:  $  
+  - Description: This page is used to display the programs for the selected products and submit for the deal.
+  -->
+<apex:page controller="ProductsAndServicesControllerNew" id="promotionPage">
+<script>  
+     var tableId = 'promotionPage:promotionForm:promotionBlock:promotionTable:';
+     
+    // This function used to validate the check box selection to apply the promotion
+      function isCheckBoxSelectedToApplyPromotion(){
+             
+         var inputElem = document.getElementsByTagName("input");           
+         var isProgramSelected;   
+         for (i=0;i<inputElem.length;i++){
+           if(document.getElementById(tableId +i+':selectedProgram') !=null){  
+             if(document.getElementById(tableId +i+':selectedProgram').checked == true)
+               {       
+                 isProgramSelected =true;
+                 break;
+                }              
+            }
+          }  
+          if(isProgramSelected == true)
+            {
+                 applyPromotion();
+            }
+         else
+           {
+              alert('Please select the check box to apply promotion');
+              return false;
+           }
+       }
+ </script>
+ 
+<apex:form id="promotionForm">
+<apex:actionFunction action="{!doSubmitBusinessUnit}" name="applyPromotion"/>  
+<apex:pageBlock title="Program Details" id="promotionBlock">
+  <apex:pageBlockButtons >
+    <apex:outputPanel id="refresh">
+     <apex:pageMessages id="error"/>
+     <apex:commandButton value="Cancel" action="{!doCancel}"/>
+      <apex:commandButton value="Submit for approval" onclick="return isCheckBoxSelectedToApplyPromotion()" reRender="refresh"/>
+    </apex:outputPanel>     
+  </apex:pageBlockButtons>
+<apex:pageBlockTable value="{!program}" var="programLists" align="right" id="promotionTable">
+ <apex:column >  
+   <apex:facet name="header">Apply Program</apex:facet>
+     <apex:inputCheckbox value="{!programLists.isSelected}" id="selectedProgram"/>
+ </apex:column> 
+ <apex:column >
+ <apex:facet name="header">Status</apex:facet>
+   <br></br>
+   <apex:outputText value="{!programLists.productStatus}"/>  
+ </apex:column>
+ <apex:column >
+  <apex:facet name="header">Program</apex:facet>
+      <apex:commandLink onClick="window.open('/{!programLists.selectedProgramId}')" >
+        <apex:outputText value="{!programLists.selectedPrograms}"></apex:outputText>
+      </apex:commandLink>     
+      <br></br>         
+       <apex:repeat var="pList" value="{!programLists.productList}"> 
+        <apex:outputText value="{!pList}"/> <br></br>
+      </apex:repeat>  
+  </apex:column>       
+  <apex:column >
+     <apex:facet name="header">Comments from Submitter to HP</apex:facet>
+      <apex:inputText id="txtProgramComments" value="{!programLists.programComments}"/>     
+  </apex:column>         
+ </apex:pageBlockTable>  
+ </apex:pageBlock>  
+</apex:form> 
+</apex:page>

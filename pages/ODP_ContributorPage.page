@@ -1,0 +1,758 @@
+<apex:page standardController="Contributor__c" extensions="ODP_ContributorControllerClass">
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" /> 
+
+<!-- athena style -->
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />   
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+
+<!-- Added By Ning -->
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/HpstandIcon.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/style.css')}" />
+
+<apex:includeScript value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.default.css')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.core.css')}"/>
+
+<script>
+    $j = jQuery.noConflict();
+    $j(document).ready(function() {
+    
+        if(window.location.toString().indexOf('f=t&') > 0)
+        {
+             alertify.alert('Gameffective Points have been assigned to you.');
+        }
+         
+        if({!!CanUpdate})
+        {
+            $j("#input_addlinkbtn").attr('disabled','disabled');
+        }
+        else
+        {
+            $j("#input_addlinkbtn").click(function(){
+                var url = window.location.toString();
+                var pos = url.split('#')[1];
+                if(pos == undefined)
+                {
+                    document.location = url + '#AddLinkView';
+                }
+                else
+                {
+                    document.location = url.split('#')[0] + '#AddLinkView';
+                }
+                
+            });
+        }
+
+
+        var feedList = $j("ul[class$=publisherFeedItemTypeChoices]").children("li");
+        for(var i=1;i<feedList.length;i++)
+        {
+            feedList[i].style.display="none";
+        }
+        if({!compert} != 100){
+            $j("td[id$=WarningTDClsTitle]").css('color', 'red');
+            $j("td[id$=WarningTDClsValue]").css('color', 'red'); 
+        }
+        if({!IsOwner || IsPMorFac}){
+           $j("a[id$=duedatesetting]").css('display', 'block'); 
+        }else{
+           $j("a[id$=duedatesetting]").css('display', 'none');
+        }
+        $j("div[class$=datePicker]").css("position","fixed");
+    });
+    function OpenAddLinkWin()
+    {
+        $j("html,body").animate({scrollTop:$("#AddLinkView").offset().top},1000);
+        /*var url = '/apex/ODP_Page_AddLink?Id={!SWEId}';  
+        var args = null;
+        var features = 'dialogHeight:400px; dialogWidth:400px; status:no;';  
+        var result = window.show
+        (url, args, features);
+        if(result == 'ok')
+        {
+            document.URL = location.href;
+        }*/
+    }
+    function myAlter(err) {
+        $('#myAlterMessage').html(err);
+        $('#DivMyAlter').modal('show');
+    }
+    function myConfirm(msg,actionId) {
+        $('#myConfirmMessage').html(msg);
+        $('#DivMyConfirm').modal('show');
+        $('#myConfirmSubmit').unbind();
+        $('#myConfirmSubmit').click(function(){
+            $('#DivMyConfirm').hide();
+            $('[id$='+actionId+']').click();
+        });
+    }
+    function myConfirmWithParm(msg,actionId,parm){
+        $('#myConfirmMessage').html(msg);
+        $('#DivMyConfirm').modal('show');
+        $('#myConfirmSubmit').unbind();
+        $('#myConfirmSubmit').click(function(){
+            $('#DivMyConfirm').hide();
+            $('[id$='+actionId+']').each(function(k){
+                if($(this).text() == parm){
+                    $(this).click();
+                    return;
+                }
+            });
+        });
+    }
+</script>
+<style>
+    .pbSubheader {
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+        body .bPageBlock .pbBody .pbSubheader img {
+            height: 15px;
+            width: 15px;
+        }
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody 
+
+        .pbSubheader h3 {
+            font-weight: 300;
+            font-family: 'Voces', sans-serif; !important;
+            font-size:16px !important; /* this controls the blue bar font-sizes */
+        }
+    
+        .myButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: #007DBA  !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+          
+        .myDisabledButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: gray !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+       .myButtons:hover{
+           background-color: #D7410B !important;
+         }
+       .parentDisable{
+           width:50%;
+           float:left;
+           overflow:hidden;
+       }
+       #chatterDisplay{
+            position:relative;
+            top:30px;
+            width: 48%;
+            float: left;
+            overflow-y: auto;
+            margin-left: 16px;
+       }
+       #chatterWrapper{
+           height:350px;
+           overflow-y: auto;
+           border: 1px solid #ccc;
+           padding:10px !important;
+       }
+    
+   #ContriReviewerList{
+        position:relative;
+        width: 48%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+    #ContributorList{
+        position:relative;
+        width: 40%;
+        float: left;
+        overflow-y: auto;
+    }
+    #ReviewList{
+        position:relative;
+        left:10px;
+        width: 40%;
+        float: left;
+        overflow-y: auto;
+
+    }
+    #ActionDiv{
+        position:relative;
+        top:20px;
+        width: 48%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+    #DIVWEDetail .cke_top {
+        display: none;
+    }
+    #Divtext{
+        width: 30%;
+        float: left;
+        overflow-y: auto;
+    }
+    #DivDelLink{
+        width: 69%;
+        float: right;
+        overflow-y: auto;
+        margin-right:0px;
+    }
+   
+   /* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:'Voces', sans-serif; !important;
+            border-top:0px;
+        }
+    .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+        border-top: 0px solid #3044b5;
+     }
+     
+   <!--  .apexp .bPageBlock .detailList .list{
+     } -->
+    
+    .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+    .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+        padding: 2px 8px;
+        color: #333;
+        border-bottom: 1px solid #e3deb8;
+        font-family: 'Voces', sans-serif; !important;
+        font-size:13px !important;
+     }
+    /* table row highlight */     
+    body .pbBody table.list tr.dataRow.highlight td{
+    background-color:#ecf4f8;
+    }
+    body .pbBody table.list tr.headerRow th{
+        background:#fff !important;
+        color:#007DBA !important;
+        border:1px solid #ccc;
+    }
+    /* for Header */
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 300 !important;
+    }
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: 'Voces', sans-serif; !important;
+        color: #fff;
+        font-size:14px !important; /* this controls the blue bar font-sizes */
+    }
+    /* done header */
+    .bPageBlock .detailList .data2Col{
+    padding-left:0px;
+    }
+    body .pbBody table.list tr.headerRow th{
+        padding: 4px 8px;
+    }
+    
+    /* Detail Table Style */
+    
+    .detailList td{
+        line-height:20px;
+    }
+    body .bPageBlock .pbBody .labelCol {
+        color: #4a4a56;
+        line-height: 20px;
+    }
+    .Custom64Tab .secondaryPalette, .individualPalette .Custom64Block .secondaryPalette{
+    border:0px;
+    }
+    
+    /* Textboxes, Textareas sytle */
+    
+    input,textarea{
+        border: 2px solid #CCCCCC;
+        background:#f2f2f2;
+    }
+   
+   /* Other review / Contribute */
+   
+   #otherReview{
+       width:49%;
+       float:left;
+       margin-left:10px;
+   }
+   #contrib{
+       width:49%;
+       float:left;
+   }
+   
+   /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 13px;
+        border-radius: 0px;
+        padding: 6px 6px 6px 6px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    ::-webkit-file-upload-button:hover {
+        background-color: #D7410B !important;
+    }
+    
+    .linkBtn {
+        background: none !important;
+        border: 0px !important;
+        background-color: #007DBA !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        border-radius: 0px !important;
+        padding: 8px 8px 8px 8px !important;
+        border-bottom-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .clear{clear:both}
+    #positionToggle{position:absolute; top:9px; left:9px; }
+    #showHideList{display:none; position:absolute; top:10px; left:10px; border-radius: 5px; border:1px solid #cccccc; background-color:#eeeeee; }
+    #ListInner{padding:10px 10px 10px 10px; }
+
+    
+#crumbs{
+    width:100%;
+    margin-bottom:10px;
+    margin-left:-24px;
+}
+#crumbs ul li {   
+    width:25%;
+    float: left;
+    list-style: none;
+}
+#crumbs ul li a {
+    width:80%;
+    display: block;
+    float: left;
+    height: 34px;
+    background: #3498db;
+    text-align: center;
+    padding: 10px 20px 0 45px;
+    position: relative;
+    margin: 0 10px 0 0;
+    font-size: 20px;
+    text-decoration: none;
+    color: #fff;
+}
+
+#crumbs ul li a span {
+    display: block;
+    float: left;
+}
+
+#crumbs ul li a:after {
+    content: "";
+    border-top: 22px solid transparent;
+    border-bottom: 22px solid transparent;
+    border-left: 22px solid #3498db;
+    position: absolute; right: -22px; top: 0;
+    z-index: 1;
+}
+#crumbs ul li a:before {
+    content: "";
+    border-top: 22px solid transparent;
+    border-bottom: 22px solid transparent;
+    border-left: 22px solid #fff;
+    position: absolute; left: 0; top: 0;
+}
+#crumbs ul li:first-child a {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding-left: 40px;
+}
+#crumbs ul li:first-child a:before {
+    display: none;
+}
+#crumbs ul li:last-child a {
+    padding-right: 30px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+#crumbs ul li:last-child a:after {
+    display: none;
+}
+#crumbs ul li a:hover {
+    background: #C1401A;
+    transition: all 0.2s ease;
+}
+#crumbs ul li a:hover:after {
+    border-left-color: #C1401A;
+    transition: all 0.2s ease;
+}
+.fixed {
+    clear: both;
+}
+.icon-nav{
+    font-size: 30px;
+    margin-top:-3px;
+}
+</style>
+<div id="crumbs">
+<ul>
+ <li><a href="/{!contributor.Stage_Work_Element__r.Release_Stage_ID__r.Offering_Release_ID__c}" title="Go back to Opportunity"><span class="icon-repeat icon-nav icon-hp-smart-update-manager"/> {!contributor.Stage_Work_Element__r.Release_Stage_ID__r.Release_Name__c}</a></li>
+ <li><a href="/{!contributor.Stage_Work_Element__r.Release_Stage_ID__c}" title="Go back to Stage"><span class="icon-repeat icon-nav icon-steps-stairs"/> {!contributor.Stage_Work_Element__r.Stage_Name__c}</a></li>
+ <li><a href="/{!contributor.Stage_Work_Element__c}" title="Go back to Work Element"><span class="icon-repeat icon-nav icon-service-catalog"/> {!contributor.Stage_Work_Element_Name__c}</a></li>
+ <li><a href="javascript:void(0);" title="Contributor"><span class="icon-repeat icon-nav icon-personal-consultation"/> {!contributor.Team_Member_Name__c}</a></li>
+</ul>
+<div class="fixed"></div>
+</div> 
+<div>
+<apex:pagemessages ></apex:pagemessages>   
+<div class="parentDisable">
+<apex:form id="myform" >     
+    <apex:pageBlock >        
+        <div id="InfoDivid">
+            <div class="pbSubheader" style="margin-top:0px;">
+                <h3>Deliverable Information<a href="/{!contributor.Stage_Work_Element__r.Release_Stage_ID__r.Offering_Release_ID__c}" title="Check Opportunity Details"><span class="white icon-repeat icon-2x icon-hp-smart-update-manager" style="float:right;"/></a></h3>
+            </div>
+            <div id="DIVWEDetail">
+                <table >
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Opportunity Name:</td><td><apex:outputField value="{!contributor.Stage_Work_Element__r.Release_Stage_ID__r.Release_Name__c}" /></td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Stage Name:</td><td><apex:outputField value="{!contributor.Stage_Work_Element__r.Stage_Name__c}" /></td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Deliverable Group:</td><td><apex:outputField value="{!contributor.Stage_Work_Element__r.Release_Deliverable_ID__r.Deliverable_ID__r.Group__c}" /></td></tr>                   
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Deliverable Name:</td><td><apex:outputField value="{!contributor.Stage_Work_Element__r.Release_Deliverable_ID__r.Deliverable_ID__r.Name__c}" /></td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Deliverable Description:</td><td width="100%"><apex:outputField value="{!contributor.Stage_Work_Element__r.Release_Deliverable_ID__r.Deliverable_ID__r.Description__c}" /></td></tr>
+                    
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Work Element Name:</td><td width="100%"><apex:outputField value="{!contributor.Stage_Work_Element_Name__c}" /></td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Work Element Description:</td><td width="100%"><apex:outputField value="{!contributor.Stage_Work_Element__r.Description_Text_Area__c}" /></td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Owner Name:</td><td width="100%">
+                            <a href="sip:{!contributor.Stage_Work_Element__r.Accountable_Team_Member__r.User__r.email}"  title="Lync Me">
+                                    <apex:image style="width:20px;height:20px;" url="https://hp--esit--c.cs11.content.force.com/servlet/servlet.ImageServer?id=015Z00000006ynN&oid=00DZ000000N9IbI"/>
+                            </a>
+                            <apex:outputField value="{!contributor.Stage_Work_Element__r.Accountable_User__c}" /></td>
+                    </tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Status:</td><td><apex:outputField value="{!contributor.Stage_Work_Element__r.Status__c}" /></td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Contribution Due Date:</td><td><apex:outputField value="{!contributor.Stage_Work_Element__r.Contribute_Due_Date__c}" /></td></tr>
+                    <tr id="tr_compert"><td style="white-space:nowrap;font-weight:bold;" id="WarningTDClsTitle">Complete%:</td><td id="WarningTDClsTitle">{!compert}%</td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Accountable Role:</td><td>{!contributor.Stage_Work_Element__r.Accountable_Process_Role_Name__c}</td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Work Instructions:</td><td width="100%"></td></tr>
+                    <tr><td></td><td width="100%"><apex:inputTextarea richText="true" style="width:98%;height: 65px;" value="{!contributor.Stage_Work_Element__r.Work_Instructions__c}" readonly="true" disabled="true" /></td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Help:</td><td width="100%"></td></tr>
+                    <tr><td></td><td width="100%"><apex:inputTextarea richText="true" style="width:98%;height: 65px;" value="{!contributor.Stage_Work_Element__r.Help_Description__c}" readonly="true" disabled="true"/></td></tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Templates:</td><td width="100%"></td></tr>                   
+                    <tr>
+                        <td style="white-space:nowrap;font-weight:bold;"></td>
+                        <td width="100%">
+                            <apex:pageBlockTable value="{!tempattach}" var="t">
+                                <apex:column headerValue="Attachment"><a href="/servlet/servlet.FileDownload?file={!t.id}" target="_blank">{!t.name}</a></apex:column>
+                            </apex:pageBlockTable>
+                        </td>
+                    </tr>
+                    <tr><td style="white-space:nowrap;font-weight:bold;">Predecessor</td><td width="100%"></td></tr>                   
+                    <tr>
+                        <td style="white-space:nowrap;font-weight:bold;"></td>
+                        <td width="100%">
+                            <apex:pageBlockTable value="{!Predecessors}" var="d">
+                                <apex:column headerValue="Work Element Name"><a href="/{!d.Predecessor_Stage_Work_Element_ID__c}" target="_blank">{!d.Predecessor_Stage_Work_Element_Name__c}</a></apex:column>
+                                <apex:column headerValue="Deliverable Name" value="{!d.Predecessor_Stage_Work_Element_ID__r.Deliverable_Name__c}" />
+                                <apex:column headerValue="Status" value="{!d.Predecessor_Stage_Work_Element_ID__r.Status__c}" />
+                                <apex:column headerValue="Last Modified" value="{!d.Predecessor_Stage_Work_Element_ID__r.LastModifiedDate}" />
+                            </apex:pageBlockTable>
+                        </td>
+                    </tr>
+                </table>               
+            </div>
+        </div>
+            
+    </apex:pageBlock>
+
+    <!-- MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL -->
+    <style>
+    .modalDialog {
+        display:none;
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.6); /*background: rgba(0,0,0,0.8);*/
+        z-index: 100;
+        opacity:0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        pointer-events: none;
+    }
+
+    .modalDialog:target {
+        display:block;
+        opacity:1;
+        pointer-events: auto;
+    }
+
+    .modalDialog > div {
+        width: 400px;
+        position: relative;
+        margin: 10% auto;
+        padding: 5px 20px 13px 20px;
+        border-radius: 10px;
+        background: #fff;
+        background: -moz-linear-gradient(#fff, #bbb);
+        background: -webkit-linear-gradient(#fff, #bbb);
+        background: -o-linear-gradient(#fff, #bbb);
+    }
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+    .close:hover { background: #00d9ff; text-decoration: none; }
+    .myLabels{font-weight:bold;}
+    .myData{font-size:14px; width:330px;}
+    #duedatesetting{position:absolute; top:14px; right:30px;color: #fff !important;}
+    </style>
+
+</apex:form>
+</div>                         
+
+<div id="leftId" style="background-color:red;">
+<div id="ContriReviewerList" style="height:auto;max-height:300px;overflow:auto">
+    <div id="ContributorList" style="width:49%;">
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1" collapsible="false" title="Contributors" />    
+            <div>
+                <apex:pageBlockTable value="{!ContribList}" var="c" rendered="{!showContributorTable}">
+                        <apex:column headerValue="Contributor">
+                            <a href="sip:{!c.Team_Members__r.User__r.email}"  title="Lync Me">
+                                    <apex:image style="width:30px;height:30px;" url="https://hp--esit--c.cs11.content.force.com/servlet/servlet.ImageServer?id=015Z00000006ynN&oid=00DZ000000N9IbI"/>
+                            </a>
+                            <span class="label hpit_athenaListPersonImg"><apex:image url="{!c.Team_Members__r.User__r.smallphotourl}" /></span>
+                            <span title="{!c.Role_Name__c}">{!c.Team_Member_Name__c}</span>
+                        </apex:column>
+                        <apex:column headerValue="Done" value="{!c.Completed__c}"/>
+                    <!--    <apex:column headerValue="Role" value="{!c.Role_Name__c}"/> -->
+                    </apex:pageBlockTable>
+                    <apex:outputText value="No Contributors" style="font-size: 14px;" rendered="{!!showContributorTable}"/>
+            </div>
+        </apex:pageBlock>
+    </div>
+    <div id="ReviewList" style="width:49%;">
+        <apex:form >
+         
+        <a href="#dueDateView" id="duedatesetting"><span class="icon-calendar" title="Set Work Element Review Due Date"></span></a>
+        <apex:pageBlock rendered="{!showReviewDiv}">
+                <apex:pageBlockSection columns="1" collapsible="false" title="Reviewers" />    
+                <div>
+                    <apex:pageBlockTable value="{!ReviewList}" var="r" rendered="{!showReviewTable}">
+                        <apex:column headerValue="Reviewer">
+                            <a href="sip:{!r.Team_Member__r.User__r.email}"  title="Lync Me">
+                                    <apex:image style="width:30px;height:30px;" url="https://hp--esit--c.cs11.content.force.com/servlet/servlet.ImageServer?id=015Z00000006ynN&oid=00DZ000000N9IbI"/>
+                            </a>
+                            <span class="label hpit_athenaListPersonImg"><apex:image url="{!r.Team_Member__r.User__r.smallphotourl}" /></span>
+                            <span  title="{!r.Role_Name__c}">{!r.Team_Member_Name__c}</span>
+                        </apex:column>                        
+                        <!-- <apex:column headerValue="Rating" value="{!r.Rating__c}"/> -->
+                        <apex:column headerValue="Done" value="{!r.Complete__c}"/>
+                      <!--  <apex:column headerValue="Role" value="{!r.Role_Name__c}"/>
+                        <apex:column headerValue="Comment" value="{!r.Comment__c}"/> -->
+                    </apex:pageBlockTable>
+                    <apex:outputText value="No Reviewers" style="font-size: 14px;" rendered="{!!showReviewTable}"/>
+            </div>
+        </apex:pageBlock>
+        </apex:form>
+    </div>
+</div>   
+<div id="chatterDisplay">
+    <apex:pageBlock >
+        <div class="pbSubheader  brandTertiaryBgr first tertiaryPalette"><h3 style="float:left;">Collaborate</h3>
+            <div id="followme" style="text-align:right; padding-bottom:0px;float:right;font-size:13px;"><chatter:follow entityID="{!SWEId}"/></div>
+         </div>    
+            
+            <div >
+                <div id="chatterWrapper" style="display:block; min-height:400px; overflow:auto; margin:0px; padding:0px;">
+                    <chatter:feed entityId="{!contributor.Stage_Work_Element__r.id}"></chatter:feed>
+                </div>
+            </div>
+    </apex:pageBlock>
+</div>
+<div id="ActionDiv">
+    <apex:form id="form_action">
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="2" collapsible="false"/>
+                <div class="pbSubheader" style="margin-top:10px;background-color: #D7410B !important;">
+                    <h3>Actions</h3>
+                </div>               
+                <div style="padding: 5px 5px 5px 5px;display:{!IF(IsContributor,'','none')};">
+                    <span class="labelCol" style="text-align:left;vertical-align:middle;">I'm Done</span>
+                    <apex:inputCheckbox value="{!contributor.Completed__c}" style="vertical-align:middle;" disabled="{!!SubmitAbled}"/>
+                </div>
+                <div style="padding: 5px 5px 20px 5px">                    
+                    <apex:commandButton styleclass="{!IF(!SubmitAbled,'myDisabledButtons','myButtons')}" value="Submit" rendered="{!IsContributor}" onclick="javascript:{!IF(SubmitAbled,'myConfirm(\"Confirm to submit your contribution?\",\"SubmitStatus\"); return false','myAlter(\"'+ ErrorSubmitAbled +'\"); return false;')}" />
+                    <apex:commandButton styleclass="{!IF(!ReviewAbled ,'myDisabledButtons','myButtons')}" value="Start Review" rendered="{!IsOwner || IsPMorFac}" onclick="javascript:{!IF(ReviewAbled,'myConfirm(\"'+ConfirmMsgReview+'\",\"ReadyForReview\");return false','myAlter(\"'+ ErrorReviewAbled +'\"); return false;')}" />
+                    <apex:commandButton action="{!rework}" value="Rework"  styleclass="{!IF(ReworkAbled,'myButtons','myDisabledButtons')}" rendered="{!IsOwner || IsPMorFac}" onclick="javascript:{!IF(ReworkAbled,'myConfirm(\"Confirm to rework this work element?\",\"rework\");return false;','myAlter(\"'+ ErrorReworkAbled +'\"); return false;')}"/>
+                    <apex:commandButton action="{!complete}" styleclass="{!IF(!CompleteAbled ,'myDisabledButtons','myButtons')}" value="Complete" rendered="{!IsOwner || IsPMorFac}" onclick="javascript:{!IF(CompleteAbled ,'myConfirm(\"Confirm to complete this work element?\",\"complete\");return false;','myAlter(\"'+ ErrorCompleteAbled +'\"); return false;')}"/>
+                </div>
+        </apex:pageBlock>
+      <apex:commandLink style="display:none" action="{!SubmitStatus}" value="Send" id="SubmitStatus"></apex:commandLink>
+      <apex:commandLink style="display:none" action="{!ReadyForReview}" value="Send" id="ReadyForReview"></apex:commandLink>
+      <apex:commandLink style="display:none" action="{!rework}" value="Send" id="rework"></apex:commandLink>
+      <apex:commandLink style="display:none" action="{!complete}" value="Send" id="complete"></apex:commandLink>       
+    </apex:form>    
+</div>
+</div>
+<div id="DeliverableDivId">  
+    <apex:form id="formaction" >
+        <apex:pageBlock >            
+            <apex:pageBlockSection columns="1" collapsible="false" title="Content" />               
+                <div id="Divtext">
+                    <apex:pageBlockSection columns="1" collapsible="false" title="Text" />    
+                    <div>
+                        <apex:inputTextarea style="width:97%;height: 80px;" richText="true"  value="{!Text}" disabled="{!!CanUpdate}" />
+                        
+                        <apex:commandButton action="{!SaveText}" value="Save Text" styleclass="{!IF(CanUpdate,'myButtons','myDisabledButtons')}" disabled="{!!CanUpdate}"/>
+
+                    </div>
+                </div>
+                <div id="DivDelLink">
+                    <apex:pageBlockSection columns="1" collapsible="false" title="Document and Links" />               
+                    <div>
+
+                        <apex:pageBlockTable value="{!attachmentAndLinkList}" var="d" id="docTable" >                          
+                            <apex:column colspan="1"  headerValue="Action">
+                                <a onclick="javascript:myConfirmWithParm('Confirm to delete this {!d.fileType}?','deleteAttaLink','{!d.docId}'); return false;" style="display:{!showFileDelete}" title="Delete"><span class="icon-trash"></span></a>
+                                <!-- <apex:commandLink value="Delete" onclick="javascript:myConfirmWithParm('Confirm to delete this {!d.fileType}?','deleteAttaLink','{!d.docId}'); return false;" style="display:{!showFileDelete}"></apex:commandLink> -->
+                                <apex:commandLink action="{!deleteAttaLink}" id="deleteAttaLink" value="{!d.docId}" style="display:none">
+                                    <apex:param name="deleteDocId" value="{!d.docId}" assignTo="{!addtaLinkId}"/>
+                                    <apex:param name="type" value="{!d.fileType}" assignTo="{!addtaLinkType}"/>                                    
+                                </apex:commandLink>
+                                &nbsp;
+                                <a href=" {!IF(d.fileType == 'Document','/servlet/servlet.FileDownload?file=' + d.docId,d.lik)}" target="_blank" title="Open"><span class="icon-folder"></span></a>
+                                <!-- <apex:commandLink ><a href=" {!IF(d.fileType == 'Document','/servlet/servlet.FileDownload?file=' + d.docId,d.lik)}" target="_blank">Open</a></apex:commandLink> -->
+                           </apex:column>                             
+                            <apex:column headerValue="Name" value="{!d.name}"/>
+                            <apex:column headerValue="Type" value="{!d.fileType}"/>
+                            <apex:column headerValue="Added By" value="{!d.addBY}"/>
+                            <apex:column headerValue="Last Modified" value="{!d.modifyDate}"/>
+                        </apex:pageBlockTable>
+                        <input id="input_addlinkbtn" type="button" value="Add Link" class="{!IF(CanUpdate,'myButtons','myDisabledButtons')}" />
+                        <apex:commandButton action="{!FileUploadSave}" value="Add Document" styleclass="{!IF(CanUpdate,'myButtons','myDisabledButtons')}" disabled="{!!CanUpdate}"/>
+                        <apex:inputFile style="background:none;border:0px;" value="{!attachDoc.body}" filename="{!attachDoc.name}" id="file" disabled="{!!CanUpdate}"/>
+                    </div>
+                </div>
+        </apex:pageBlock>
+        
+        <div id="AddLinkView" class="modalDialog">
+            <div>
+                <a href="#close" Xtitle="Close" class="close">X</a>
+                <p></p>
+                <apex:outputPanel id="tmm">
+                    <apex:pageBlock >
+                        <apex:pageBlockSection columns="1" collapsible="false" title="AddLink">
+                        <apex:messages />
+                        <apex:inputText value="{!link.Name__c}"/>
+                        <apex:inputtextarea value="{!link.Description__c}" cols="30" rows="8"/>
+                        <apex:inputText value="{!link.Link__c}"/>
+                        <apex:commandButton value="Save" styleclass="myButtons" action="{!saveLink}" />
+                        </apex:pageBlockSection>
+                    </apex:pageBlock>
+                </apex:outputPanel>          
+                <p></p>
+            </div>
+        </div>
+        <script>
+        function changeDivZindex(){
+            $j("div[id$=datePicker]").css('z-index', '200');        
+        }    
+    </script>
+    <div id="dueDateView" class="modalDialog">
+        
+        <div style="width:350px;">
+            <a href="#close" Xtitle="Close" class="close">X</a>
+            <div  style="padding-top:8px;">
+                
+                <h2>Review Due Date Setting</h2>
+            </div>          
+            <p></p>
+            <apex:outputPanel >
+                <apex:inputField value="{!contributor.Stage_Work_Element__r.Review_Due_Date__c}" />               
+            </apex:outputPanel>
+            <apex:commandButton value="save" action="{!saveDueDate}" styleClass="myButtons"/>               
+            <p></p>
+        </div>
+    </div>
+    </apex:form>    
+</div>
+<div id="DivMyAlter" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Error Message</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0" id="myAlterMessage">
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true">OK</button>
+      </div>
+</div>
+<div id="DivMyConfirm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Confirm Message</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0" id="myConfirmMessage">
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true">Cancel</button>
+          <button class="btnAthena EbtnLess" id="myConfirmSubmit">Submit</button>
+      </div>
+</div>
+</div>
+</apex:page>

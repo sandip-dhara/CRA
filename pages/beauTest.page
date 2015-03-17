@@ -1,0 +1,50 @@
+<apex:page >
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Page
+<apex:stylesheet value="{!URLFOR($Resource.joyride, '/zurb-joyride-9e5ff47/joyride-2.1.css')}"  />  
+<apex:includeScript value="{!URLFOR($Resource.joyride, '/zurb-joyride-9e5ff47/jquery-1.10.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.joyride, '/zurb-joyride-9e5ff47/jquery.joyride-2.1.js')}"  />
+    
+
+<h3 id="something">Header</h3>
+<p class="your-paragraph-class">Paragraph</p>
+<p>dd</p><p>dd</p><p>dd</p><p>dd</p><p>dd</p><p>dd</p><p>dd</p>
+<a id="alink" href="#url">Link</a>
+
+<ol id="chooseID">
+      <li data-class="so-awesome" data-text="Next" class="custom">
+        <h2>Stop #1</h2>
+        <p>You can control all the details for you tour stop. Any valid HTML will work inside of Joyride.</p>
+      </li>
+      <li data-id="something" data-button="Next" data-options="tipLocation:top;tipAnimation:fade">
+        <h2>Stop #2</h2>
+        <p>Get the details right by styling Joyride with a custom stylesheet!</p>
+      </li>
+      <li data-id="alink" data-button="Next" data-options="tipLocation:right">
+        <h2>Stop #3</h2>
+        <p>It works right aligned.</p>
+      </li>
+      <li data-button="Next">
+        <h2>Stop #4</h2>
+        <p>It works as a modal too!</p>
+      </li>
+      </ol>
+
+<script>
+      $(window).load(function() {
+        $('#chooseID').joyride({
+          autoStart : true,
+          postStepCallback : function (index, tip) {
+          if (index == 2) {
+            $(this).joyride('set_li', false, 1);
+          }
+        },
+        modal:true,
+        expose: true
+        });
+      });
+    </script>
+
+
+</apex:page>

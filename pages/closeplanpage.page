@@ -1,0 +1,291 @@
+<!-- 
+/**********************************************************
+* Page Name: closeplanpage
+* Author: HP(Mousumi Panda)
+* Date: 30-Sept-2012 
+* Requirement # Request Id :
+* Description: Opportunity Planning Tool(Summary Page)
+***********************************************************/
+-->
+
+
+<apex:page standardController="Opportunity_Plan__c" extensions="closeplanExtensionController" showHeader="false" sidebar="false" standardStylesheets="true" >
+<body  style="padding-left:10px;padding-right:10px" onload="window.scroll(0,0);">
+
+<style>
+
+table.crs {
+   border-width: 0px;
+    border-spacing: 0px;
+    border-style: none;
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px lightgray;
+    width: 1000px;
+    text-align:left
+}
+
+
+.trresponse {
+    border: 1px solid #000;
+    width:1000px;
+}
+
+.statusth {
+width:30px;
+padding:0px;
+text-align: center;
+}
+
+.csfth1 {
+width:200px;
+font-weight:bold;
+text-align: Left
+}
+
+.csfth {
+width:200px;
+font-weight:normal;
+text-align: Left
+}
+
+table .table_DBC{
+    border-width: 0px;
+    border-spacing: 0px;
+    border-style: none;
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px lightgray;
+    
+}
+.liborder {
+border-width:thin;
+border: 1px lightgray;
+}
+
+
+
+
+</style>
+
+
+
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px;">Close Plan</h1>
+<hr size="1"></hr>
+<br />
+
+
+
+<center>
+<apex:panelGrid columns="1" style="width:100%:border:0 px" cellPadding="3" border="0">
+    <input type="button" class="btn" value="Begin/Edit" title="edit"  onclick="location.href='/apex/ClosePlanEdit?id={!Opportunity_Plan__c.id}&retURL=/apex/closeplanpage?id={!Opportunity_Plan__c.id}'"/>
+    <input type="button" class="btn" value="Print" title="Print" onclick="window.open('/apex/ClosePlanPrint?id={!Opportunity_Plan__c.id}','ClosePlan_print','width=780,height=925')"/>
+    <input type="button" class="btn" value="Help" title="Help"  onclick="window.open('/apex/ClosePlanHelp','Clspln_Help','width=600,height=400')"/>
+</apex:panelgrid> 
+</center>
+
+<!--Section Heading-->
+<apex:panelgrid columns="1" border="0" style="width:100%;table-layout:fixed">
+    <apex:panelGrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3" border="0">
+    <apex:Outputlabel value="Information" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold" />
+    </apex:panelGrid>
+</apex:panelGrid>
+
+
+<!--Section Contents-->
+<apex:panelgrid columns="3" border="0" style="width:100%;table-layout:fixed">
+<!--Column1-->
+    <apex:panelgroup >
+    <apex:panelGrid columns="2" style="width:100%" cellPadding="3" border="0">
+    <apex:outputPanel ><b>Primary Decision Maker(s)&nbsp;</b><i>(from Relationship Suite)</i></apex:outputPanel>
+    <apex:outputPanel >
+                    <apex:repeat value="{!DecisionMakers}" var="dm"><li><apex:outputtext value="{!dm.Contact__r.Name}"></apex:outputtext><apex:outputtext value="{!dm.Contact__r.Title}">,&nbsp;</apex:outputtext></li>
+                    </apex:repeat>
+    </apex:outputPanel>
+    <apex:outputPanel ><b>Buying Criteria</b> <i>(from Decision Grid)</i></apex:outputPanel>
+        <apex:repeat value="{!BuyingCriteria}" var="bc">
+            <apex:outputPanel >
+                <li><apex:outputtext value="{!bc.Criteria__c}"></apex:outputtext></li>
+            </apex:outputPanel>
+            <apex:outputPanel />
+            <apex:outputPanel />
+            <apex:outputPanel />
+        </apex:repeat>
+    <apex:outputPanel ><b>Primary Competitor</b></apex:outputPanel>
+    <apex:outputPanel ><apex:outputField value="{!Opportunity_Plan__c.Opportunity__r.Primary_Competitor__c}"/></apex:outputPanel>
+    <apex:outputPanel ><b>Incumbent Competitor</b></apex:outputPanel>
+    <apex:outputPanel ><apex:outputField value="{!Opportunity_Plan__c.Opportunity__r.Incumbent_Competitor__c}"/></apex:outputPanel>
+    <apex:outputPanel ><b>Opportunity Gauge Results</b></apex:outputPanel>
+    <apex:outputPanel ></apex:outputPanel>
+    <apex:outputPanel >Will They Buy?</apex:outputPanel>
+    <apex:outputPanel >{!Opportunity_Plan__c.WTB_CBP__c}</apex:outputPanel>
+    <apex:outputPanel >Will They Buy Ours?</apex:outputPanel>
+    <apex:outputPanel >{!Opportunity_Plan__c.WTBO_CBP__c }</apex:outputPanel>
+    <apex:outputPanel >Combined Buying Potential</apex:outputPanel>
+    <apex:outputPanel >{!Opportunity_Plan__c.Combined_Buying_Potential__c}%</apex:outputPanel>
+   <apex:outputPanel ><b></b></apex:outputPanel>
+    <apex:outputPanel ><b></b></apex:outputPanel>
+    <apex:outputPanel ><b></b></apex:outputPanel>
+    <apex:outputPanel ><b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>
+   
+    <!--<apex:outputPanel > <b></b></apex:outputPanel>
+    <apex:outputPanel > <b></b></apex:outputPanel>-->
+
+    
+    
+    </apex:panelGrid>
+    </apex:panelgroup>
+ <!--Column2-->
+<apex:panelgroup >
+</apex:panelgroup> 
+<!--Column3-->
+<apex:panelgroup >
+<!--<table width="100%" border="1" cellpadding="5" cellspacing="0" class="table">-->
+  <table  cellpadding="3" cellspacing="0" class="table_DBC" border="1px">
+  <tr>
+    <th class="csfth1" scope="col">Deal Health Report &nbsp;<br></br><i>(From  Deal Health Check List)</i></th>
+    <th class="statusth" scope="col"></th>
+  </tr>
+  <tr>
+    <!--<td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Will_the_client_buy__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Will_the_client_buy__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>-->
+    <td class="csfth"><apex:outputText value="Will They Buy?"/></td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Will_the_client_buy__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Will_the_client_buy__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+   
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Buyer Experience with HP"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Buyer_experience_with_HP__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Buyer_experience_with_HP__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Client Relationship and Insight"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Client_Relationship_and_Insight__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Client_Relationship_and_Insight__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Client Decision Process"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Client_Decision_Process__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Client_Decision_Process__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Competitive Position"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Competitive_Position__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Competitive_Position__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Solution Scope"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Solution_Scope__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Solution_Scope__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Differentiation"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Differentiation__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Differentiation__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Teaming"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Teaming__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Teaming__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+ 
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Sales Team Staffing"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Sales_Team_Staffing__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Sales_Team_Staffing__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Deal Shape and Pricing"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Deal_Shape_and_Pricing__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Deal_Shape_and_Pricing__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Delivery Leadership Team"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Delivery_Leadership_Team__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Delivery_Leadership_Team__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Terms and Conditions"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Terms_and_Conditions__c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Terms_and_Conditions__c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+
+  </tr>
+</table>
+</apex:panelgroup>
+
+ 
+</apex:panelGrid> 
+
+<br></br>   
+
+       
+<!--Section Heading for Closing Steps-->
+<apex:panelgrid columns="1" border="0" style="width:100%;table-layout:fixed">
+    <apex:panelGrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3" border="0">
+        <apex:Outputlabel value="Steps to Close:" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold" />
+    </apex:panelGrid>
+</apex:panelGrid> 
+   
+<table class="crs" cellpadding="1" cellspacing="1" border="1px" style="width:100%">
+    
+    <tr style= "background-color:#E8F7FF;">
+        <th><b>Date</b></th>
+        <th><b>Owner</b></th>
+        <th><b>HP/Customer/3rd Party</b></th>
+        <th><b>Description</b></th>
+        <th><b>Exec Involvement</b></th>
+        <th><b>Help Needed</b></th>
+        <th><b>Status</b></th>
+        
+    </tr>
+    
+    <apex:repeat value="{!closeplanItemWrapper}" var="clsplan">
+    <tr>
+        <td><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+            <apex:param value="{!clsplan.ocloseplanObj.DATES__c}" /> 
+            </apex:outputText>
+        </td>
+       
+        <td><apex:outputfield value="{!clsplan.ocloseplanObj.Owner1__c}" /></td>
+        <td>{!clsplan.ocloseplanObj.HP_CUSTOMER_3rd_PARTY__c}</td>
+        <td>{!clsplan.ocloseplanObj.DESCRIPTION__c}</td>
+        <td>{!clsplan.ocloseplanObj.EXEC_INVOLMENT__c}</td>
+        <td>{!clsplan.ocloseplanObj.HELP_NEEDED__c}</td>
+        <td>{!clsplan.ocloseplanObj.Status1__c}</td>
+        
+    </tr>
+    </apex:repeat>
+    
+ </table>
+       
+<br> </br>    
+<!--Section Heading for Other Items-->
+<apex:panelgrid columns="1" border="0" style="width:100%;table-layout:fixed">
+    <apex:panelGrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3" border="0">
+       <apex:Outputlabel value="Additional Detail Related to Closing this Opportunity:" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold" />
+    </apex:panelGrid>
+</apex:panelGrid>
+<apex:outputtext value="{!Opportunity_Plan__c.Description__c}" style="width: 1100px; height: 50px" />
+<br> </br>  
+</body>
+</apex:page>

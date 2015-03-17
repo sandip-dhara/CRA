@@ -1,0 +1,60 @@
+<apex:page standardController="Apttus__APTS_Agreement__c">
+<script type="text/javascript" src="/soap/ajax/15.0/connection.js"></script>
+    
+    <script type="text/javascript">
+    
+    //Initialize Call
+    function initCall() {
+     try {
+            sforce.connection.sessionId = "{!$Api.Session_ID}"; //to avoid session timeout
+           } catch(e) {
+            erroralert(cERROR_UNKNOWN,e);
+            }
+    }
+    
+    function navigateTo(url) {
+        top.location.replace(url);
+    }
+    
+    function restartAuthoring() {
+        
+        
+        try {
+            initCall();
+            
+            agreementId = "{!Apttus__APTS_Agreement__c.Id}";
+            
+            var qryStr = "select Id, Apttus__Status_Category__c, Apttus__Status__c from Apttus__APTS_Agreement__c where Id='" + agreementId + "'";
+            
+            var result = sforce.connection.query(qryStr);
+           
+            if (result.size > 0) {
+                var records = result.getArray("records");
+                var agreement = records[0];           
+                
+                agreement.Apttus__Status_Category__c = "In Authoring";
+                
+                agreement.Apttus__Status__c = "In Authoring"; 
+                
+                var saveResult = sforce.connection.update([agreement]);
+                
+                if (!saveResult[0].getBoolean("success")) {
+                    alert("ERROR: Unable to change status", saveResult[0]);
+                }
+            }
+        } catch(ex) {
+            alert(ex);
+            erroralert("Status Update failed", ex);
+        } finally {
+            // go to the detail page
+            navigateTo("/apex/Apttus__OfflineDocumentImport?id={!Apttus__APTS_Agreement__c.Id}");
+        }
+    }
+    
+    // register to invoke the function after the page load
+    window.onload = function() { 
+        // post save
+        restartAuthoring();
+    }
+    </script>
+</apex:page>

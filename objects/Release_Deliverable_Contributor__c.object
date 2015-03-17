@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>true</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Contributor__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Contributor</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Release_Deliverable_Contributors</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Deliverable_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>null</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Deliverable Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Release_Deliverable_ID__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Release Deliverable ID</label>
+        <referenceTo>Release_Deliverable__c</referenceTo>
+        <relationshipLabel>Release Deliverable Contributors</relationshipLabel>
+        <relationshipName>Release_Deliverable_Contributors</relationshipName>
+        <required>true</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Release_Deliverable_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Release_Deliverable_ID__r.Release_Deliverable_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Release Deliverable Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Stage_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>null</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Stage Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Team_Member_ID__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Team Member ID</label>
+        <referenceTo>Core_Team_Member__c</referenceTo>
+        <relationshipLabel>Release Deliverable Contributors</relationshipLabel>
+        <relationshipName>Release_Deliverable_Contributors</relationshipName>
+        <required>true</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Team_Member_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Team_Member_ID__r.User__r.Last_First_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Team Member Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Release Deliverable Contributor</label>
+    <nameField>
+        <displayFormat>RDC-{0000}</displayFormat>
+        <label>Release Deliverable Contributor ID</label>
+        <trackFeedHistory>true</trackFeedHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Release Deliverable Contributors</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Team_Member_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Deliverable_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Stage_Name__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Team_Member_Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Deliverable_Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Stage_Name__c</lookupDialogsAdditionalFields>
+        <searchResultsAdditionalFields>Team_Member_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Deliverable_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Stage_Name__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

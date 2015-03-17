@@ -1,0 +1,346 @@
+<apex:page id="SLHomePage" controller="AthenaSLPavan" showheader="false" standardstylesheets="true"
+    doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+  <html>
+  <head>
+  <title>Social Learning Platform</title>
+  <style>
+body {
+    background-color: #fff !important;
+    background: #fff !important
+}
+.bPageBlock {
+    background: #fff !important
+}
+</style>
+  <script type="text/javascript">      
+
+       
+     function validate()
+               {                  
+                    if(document.getElementById('{!$Component.LBForm.LBPageBlock.searchText}').value!=''){                        
+                        return true;
+                    }
+                    else{
+                        document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                        return false;
+                    }
+                }
+</script>
+  <!-- Example of an application-specific style -->
+  
+  <!-- Athena Style Starts -->
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/style.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.jscrollpane.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/jquery-ui.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/theme.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.dropdown.css')}"/>
+  <!-- Athena Style Ends -->
+  
+  </head>
+  <apex:form id="LBform">
+    <apex:pageblock id="LBPageBlock">
+      <body class="hpit_body">
+      <!-- begin themed header -->
+      <header>
+        <div id="hpit_top" class="">
+          <div id="hpit_topTitle">
+            <h1>Social Learning Platform</h1>
+            <h3>Learning on your terms!</h3>
+          </div>
+          <div id="hpit_topLogo"></div>
+          <div id="hpit_topSearch">
+            <apex:inputText id="searchText" styleClass="TopSearchInput" value="{!strSearchValue}" title="Enter value to search Learning Board"/>
+            <apex:commandButton action="{!dosearch}" onclick="return validate()" value="Search" styleClass="SearchBtn"  id="searchButton" title="Click to Search for Learning Board"/>
+          </div>
+          
+          <!-- Begin Themed User Greeting and Menu -->
+         <div id="hpit_topUser"> <span>Welcome {!LoggedinUserDtls.Name}</span>
+            <ul id="hpit_topUserMenu">
+              <li><a href="https://{!getSfInstance}/secur/logout.jsp">Logout</a></li>
+            </ul>
+          </div>
+          <!-- End Themed User Greeting and Menu --> 
+          
+        </div>
+        <div style="background-color: #393939;height: 40px; min-width:1000px; margin:0 auto"> <a href="https://{!getSfInstance}/apex/AthenaSocialLearning">
+          <apex:image url="{!URLFOR($Resource.athena_images, 'images/Icon_Home.png')}" style="margin: 8px;"/>
+          </a> <a href="#" data-dropdown="#dropdown-1">
+          <apex:image url="{!URLFOR($Resource.athena_images, 'images/Icon_Menu.png')}" style="margin: 2px;"/>
+          </a>
+          <div id="dropdown-1" class="dropdown dropdown-tip">
+            <ul class="dropdown-menu">
+              <li><a href="https://{!getSfInstance}">Salesforce Home</a></li>
+              <li><a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank">Help &amp; Support</a></li>
+              <br/>
+              <li><a href="http://amp.corp.hp.com/" target="_blank">Account Management Portal(AMP)</a></li>
+              <li><a href="http://ent241.sharepoint.hp.com/teams/GSCDC/es/ITO.aspx" target="_blank">Portfolio Accrediation</a></li>
+              <li><a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html" target="_blank">What We Sell</a></li>
+
+            </ul>
+          </div>
+        </div>
+      </header>
+      <!-- end themed header --> 
+
+      <!-- Athena Body Content Starts -->
+      <div style="width:1000px; margin:0 auto">
+
+      </div>
+       <span class="err_msg hpit_error" id="err_msg"></span>     
+      <div id="Futured" class="hpit_Athena_container">
+        <apex:outputPanel id="FeaturedLBTable" layout="block">
+          <div class="hpit_Athena_contRow1">
+            <div class="hpit_Athena_contRow1Headding"></div>
+            <div id="hpit_athena_ca-container" class="hpit_athena_ca-container">
+              <div class="hpit_athena_ca-wrapper">
+                <apex:commandlink styleClass="ca-nav-prev" action="{!featuredPrevious}" rendered="{!FeaturedCon.hasPrevious}" rerender="FeaturedLBTable" status="counterStatus">
+
+                </apex:commandlink>
+                <apex:repeat value="{!FeaturedLBList}" var="featuredlb" rendered="{!ShowSearch=false}">
+                  <div class="hpit_athena_ca-item">
+                    <div class="hpit_athena_ca-item-main"> 
+                      <!--<a class="hpit_athena_ca_itemLink" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!featuredlb.Lbid}">-->
+                      <div class="hpit_athena_ca-item-firstHalf">
+                        <div class="hpit_athena_ca-item-topBar">
+                          <div class="hpit_athena_ca-item-topBarDate">
+                            <apex:OutputText value="{0,date,dd' 'MMM' 'yy}">
+                              <apex:param value="{!featuredlb.LBCrtDate}"/>
+                            </apex:outputtext>
+                          </div>
+                          <div class="hpit_athena_ca-item-topBarLikes">
+                            <div class="hpit_athena_ca-item-topBarLikesImg">
+                              <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIcon.png')}" width="18" height="18"/>
+                            </div>
+                            <div class="hpit_athena_ca-item-topBarLikesValue">{!featuredlb.LBNoOfLikes} </div>
+                          </div>
+                          <div class="hpit_athena_ca-item-topBarChat">
+                            <div class="hpit_athena_ca-item-topBarChatImg">
+                              <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIcon.png')}" width="18" height="18"/>
+                            </div>
+                            <div class="hpit_athena_ca-item-topBarChatValue">{!featuredlb.LBNoOfComments}</div>
+                          </div>
+                        </div>
+                        <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!featuredlb.Lbid}">
+                          <h3>{!featuredlb.LBName}</h3>
+                          </a> </div>
+                        <div class="ca-icon"> <a class="hpit_athena_ca_itemLink" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!featuredlb.Lbid}">
+                          <apex:outputPanel rendered="{!!featuredlb.StaticImage}"> 
+                          <!--<img src="data:{!featuredlb.AttContentType};base64,{!featuredlb.Attbody}" width="181" height="181"/> -->
+                         <apex:image url="{!URLFOR($Action.Attachment.Download, featuredlb.AttachmentId)}" width="181" height="181" />
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!featuredlb.StaticImage}">
+                            <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}" width="181" height="181"/>
+                          </apex:outputPanel>
+                          </a> </div>
+                      </div>
+                      <div class="hpit_athena_ca-item-SecondHalf">
+                        <div class="hpit_athena_ca-item-person cf">
+                          <div class="hpit_athena_ca-item-personPhoto">
+                            <apex:image value="{!featuredlb.LBOwnerURL}" width="35" height="35"/>
+                          </div>
+                          <div class="hpit_athena_ca-item-personName"><a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!featuredlb.LBOwnerID}">
+ {!featuredlb.LBOwnerName}</a> </div>
+                        </div>
+                        <div class="hpit_athena_ca-item-PersonPost">
+                          <p>{!featuredlb.LBDescription}</p>
+                        </div>
+                      </div>
+                      <!-- </a> --> 
+                    </div>
+                  </div>
+                </apex:repeat>
+                <apex:commandlink styleClass="ca-nav-next" action="{!featuredNext}" rendered="{!FeaturedCon.hasNext}" rerender="FeaturedLBTable" status="counterStatus">
+
+                </apex:commandlink>
+              </div>
+            </div>
+          </div>
+        </apex:outputPanel>
+      </div>
+      <div id="MyTopics" class="hpit_Athena_container">
+        <apex:outputPanel id="personalizedTable" layout="block">
+          <div class="hpit_Athena_contRow2">
+            <div class="hpit_Athena_contRow2Headding"></div>
+            <div id="hpit_athena_ca-container1" class="hpit_athena_ca-container">
+              <div class="hpit_athena_ca-wrapper">
+                <apex:commandlink styleClass="ca-nav-prev" action="{!perPrevious}" rendered="{!PersonalizedCon.hasPrevious}" rerender="personalizedTable" status="perCounterStatus1">
+
+                </apex:commandlink>
+                <apex:repeat value="{!PersonalizedLBList}" var="perlb" rendered="{!ShowSearch=false}">
+                  <div class="hpit_athena_ca-item hpit_athena_ca-item-3">
+                    <div class="hpit_athena_ca-item-main">
+                      <div class="hpit_athena_ca-item-firstHalf">
+                        <div class="hpit_athena_ca-item-topBar">
+                          <div class="hpit_athena_ca-item-topBarDate">
+                            <apex:OutputText value="{0,date,dd' 'MMM' 'yy}">
+                              <apex:param value="{!perlb.LBCrtDate}"/>
+                            </apex:outputtext>
+                          </div>
+                          <div class="hpit_athena_ca-item-topBarLikes">
+                            <div class="hpit_athena_ca-item-topBarLikesImg">
+                              <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIcon.png')}" width="18" height="18"/>
+                            </div>
+                            <div class="hpit_athena_ca-item-topBarLikesValue">{!perlb.LBNoOfLikes} </div>
+                          </div>
+                          <div class="hpit_athena_ca-item-topBarChat">
+                            <div class="hpit_athena_ca-item-topBarChatImg">
+                              <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIcon.png')}" width="18" height="18"/>
+                            </div>
+                            <div class="hpit_athena_ca-item-topBarChatValue">{!perlb.LBNoOfComments}</div>
+                          </div>
+                        </div>
+                        <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemLink" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!perlb.Lbid}">
+                          <h3>{!perlb.LBName}</h3>
+                          </a> </div>
+                        <div class="ca-icon"> <a class="hpit_athena_ca_itemLink" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!perlb.Lbid}">
+                          <apex:outputPanel rendered="{!!perlb.StaticImage}"> 
+                         <!-- <img src="data:{!perlb.AttContentType};base64,{!perlb.Attbody}" width="181" height="181"/> -->
+                          <apex:image url="{!URLFOR($Action.Attachment.Download, perlb.AttachmentId)}" width="181" height="181" />
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!perlb.StaticImage}">
+                            <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}" width="181" height="181"/>
+                          </apex:outputPanel>
+                          </a> </div>
+                      </div>
+                      <div class="hpit_athena_ca-item-SecondHalf">
+                        <div class="hpit_athena_ca-item-person cf">
+                          <div class="hpit_athena_ca-item-personPhoto">
+                            <apex:image value="{!perlb.LBOwnerURL}" width="35" height="35"/>
+                          </div>
+                          <div class="hpit_athena_ca-item-personName"><a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!perlb.LBOwnerID}"> {!perlb.LBOwnerName} </a> </div>
+                        </div>
+                        <div class="hpit_athena_ca-item-PersonPost">
+                          <p>{!perlb.LBDescription}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </apex:repeat>
+                <apex:commandlink styleClass="ca-nav-next" action="{!perNext}" rendered="{!PersonalizedCon.hasNext}" rerender="personalizedTable" status="perCounterStatus">
+
+                </apex:commandlink>
+              </div>
+            </div>
+          </div>
+        </apex:outputPanel>
+      </div>
+      <div id="SearchResults" class="hpit_Athena_container">
+        <apex:outputPanel id="searchResultTable" layout="block" rendered="{!SearchResultLBList.Size != 0 && ShowSearch=True}">
+          <div class="hpit_Athena_contRow1">
+            <div class="hpit_Athena_contSearchHeadding"></div>
+            <div id="hpit_athena_ca-container" class="hpit_athena_ca-container">
+              <div class="hpit_athena_ca-wrapper">
+                <apex:commandlink styleClass="ca-nav-prev" action="{!searchPrevious}" rendered="{!searchCon.hasPrevious}" rerender="searchResultTable" status="counterSearchStatus1">
+
+                </apex:commandlink>
+                <apex:repeat value="{!SearchResultLBList}" var="searchlb" rendered="{!ShowSearch=true}">
+                  <div class="hpit_athena_ca-item hpit_athena_ca-item-1">
+                    <div class="hpit_athena_ca-item-main">
+                      <div class="hpit_athena_ca-item-firstHalf">
+                        <div class="hpit_athena_ca-item-topBar">
+                          <div class="hpit_athena_ca-item-topBarDate">
+                            <apex:OutputText value="{0,date,dd' 'MMM' 'yy}">
+                              <apex:param value="{!searchlb.LBCrtDate}"/>
+                            </apex:outputtext>
+                          </div>
+                          <div class="hpit_athena_ca-item-topBarLikes">
+                            <div class="hpit_athena_ca-item-topBarLikesImg">
+                              <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIcon.png')}" width="18" height="18"/>
+                            </div>
+                            <div class="hpit_athena_ca-item-topBarLikesValue">{!searchlb.LBNoOfLikes} </div>
+                          </div>
+                          <div class="hpit_athena_ca-item-topBarChat">
+                            <div class="hpit_athena_ca-item-topBarChatImg">
+                              <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIcon.png')}" width="18" height="18"/>
+                            </div>
+                            <div class="hpit_athena_ca-item-topBarChatValue">{!searchlb.LBNoOfComments}</div>
+                          </div>
+                        </div>
+                        <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemLink" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!searchlb.Lbid}">
+                          <h3>{!searchlb.LBName}</h3>
+                          </a> </div>
+                        <div class="ca-icon"> <a class="hpit_athena_ca_itemLink" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!searchlb.Lbid}">
+                          <apex:outputPanel rendered="{!!searchlb.StaticImage}"> 
+                         <!-- <img src="data:{!searchlb.AttContentType};base64,{!searchlb.Attbody}" width="181" height="181"/>--> 
+                          <apex:image url="{!URLFOR($Action.Attachment.Download, searchlb.AttachmentId)}" width="181" height="181" />
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!searchlb.StaticImage}">
+                            <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}" width="181" height="181"/>
+                          </apex:outputPanel>
+                          </a> </div>
+                      </div>
+                      <div class="hpit_athena_ca-item-SecondHalf">
+                        <div class="hpit_athena_ca-item-person cf">
+                          <div class="hpit_athena_ca-item-personPhoto">
+                            <apex:image value="{!searchlb.LBOwnerURL}" width="35" height="35"/>
+                          </div>
+                          <div class="hpit_athena_ca-item-personName"><a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!searchlb.LBOwnerID}"> {!searchlb.LBOwnerName}  </a> </div>
+                        </div>
+                        <div class="hpit_athena_ca-item-PersonPost">
+                          <p>{!searchlb.LBDescription}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </apex:repeat>
+                <apex:commandlink styleClass="ca-nav-next" action="{!searchNext}" rendered="{!searchCon.hasNext}" rerender="searchResultTable" status="counterSearchStatus">
+
+                </apex:commandlink>
+              </div>
+            </div>
+          </div>
+        </apex:outputPanel>
+        <apex:outputPanel id="searchNoResult" layout="block" rendered="{!SearchResultLBList.Size = 0 && ShowSearch=True}">
+          <div><span class="err_msg hpit_error">No Search Results found.</span></div>
+        </apex:outputPanel>
+      </div>
+      
+      <!-- Athena Body Content Ends --> 
+      
+      <!-- begin themed footer -->
+      <div>
+        <footer>
+          <div id="hpit_btm">
+            <div id="hpit_btmCopyright">&copy; <span class="hpit_year"></span> Hewlett-Packard Development Company, L.P. &nbsp; &nbsp; | &nbsp; &nbsp; HP Restricted</div>
+          </div>
+        </footer>
+      </div>
+      <!-- end themed footer --> 
+      
+      <!-- ETR JavaScript -->
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery.min.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery-ui.min.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/hp-esm_theme.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/theme.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.athena_js, '/athena_js/jquery.dropdown.js')}"/>
+      
+      <!-- end themed busy popup  --> 
+      <script type="text/javascript">
+ 
+           // Use the jQuery "ready()" method to ensure our page is ready before running
+        // (See jQuery.com documentation for more on the "ready()" method)
+        $(document).ready(function (e) {
+           
+            var showsearch = {!ShowSearch};
+            if(showsearch)
+            {
+                    $('#MyTopics').hide();
+                    $('#Futured').hide();  
+                    $('#SearchResults').show();
+             
+            }
+            else
+            {
+                    $('#MyTopics').show();
+                    $('#Futured').show();  
+                    $('#SearchResults').hide();
+            
+            }
+            
+        });
+</script>
+      </body>
+    </apex:pageblock>
+  </apex:form>
+  </html>
+</apex:page>

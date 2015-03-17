@@ -1,0 +1,51 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<apex:component controller="contentblockcomponentController">
+
+
+	<apex:attribute name="name" description="content block component" type="string" required="true" assignTo="{!name}"/>
+	<div class="contentblock">
+	<apex:outputText rendered="{!($CurrentPage.parameters.console == 'true')}">
+		<div  class="toolbarleft" id="toolbarleft">
+		<a href="{!$CurrentPage.Parameters.pod}/apex/PageItemEdit?masterpage={!$CurrentPage.Parameters.pageid}&console=true&fullscreen={!$CurrentPage.parameters.fullscreen}&cbname={!name}" target="_top"><apex:image style="border-style: none;" url="{!URLFOR($Resource.CMSForce, '/JSTree/doc.png')}" title="Add New Item"/></a>
+		<a href="{!$CurrentPage.Parameters.pod}/apex/PageItemInclude?pageid={!$Currentpage.Parameters.pageid}&cbname={!name}" target="_top"><apex:image style="border-style: none;background-color:white;" url="{!URLFOR($Resource.CMSForce, '/JSTree/attach.png')}" title="Include Existing Item"/></a>
+		<a href="{!$CurrentPage.Parameters.pod}/apex/FormItemInclude?pageid={!$Currentpage.Parameters.pageid}&cbname={!name}" target="_top"><apex:image style="border-style: none;" url="{!URLFOR($Resource.CMSForce, '/JSTree/form.png')}" title="Include Existing Web Form"/></a>		
+		</div>
+	</apex:outputText>
+	<apex:repeat value="{!items}" var="item">
+		
+		<!-- Toolbar -->		
+		<apex:outputText rendered="{!($CurrentPage.parameters.console == 'true')}">
+		<div class="toolbarright" id="toolbarright">
+			<a href="{!$CurrentPage.Parameters.pod}/apex/PageItemEdit?id={!item.PageToItemId__c}&console=true&fullscreen={!$Currentpage.parameters.fullscreen}&currentpage={!JSENCODE($Currentpage.Parameters.pageid)}" target="_top"><apex:image style="border-style: none;" url="{!URLFOR($Resource.CMSForce, '/JSTree/edit.png')}" title="Edit Item"/></a>			
+			<a href="" onclick="javascript:if(confirm('Are you sure you want to delete this item ?')){document.location.href='{!JSENCODE($CurrentPage.Parameters.pod)}/apex/CMSConsoleActions?operation=delete_pageitem&pageitemid={!JSENCODE(item.PageToItemId__c)}&fullscreen={!JSENCODE($Currentpage.parameters.fullscreen)}'};" target="_top"><apex:image style="border-style: none;cursor:pointer;" url="{!URLFOR($Resource.CMSForce, '/JSTree/delete.png')}" title="Delete Item"/></a>			
+		</div>
+		</apex:outputText>
+		
+		<!-- Regular HTML output-->
+			
+		<apex:outputText escape="false" value="{!item.Content__c}" rendered="{!item.Type__c != 'WebForm'}"/>
+		
+		<!-- Render a Web Form -->
+		<c:RenderForm formId="{!item.Web_Form__c}" rendered="{!item.Type__c == 'WebForm'}"/>
+		
+	</apex:repeat>
+	</div>
+	
+</apex:component>

@@ -1,0 +1,514 @@
+<apex:page standardController="Core_Team_Member__c" extensions="ExtendedRelRoleTeamMemberOverView">
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+<!--Tovid -alertfiy plugin -->
+<apex:includeScript value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.default.css')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.core.css')}"/>
+<script>
+       $j = jQuery.noConflict();
+       $j(document).ready(function() {
+          $j("select[id$=inputUser_mlktp]").hide();
+       });
+</script>
+    
+
+    <style>
+        .pbSubheader {
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+        body .bPageBlock .pbBody .pbSubheader img {
+            height: 15px;
+            width: 15px;
+        }
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody 
+
+        .pbSubheader h3 {
+            font-weight: 300;
+            font-family: 'Voces', sans-serif; !important;
+            font-size:16px !important; /* this controls the blue bar font-sizes */
+        }
+    
+        .myButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: #007DBA  !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+          
+        .myDisabledButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: gray !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+       .myButtons:hover{
+           background-color: #D7410B !important;
+         }
+       .parentDisable{
+           width:58%;
+           float:left;
+           overflow:hidden;
+       }
+       #chatterDisplay{
+            position:relative;
+            top:30px;
+            width: 38%;
+            float: left;
+            overflow-y: auto;
+            margin-left: 16px;
+       }
+       #chatterWrapper{
+           height:350px;
+           overflow-y: auto;
+           border: 1px solid #ccc;
+           padding:10px !important;
+       }
+    
+   #ContriReviewerList{
+        position:relative;
+        width: 40%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+    #ContributorList{
+        position:relative;
+        width: 40%;
+        float: left;
+        overflow-y: auto;
+    }
+    #ReviewList{
+        position:relative;
+        left:10px;
+        width: 40%;
+        float: left;
+        overflow-y: auto;
+
+    }
+    #ActionDiv{
+        position:relative;
+        top:20px;
+        width: 38%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+    
+    #Divtext{
+        width: 30%;
+        float: left;
+        overflow-y: auto;
+    }
+    #DivDelLink{
+        width: 69%;
+        float: right;
+        overflow-y: auto;
+        margin-right:0px;
+    }
+   
+   /* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:'Voces', sans-serif; !important;
+            border-top:0px;
+        }
+    .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+        border-top: 0px solid #3044b5;
+     }
+     
+   <!--  .apexp .bPageBlock .detailList .list{
+     } -->
+    
+    .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+    .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+        padding: 2px 8px;
+        color: #333;
+        border-bottom: 1px solid #e3deb8;
+        font-family: 'Voces', sans-serif; !important;
+        font-size:13px !important;
+     }
+    /* table row highlight */     
+    body .pbBody table.list tr.dataRow.highlight td{
+    background-color:#ecf4f8;
+    }
+    body .pbBody table.list tr.headerRow th{
+        background:#fff !important;
+        color:#007DBA !important;
+        border:1px solid #ccc;
+    }
+    /* for Header */
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 300 !important;
+    }
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: 'Voces', sans-serif; !important;
+        font-size:14px !important; /* this controls the blue bar font-sizes */
+    }
+    /* done header */
+    .bPageBlock .detailList .data2Col{
+    padding-left:0px;
+    }
+    body .pbBody table.list tr.headerRow th{
+        padding: 4px 8px;
+    }
+    
+    /* Detail Table Style */
+    
+    .detailList td{
+        line-height:20px;
+    }
+    body .bPageBlock .pbBody .labelCol {
+        color: #4a4a56;
+        line-height: 20px;
+    }
+    .Custom64Tab .secondaryPalette, .individualPalette .Custom64Block .secondaryPalette{
+    border:0px;
+    }
+    
+    /* Textboxes, Textareas sytle */
+    
+    input,textarea{
+        border: 2px solid #CCCCCC;
+        background:#f2f2f2;
+    }
+   
+   /* Other review / Contribute */
+   
+   #otherReview{
+       width:49%;
+       float:left;
+       margin-left:10px;
+   }
+   #contrib{
+       width:49%;
+       float:left;
+   }
+   
+   /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 13px;
+        border-radius: 0px;
+        padding: 6px 6px 6px 6px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    ::-webkit-file-upload-button:hover {
+        background-color: #D7410B !important;
+    }
+    
+    .linkBtn {
+        background: none !important;
+        border: 0px !important;
+        background-color: #007DBA !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        border-radius: 0px !important;
+        padding: 8px 8px 8px 8px !important;
+        border-bottom-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .clear{clear:both}
+    #positionToggle{position:absolute; top:9px; left:9px; }
+    #showHideList{display:none; position:absolute; top:10px; left:10px; border-radius: 5px; border:1px solid #cccccc; background-color:#eeeeee; }
+    #ListInner{padding:10px 10px 10px 10px; }   
+       
+    </style>
+    <script>
+            function showErrorMessage(){                     
+               if({!beginstartup}){
+                   /*
+                   return window.confirm("Confirm to Start Up Project?");  
+                   */
+                   alertify.confirm("Confirm to start up project ?", function (e) {
+                        if (e) {
+                            BeginStarup();
+                        } 
+                    }); 
+                    return false;             
+               }else{
+                   alertify.alert("{!ErrorCategory}");
+                   //alert('test');
+                   return false;
+               }
+           }
+            function deleteTeam
+            
+            
+            
+            
+            Confirm(tmid){
+                    alertify.confirm("Confirm to delete this Team Member ?", function (e) {
+                        if (e) { 
+                             deleteTeamMemberByID(tmid);
+                        } 
+                    }); 
+                    return false;    
+            }
+            function showDocumentsSection(rowId){
+                var rowObj = document.getElementById(rowId);
+                    if ( rowObj.style.display == "table-row" ) 
+                        rowObj.style.display = "none";
+                    else {
+                        rowObj.style.display = "table-row";
+                        
+                    }
+            }          
+        </script>
+
+
+<apex:pageBlock >
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:PAGEBlock >
+        <apex:form >
+        <apex:actionFunction action="{!findTeamMemberById}" name="findTeamMemberById" reRender="tmm">
+            <apex:param id="teammemberIdPra" name="teammemberIdPra" value="" /> 
+        </apex:actionFunction>  
+        <apex:pageBlockSection collapsible="false" columns="1" id="RecordsList" title="Manage Team Members">
+        <apex:actionFunction name="deleteTeamMemberByID" action="{!deleteTeamMember}" oncomplete="javascript:alertify.alert('{!errorMsg}')" > 
+            <apex:param name="firstParam" assignTo="{!teamMemberId}" value="" />
+        </apex:actionFunction>                             
+        <apex:pageBlockTable value="{!ctmList}" var="ctm" id="ctmTable" rendered="{!DisplayIndicator}">
+            <apex:column headerValue="Action">
+                <a href="#teammemberDetailView" onclick="findTeamMemberById('{!ctm.Id}');">Edit</a>
+                <apex:outputText value="  "></apex:outputText>               
+                <apex:commandLink value="Delete"  onclick="javascript:return deleteTeamMemberConfirm('{!ctm.Id}');">                                                     
+                </apex:commandLink>           
+            </apex:column>       
+            <apex:column headerValue="Project">
+                    <a href="/{!para_OffRelID}" class="hotLink"><apex:outputText value="{!para_OffRelName}" /></a>
+            </apex:column>    
+            <apex:column headerValue="Team Member ID"> 
+                    <a href="/{!ctm.id}" target="_blank" class="hotLink"><apex:outputText value="{!ctm.Name}" /></a>
+            </apex:column>
+            <apex:column > 
+                <apex:facet name="header">   
+                    <apex:commandLink action="{!ShowByRoleName}" value="Role Name {!IF(sortDirection='ASC','▼','▲')}" id="cmdSort" rerender="ctmTable" style="color: #007DBA  !important;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!ctm.Role_Name__c}</apex:outputText>
+            </apex:column>            
+            
+            <apex:column value="{!ctm.User__c}" headerValue="Name"/>
+            <apex:column value="{!ctm.Contributor__c}"/>
+            <apex:column value="{!ctm.Reviewer__c}" />
+            <apex:column value="{!ctm.Accountable__c}" />
+            <apex:column value="{!ctm.Independent_Reviewer__c}" />
+        </apex:pageblockTable>
+        </apex:pageBlockSection>
+        <apex:outputLabel value="Note:---" style="color:red;" rendered="{!!DisplayIndicator}">No Team Member Assigned to the current <a href="/{!para_OffRelID}"  class="hotLink"><apex:outputText value="{!para_OffRelName}" /></a></apex:outputLabel>        
+        <apex:actionFunction name="BeginStarup" action="{!BeginStarup}"/>
+        <div id="buttons">
+            <apex:commandButton value="Begin Startup" styleClass="{!IF(!beginstartup,'myDisabledButtons','myButtons')}"  onclick="javascript:return showErrorMessage();"/>
+        
+        </div>
+    </apex:form>         
+    </apex:PAGEBlock>
+    <apex:pageBlock >
+        <apex:form >    
+        <apex:pageblockSection >
+             <apex:outputPanel style="float:left;width:100%;margin-left: -8px;">
+                <apex:pageblockSection columns="1" id="NewTeamMemberSection" title="New Team Members" rendered="true" >      
+                            
+                    <apex:inputField value="{!newctm.User__c}" id="inputUser"/>            
+                    <apex:selectList value="{!SelectReleaseRole}" multiselect="false" size="1" label="Role" id="role" required="true">
+                        <apex:selectOptions value="{!RoleItems}"></apex:selectOptions>
+                       <apex:actionSupport event="onchange" action="{!RewContActLoad}" reRender="rew,cnt,act,notePanel"/> 
+                    </apex:selectList>
+                    <apex:inputCheckbox value="{!newctm.Reviewer__c}"  id="rew" label="Reviewer" disabled="{!independentReviewer}" />
+                    <apex:inputCheckbox value="{!newctm.Contributor__c}" id="cnt" label="Contributor" disabled="{!independentReviewer}"/>
+                    <apex:inputCheckbox value="{!newctm.Accountable__c}" id="act" label="Accountable" disabled="{!independentReviewer}"/>
+                    <!-- <apex:inputfield value="{!newctm.Independent_Reviewer__c}" id="independ" label="Independent Reviewer"/> -->
+                    <apex:inputField value="{!newctm.Comment__c}" style="width:300px;"/>
+                    <apex:commandButton value="Add Team Member" action="{!CreateTeamMember}" id="btn_createTM" styleClass="myButtons" /> 
+                    <apex:outputPanel style="visibility:{!hiddenNote};" id="notePanel">
+                        <apex:pageblockSection columns="1">
+                        <apex:outputText value="The selected role already contains team member as reviewer or contributor. The system will automatically assign the created team member to all the work element as contributor or reviewer. Please uncheck the Manually Allocate checkbox below to manually assign to corresponding work elements" Label="Note" style="color:red;"></apex:outputText>
+                        <apex:inputCheckbox value="{!manuallySet}" label="Manually Allocate"/>
+                        </apex:pageblockSection>
+                          
+                    </apex:outputPanel>                    
+                </apex:pageBlockSection>                               
+             </apex:outputPanel>  
+             <apex:outputPanel style="float:right;width:100%">
+                    <div class="pbSubheader" >
+                            <h3>Roles to be assigned</h3>
+                    </div>                                        
+                    <apex:pageBlockTable value="{!relRoleListNoMember}" var="relRoleNoMem" id="relRoleListNoMember">
+                        <apex:column value="{!relRoleNoMem.Role_Name__c}" />
+                        <apex:column value="{!relRoleNoMem.Contributor__c}" />
+                        <apex:column value="{!relRoleNoMem.Reviewer__c}"/>
+                        <apex:column value="{!relRoleNoMem.Accountable__c}"/>
+                        <apex:column value="{!relRoleNoMem.Independent_Reviewer__c}"/>       
+                    </apex:pageBlockTable>   
+                    
+             </apex:outputPanel>                
+        </apex:pageblockSection>        
+        </apex:form>         
+    </apex:pageBlock>
+    <!-- MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL -->
+    <style>
+    .modalDialog {
+        display:none;
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.6); /*background: rgba(0,0,0,0.8);*/
+        z-index: 99999;
+        opacity:0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        pointer-events: none;
+    }
+
+    .modalDialog:target {
+        display:block;
+        opacity:1;
+        pointer-events: auto;
+    }
+
+    .modalDialog > div {
+        width: 400px;
+        position: relative;
+        margin: 10% auto;
+        padding: 5px 20px 13px 20px;
+        border-radius: 10px;
+        background: #fff;
+        background: -moz-linear-gradient(#fff, #bbb);
+        background: -webkit-linear-gradient(#fff, #bbb);
+        background: -o-linear-gradient(#fff, #bbb);
+    }
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+    .close:hover { background: #00d9ff; text-decoration: none; }
+    .myLabels{font-weight:bold;}
+    .myData{font-size:14px; width:330px;}
+    .ReviewHeader{font-weight:bold; border-bottom:1px #888888 solid;}
+    .ReviewRow{ border-bottom:1px white solid; }   
+    </style>
+    <apex:form id="editTeammember" >    
+    <div id="teammemberDetailView" class="modalDialog">
+        <div>
+            <a href="#close" Xtitle="Close" class="close">X</a>
+            <div  style="padding-top:8px;">
+                <h2>Team Member Details</h2>
+            </div>
+            <p></p>
+            <apex:outputPanel id="tmm">
+                <table cellspacing="0" cellpadding="5">   
+                   <tr>
+                        <td class="ReviewRow" align="center">Member</td>
+                        <td class="ReviewRow" style="white-space:nowrap"><apex:inputField value="{!ctmDetail.User__r.Name}"/></td>
+                   </tr>                        
+                   <tr>
+                        <td class="ReviewRow" align="center">Role</td>
+                        <td class="ReviewRow" style="white-space:nowrap">
+                            <!--
+                            <apex:selectList value="{!SelectReleaseRole}" multiselect="false" size="1" label="Role" id="role" required="true">
+                                <apex:selectOptions value="{!RoleItems}"></apex:selectOptions>
+                                <apex:actionSupport event="onchange" action="{!RewContActLoad}" reRender="TeamOverView"/> 
+                            </apex:selectList>
+                            -->
+                            <apex:inputField value="{!ctmDetail.Role_Name__c}"/>
+                        </td>
+                   </tr>
+                   <tr>
+                        <td class="ReviewRow" align="center">Contributor</td>
+                        <td class="ReviewRow" style="white-space:nowrap"><apex:inputCheckbox value="{!ctmDetail.Contributor__c}" disabled="{!independentReviewer}"/></td>
+                   </tr>
+                   <tr>
+                        <td class="ReviewRow" align="center">Reviewer</td>
+                        <td class="ReviewRow" style="white-space:nowrap"><apex:inputCheckbox value="{!ctmDetail.Reviewer__c}" disabled="{!independentReviewer}"/></td>
+                   </tr>
+                   <tr>
+                        <td class="ReviewRow" align="center">Accountable</td>
+                        <td class="ReviewRow" style="white-space:nowrap"><apex:inputCheckbox value="{!ctmDetail.Accountable__c}" disabled="{!independentReviewer}"/></td>
+                   </tr>
+                   <tr>
+                        <td class="ReviewRow" align="center">Comment</td>
+                        <td class="ReviewRow" style="white-space:nowrap"><apex:inputField value="{!ctmDetail.Comment__c}" style="width:300px;"/></td>
+                   </tr>                
+                </table>
+                <div style="padding-left:84px;">
+                    <apex:commandButton value="Save" action="{!updateTeamMember}" styleClass="myButtons"/>
+                </div>
+            </apex:outputPanel>         
+            <p></p>
+        </div>
+    </div>
+    </apex:form>
+    <style type="text/css">
+.pointer
+{
+    cursor:pointer;
+    border:1px solid #ccc;
+    padding:5px;
+}
+</style>
+</apex:pageblock>  
+</apex:page>

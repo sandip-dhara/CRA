@@ -1,0 +1,64 @@
+<apex:page standardController="Support_Request__c" extensions="RSCSupportRequestController,PluginPopControllerExtensionSR" tabStyle="Support_Request__c">
+<!--apex:page standardController="Support_Request__c" extensions="RSCSupportRequestController" tabStyle="Support_Request__c">-->
+    <style>
+        /*
+        th.actionColumn,td.actionColumn{
+            display:none !important;
+        }
+        */
+    </style>
+    <apex:sectionHeader title="Support Request" subTitle="{!supportRequest.Name}"/>
+    <apex:PageBlock title="Support Request Details">
+        <apex:pageBlockSection rendered="{!NOT(ISNULL(supportRequest))}" columns="2">
+            <apex:outputField value="{!supportRequest.Support_Type__c}"/>
+            <apex:pageblockSectionItem >
+            <div id="zzyyzz"></div>
+          <!-- <apex:commandLink value="{!pluginPage}" /> -->
+              <!--  <apex:outputText value="Not Implemented"/>-->
+                <!-- <apex:outputField value="{!supportRequest.given lookup field}"/> -->
+            </apex:pageblockSectionItem>
+            <apex:outputField value="{!supportRequest.Sub_Type__c}"/>
+            <apex:outputField value="{!supportRequest.Opportunity__c}"/>
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="Created By"></apex:outputLabel>
+                {!supportRequest.CreatedBy.name}, {!supportRequest.CreatedDate}
+            </apex:pageblockSectionItem>
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="Last Modified By"></apex:outputLabel>
+                {!supportRequest.LastModifiedBy.Name}, {!supportRequest.LastModifiedDate}
+            </apex:pageblockSectionItem>
+        </apex:pageblockSection>
+    </apex:PageBlock>
+    <apex:relatedList list="Sales_Wins__r" title="Ring the Bell"/>
+    <apex:relatedList list="Reference_Requests__r"/>
+    <apex:relatedList list="Spotlight_Activities__r"/>
+    <script type="text/javascript">
+var startURL = window.location.href.toLowerCase().replace("https://", "").replace(".my.", ".").replace(".salesforce.", ".visual.force.");
+if(startURL.indexOf("c.") == 0) startURL = startURL.substring(2);
+startURL = startURL.substring(0, startURL.indexOf(".visual.force."));
+if(startURL.indexOf(".") == -1) startURL = "roi." + startURL; else startURL = startURL.replace(".", "--roi.");
+startURL = startURL.replace("roi--roi.", "roi.");
+var tabURL = "https://" + startURL + ".visual.force.com/apex/ReferenceView?page=Asset&oid={!Support_Request__c.Opportunity__c}";
+var a = ('{!RelatedContent}').split('|||');
+
+if(a.length > 1) {
+    var tdHTML = "<table width='100%' cellpadding=0 style='padding-right:16px'><tr><td width='36%' align=right style='padding-right:12px;color:#4A4A56;font-size:91%;'><b>{!ReferenceContentCaption}</b></td><td width='64%' style='padding-left:6px;font-size:12px;'>";
+    var ttl = a[0];
+    var toolTip = a[1];
+    var url = ttl.indexOf("Customer") == -1 ? tabURL : tabURL.replace("=Asset", "=Search");
+    tdHTML += "<a style='color:{!LinkColor};' target='_top' title=\"" + toolTip + "\" href=\"" + url + "\">" + ttl + "</a>";
+    if(a.length > 3) {
+        ttl = a[2];
+        toolTip = a[3];
+        url = ttl.indexOf("Customer") == -1 ? tabURL : tabURL.replace("=Asset", "=Search");
+        
+        tdHTML += "&nbsp;&nbsp;";
+        tdHTML += "<a style='color:{!LinkColor};' target='_top' title=\"" + toolTip + "\" href=\"" + url + "\">" + ttl + "</a>";
+    }
+    tdHTML += "</td></tr></table>"
+    document.getElementById("zzyyzz").innerHTML = tdHTML;
+} else {
+    document.getElementById("zzyyzz").innerHTML = "";
+}
+</script>
+</apex:page>

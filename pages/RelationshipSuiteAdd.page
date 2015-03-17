@@ -1,0 +1,84 @@
+<apex:page standardController="Relationship_Suite__c" extensions="RelExtnController" showHeader="False" sidebar="False" action="{!initialize}">
+<script type="text/javascript"> 
+
+    function openLookup(baseURL, width, modified, searchParam,OpId){
+        var originalbaseURL = baseURL;
+        var opId = document.getElementById("{!$Component.idForm.pb.OppId}").value; 
+        var opPlanId = document.getElementById("{!$Component.idForm.pb.OppPlanId}").value;
+        var originalwidth = width;
+        var originalmodified = modified;
+        var originalsearchParam = searchParam; 
+        var lookupType = baseURL.substr(baseURL.length-3, 3);
+        if (modified == '1') baseURL = baseURL + searchParam; 
+        var isCustomLookup = false;
+        // Following "003" is the lookup type for opportunity object 
+        if(lookupType == "003"){ 
+            var urlArr = baseURL.split("&");
+            var txtId = '';
+            
+            if(urlArr.length > 2){
+                urlArr = urlArr[1].split('=');
+                txtId = urlArr[1];
+                                
+            }
+ 
+          // The below URL will call the Custom Lookup page.
+          
+        baseURL = "/apex/ContactCustomLookup?txt=" + txtId;
+
+          // Following is the id of apex:form control "idform". 
+          
+        // baseURL = baseURL + "&OppId=" + OpId;
+        baseURL = baseURL + "&frm=" + escapeUTF("{!$Component.idForm}");
+        
+        //alert(opId);
+        
+        //alert(baseURL);
+         // alert( document.URL );
+        if (modified == '1'){
+            baseURL = baseURL + "&lksearch=" + searchParam +','+ opId + ',' + opPlanId;
+            }
+ 
+          // Following is the ID of inputField that is the lookup to be customized as custom lookup
+        if(txtId.indexOf('con') > -1 ){
+            isCustomLookup = true;
+            }
+        } 
+        if(isCustomLookup == true){
+            openPopup(baseURL, "lookup", 350, 480, "width="+width+",height=480,toolbar=no,status=no,directories=no,menubar=no,resizable=yes,scrollable=no", true);
+            }
+        else{
+            if (modified == '1') originalbaseURL = originalbaseURL + originalsearchParam;
+            openPopup(originalbaseURL, "lookup", 350, 480, "width="+originalwidth+",height=480,toolbar=no,status=no,directories=no,menubar=no,resizable=yes,scrollable=no", true);
+            } 
+    }       
+    </script>
+<apex:form id="idForm">
+      <apex:pageblock id="pb" >
+      <!--Heading of Opportunity Gauge-->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="24" /><BR>&nbsp;</BR><apex:OutputText value="Relationship Suite"  style="size:100%;color: #000000; font-size: 16pt; width: 25%; font-weight:bold;text-align:left"/>
+    </apex:panelgrid>
+    <apex:messages />
+    <hr size="2"></hr>
+    <!--End-->
+
+          <apex:pageBlockButtons >
+          <apex:commandButton value="Save" action="{!save}" onclick="location.href='/apex/RelationshipSuiteSummary?id={!Relationship_Suite__c.Opportunity_Plan__c}"/>
+          <apex:commandButton value="Cancel" action="{!cancel}" onclick="location.href='/apex/RelationshipSuiteSummary?id={!Relationship_Suite__c.Opportunity_Plan__c}"/>
+          </apex:pageBlockButtons>
+          
+          <apex:panelgrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3">
+          <apex:OutputLabel value="Add Contacts" />
+          </apex:panelgrid>
+          <apex:panelgrid columns="1" id="pg" >
+          <apex:inputhidden id="OppId" value="{!OppId}"/>
+          <apex:inputHidden id="OppPlanId" value="{!OppPlanId}"/>
+          <apex:InputField id="con" value="{!Relationship_Suite__c.Contact__c}" />
+          <script>document.getElementById('{!$Component.con}').disabled = true; </script>
+          </apex:panelgrid>
+          
+      </apex:pageblock>
+</apex:form>
+
+</apex:page>

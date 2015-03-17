@@ -1,0 +1,42 @@
+<apex:page standardController="Sales_Territory__c" extensions="TMPreviewLocationsController" readOnly="true" tabStyle="Location__c" sidebar="false">
+    <apex:sectionHeader subtitle="{!Sales_Territory__c.Name}" title="Sales Territory Location Preview" />
+    <apex:pageBlock >
+        <apex:pageBlockButtons >
+            <apex:outputPanel id="myButtons">
+                <apex:form >
+                    <apex:commandButton action="{!beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" status="loadingStatus" reRender="myPanel,myButtons" />
+                    <apex:commandButton action="{!previous}" title="Previous" value="<" disabled="{!disablePrevious}" status="loadingStatus" reRender="myPanel,myButtons" />
+                    <apex:commandButton action="{!next}" title="Next" value=">" disabled="{!disableNext}" status="loadingStatus" reRender="myPanel,myButtons" />
+                    <apex:commandButton action="{!endp}" title="End" value=">>" disabled="{!disableNext}" status="loadingStatus" reRender="myPanel,myButtons" /></apex:form>
+            </apex:outputPanel>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="1" title="Locations (Total List Size: {!totalSize})" collapsible="false">
+            <div style="position:relative;">
+                <apex:outputPanel id="myPanel">
+                    <apex:actionStatus id="loadingStatus">
+                        <apex:facet name="start">
+                            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+                                <div class="waitingHolder" style="top:74.2px;width:91px;">
+                                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait...." /> 
+                                    <span class="waitingDescription">Loading....</span>
+                                </div>
+                            </div>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <apex:pageMessages id="myMessages" />
+                    <apex:pageBlockTable value="{!locationList}" var="loc">
+                        <apex:column value="{!loc.Name}" />
+                        <apex:column value="{!loc.Location_Name__c}" />
+                        <apex:column value="{!loc.Business_Relationship__c}" />
+                        <apex:column value="{!loc.MDCP_Organization_ID__c}" />
+                        <apex:column value="{!loc.State__c}" />
+                        <apex:column value="{!loc.Country__c}" />
+                        <apex:column value="{!loc.Postal_Code__c}" />
+                        <apex:column value="{!loc.WorldRegion_Hierarchy__c}" />
+                        <apex:facet name="footer">Showing Page # {!pageNumber} of {!totalPages}</apex:facet>
+                    </apex:pageBlockTable>
+                </apex:outputPanel>
+            </div>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>

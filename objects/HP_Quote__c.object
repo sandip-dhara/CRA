@@ -1,0 +1,2649 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>cpqHPQuoteEditIntermediatePage</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Custom quote object to capture quotes from Quote IDS and to support future integration with CPQ tools</description>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>true</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>AMPID_TS__c</fullName>
+        <externalId>false</externalId>
+        <label>AMP ID</label>
+        <length>30</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Account_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>HYPERLINK(&quot;/&quot;+ Opportunity_Name__r.Account.Id ,  Opportunity_Name__r.Account.Name )</formula>
+        <label>Account Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Agreement_Term__c</fullName>
+        <externalId>false</externalId>
+        <label>Agreement Term</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>BMI_ID__c</fullName>
+        <externalId>true</externalId>
+        <label>BMI ID</label>
+        <length>20</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>BMI_Quote__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>BMI Quote</label>
+        <referenceTo>BigMachines__Quote__c</referenceTo>
+        <relationshipLabel>HP Quotes</relationshipLabel>
+        <relationshipName>HP_Quotes</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Bill_To_City__c</fullName>
+        <externalId>false</externalId>
+        <label>Bill To City</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bill_To_Country__c</fullName>
+        <externalId>false</externalId>
+        <label>Bill To Country</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bill_To_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Bill To Name</label>
+        <length>250</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bill_To_State_Province__c</fullName>
+        <externalId>false</externalId>
+        <label>Bill To State/Province</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bill_To_Street_Address_1__c</fullName>
+        <externalId>false</externalId>
+        <label>Bill To Street Address 1</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bill_To_Street_Address_2__c</fullName>
+        <externalId>false</externalId>
+        <label>Bill To Street Address 2</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bill_To_Street_Address_3__c</fullName>
+        <externalId>false</externalId>
+        <label>Bill To Street Address 3</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bill_To_Street_Address__c</fullName>
+        <externalId>false</externalId>
+        <formula>Bill_To_Street_Address_1__c &amp; BR() &amp;  Bill_To_Street_Address_2__c &amp; BR() &amp; Bill_To_Street_Address_3__c</formula>
+        <label>Bill To Street Address</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bill_To_Zip_Postal_Code__c</fullName>
+        <externalId>false</externalId>
+        <label>Bill To Zip/Postal Code</label>
+        <length>60</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Billing_Model__c</fullName>
+        <externalId>false</externalId>
+        <label>Billing Model</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Billing_Schedule__c</fullName>
+        <externalId>false</externalId>
+        <label>Billing Schedule</label>
+        <length>60</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CI_Creator__c</fullName>
+        <externalId>false</externalId>
+        <formula>Customer_Intended_Document__r.CI_Creator__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>CI Creator</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CI_Number__c</fullName>
+        <externalId>false</externalId>
+        <formula>Customer_Intended_Document__r.CI_Number_CI_URL__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>CI Number</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CI_Status__c</fullName>
+        <externalId>false</externalId>
+        <formula>Customer_Intended_Document__r.CI_Status__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>CI Status</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CI_URL__c</fullName>
+        <externalId>false</externalId>
+        <formula>Customer_Intended_Document__r.CI_URL__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>CI URL</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_Admin_Email__c</fullName>
+        <externalId>false</externalId>
+        <label>Contract Admin Email</label>
+        <length>60</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_Admin_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Contract Admin Name</label>
+        <length>35</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_Admin_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>Contract Admin Phone</label>
+        <length>16</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Contract End Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Contract_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Contract Start Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Created_DT__c</fullName>
+        <externalId>false</externalId>
+        <formula>CreatedDate</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Created DT</label>
+        <required>false</required>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Customer_Contacts__c</fullName>
+        <externalId>false</externalId>
+        <label>Customer Contacts</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Customer_Intended_Document__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Customer Intended Document</label>
+        <referenceTo>Customer_Intended_Document__c</referenceTo>
+        <relationshipLabel>HP Quotes</relationshipLabel>
+        <relationshipName>HP_Quotes</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Deal_Phase__c</fullName>
+        <externalId>false</externalId>
+        <label>Deal Phase</label>
+        <length>30</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Deal_Region__c</fullName>
+        <externalId>false</externalId>
+        <label>Deal Region (Remove)</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Discount_Amount__c</fullName>
+        <externalId>false</externalId>
+        <label>Discount Amount</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Discount_Percentage__c</fullName>
+        <externalId>false</externalId>
+        <label>Discount %</label>
+        <precision>5</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Discount__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(Discount_Amount__c == 0,0,Discount_Amount__c / ( Total__c + Discount_Amount__c ))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Discount %</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Document_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Document Type</label>
+        <length>4</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Eclipse_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>Eclipse ID</label>
+        <length>20</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Expiring_Contract_Number__c</fullName>
+        <externalId>false</externalId>
+        <label>Expiring Contract Number</label>
+        <length>10</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Functional_Location__c</fullName>
+        <externalId>false</externalId>
+        <formula>Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Functional Location</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Grand_Total__c</fullName>
+        <externalId>false</externalId>
+        <formula>Total__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Total</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Group_Contract_SW__c</fullName>
+        <externalId>false</externalId>
+        <label>Group Contract</label>
+        <length>10</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>HW_Procurement__c</fullName>
+        <externalId>false</externalId>
+        <label>HW Procurement</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Has_Expired__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(TODAY()  &gt;  Quote_End_Date__c,&quot;TRUE&quot; , &quot;FALSE&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Has Expired</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Hide_Record__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Hide Record</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Last_Modified__c</fullName>
+        <externalId>false</externalId>
+        <formula>LastModifiedDate</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Last Modified</label>
+        <required>false</required>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Last_Synced_to_Opportunity__c</fullName>
+        <externalId>false</externalId>
+        <label>Synced to Opportunity</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>List_Price__c</fullName>
+        <externalId>false</externalId>
+        <label>List Price</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Merged_Quote_Information__c</fullName>
+        <externalId>false</externalId>
+        <label>Merged Quote Information</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Monthly_Fee__c</fullName>
+        <externalId>false</externalId>
+        <label>Monthly Fee</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Multiyear_Indicator__c</fullName>
+        <externalId>false</externalId>
+        <label>Multi Year Flag</label>
+        <length>1</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Operations_Contact_Email_Address__c</fullName>
+        <externalId>false</externalId>
+        <formula>Support_Request__r.CPQ_Routing_Email__c</formula>
+        <label>Operations Contact Email Address</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Opportunity_ID__c</fullName>
+        <externalId>false</externalId>
+        <formula>Opportunity_Name__r.Opportunity_ID__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Opportunity ID</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Opportunity_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Opportunity Name</label>
+        <referenceTo>Opportunity</referenceTo>
+        <relationshipLabel>HP Quotes</relationshipLabel>
+        <relationshipName>Quotes</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>true</reparentableMasterDetail>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Opportunity_Stage__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(ISPICKVAL(Opportunity_Name__r.StageName ,&quot;06 - Won, Deploy &amp; Expand&quot;), &quot;06 - Won, Deploy &amp; Expand&quot;, IF(ISPICKVAL(Opportunity_Name__r.StageName ,&quot;HP Not Pursued&quot;), &quot;HP Not Pursued&quot;, IF(ISPICKVAL(Opportunity_Name__r.StageName ,&quot;Lost&quot;), &quot;Lost&quot;, &quot;Blank&quot;)))</formula>
+        <label>Opportunity Stage</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ordering_Contact__c</fullName>
+        <externalId>false</externalId>
+        <label>Ordering Contact</label>
+        <length>35</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Originating_Quote_System__c</fullName>
+        <externalId>false</externalId>
+        <label>Originating Quote System</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>BMI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SAP O&amp;C</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>O &amp; C</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Compass ES</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Originating_System_Quote_Creation_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Originating System Quote Creation Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Originating_System_Quote_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote ID Doc #</label>
+        <length>20</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Originating_System_Quote_Version__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Version</label>
+        <length>20</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Payment_Term__c</fullName>
+        <externalId>false</externalId>
+        <label>Payment Term</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Quote_Age__c</fullName>
+        <externalId>false</externalId>
+        <formula>TODAY() - Originating_System_Quote_Creation_Date__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Quote Age</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_Complete_DT__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Complete DT</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Quote_Configuration_Created_DT__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote/Configuration Created DT</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Quote_Country__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Country</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Description</label>
+        <length>32000</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Quote_Detail_URL__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Detail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>Quote_Detail__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( ISPICKVAL( Originating_Quote_System__c , &apos;BMI&apos;) , IF( ISBLANK(Quote_Detail_URL__c),&apos;&apos;, HYPERLINK(&quot;/apex/CPQOpenBMIDocumentURL?id=&quot;&amp;Id, LEFT(Quote_Detail_URL__c,47)+&quot;...&quot;)), Quote_Detail_URL__c)</formula>
+        <label>Quote Detail</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote End Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Quote_External_ID__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>Quote External ID</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_IDS_Hide__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Quote IDS Hide</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Quote_IDS_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote IDS ID</label>
+        <length>20</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_IDS_Version__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote IDS Version</label>
+        <length>20</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_Owner__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Owner</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_Request_Sent_Submitted_DT__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Request Sent/Submitted DT</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Quote_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Start Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Quote_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote Status</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_City__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote To City</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_Country__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote To Country</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote To Name</label>
+        <length>250</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_State_Province__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote To State/Province</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_Street_Address_1__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote To Street Address 1</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_Street_Address_2__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote To Street Address 2</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_Street_Address_3__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote To Street Address 3</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_Street_Address__c</fullName>
+        <externalId>false</externalId>
+        <formula>Quote_To_Street_Address_1__c &amp; BR() &amp; Quote_To_Street_Address_2__c &amp; BR() &amp; Quote_To_Street_Address_3__c</formula>
+        <label>Quote To Street Address</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_To_Zip_Postal_Code__c</fullName>
+        <externalId>false</externalId>
+        <label>Quote To Zip/Postal Code</label>
+        <length>60</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quote_Type__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(AND(ISPICKVAL(Originating_Quote_System__c,&quot;BMI&quot;),OR(ISBLANK(Support_Request__c),ISNULL(Support_Request__c))),&quot;Self&quot;,
+IF(AND(NOT(ISPICKVAL(Originating_Quote_System__c,&quot;BMI&quot;)),OR(ISNULL(BMI_ID__c),ISBLANK(BMI_ID__c))), &quot;Assisted&quot;,
+&quot;Hybrid&quot;))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Quote Type</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Requestor_Email__c</fullName>
+        <description>Creating new field for the workflow &quot;HP Quote-Email Notification&quot;</description>
+        <externalId>false</externalId>
+        <label>Requestor Email</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Return_to_Support_Count__c</fullName>
+        <externalId>false</externalId>
+        <label>Return to Support Count</label>
+        <summaryFilterItems>
+            <field>HP_Quote_Line_Item__c.Return_to_Support__c</field>
+            <operation>equals</operation>
+            <value>Y</value>
+        </summaryFilterItems>
+        <summaryForeignKey>HP_Quote_Line_Item__c.HP_Quote_Name__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Return_to_Support_Value1__c</fullName>
+        <externalId>false</externalId>
+        <label>Return to Support Value</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Return_to_Support__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE( TEXT( Return_to_Support_Count__c ) , &quot;0&quot;, &quot;N&quot;, &quot;Y&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Return to Support</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Route__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(Opportunity_Name__r.Route_To_Market__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Go To Market Route</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SFDC_Quote_Number__c</fullName>
+        <displayFormat>OQ-{00000000}</displayFormat>
+        <externalId>false</externalId>
+        <label>SFDC Quote Number</label>
+        <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>Sales_Org__c</fullName>
+        <externalId>false</externalId>
+        <label>Sales Org</label>
+        <length>4</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Agreement_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>SAID</label>
+        <length>12</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_City__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To City</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_Country__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To Country</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To Name</label>
+        <length>250</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_State_Province__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To State/Province</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_Street_Address_1__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To Street Address 1</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_Street_Address_2__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To Street Address 2</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_Street_Address_3__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To Street Address 3</label>
+        <length>200</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_Street_Address__c</fullName>
+        <externalId>false</externalId>
+        <formula>Ship_To_Street_Address_1__c &amp; BR() &amp; Ship_To_Street_Address_2__c &amp; BR() &amp; Ship_To_Street_Address_3__c</formula>
+        <label>Ship To Street Address</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Ship_To_Zip_Postal_Code__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To Zip/Postal Code</label>
+        <length>60</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Shipping_Handling__c</fullName>
+        <externalId>false</externalId>
+        <label>Shipping &amp; Handling</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Special_Pricing_Approval_DT__c</fullName>
+        <externalId>false</externalId>
+        <label>Special Pricing Approval DT</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Special_Pricing_Escalated_DT__c</fullName>
+        <externalId>false</externalId>
+        <label>Special Pricing Escalated DT</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Special_Pricing_In_Progress_DT__c</fullName>
+        <externalId>false</externalId>
+        <label>Special Pricing In Progress DT</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Sub_Total__c</fullName>
+        <externalId>false</externalId>
+        <label>Sub Total</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Support_Request__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Support Request</label>
+        <referenceTo>Support_Request__c</referenceTo>
+        <relationshipName>Quotes1</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Synced_To_Opportunity__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Synced</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Tax__c</fullName>
+        <externalId>false</externalId>
+        <label>Tax</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Term_in_Months__c</fullName>
+        <externalId>false</externalId>
+        <label>Term in Months</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Total_Cost__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Cost</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Total_Pricing_of_Previous_Contract__c</fullName>
+        <externalId>false</externalId>
+        <label>Total Pricing of Previous Contract</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Total__c</fullName>
+        <externalId>false</externalId>
+        <label>Total</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <label>HP Quote</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Opportunity_Name__c</columns>
+        <columns>Originating_Quote_System__c</columns>
+        <columns>Originating_System_Quote_ID__c</columns>
+        <columns>Originating_System_Quote_Version__c</columns>
+        <columns>Quote_Start_Date__c</columns>
+        <columns>Quote_End_Date__c</columns>
+        <columns>Quote_Status__c</columns>
+        <columns>Synced_To_Opportunity__c</columns>
+        <columns>Last_Synced_to_Opportunity__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+        <language>en_US</language>
+    </listViews>
+    <listViews>
+        <fullName>All1</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>HP Quote Name</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>HP Quotes</pluralLabel>
+    <recordTypeTrackFeedHistory>false</recordTypeTrackFeedHistory>
+    <recordTypes>
+        <fullName>BMI_Quote</fullName>
+        <active>true</active>
+        <description>Displays detailed quote information when Quote is in BMI Quote Completed status</description>
+        <label>BMI Quote</label>
+        <picklistValues>
+            <picklist>Agreement_Term__c</picklist>
+            <values>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Billing_Model__c</picklist>
+            <values>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HW_Procurement__c</picklist>
+            <values>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Originating_Quote_System__c</picklist>
+            <values>
+                <fullName>BMI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payment_Term__c</picklist>
+            <values>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Compass_ES</fullName>
+        <active>true</active>
+        <description>Displays detailed quote information when Quote is from SAP Compass and Quote status should be completed.</description>
+        <label>Compass ES</label>
+        <picklistValues>
+            <picklist>Agreement_Term__c</picklist>
+            <values>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Billing_Model__c</picklist>
+            <values>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HW_Procurement__c</picklist>
+            <values>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Originating_Quote_System__c</picklist>
+            <values>
+                <fullName>BMI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SAP O%26C</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payment_Term__c</picklist>
+            <values>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Eclipse</fullName>
+        <active>true</active>
+        <description>Displays detailed quote information when Quote is from Eclipse Compass and  Quote status should be completed.</description>
+        <label>Eclipse</label>
+        <picklistValues>
+            <picklist>Agreement_Term__c</picklist>
+            <values>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Billing_Model__c</picklist>
+            <values>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HW_Procurement__c</picklist>
+            <values>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Originating_Quote_System__c</picklist>
+            <values>
+                <fullName>BMI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SAP O%26C</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payment_Term__c</picklist>
+            <values>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Quote_Header</fullName>
+        <active>true</active>
+        <description>Displays basic quote header information</description>
+        <label>Quote Header</label>
+        <picklistValues>
+            <picklist>Agreement_Term__c</picklist>
+            <values>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Billing_Model__c</picklist>
+            <values>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HW_Procurement__c</picklist>
+            <values>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Originating_Quote_System__c</picklist>
+            <values>
+                <fullName>BMI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payment_Term__c</picklist>
+            <values>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Quote_Summary</fullName>
+        <active>true</active>
+        <description>Displays detailed quote information when Quote is in Completed status</description>
+        <label>Quote Summary</label>
+        <picklistValues>
+            <picklist>Agreement_Term__c</picklist>
+            <values>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Billing_Model__c</picklist>
+            <values>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HW_Procurement__c</picklist>
+            <values>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Originating_Quote_System__c</picklist>
+            <values>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payment_Term__c</picklist>
+            <values>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>SAP_Compass</fullName>
+        <active>true</active>
+        <description>Displays detailed quote information when Quote is from SAP O &amp; C and  Quote status should be completed.</description>
+        <label>O &amp; C</label>
+        <picklistValues>
+            <picklist>Agreement_Term__c</picklist>
+            <values>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Billing_Model__c</picklist>
+            <values>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HW_Procurement__c</picklist>
+            <values>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Originating_Quote_System__c</picklist>
+            <values>
+                <fullName>BMI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SAP O%26C</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payment_Term__c</picklist>
+            <values>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>SAP_O_C</fullName>
+        <active>true</active>
+        <description>Displays detailed quote information when Quote is from SAP O&amp;C and Quote status should be completed.</description>
+        <label>SAP O&amp;C</label>
+        <picklistValues>
+            <picklist>Agreement_Term__c</picklist>
+            <values>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Billing_Model__c</picklist>
+            <values>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HW_Procurement__c</picklist>
+            <values>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Originating_Quote_System__c</picklist>
+            <values>
+                <fullName>BMI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SAP O%26C</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payment_Term__c</picklist>
+            <values>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Watson_CCA</fullName>
+        <active>true</active>
+        <description>Displays detailed quote information when Quote is from Watson or CCA or BMI and  Quote status should be completed.</description>
+        <label>Watson &amp; CCA</label>
+        <picklistValues>
+            <picklist>Agreement_Term__c</picklist>
+            <values>
+                <fullName>36 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>48 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>60 Months</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Evergreen</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Billing_Model__c</picklist>
+            <values>
+                <fullName>Credit Card</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly Service</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase Order</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HW_Procurement__c</picklist>
+            <values>
+                <fullName>Lease</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Purchase</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Originating_Quote_System__c</picklist>
+            <values>
+                <fullName>BMI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Customer PO</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Eclipse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Global Opportunity ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mixed BG Opportunity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Discount</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OnlinePriceBook ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Order Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PreSalesSupport - RMX</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quicksilver DealONE Id</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quote Number</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SAP O%26C</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Smartquote ID</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Watson</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ePrime</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Payment_Term__c</picklist>
+            <values>
+                <fullName>Custom</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Net 30</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts>
+        <excludedStandardButtons>Accept</excludedStandardButtons>
+        <excludedStandardButtons>New</excludedStandardButtons>
+        <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
+        <lookupDialogsAdditionalFields>Opportunity_Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Quote_Start_Date__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Quote_End_Date__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Quote_Status__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Grand_Total__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Synced_To_Opportunity__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Last_Synced_to_Opportunity__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Last_Modified__c</lookupDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Opportunity_Name__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Quote_Start_Date__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Quote_End_Date__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Quote_Status__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Grand_Total__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Synced_To_Opportunity__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Last_Synced_to_Opportunity__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Last_Modified__c</lookupPhoneDialogsAdditionalFields>
+        <searchResultsAdditionalFields>Opportunity_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Originating_Quote_System__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Originating_System_Quote_ID__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Originating_System_Quote_Version__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Quote_Start_Date__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Quote_End_Date__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Quote_Status__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Synced_To_Opportunity__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Prevent_to_change_Opportunity_Id</fullName>
+        <active>false</active>
+        <errorConditionFormula>AND(NOT($Setup.Global_Config__c.CPQ_Mute_Validation_Rule__c) ,
+ISCHANGED(Opportunity_Name__c ) ||  ISCHANGED( Name ),(NOT(ISPICKVAL(Originating_Quote_System__c,&apos;BMI&apos;))))</errorConditionFormula>
+        <errorMessage>You don&apos;t have access to change the Name and Opportunity.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Clone</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Clone</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>/apex/BigMachines__QuoteEdit?id={!HP_Quote__c.BMI_QuoteId__c}&amp;oppId={!HP_Quote__c.Opportunity_NameId__c}&amp;clone=true</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Edit</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Edit</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT (&quot;/soap/ajax/25.0/connection.js&quot;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/10.0/apex.js&quot;)} 
+var queryRecords = sforce.connection.query(&quot;Select id from BigMachines__Quote__c where Name=&apos;{!HP_Quote__c.BMI_ID__c}&apos;&quot;);
+var BMIId = queryRecords.getArray(&quot;records&quot;); 
+window.location.href = &apos;/apex/BigMachines__QuoteEdit?retURL=%2F{!HP_Quote__c.Id}&amp;scontrolCaching=1&amp;sfdc.override=1&amp;id=&apos;+BMIId[0].Id;</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Edit_O_C</fullName>
+        <availability>online</availability>
+        <description>Button is for O&amp;C Recordtype</description>
+        <displayType>button</displayType>
+        <linkType>url</linkType>
+        <masterLabel>Edit</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <url>/apex/CPQSAPSelectionPage?pageMode=EditQuote&amp;I_Quote={!HP_Quote__c.Originating_System_Quote_ID__c}&amp;I_ACC_NAME={!Account.Name}&amp;I_OPP_ID={!Opportunity.Opportunity_ID__c}&amp;I_OPP_NAME={!HP_Quote__c.Opportunity_Name__c}&amp;i_rpl_status={!Account.RPL_status__c}
+&amp;I_COUNTRY={!Account.World_Region1__c}&amp;Mode=2&amp;iframe=X</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Hide</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Hide</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>{!REQUIRESCRIPT (&quot;/soap/ajax/25.0/connection.js&quot;)}
+
+var records = {!GETRECORDIDS($ObjectType.HP_Quote__c)};
+var newRecords = [];
+
+if (records[0] == null)
+{
+alert(&quot;Please select at least one Quote record to perform the action&quot;)
+}
+else
+{
+for (var n=0; n&lt;records.length; n++)
+{
+var c = new sforce.SObject(&quot;HP_Quote__c&quot;);
+c.id = records[n];
+c.Hide_Record__c = 1;
+newRecords.push(c);
+}
+result = sforce.connection.update(newRecords);
+
+window.location.reload();
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Request_Assistance</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Request Assistance</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>/apex/CPQBMIwithRequestFormintermediatePage?OpptyId={!HP_Quote__c.Opportunity_NameId__c}&amp;BMIId={!HP_Quote__c.BMI_ID__c}&amp;Type=RequestAssistance</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Request_New_Quote</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>url</linkType>
+        <masterLabel>Request New Quote</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>false</requireRowSelection>
+        <url>/{!$ObjectType.Support_Request__c}/e?CF00NZ0000000ITqC={!Opportunity.Name}&amp;CF00NZ0000000ITqC_lkid={!Opportunity.Id}&amp;ent=01IZ00000000KTP&amp;retURL={!Opportunity.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Request_New_Special_Pricing</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Request New Special Pricing</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT (&quot;/soap/ajax/25.0/connection.js&quot;)} 
+{!REQUIRESCRIPT(&quot;/soap/ajax/10.0/apex.js&quot;)} 
+
+if(&apos;{!HP_Quote__c.Support_RequestId__c}&apos; != null &amp;&amp; &apos;{!HP_Quote__c.Support_RequestId__c}&apos; != &apos;&apos;){
+	var result = sforce.apex.execute(&quot;CPQCloneRequest&quot;,&quot;CPQCloneRequestForRevision&quot;, {requestId:&quot;{!HP_Quote__c.Support_RequestId__c}&quot;,quoteId:&quot;{!HP_Quote__c.Id}&quot;,clickedFrom:&quot;Special Pricing&quot;}); 
+	var CPQCloneResult = result.toString(); 
+	if (CPQCloneResult.indexOf(&quot;apex&quot;) &gt;= 0){ 
+	window.location.href = CPQCloneResult; 
+	} 
+	else{ 
+		alert(CPQCloneResult); 
+	}
+}
+else{
+	alert(&apos;No Support Request for this quote&apos;);
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Request_Pricing_Escalation</fullName>
+        <availability>online</availability>
+        <description>This button is used in HP Quote Detail page to create the pricing escalation request.</description>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Request Pricing Escalation</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT (&quot;/soap/ajax/25.0/connection.js&quot;)} 
+{!REQUIRESCRIPT(&quot;/soap/ajax/10.0/apex.js&quot;)} 
+
+if(&apos;{!User.Business_Group__c}&apos; != &apos;PPS&apos; &amp;&amp; &apos;{!User.Business_Group__c}&apos; != &apos;PSG&apos; &amp;&amp; &apos;{!User.Business_Group__c}&apos; != &apos;IPG&apos;){
+	alert(&apos;The Pricing Escalation form is only used by PPS&apos;);
+}
+else{
+	if(&apos;{!HP_Quote__c.Support_RequestId__c}&apos; != null &amp;&amp; &apos;{!HP_Quote__c.Support_RequestId__c}&apos; != &apos;&apos;){
+		var result = sforce.apex.execute(&quot;CPQCloneRequest&quot;,&quot;CPQCloneRequestForRevision&quot;, {requestId:&quot;{!HP_Quote__c.Support_RequestId__c}&quot;,quoteId:&quot;{!HP_Quote__c.Id}&quot;,clickedFrom:&quot;Pricing Escalation&quot;}); 
+		var CPQCloneResult = result.toString(); 
+		if (CPQCloneResult.indexOf(&quot;apex&quot;) &gt;= 0){ 
+		window.location.href = CPQCloneResult; 
+		} 
+		else{ 
+			alert(CPQCloneResult); 
+		}
+	}
+	else{
+		alert(&apos;No Support Request for this quote&apos;);
+	}
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Request_Revision</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Request Revision</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT (&quot;/soap/ajax/25.0/connection.js&quot;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/10.0/apex.js&quot;)} 
+
+if(&apos;{!HP_Quote__c.Support_RequestId__c}&apos; != null &amp;&amp; &apos;{!HP_Quote__c.Support_RequestId__c}&apos; != &apos;&apos;){
+	var result = sforce.apex.execute(&quot;CPQCloneRequest&quot;,&quot;CPQCloneRequestForRevision&quot;, {requestId:&quot;{!HP_Quote__c.Support_RequestId__c}&quot;,quoteId:&quot;{!HP_Quote__c.Id}&quot;});
+	var CPQCloneResult = result.toString();
+	if (CPQCloneResult.indexOf(&quot;apex&quot;) &gt;= 0){
+		window.location.href = CPQCloneResult;
+	}
+	else{
+		alert(CPQCloneResult);
+	}
+}
+else{
+	alert(&apos;No Support Request for this quote&apos;);
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Show_All</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Show All</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>false</requireRowSelection>
+        <url>{!REQUIRESCRIPT (&quot;/soap/ajax/25.0/connection.js&quot;)}
+
+var queryRecord = sforce.connection.query(&quot;Select id from HP_Quote__c where Hide_Record__c = true&quot;);
+var newRecords = [];
+var records = queryRecord.getArray(&quot;records&quot;);
+
+{
+for (var n=0; n&lt;records.length; n++)
+{
+var c = new sforce.SObject(&quot;HP_Quote__c&quot;);
+c.id = records[n].Id;
+c.Hide_Record__c = 0;
+newRecords.push(c);
+}
+result = sforce.connection.update(newRecords);
+window.location.reload();
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Show_Previous_Versions</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Show Previous Versions</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>{!REQUIRESCRIPT (&quot;/soap/ajax/26.0/connection.js&quot;)}
+
+var records = {!GETRECORDIDS($ObjectType.HP_Quote__c)};
+
+if ((records[0] == null) || (records.length &gt; 1))
+{
+alert(&quot;Please select one Quote record to perform the action&quot;)
+}
+else
+{
+
+alert(&quot;No previous version available&quot;)
+                                       
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Sync</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Sync</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>{!REQUIRESCRIPT (&quot;/soap/ajax/25.0/connection.js&quot;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/10.0/apex.js&quot;)} 
+
+var selectedRecords = {!GETRECORDIDS($ObjectType.HP_Quote__c)};
+var queryRecords = sforce.connection.query(&quot;Select id from HP_Quote__c where Synced_To_Opportunity__c = true and Opportunity_Name__c = &apos;{!Opportunity.Id}&apos;&quot;);
+var syncRecords = queryRecords.getArray(&quot;records&quot;); 
+var newRecords = [];
+var oldRecords = [];
+if (selectedRecords[0] == null)
+{
+	if (confirm(&apos;No quotes are selected. Clicking OK will remove all opportunity products &amp; services line items which are not marked to retain. Do you want to continue?&apos;))
+	{
+		for (var n=0; n&lt;syncRecords.length; n++) 
+		{ 
+			var c = new sforce.SObject(&quot;HP_Quote__c&quot;); 
+			c.id = syncRecords[n].Id; 
+			c.Synced_To_Opportunity__c = 0;
+			c.Last_Synced_to_Opportunity__c =null;
+			oldRecords.push(c); 
+		} 
+		result = sforce.connection.update(oldRecords);
+		sforce.apex.execute(&quot;syncQuoteLineItemWithOpportunityLineItem&quot;,&quot;syncQuoteLineItemWithOpptyLineItem&quot;, {OpportunityId:&quot;{!Opportunity.Id}&quot;,runQuoteLineItem:&quot;False&quot;,opptyISOCode:&quot;{!Opportunity.CurrencyIsoCode}&quot;});
+		
+		window.location.reload();
+	}
+}
+
+else
+{
+	//Check selected quote status
+	var q = &quot;Select id,Quote_Status__c,Synced_To_Opportunity__c from HP_Quote__c where Id In &quot; + &quot;(&apos;&quot; + selectedRecords.toString().replace(/,/g, &quot;&apos;,&apos;&quot;) + &quot;&apos;)&quot;;
+	var selectedQueryRecords = sforce.connection.query(q);
+	var selectedQuoteStatus = selectedQueryRecords.getArray(&quot;records&quot;);
+	var allStatusCompleted = true;
+	for(var i=0;i&lt;selectedQuoteStatus.length;i++)
+	{	
+		if(selectedQuoteStatus[i].Quote_Status__c != &apos;Quote Complete&apos;)
+			allStatusCompleted = false;
+	}
+	if(allStatusCompleted == false){
+		alert(&apos;One or more selected quotes are not completed and cannot be synced with the opportunity. Please select completed quotes for syncing&apos;);
+	}
+	else{
+		//uncheck all quotes marked for sync
+		for (var n=0; n&lt;syncRecords.length; n++) 
+		{ 
+			var c = new sforce.SObject(&quot;HP_Quote__c&quot;); 
+			c.id = syncRecords[n].Id; 
+			c.Synced_To_Opportunity__c = 0;
+			c.Last_Synced_to_Opportunity__c =null;
+			oldRecords.push(c); 
+		} 
+		result = sforce.connection.update(oldRecords);
+		
+		//check all quotes marked for sync
+		for (var n=0; n&lt;selectedRecords.length; n++)
+		{
+			var c = new sforce.SObject(&quot;HP_Quote__c&quot;);
+			c.id = selectedRecords[n];
+			c.Synced_To_Opportunity__c = 1;
+			var d =new Date(); 
+			c.Last_Synced_to_Opportunity__c = d.toJSON();
+			newRecords.push(c);
+		}
+		result = sforce.connection.update(newRecords);
+		sforce.apex.execute(&quot;syncQuoteLineItemWithOpportunityLineItem&quot;,&quot;syncQuoteLineItemWithOpptyLineItem&quot;, {OpportunityId:&quot;{!Opportunity.Id}&quot;,runQuoteLineItem:&quot;True&quot;,opptyISOCode:&quot;{!Opportunity.CurrencyIsoCode}&quot;});
+		window.location.reload();
+	}
+
+}</url>
+    </webLinks>
+</CustomObject>

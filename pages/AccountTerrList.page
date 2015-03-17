@@ -1,0 +1,31 @@
+<apex:page controller="AcctTerrListController" tabStyle="Account" readOnly="True">
+
+<apex:pageBlock >   
+   <apex:pageBlockButtons location="top" >
+   <apex:outputPanel id="myButtons">
+   <apex:form >
+        <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>
+        <apex:commandButton action="{!previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>        
+        <apex:commandButton action="{!next}" title="Next" value=">" disabled="{!disableNext}" reRender="myPanel,myButtons"/>
+        <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="myPanel,myButtons"/>        
+   </apex:form>
+   </apex:outputPanel>
+   </apex:pageBlockButtons>
+
+<apex:pageBlockSection columns="1" title="Accounts (Total  Assigned to Your Territories: {!total_size})" collapsible="false">    
+  <apex:outputPanel id="myPanel">
+        <apex:pageBlockTable value="{!accountAssignment}" var="a">
+             <chatter:follow entityId="{!a.Id}"/>
+            <apex:column value="{!a.Account__c}"/>
+            <apex:column value="{!a.Sales_Territory__r.MyComp_Sales_Territory_Name__c}"/>
+            <apex:column value="{!a.Account__r.AMID_L2__c}"/>
+            <apex:column value="{!a.Account__r.ShippingCity}"/>
+            <apex:column value="{!a.Account__r.ShippingState}"/>
+            <apex:column value="{!a.Account__r.ShippingCountry}"/>
+            <apex:column value="{!a.Account__r.MDCP_Business_Relationship__c}"/>
+            <apex:facet name="footer">Showing Page # {!pageNumber} of {!totalPages}</apex:facet>
+        </apex:pageBlockTable>
+        </apex:outputPanel>
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+</apex:page>

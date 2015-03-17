@@ -1,0 +1,100 @@
+<apex:page controller="OAE_Skills_StartCtlr" tabstyle="User">
+<apex:sectionheader title="Skill Parameter Selection Wizard" subTitle="{!targetObjectType} Object"/>
+  <apex:form >
+    <apex:pageBlock tabstyle="Contact" mode="maindetail">
+      <apex:pageBlockSection collapsible="false" />
+    </apex:pageBlock>
+    <apex:pageBlock tabstyle="Contact">
+      <apex:pageBlockSection title="Object Options In Use" collapsible="false" />
+	  <apex:outputText rendered="{!!showObj}">No object options in use</apex:outputText>
+      <apex:dataTable value="{!objParams}" var="theObj" id="tblObj" cellpadding="2" rendered="{!showObj}">
+        <apex:column width="120">
+          <apex:facet name="header">Object</apex:facet>
+          <apex:outputText value="{!theObj.sOne}"/>
+        </apex:column>
+        <apex:column width="160">
+          <apex:facet name="header">Field</apex:facet>
+          <apex:outputText value="{!theObj.sTwo}"/>
+        </apex:column>
+        <apex:column width="160">
+          <apex:facet name="header">Type</apex:facet>
+          <apex:outputText value="{!theObj.sThree}"/>
+        </apex:column>
+        <apex:column width="160">
+          <apex:facet name="header">Path</apex:facet>
+          <apex:outputText value="{!theObj.sFour}"/>
+        </apex:column>
+        <apex:column width="350">
+          <apex:facet name="header">Values</apex:facet>
+          <apex:outputText value="{!theObj.sFive}"/>
+        </apex:column>
+      </apex:dataTable>
+      <apex:pageBlockSection title="Custom Options" collapsible="false" />
+	  <apex:outputText rendered="{!!showCust}">No custom options in use</apex:outputText>
+      <apex:dataTable value="{!custParams}" var="custF" id="tblCust" cellpadding="2" rendered="{!showCust}">
+        <apex:column width="200">
+          <apex:facet name="header">Object</apex:facet>
+          <apex:outputText value="{!custF.sOne}"/>
+        </apex:column>
+        <apex:column width="150">
+          <apex:facet name="header">Label</apex:facet>
+          <apex:outputText value="{!custF.sTwo}"/>
+        </apex:column>
+        <apex:column width="350">
+          <apex:facet name="header">Values</apex:facet>
+          <apex:outputText value="{!custF.sThree}"/>
+        </apex:column>
+      </apex:dataTable>
+      <apex:pageBlockSection title="UserData Options In Use" collapsible="false" />
+	  <apex:outputText rendered="{!!showUser}">No UserData options in use</apex:outputText>
+      <apex:dataTable value="{!userParams}" var="userF" id="tblUser" cellpadding="2" rendered="{!showUser}">
+        <apex:column width="200">
+          <apex:facet name="header">Object</apex:facet>
+          <apex:outputText value="{!userF.sOne}"/>
+        </apex:column>
+        <apex:column width="200">
+          <apex:facet name="header">Field</apex:facet>
+          <apex:outputText value="{!userF.sTwo}"/>
+        </apex:column>
+        <apex:column width="150">
+          <apex:facet name="header">Type</apex:facet>
+          <apex:outputText value="{!userF.sThree}"/>
+        </apex:column>
+        <apex:column width="200">
+          <apex:facet name="header">Path</apex:facet>
+          <apex:outputText value="{!userF.sFour}"/>
+        </apex:column>
+        <apex:column width="350">
+          <apex:facet name="header">Values</apex:facet>
+          <apex:outputText value="{!userF.sFive}"/>
+        </apex:column>
+      </apex:dataTable>
+      <apex:pageBlockSection title="Schedule Options" collapsible="false" />
+	  <apex:outputText rendered="{!!showSked}">No schedule options in use</apex:outputText>
+      <apex:dataTable value="{!skedParams}" var="skedF" id="tblSked" cellpadding="2"  rendered="{!showSked}">
+        <apex:column width="200">
+          <apex:facet name="header">Object</apex:facet>
+          <apex:outputText value="{!skedF.sOne}"/>
+        </apex:column>
+        <apex:column width="200">
+          <apex:facet name="header">Field</apex:facet>
+          <apex:outputText value="{!skedF.sTwo}"/>
+        </apex:column>
+        <apex:column width="150">
+          <apex:facet name="header">Type</apex:facet>
+          <apex:outputText value="{!skedF.sThree}"/>
+        </apex:column>
+        <apex:column width="350">
+          <apex:facet name="header">Values</apex:facet>
+          <apex:outputText value="{!skedF.sFive}"/>
+        </apex:column>
+      </apex:dataTable>
+      <apex:pageBlockButtons location="bottom">
+        <apex:commandButton action="{!addObj}" value="Manage Object Options"/>
+        <apex:commandButton action="{!addCust}" value="Manage Custom Options"/>
+        <apex:commandButton action="{!addUser}" value="Manage UserData Options"/>
+        <apex:commandButton action="{!addSked}" value="Manage Schedule Options"/>
+      </apex:pageBlockButtons>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

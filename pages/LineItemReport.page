@@ -1,0 +1,128 @@
+<apex:page controller="Lineitemreportcontroller" showHeader="false" standardStylesheets="true">
+<style>
+
+.coltxt {
+text-align:left;
+}
+
+.colnum {
+text-align:right;
+    background-color:#DDDDDD;
+
+}
+
+.hdr {
+font-style:bold;
+    background-color:#66CCFF;
+}
+.offheader {
+    font-size: 12px;
+    border-style:solid;
+    border-width:thin;
+    frame-width:thin;
+}
+
+.headerRow .headerclass{text-align: right;}
+.headerRow .headerclassnew{text-align: left;}
+
+
+.body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #EAEAEA;
+    border-left: 1px solid #EAEAEA;
+    border-radius: 4px 4px 4px 4px;
+    border-right: 1px solid #EAEAEA;
+}
+
+</style>
+
+
+
+<apex:pageBlock >
+<apex:outputPanel style="background-color:#FFFFFF">
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px;">Opportunity Product Summarized by BG/GBU</h1>
+<hr size="1"></hr>
+<br />
+            <apex:pageBlockTable value="{!opportunitydetailswrapper}" var="oppvar" >
+            <apex:column HeaderValue="Opportunity Name" value="{!oppvar.opportunityname}" style="background-color:#FFFFFF"/>
+            <apex:column HeaderValue="Opportunity Id" value="{!oppvar.opportunityid}" style="background-color:#FFFFFF;text-align:left" headerclass="headerclassnew" />
+            <apex:column HeaderValue="Account Name" value="{!oppvar.accountname}" style="background-color:#FFFFFF;text-align:left" headerclass="headerclassnew"/>
+            <apex:column HeaderValue="Total Opportunity Value"  style="background-color:#FFFFFF;text-align:right" headerclass="headerclass">
+                <apex:outputText value="{!opportunitycurrencycode} {0,number,###,###,###,###.00} " style="text-align:left" > 
+                <apex:param value="{!oppvar.totaloppvalue}"/> 
+                </apex:outputText>
+                <apex:outputText value="({!usercurrencycode} {0,number,###,###,###,###.00})" style="text-align:right" rendered="{!if((opportunitycurrencycode!=usercurrencycode),true,false)}"> 
+                <apex:param value="{!oppvar.totaluseroppvalue}"/> 
+                </apex:outputText>
+                
+            </apex:column> 
+            <apex:column HeaderValue="Sales Stage" value="{!oppvar.salesstage}" style="background-color:#FFFFFF;text-align:left" headerclass="headerclassnew"/>
+            </apex:pageBlockTable>
+     </apex:outputPanel>       
+</apex:pageBlock>
+
+<apex:pageBlock >
+                    
+       <apex:pageBlockTable value="{!opplineitemwrapperlist}" var="opplineitem">
+            <apex:column headerValue="Business Group" value="{!opplineitem.businessgroup}"  style="{!if((opplineitem.businessgroup!=' '),'background-color:#cce0ff','')}"/>                                
+            <apex:column headerValue="Global Business Unit" value="{!opplineitem.globalbunit}" headerclass="headerclassnew"  style="{!if((opplineitem.globalbunit==' '),'background-color:#cce0ff;text-align:left','text-align:left')}"/>
+            
+   <apex:column headerValue="Value" headerclass="headerclass"  style="{!if((opplineitem.globalbunit==' '),'background-color:#cce0ff;text-align:right','text-align:right')}">
+            
+            <apex:outputText value="{!opplineitem.oppcurrencyisocodebg} {0,number,###,###,###,###.00} " style="text-align:right" > 
+                <apex:param value="{!opplineitem.totalcurrency}"/> 
+                </apex:outputText>
+          <apex:outputText value=" {!opplineitem.usercurrencycodebg} {0, number,###,###,###,###.00} {!opplineitem.bgconcatenator}" style="text-align:right" rendered="{!if((opportunitycurrencycode!=usercurrencycode),true,false)}"> 
+                <apex:param value="{!opplineitem.totalusercurrency}"/>                
+                </apex:outputText>
+             
+              <apex:outputText value="{!opplineitem.oppucurrencyisocodegbu}  {0,number,###,###,###,###.00} " style="text-align:right" > 
+                <apex:param value="{!opplineitem.opportunitycurrency}" /> 
+                </apex:outputText>
+               <apex:outputText value="{!opplineitem.usercurrencycodegbu} {0, number,###,###,###,###.00}  {!opplineitem.gbuconcatenator}" rendered="{!if((opportunitycurrencycode!=usercurrencycode),true,false)}"> 
+                <apex:param value="{!opplineitem.usercurrency}"/> 
+                </apex:outputText> 
+            
+             </apex:column>
+             <apex:column headerValue="FFYR" headerclass="headerclass" style="{!if((opplineitem.businessgroup!=' '),'background-color:#cce0ff;text-align:right','text-align:right')}">
+              <apex:outputText value="{!opplineitem.oppcurrencyisocodebg} {0,number,###,###,###,###.00} " style="text-align:right" rendered="{!if(opplineitem.ffyrbg != null,true,false)}"> 
+               <apex:param value="{!opplineitem.ffyrbg}"/> 
+              </apex:outputText>
+               <apex:outputText value=" {!opplineitem.usercurrencycodebg} {0, number,###,###,###,###.00} {!opplineitem.bgconcatenator}" style="text-align:right" rendered="{!if((opplineitem.ffyrbg != null)&&(opportunitycurrencycode!=usercurrencycode),true,false)}"> 
+                 <apex:param value="{!opplineitem.ffyrusercurrencybg}"/>                
+               </apex:outputText>
+               
+               <apex:outputText value="{!opplineitem.oppucurrencyisocodegbu}  {0,number,###,###,###,###.00} " rendered="{!if((opplineitem.ffyrgbu != null),true,false)}" style="text-align:right" > 
+                <apex:param value="{!opplineitem.ffyrgbu}" /> 
+                </apex:outputText>
+               <apex:outputText value="{!opplineitem.usercurrencycodegbu} {0, number,###,###,###,###.00}  {!opplineitem.gbuconcatenator}" rendered="{!if(((opplineitem.ffyrgbu != null)&&(opportunitycurrencycode!=usercurrencycode)),true,false)}"> 
+                <apex:param value="{!opplineitem.ffyrusercurrencygbu}"/> 
+                </apex:outputText> 
+
+             </apex:column>
+            
+             
+             <apex:column headerValue="Product Magin" headerclass="headerclass" style="{!if((opplineitem.businessgroup!=' '),'background-color:#cce0ff;text-align:right','text-align:right')}">
+              <apex:outputText value="{!opplineitem.oppcurrencyisocodebg} {0,number,###,###,###,###.00} " style="text-align:right" rendered="{!if((opplineitem.pmbg != null),true,false)}"> 
+               <apex:param value="{!opplineitem.pmbg}"/> 
+              </apex:outputText>
+               <apex:outputText value=" {!opplineitem.usercurrencycodebg} {0, number,###,###,###,###.00} {!opplineitem.bgconcatenator}" style="text-align:right" rendered="{!if((opplineitem.pmbg != null)&&(opportunitycurrencycode!=usercurrencycode),true,false)}"> 
+                 <apex:param value="{!opplineitem.pmusercurrencybg}"/>                
+               </apex:outputText>
+               
+               <apex:outputText value="{!opplineitem.oppucurrencyisocodegbu}  {0,number,###,###,###,###.00} " rendered="{!if(opplineitem.pmgbu!=null,true,false)}" style="text-align:right" > 
+                <apex:param value="{!opplineitem.pmgbu}" /> 
+                </apex:outputText>
+               <apex:outputText value="{!opplineitem.usercurrencycodegbu} {0, number,###,###,###,###.00}  {!opplineitem.gbuconcatenator}" rendered="{!if((opplineitem.pmgbu != null)&&(opportunitycurrencycode!=usercurrencycode),true,false)}"> 
+                <apex:param value="{!opplineitem.pmusercurrencygbu}"/> 
+                </apex:outputText> 
+
+             </apex:column>
+             
+            
+           
+        </apex:pageBlockTable>
+
+</apex:pageBlock>
+
+</apex:page>

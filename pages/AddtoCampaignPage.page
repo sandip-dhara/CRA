@@ -1,0 +1,51 @@
+<!-- 
+/**********************************************************
+* Page Name: AddtoCampaignPage
+* Author: HP
+* Date: 13-SEP-2012 
+* Requirement # Request Id: 
+* Description: VF page for Custom Campaign Influence
+**********************************************************/
+-->
+
+<apex:page standardController="Lead" extensions="AddtoCampaignController" recordSetVar="LeadsRecord" id="page">
+    <!-- Form to add products on lead -->
+    <apex:form id="form">
+        <apex:sectionHeader title="Edit Campaign Influence"/>
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock title="Edit Campaign Influence" id="pageBlock">
+            <!-- Command buttons to perform actions -->
+            <table>
+            <td></td>
+            <td></td>            
+               <td> <apex:pageBlockButtons location="bottom" >
+                <b><apex:commandButton value="Add to Campaign" action="{!AddToCampaign}" /></b>
+                <b><apex:commandButton value="Cancel" action="{!Cancel}"/></b>
+               </apex:pageBlockButtons>
+               </td>
+             </table>   
+            <apex:pageBlockSection collapsible="false" columns="1" id="pageBlockSection" >
+            
+                <br/><apex:pageBlockSectionItem id="pageBlockSectionItem">
+                    <apex:outputLabel value="Campaign: " />
+                    <apex:inputField value="{!Lead.Campaign__c}" id="camp" onchange="LeadUpd" required="true"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:actionFunction action="{!Save}" name="LeadUpd"/>               
+            </apex:pageBlockSection>                        
+        </apex:pageBlock>    
+    </apex:form>
+    
+    <!-- JavaScript -->
+    <script>
+        window.onload = function(){
+            var campaignId = 'page:form:pageBlock:pageBlockSection:pageBlockSectionItem:camp';
+            var lookupId = campaignId + '_lkwgt';
+            var lookupComp = document.getElementById(lookupId);   
+            /* Setting lookup url*/
+            if (lookupComp != null) {
+                lookupComp.href = "javascript: openLookup('/apex/CampaignLookupPage?lkfm=page%3Afrm&lknm="+campaignId+"&lktp=' + getElementByIdCS('"+campaignId+"_lktp').value,900,'1','&lksrch=' + escapeUTF(getElementByIdCS('"+campaignId +"').value.substring(0, 80)))";    
+            }           
+        }         
+    </script>
+    
+</apex:page>

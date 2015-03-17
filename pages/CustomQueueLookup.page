@@ -1,0 +1,34 @@
+<!--*****************************************
+Author: Venkatesh S
+Date: 29-03-2013
+Capability: OM Deal Governance
+Description:  Page to list Queues related to Approval Object.
+
+*****************************************-->
+
+<apex:page controller="ApprovalQueueListing" showHeader="False" sidebar="False" action="{!initialize}" id="Queuelist">
+    <apex:form id="QueueListFrom">
+        <apex:pageblock title="Queue List"  id="QueueListPB">
+            <apex:pageblocktable value="{!QueueList}" var="List">
+                <apex:column headervalue="Queue Name">
+                <a onclick="selectQueue('{!List.Queue.Id}', '{!List.Queue.Name}')">{!List.Queue.Name}</a>
+                </apex:column>
+                <apex:column headervalue="Queue Id" value="{!List.Queue.Id}"/>
+                <apex:column headervalue="Queue Type" value="{!List.SObjectType}"/>
+            </apex:pageblocktable>
+            <apex:inputhidden value="{!QueueId}" Id="QueueId"/>
+            <apex:inputhidden value="{!ApproverId}" Id="ApproverId"/>
+         </apex:pageblock>
+        
+    </apex:form>
+<script>
+function selectQueue(QueueId, QueueName) 
+{    
+    var QueId = document.getElementById('Queuelist:QueueListFrom:QueueListPB:QueueId').value
+    var AppId = document.getElementById('Queuelist:QueueListFrom:QueueListPB:ApproverId').value
+    //alert('SelectQueueBefore'+QueId+AppId);
+    window.parent.opener.backPopulate(QueueId, QueueName, QueId, AppId);
+    
+}
+</script>
+</apex:page>

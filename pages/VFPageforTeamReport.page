@@ -1,0 +1,37 @@
+<apex:page controller="OpptyForecastVSLineItem" tabStyle="Account" readOnly="True" showHeader="false">
+    <!--<apex:outputLink value="/00OJ0000000Sog2" > -->
+    <apex:pageBlock onclick="window.top.location.href = '/{!reportId}'">
+        <apex:outputPanel layout="block" style="overflow:auto;height:300px" >
+        <apex:pageBlockTable value="{!mapBGVsForecast}" var="mapvalues">
+            <apex:column headerValue="Global Business Unit" style="background-color:#f2f3f3;font-weight: bold;font-size: .9em;" width="20%">
+                {!mapvalues}
+            </apex:column>
+            <apex:column headerValue="Pipeline">
+                <apex:panelgroup >
+                    <apex:outputtext value="{!users_Currency}" />
+                    <apex:outputText value=" {!mapBGVsForecast[mapvalues].pipeline_Count}"/>
+                </apex:panelgroup>
+            </apex:column>
+            <apex:column headerValue="Upside">
+                <apex:panelgroup >
+                    <apex:outputtext value="{!users_Currency}" />
+                    <apex:outputText value=" {!mapBGVsForecast[mapvalues].upside_Count}"/>
+                </apex:panelgroup>
+            </apex:column>
+            <apex:column headerValue="Commit">
+                <apex:panelgroup >
+                    <apex:outputtext value="{!users_Currency}" />
+                    <apex:outputText value=" {!mapBGVsForecast[mapvalues].commit_Count}"/>
+                </apex:panelgroup>
+            </apex:column>
+            <apex:column headerValue="Won">
+                <apex:panelgroup >
+                    <apex:outputtext value="{!users_Currency}" />
+                    <apex:outputText value=" {!mapBGVsForecast[mapvalues].won_Count}"/>
+                </apex:panelgroup>
+            </apex:column>
+        </apex:pageBlockTable>
+        </apex:OutputPanel>
+    </apex:pageBlock>
+    <!--</apex:outputLink> -->
+</apex:page>

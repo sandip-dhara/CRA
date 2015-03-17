@@ -1,0 +1,44 @@
+<apex:page controller="commentcount">
+    
+    
+     <div class="hpit_athena_comments">
+        <apex:outputPanel >
+          <div class="menu_container">
+            <p class="menu_head"><span class="plusminus">+</span> Comment <span class="hpit_athena_ComIcon">
+              <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIconBlack.png')}" width="14" height="14"/>
+              </span><span class="hpit_athena_ComIconCount">  {!LrngCommentCount} </span></p>
+            <div class="menu_body" style="display: none;">
+              <div  style="overflow-x:hidden;height:360px;" class="menu_bodyDiv">
+                  <chatter:feed entityId="a6wZ00000008otq"/>              
+               
+              </div>
+            </div>
+          </div>
+          </apex:outputPanel>
+        </div>
+        
+      <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery-ui.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/hp-esm_theme.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/theme.js')}"/>   
+     <script type="text/javascript">
+        //toggle the componenet with class menu_body
+    $(".menu_body").hide();
+    $(".menu_head").click(function(){
+        $(this).next(".menu_body").slideToggle(600); 
+        var plusmin;
+        plusmin = $(this).children(".plusminus").text();
+        
+        if( plusmin == '+')
+        $(this).children(".plusminus").text('-');
+        else
+        $(this).children(".plusminus").text('+');
+    });
+ 
+    document.getElementById('publishersharebutton').onclick = function() {chatter.getPublisher().submit();setTimeout(function(){window.location.reload()},2500);};
+
+   
+    </script>
+ 
+    
+    </apex:page>

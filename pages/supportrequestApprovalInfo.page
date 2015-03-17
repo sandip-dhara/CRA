@@ -1,0 +1,24 @@
+<apex:page standardController="Support_Request__c" extensions="SupportReqApprovalInfoController">
+    <apex:form >
+        <apex:inputHidden value="{!Support_Request__c.Opportunity__c}"/>
+        <apex:pageBlock mode="Edit">
+            <!-- <apex:outputpanel style="width:2000px;height:2000px"> -->
+            <apex:pageblockSection rendered="{!isOpportunityApprovalListEmpty}" >
+                 <apex:outputLabel >
+                    {!$Label.No_records_to_display}
+                </apex:outputLabel>
+            </apex:pageblockSection>
+            <apex:pageblockSection columns="1" rendered="{!NOT(isOpportunityApprovalListEmpty)}">
+               <apex:outputtext label="Approvers:" value="{!approvernames}" />
+               <apex:outputField label="Status:" value="{!ApprovalList[0].Status__c}" />   
+               <apex:outputField label="Pursuit Budget:" value="{!ApprovalList[0].Pursuit_Budget__c}" />     
+               <apex:outputtext label="Date Approved:" value="{!ApprovalList[0].Approved_Date__c}" />
+             </apex:pageblockSection>        
+            <apex:pageBlockTable columns="3" value="{!PrList}" var="pr" width="100%" rendered="{!NOT(isOpportunityApprovalListEmpty)}">
+                <apex:column headerValue="Resource : Name/Role" value="{!pr.Pursuit_Team_Name_Role__c}" style="width:50%"/>
+                <apex:column headerValue="Start date" value="{!pr.Estimated_Start_Date__c}" style="width:80%"/>
+                <apex:column headerValue="End Date" value="{!pr.Estimated_End_Date__c }" style="width:80%"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

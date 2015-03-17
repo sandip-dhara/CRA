@@ -1,0 +1,14 @@
+<apex:page standardController="Offering_Release__c">
+    <script type="text/javascript"> 
+        var offrelStatus = "{!Offering_Release__c.Status__c}";
+        
+        if(offrelStatus == 'Start Up')
+        {
+            document.getElementById('nrbtn').hide();
+        }
+    </script>
+  <apex:form >
+    <apex:commandButton value="New Risk" id="nrbtn" disabled="{!IF(Offering_Release__c.Status__c=='Start Up',false,true)}"/>
+    <apex:detail subject="{!Offering_Release__c}"/>
+  </apex:form>
+</apex:page>

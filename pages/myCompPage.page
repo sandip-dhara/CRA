@@ -1,0 +1,258 @@
+<apex:page controller="myCompController" tabStyle="MyComp__tab" sidebar="false"  standardStylesheets="true">
+<apex:stylesheet value="{!$Resource.MyCompStyles}"/>
+<!-- Start of Comments: Modified by PM on 03/14/2013 MyComp tab access based on User Region -->
+<apex:outputpanel id="dashboard" rendered="{!redirect}">
+    <!--<apex:outputLabel style="color:red;font-size:12px;">Warning:  Do not use the MyComp "Log Out" menu option as it will terminate your SFDC MyComp session and require a new SFDC session.</apex:outputLabel>-->
+    <apex:iframe src="{!$Label.MYCOMP_DASHBOARD_URL}" scrolling="true" id="theIframe"/>
+</apex:outputpanel>
+<!-- End -->
+
+<apex:form id="formId" rendered="{!isStart}"> <!-- rendered property is added so that the page will be rendered only for APJ-->
+<apex:pageMessages id="errorMessageId"></apex:pageMessages>
+
+<apex:pageBlock id="mycompblock">
+
+                              <apex:pageBlockSection id="fySectionandHelp" columns="2" collapsible="false">
+                              
+                                <apex:outputpanel style="align:left;" id="fyListBlock" >
+                                     <p align="left"><apex:outputText styleClass="metricvariablename" value="FiscalYear "/>
+                                     <apex:selectList title="Fiscal Year" styleClass="sectionname" value="{!selectedFiscalYear}" id="fyListId" size="1" >
+                                     <apex:selectOptions value="{!fiscalYearList}"/>
+                                     <apex:actionSupport event="onchange" id="perId" action="{!refreshPage}" reRender="componentListBlock, currentPerformancBlock, OverallPerformanceGraph, payBlock3, paymentBlock, payBlock2, errorMessageId, testLinkId, specialtyTIABlock"  status="statusMessageId"/>
+                                     </apex:selectList>
+                                      
+                                     <apex:actionStatus startStyle="color:green!important;font-size:14px;font-weight:bold;" id="statusMessageId" startText=" Loading the data..Please Wait!!!.. " stopText=""/></p>
+                                
+                                </apex:outputpanel>
+                                
+                               <apex:outputpanel style="align:right;" id="testLinkId">
+                                   <p align ="right"><span class="paymentcolumn"><b><apex:commandLink rendered="{!showTestLink}" rerender="testLinkId" action="{!showPasswordSection}" value="Enter EmployeeId" /></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputLink styleClass="paymentcolumn" value="{!$Label.MYCOMP_HELP_URL}" id="helpLink" target="test"><b>MyCompHelp</b></apex:outputLink></p>
+                                   <p align="right"><apex:outputText styleClass="paymentcolumn" rendered="{!showPasswordTextBox}" value="Enter Password"/> &nbsp;&nbsp;&nbsp;&nbsp; <apex:inputSecret rendered="{!showPasswordTextBox}" value="{!password}"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:commandbutton rendered="{!showPasswordTextBox}" rerender="testLinkId" action="{!showEmployeeIdSection}" value="Submit" />
+                                   <apex:outputText styleClass="validationMessage" rendered="{!showPasswordTextBox}" value="{!invalidPasswordMessage}"/>
+                                   <apex:outputText styleClass="paymentcolumn" rendered="{!showEmployeeIdTextBox}" value="Enter EmployeeId"/> &nbsp;&nbsp;&nbsp;&nbsp; <apex:inputText rendered="{!showEmployeeIdTextBox}" value="{!employeenumber}"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:commandbutton rendered="{!showEmployeeIdTextBox}" reRender="formId,errorMessageId,componentListBlock" action="{!start}" value="Submit" /></p>
+                               </apex:outputpanel>
+                               
+                              </apex:pageBlockSection>
+                            
+        
+       <apex:pageBlockSection columns="2" collapsible="false">
+             <apex:pageBlockSectionItem >
+                      <apex:pageBlock id="currentandoverall">
+                      
+                          
+                              <apex:pageBlockSection collapsible="true" columns="1">
+                                    <apex:facet name="header">
+                                        <span class="sectionname"><strong>Current Performance</strong></span>
+                                    </apex:facet>
+                                    <apex:outputpanel id="specialtyTIABlock">
+                                            <apex:pageBlockSection columns="2">
+                                            <apex:pageBlockSection columns="2" collapsible="false">
+                                    
+                                            <apex:pageBlockSectionItem >
+                                            <apex:outputtext styleClass="metricvariablename" value="Specialty : "/>
+                                            </apex:pageBlockSectionItem> 
+                                            
+                                            <apex:pageBlockSectionItem >
+                                            <apex:outputtext styleClass="metricvariablevalue" value="{!personalResponse.specialty_name}"/>
+                                            </apex:pageBlockSectionItem>
+                                          
+                                           </apex:pageBlockSection>
+                                           </apex:pageBlockSection>
+                                           
+                                           <apex:pageBlockSection columns="2">
+                                           <apex:pageBlockSection columns="2" collapsible="false">
+                                            
+                                            <apex:pageBlockSectionItem >
+                                            <apex:outputText styleClass="metricvariablename" value="TIA : "/>
+                                            </apex:pageBlockSectionItem>
+                                            
+                                            <apex:pageBlockSectionItem >
+                                            <apex:outputtext styleClass="metricvariablevalue" value="{!intTIA}"/>
+                                            </apex:pageBlockSectionItem>
+                                          
+                                            </apex:pageBlockSection>
+                                            </apex:pageBlockSection>
+                                      </apex:outputpanel>
+                                            
+                                            <apex:outputpanel id="currentPerformancBlock" >
+                                              <apex:image value="{!palmviewResponse}" />
+                                           </apex:outputpanel>
+                                            
+                            </apex:pageBlockSection>
+                          
+                            <apex:pageBlockSection title="Overall Performance" collapsible="true" columns="1">
+                               <apex:facet name="header">
+                               <span class="sectionname"><strong>Overall Performance</strong></span>
+                               </apex:facet>
+                                 
+                                 <apex:outputpanel id="errorMessageId">
+                                 <apex:outputtext styleClass="validationMessage" value="{!calloutLimitError}" />
+                                 </apex:outputpanel>
+                                                         
+                                 <apex:outputpanel id="componentListBlock" rendered="{!showComponentList}">
+                                 <apex:selectList rendered="{!componentListIsNotEmpty}" title="componentList" styleClass="sectionname" value="{!selectedComponent}" id="componentListId" multiselect="true" size="6">
+                                 <apex:selectOptions value="{!componentList}"/>
+                                 <apex:actionSupport event="onchange" id="perId1" action="{!showOverallPerformanceFrame}" reRender="OverallPerformanceGraph, errorMessageId"/>
+                                 </apex:selectList>
+                                 </apex:outputpanel>
+                                 
+                                 <apex:outputpanel id="OverallPerformanceGraph">
+                                 <apex:repeat value="{!overallperformanceList}" var="overallperf">
+                                  <apex:image value="{!overallperf}" />
+                                </apex:repeat>
+                                </apex:outputpanel>
+                           </apex:pageBlockSection>
+                      
+                      
+                  </apex:pageBlock> 
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem >
+                  <apex:pageBlock id="PaymentBlockandMetrics">
+                  
+                          <apex:outputpanel id="paymentBlock" layout="block" styleClass="paymentcontainer">  
+                                 <apex:pageBlockSection columns="1" >
+                                  
+                                     <apex:facet name="header">
+                                         <span class="sectionname"><strong>Payments Made</strong></span>
+                                     </apex:facet>
+                                     
+                                     <apex:pageBlockSectionItem >
+                                        <apex:pageBlockTable value="{!paymentsResponse}" var="r">
+                                            <apex:column styleClass="paymentcolumn" value="{!r.fiscal_month_Str}">
+                                                <apex:facet name="header"><span class="sectionname">PaymentMonth</span></apex:facet>
+                                            </apex:column>
+                                            <apex:column styleClass="paymentcolumn" value="{!r.description}">
+                                                <apex:facet name="header"><span class="sectionname">PaymentType</span></apex:facet>
+                                            </apex:column>
+                                            <apex:column style="text-align:right;" styleClass="paymentcolumn" value="{!r.paymentAmount_str}">
+                                                <apex:facet name="header"><span class="sectionname">PaymentAmount</span></apex:facet>
+                                            </apex:column>
+                                        </apex:pageBlockTable>
+                                    </apex:pageBlockSectionItem>
+                               
+                                </apex:pageBlockSection>
+                            </apex:outputpanel>     
+                            
+                     <apex:pageBlockSection columns="2">
+                       
+                                <apex:pageBlockSection collapsible="false" columns="1">
+                                <apex:facet name="header">
+                                      <span class="metricsectionname"><strong>Estimated Next Payment</strong></span>
+                                </apex:facet>
+                                    <apex:outputpanel id="payBlock2" layout="block" styleClass="container">
+                                    
+                                            <apex:pageBlockSection columns="2" collapsible="false">
+                                        
+                                                <apex:pageBlockSectionItem >
+                                                <apex:outputtext styleClass="metricvariablename" value="Date : "/>
+                                                </apex:pageBlockSectionItem> 
+                                                
+                                                <apex:pageBlockSectionItem >
+                                                <apex:outputtext styleClass="metricvariablevalue" value="{!estimatedNextPaymentResponse.fiscal_month_Str}"/>
+                                                </apex:pageBlockSectionItem>
+                                                
+                                           </apex:pageBlockSection>
+                                           
+                                           
+                                           <apex:pageBlockSection columns="2" collapsible="false">
+                                                
+                                                <apex:pageBlockSectionItem >
+                                                <apex:outputText styleClass="metricvariablename" value="Payment Type : "/>
+                                                </apex:pageBlockSectionItem>
+                                                
+                                                <apex:pageBlockSectionItem >
+                                                <apex:outputtext styleClass="metricvariablevalue" value="{!estimatedNextPaymentResponse.description}"/>
+                                                </apex:pageBlockSectionItem>
+                                           </apex:pageBlockSection>
+                                           
+                                           <apex:pageBlockSection columns="2" collapsible="false">
+                                        
+                                                <apex:pageBlockSectionItem dataStyle="align:left">
+                                                <apex:outputtext styleClass="metricvariablename" value="Date Calculated : "/>
+                                                </apex:pageBlockSectionItem> 
+                                                
+                                                <apex:pageBlockSectionItem dataStyle="align:right">
+                                                <apex:outputtext styleClass="metricvariablevalue" value="{!estimatedNextPaymentResponse.calculate_date_str}"/>
+                                                </apex:pageBlockSectionItem>
+                                                
+                                           </apex:pageBlockSection>
+                                           
+                                           <apex:pageBlockSection columns="2" collapsible="false">
+                                                
+                                                <apex:pageBlockSectionItem dataStyle="align:left">
+                                                <apex:outputText styleClass="metricvariablename" value="Payment Amount : "/>
+                                                </apex:pageBlockSectionItem>
+                                                 
+                                                <apex:pageBlockSectionItem dataStyle="align:right">
+                                                <apex:outputtext styleClass="metricvariablevalue" value="{!estimatedNextPaymentAmount}"/>
+                                                </apex:pageBlockSectionItem>
+                                           </apex:pageBlockSection>
+                                           
+                                </apex:outputpanel>
+                                    <apex:pageBlockSectionItem dataStyle="align:left">
+                                            <p align="left" class="disclaimer">**The Estimated Next Payment feature will not be used in all countries and may be blank.</p>
+                                    </apex:pageBlockSectionItem>  
+                          </apex:pageBlockSection>
+                      
+                 
+                       
+                                <apex:pageBlockSection collapsible="false" columns="1">
+                                <apex:facet name="header">
+                                      <span class="metricsectionname"><strong>Liability</strong></span>
+                                </apex:facet>
+                                    <apex:outputpanel id="payBlock3" layout="block" styleClass="container">
+                                    
+                                            
+                                            <apex:pageBlockSection columns="2" collapsible="false">
+                                                <apex:pageBlockSectionItem dataStyle="align:left">
+                                                <apex:outputtext styleClass="metricvariablename" value="Overpayment Liability : "/>
+                                                </apex:pageBlockSectionItem> 
+                                                
+                                                <apex:pageBlockSectionItem dataStyle="align:right">
+                                                <apex:outputtext styleClass="metricvariablevalue" value="{!intoverpayLiability}"/>
+                                                </apex:pageBlockSectionItem>
+                                           </apex:pageBlockSection>
+                                           
+                                           
+                                           
+                                           <apex:pageBlockSection columns="2" collapsible="false">
+                                                <apex:pageBlockSectionItem dataStyle="align:left">
+                                                <apex:outputText styleClass="metricvariablename" value="Draw Liability : "/>
+                                                </apex:pageBlockSectionItem>
+                                                
+                                                <apex:pageBlockSectionItem dataStyle="align:right">
+                                                <apex:outputtext styleClass="metricvariablevalue" value="{!intdrawLiability}"/>
+                                                </apex:pageBlockSectionItem>
+                                           </apex:pageBlockSection>
+                                           
+                                           
+                                    </apex:outputpanel>
+                                </apex:pageBlockSection>
+                  
+                 </apex:pageBlockSection> 
+           
+    
+        </apex:pageBlock>    
+   </apex:pageBlockSectionItem>               
+ </apex:pageBlockSection>
+
+         <apex:pageBlockSection columns="1" collapsible="false"> 
+       
+             <apex:pageBlockSectionItem >
+               <p align="center" class="disclaimer"><b>Disclaimer:</b>The data presented here is for reference purposes only. Additional information may result in a revised calculation.<br/> The calculations and the data of the Sales Compensation system of record, once finalized, will govern.</p>
+             </apex:pageBlockSectionItem>
+       
+         </apex:pageBlockSection>
+
+
+</apex:pageBlock>
+<script type="text/javascript">
+var errorMessage = "{!errorMessage}";
+if(errorMessage != null && errorMessage!= '' && errorMessage != 'undefined')
+{
+    alert(errorMessage);
+}
+</script>
+</apex:form>
+</apex:page>

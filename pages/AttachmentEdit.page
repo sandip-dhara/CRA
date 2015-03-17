@@ -1,0 +1,51 @@
+<!--
+Release : R6
+for editing the attachment at approval level and workspace level and also letting user to update decription and comments
+Modified by Praveen Kumar Reddy 
+-->
+<apex:page controller="UpdateAttachmentController">
+<style>
+       
+    .body
+    {
+    font-family:sans-serif;
+    color:#4a4a56;
+    width:160px;
+    font-weight:bold;
+    font-size: 91%;
+    padding-left: 100px;
+    }
+</style>   
+  <apex:form >
+       <apex:pagemessages ></apex:pagemessages>
+      <apex:pageblock >
+          <apex:pageBlockButtons >
+          <apex:commandButton value="Update and Check-In" action="{!UpdateAttachment}"/>
+          <apex:commandButton value="Cancel" action="{!Cancel}"/>
+          </apex:pageBlockButtons>
+          
+          <apex:pageBlockSection title="Edit Attachment" columns="1">
+          <apex:outputpanel styleclass="body">
+          <b><apex:OutputLabel value="File Name"/></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <apex:OutputText value="{!filename1}" />
+          </apex:outputpanel>
+          
+          <apex:OutputPanel styleclass="body">
+              <b><apex:OutputLabel value="Browse File"/></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <apex:inputfile value="{!AttWrapper.AttachmentRecordUI.body}" filename="{!AttWrapper.AttachmentRecordUI.Name}"/>
+          </apex:OutputPanel>
+          <apex:inputfield value="{!AttWrapper.AttachmentRecordUI.description}" style="width:150px" />
+          
+          
+          <apex:inputField id="version" value="{!AttWrapper.AttachmentExtensionRecordUI.Version_Number__c}" style="width:150px"/>
+          <script>
+            document.getElementById('{!$Component.version}').disabled = true;
+                          
+         </script>  
+          <apex:inputField value="{!AttWrapper.AttachmentExtensionRecordUI.Comments__c}" style="width:150px"/>
+          
+         
+          </apex:pageBlockSection>
+     </apex:pageblock>
+</apex:form>
+</apex:page>

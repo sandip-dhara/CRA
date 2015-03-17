@@ -1,0 +1,172 @@
+<apex:page standardController="Flight_Plan__c" extensions="ODP_Extension_VisualAdminConsoleNing" >
+<!-- jquery -->
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css')}"  />
+<!-- alertfiy plugin -->
+<apex:includeScript value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.default.css')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.core.css')}"/> 
+<!-- bootstrap  -->
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/> 
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" /> 
+<!-- commmon style  -->
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/winstyle.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/HpstandIcon.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/style.css')}" />
+<style>
+.fpHead{
+    width:100%;
+    height:140px;
+    border: 1px solid #d9d9d9;
+    margin:20px 0px;
+    box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.2);
+    border-top-right-radius: 13px;
+    border-bottom-right-radius: 3px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 13px;
+}
+.fpHead ul{
+    list-style: none;
+    display: block;
+    list-style-type: disc;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 40px;
+}
+.fpHead ul>li{
+    width: 140px;
+    height: 110px;
+    display: block;
+    text-align:center;
+    float: left;
+    margin-right: 10px;
+    background: #0096D6;
+    vertical-align: middle;
+    color: #fff;
+}
+.fpHead ul>li>a{
+    display:block;
+    height:40px;
+    margin-top:20px;
+    color: #fff;
+}
+.fpHead ul>li>span{
+    position: relative;
+    display:block;
+    bottom: -20px;
+    font-size: 86%;
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+}
+.fpHead ul>li>span.edit{
+    left: 20px;
+}
+.fpHead ul>li>span.delete{
+    bottom: -3px;
+    left: 80px;
+}
+.tab-pane{
+    border: 1px solid #DDDDDD;
+    padding: 10px;
+    margin-top: 20px;
+}
+.dataGrid{
+    width:100%;
+}
+</style>
+<script type="text/javascript">
+     $j = jQuery.noConflict();
+     $j(function(){      
+        $j(document).on("click",".fpHead .edit",function(event){
+            $('#FPUpsert').modal('show');
+        });
+        $j(document).on("click",".fpHead .delete",function(event){
+            alertify.confirm("Flight Plan has been reselected, Please confirm to continue?",function(e){
+                 if(e){
+                    $('#loading_Modal').modal('show');
+                     saveProject();
+                 }
+            });
+        });
+        $("div.tabs").tabs();  
+     });
+</script>
+<div class="fpHead"> 
+    <ul>
+        <apex:repeat value="{!FPS}" var="FP">
+        <li>
+            <a href="#" value="{!FP.id}">{!FP.Name__c }</a> 
+            <span class="edit">edit</span>
+            <span class="delete">delete</span>
+        </li>
+        </apex:repeat>
+        <div class="c_clr"></div>
+    </ul>
+</div>
+<div class="tabs">
+    <ul>
+        <li><a href="#tab-pac">PAC</a></li>
+        <li><a href="#tab-2">Tab 2</a></li>
+        <li><a href="#tab-3">Tab 3</a></li>
+    </ul>
+    <div id="tab-pac">
+        <div class="tab-pane">
+            <table id="revAccountableTable" class="dataGrid">
+                <thead>
+                <tr class="GridHeaderRow">
+                <th class="center">Action<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element_Name__c"></span></th>
+                <th class="center">Name<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Accountable_User__c"></span></th>
+                <th class="center">CreatedBy<span class="DataTables_sort_icon icon-arrow-up-down" value="Role_Name__c"></span></th>
+                <th class="center">Last Modified<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Stage_Name__c"></span></th>
+                <th class="center">Is Active<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Release_Name__c"></span></th>
+                <th class="center">Members<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Status__c"></span></th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="tab-2">
+        <div class="tab-pane">
+            This is the content of tab 2.
+        </div>
+    </div>
+    <div id="tab-3">
+        <div class="tab-pane">This is the content of tab 3.</div>
+    </div>
+</div>
+<div id="FPUpsert" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+    <apex:pageBlock >
+          <div class="modal-header">
+            <span class="VPCircle blue icon-repeat icon-6x icon-sandboxing" style="Height: 60px;" title="My Related Approval"/>
+          </div>
+          <div class="modal-body">
+            <img id="FPUpsertLoading" class="loading" src="{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />
+            <div id="FPUpsertBody" class="span5 ml0">
+                  <table id="ApprovalTable" class="dataGrid">
+                    
+                </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <a href="#" class="VPmore"><span class="blue icon-repeat icon-3x icon-refresh" title="refresh">submit</span></a>
+              <a href="#" class="VPmore" data-dismiss="modal" aria-hidden="true"><span class="blue icon-repeat icon-3x icon-close2" title="close"/></a>
+          </div>
+    </apex:pageBlock>
+</div>
+<div id="loading_Modal" class="modal hide fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="width:100px;margin:0 auto;margin-top:20%;">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-body">
+                    <img  src = "{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />                       
+            </div>                     
+        </div>
+    </div>
+</div>
+</apex:page>

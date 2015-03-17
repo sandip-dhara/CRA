@@ -1,0 +1,159 @@
+<apex:page standardController="Offering_Release_Stage__c" extensions="ExtendedOfferingReleaseStage">
+<!--<chatter:feed entityId="{!Offering_Release_Stage__c.Id}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+<script>
+   $j = jQuery.noConflict();
+   $j(document).ready(function() {
+    var options = $j("select[id$=status]").children();
+    for(var i = 0 ; i < options.length; i++){
+        var tempOption = options[i];
+        if(tempOption.value == 'In Review' || tempOption.value == 'Complete' ){
+            tempOption.disabled = true;    
+        }    
+    }
+    
+    for(var i=1;i<16;i++)
+    {
+      $j("select[id$=inputApprover"+i+"_mlktp]").hide();
+      
+      $j("input[id$=inputApprover"+i+"]").attr("disabled",true);
+
+      $j("a[id$=inputApprover"+i+"_lkwgt]").hide();
+    }
+   });
+</script>
+<br />
+<apex:pageBlock >
+    <apex:pageBlockSection columns="1" rendered="{!!WrongCall}">
+        <a href="/{!CurServiceLineId}">Service Line [{!CurServiceLine}]</a> > 
+        <a href="/{!CurOfferingId}">Offering [{!CurOffering}]</a> > 
+        <a href="/{!CurReleaseId}">Offering Release [{!CurRelease}]</a>  
+    </apex:pageBlockSection>
+    <apex:pagemessages />
+</apex:pageBlock>
+<apex:form rendered="{!!WrongCall}">  
+    <apex:pageBlock title="{!myEditStates} Offering Release Stage {!Offering_Release_Stage__c.Name}">
+        <apex:pageBlockSection title="Required Information" columns="1">
+            <apex:outputField value="{!Offering_Release_Stage__c.Offering_Release_ID__c}" />
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Stage ID"/>
+                <apex:actionRegion >
+                    <apex:inputField value="{!Offering_Release_Stage__c.Stage_ID__c}">
+                        <apex:actionSupport event="onchange" action="{!SetStageName}" reRender="Current_Stage_Name"/>
+                    </apex:inputField>
+                </apex:actionRegion>
+            </apex:pageBlockSectionItem>
+            <apex:outputText value="{!StageName}" label="Stage Name" id="Current_Stage_Name"/>
+            <apex:inputField value="{!Offering_Release_Stage__c.Start_Date__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Allowable_Variance__c}" />
+        </apex:pageBlockSection>           
+        <apex:pageBlockSection title="Business Information" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.PAC__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Status__c}" id="status"/>
+
+            <apex:inputField value="{!Offering_Release_Stage__c.Status__c}" rendered="{!!StatusDisable}"/>
+            <apex:outputField value="{!Offering_Release_Stage__c.Status__c}" rendered="{!StatusDisable}"/>
+         
+            <apex:inputtextarea value="{!Offering_Release_Stage__c.Business_Case_Assumptions__c}" cols="100" rows="4" />           
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="Total Funding" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Plan_Total_Funding_Alloc__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Total_Funding_Allocation_Var__c}" />            
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Total_Funding_Alloc__c}" />        
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="Capital Expenses" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Planned_Capital_Expenses__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Capital_Expenses_Variance__c}" />         
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Capital_Expenses__c}" />
+            
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="Billable Resources" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Billable_Resource_Cost__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Billable_Resource_Cost_Var__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Billable_Resource_Cost__c}" />
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Customer Trial" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Customer_Trial_Cost__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Customer_Trial_Cost_Variance__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Customer_Trial_Cost__c}" />
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Release Total Funding" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Plan_Total_Funding_Alloc__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Total_Funding_Alloc_Var__c}" />           
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Release Capital Expenses" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Planned_Capital_Expenses__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Capital_Expenses_Var__c}" />           
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Release Billable Resources" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Plan_Billable_Resource_Cost__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Billable_Resource_Cost_Var__c}" />            
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Release Customer Trial" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Plan_Customer_Trial_Cost__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Rel_Customer_Trial_Cost_Var__c}" />            
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="Unit Volume" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Unit_Volume__c}" /> 
+            <apex:inputField value="{!Offering_Release_Stage__c.Unit_Volume_Variance__c}" />        
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Unit_Volume__c}" />                        
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Revenue" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Revenue__c}" /> 
+            <apex:inputField value="{!Offering_Release_Stage__c.Revenue_Variance__c}" />        
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Revenue__c}" />             
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Gross Margin" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Gross_Margin__c}" /> 
+            <apex:inputField value="{!Offering_Release_Stage__c.Gross_Margin_Variance__c}" />        
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Gross_Margin__c}" />             
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Gross Margin Percent" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Gross_Margin_Percent__c}" /> 
+            <apex:inputField value="{!Offering_Release_Stage__c.Gross_Margin_Percent_Variance__c}" />        
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Gross_Percent_Margin__c}" />         
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="Other Costs" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Other_Cost__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Other_Cost_Variance__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Other_Cost__c}" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="Operating Earnings" columns="2">                                             
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Operating_Earnings__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Operating_Earnings_Variance__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Operating_Earnings__c}" />            
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="Operating Cash Flow" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Planned_Operating_Cash_Flow__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Operating_Cash_Flow_Variance__c}" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Actual_Operating_Cash_Flow__c}" />
+        </apex:pageBlockSection> 
+       
+        <apex:pageBlockSection title="Approver" columns="2">
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver1__c}" id="inputApprover1" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver2__c}" id="inputApprover2" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver3__c}" id="inputApprover3" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver4__c}" id="inputApprover4" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver5__c}" id="inputApprover5" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver6__c}" id="inputApprover6" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver7__c}" id="inputApprover7" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver8__c}" id="inputApprover8" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver9__c}" id="inputApprover9" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver10__c}" id="inputApprover10" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver11__c}" id="inputApprover11" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver12__c}" id="inputApprover12" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver13__c}" id="inputApprover13" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver14__c}" id="inputApprover14" />
+            <apex:inputField value="{!Offering_Release_Stage__c.Approver15__c}" id="inputApprover15" />
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons location="both">
+            <apex:commandButton value="Save" action="{!save}"/>
+           <apex:commandButton value="Save & New"/> 
+             <apex:commandButton value="Cancel" action="{!cancel}"/>               
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+</apex:form>
+-->
+</apex:page>

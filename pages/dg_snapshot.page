@@ -1,0 +1,664 @@
+<apex:page controller="customSnapshotCtrl" showHeader="false" sidebar="false" renderas="pdf" >
+<head>
+<style>
+@page {
+  size: A4 landscape;
+}
+table {
+
+    border-collapse:collapse;
+}
+
+.headerclass {
+    margin:0 10px 10px 10px;
+    padding:0 10px 10px 10px;
+}
+
+.headerclassnew {
+    margin:40px;
+    padding: 10px;
+}
+
+.oppDetail {
+    padding-right: 40px;
+    margin-right:40px;
+}
+
+.criteria{
+    width: 200px;
+    padding: 20px;
+    margin: 20px;
+}
+
+.CountryTable {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 2px;
+    
+}
+.prodSummaryTable {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 2px;
+    
+}
+
+.prodSummaryTD {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 2px;
+}
+
+
+.columnHeading{
+    font-weight:bold;
+    background: #66ccff;
+}
+
+.columnHeading_csp{
+
+}
+
+</style>
+</head>
+
+
+<h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opportunity Detail</h1>  
+        
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td scope="col" valign="top"><strong>Opportunity ID</strong></td>
+    <td scope="col" valign="top">{!oppData.hpoppid}</td>
+    <td scope="col" valign="top"><strong>Opportunity Type</strong></td>
+    <td scope="col" valign="top">{!oppData.Type}</td>
+  </tr>
+  <tr>
+    <td valign="top"><strong>Opportunity Name</strong></td>
+    <td valign="top">{!oppData.Name}</td>
+    <td valign="top"><strong>Close Date</strong></td>
+    <td valign="top"><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!oppData.closedate}" /> 
+</apex:outputText></td>
+  </tr>
+  <tr>
+    <td valign="top"><strong>Account Name</strong></td>
+    <td valign="top">{!oppData.AccountName}</td>
+    <td valign="top"><strong>Sales Stage</strong></td>
+    <td valign="top">{!oppData.stagename}</td>
+  </tr>
+  <tr>
+    <td valign="top"><strong>Opportunity Owner</strong></td>
+    <td valign="top"><apex:outputtext value="{!oppData.oppowner}"/></td>
+    <td valign="top"><strong>Opportunity Owner's BG</strong></td>
+    <td valign="top">{!oppData.ownerbg}</td>
+  </tr>
+  <tr>
+    <td valign="top"><strong>Opportunity Description</strong></td>
+    <td valign="top" width="33%">{!oppData.oppdescription}</td>
+    <td valign="top"><strong>Total Opportunity Value</strong></td>
+    <td valign="top">{!oppData.CurrencyIsoCode}&nbsp; <apex:outputText value="{0,number,###,###,###,###.00}">
+    <apex:param value="{!oppData.oppvalue}" /></apex:outputtext></td>
+  </tr>
+  <tr>
+    <td valign="top"><strong>Executive Sponsor</strong></td>
+    <td valign="top" width="33%">{!ExecutiveSponsor}</td>
+    
+  </tr>
+</table>
+
+<hr />
+
+<P style="font-style:italic;{!IF(oppPlanExists == true,'display:none;','')}">This opportunity has no opportunity plan data available.</P>
+
+
+
+
+<div style="page-break-inside:avoid;">
+                  <h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Product Summary by BG/GBU</h1>  
+       
+<table width="100%" class="prodSummaryTable ">
+  <tr style="background-color:#eeeeee;">
+    <th class="prodSummaryTD " scope="col">Business Group</th>
+    <th class="prodSummaryTD " scope="col">Global Business Unit</th>
+    <th class="prodSummaryTD " scope="col" style="text-align: right;">SubTotal</th>
+  </tr>
+  <apex:repeat value="{!opplineitemwrapperlist}" var="opplineitem">
+  <tr>
+    <td class="prodSummaryTD " style="{!if((opplineitem.businessgroup!=' '),'background-color:#cce0ff','')}">{!opplineitem.businessgroup}</td>
+    <td class="prodSummaryTD " style="{!if((opplineitem.globalbunit==' '),'background-color:#cce0ff;text-align:left','text-align:left')}">{!opplineitem.globalbunit}</td>
+    <td class="prodSummaryTD " style="{!if((opplineitem.globalbunit==' '),'background-color:#cce0ff;text-align:right;','text-align:right;')}"><apex:outputText value="{!opplineitem.oppcurrencyisocodebg} {0,number,###,###,###,###.00} " style="text-align:right" > 
+                <apex:param value="{!opplineitem.totalcurrency}"/> 
+                </apex:outputText>
+          <apex:outputText value=" {!opplineitem.usercurrencycodebg} {0, number,###,###,###,###.00} {!opplineitem.bgconcatenator}" style="text-align:right" rendered="{!if((opportunitycurrencycode!=usercurrencycode),true,false)}"> 
+                <apex:param value="{!opplineitem.totalusercurrency}"/>                
+                </apex:outputText>
+             
+              <apex:outputText value="{!opplineitem.oppucurrencyisocodegbu}  {0,number,###,###,###,###.00} " style="text-align:right" > 
+                <apex:param value="{!opplineitem.opportunitycurrency}" /> 
+                </apex:outputText>
+               <apex:outputText value="{!opplineitem.usercurrencycodegbu} {0, number,###,###,###,###.00}  {!opplineitem.gbuconcatenator}" rendered="{!if((opportunitycurrencycode!=usercurrencycode),true,false)}"> 
+                <apex:param value="{!opplineitem.usercurrency}"/> 
+                </apex:outputText></td>
+  </tr>
+</apex:repeat>
+</table>
+</div>
+
+
+<hr />
+
+<div style="{!IF(oppPlanExists == true,'','display:none;')}">
+
+<div style="page-break-inside:avoid;">
+<div style="page-break-inside:avoid;"><h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value Proposition</h1>
+<div style="background:#eee;border-style:solid solid none solid;border-width: 1px 1px 0px 1px;border-color: #000 #000 #000 #000;"><b>Value Proposition</b></div>
+<div style="background:#eee;padding: 15px 15px 15px 20px; background:#eee;border-style:none solid solid solid;border-width: 0px 1px 1px 1px;border-color: #000 #000 #000 #000;">{!oppplan.VP_value_proposition_c}</div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div style="padding-top: 10px;"><b>1. What are or could be the client’s most important problems to solve and/or results to achieve? (Business Issues/Initiatives)</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputtext value="{!oppplan.VP_01_clients_most_important_problems_c}" /></div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div><b>2. How do or would they show up in the organization? (Evidence)</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputText value="{!oppplan.VP_02_how_do_they_show_up_c}" /></div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div><b>3. What is or could be the effect of these issues? (Impact in $$$ or on a scale of 1-10)</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputtext value="{!oppplan.VP_03_effects_of_issues_c}" /></div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div><b>4. Who is or could be affected? How does this align with the strategy of the organization or individual? (Context)</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputtext value="{!oppplan.VP_04_who_is_affected_c}" /></div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div><b>5. What constraints do or may exist that would prevent the customer from addressing the problem or achieving the result? (Constraints)</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputtext value="{!oppplan.VP_05_constraints_c}" /></div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div><b>6. What alternatives does or might the customer have to address these issues/initiatives? (Options in addition to HP’s solutions: e.g., HP’s competitors, internal options, do nothing, etc.)</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputtext value="{!oppplan.VP_06_alternatives_c}" /></div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div><b>7. What are we offering to address this situation? (HP’s solution)  What are the reasons adopting your solution makes sense?</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputtext value="{!oppplan.VP_07_what_are_we_offering_c}" /></div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div><b>8. What will it or could it take to implement our solution? (Resources – Time, People and Money)</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputtext value="{!oppplan.VP_08_what_will_it_take_c}" /></div>
+</div>
+
+<div style="page-break-inside:avoid;">
+<div><b>9. What criteria would a solution like this need to meet? (Highest level decision criteria)</b></div>
+<div style="padding: 15px 15px 15px 20px;"><apex:outputtext value="{!oppplan.VP_09_criteria_c}" /></div>
+</div>
+</div>
+
+
+<hr />
+
+
+<div style="page-break-inside:avoid;">
+<h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opportunity Gauge Summary</h1>  
+<apex:panelgrid columns="2" border="0" style="width:100%;table-layout:fixed;border: 2px solid gray;">
+
+<!--Column1-->
+    <apex:panelGrid columns="2" id="WTB_Score" style="width:100%; background-color:#66CCFF" cellPadding="3">
+
+    <apex:Outputlabel value="Will They Buy?" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold" />
+    </apex:panelGrid>
+
+<!--Column2-->
+    <apex:panelGrid columns="2" id="WTBO_Score" style="width:100%; background-color:#66CCFF" cellPadding="3" >
+    
+    <apex:Outputlabel value="Will They Buy Ours?" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+    </apex:panelGrid>
+
+<!--Column1-->
+    <apex:panelGrid id="WTB_BAR" columns="2" border="0" cellpadding="3"   cellspacing="8" >
+    <apex:outputLabel value="S1. Business Case" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTB_Q1_c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S2. Resources" style="color: #000000; font-size:10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTB_Q2_c,1)+'-5.jpg')}"  height="18"/>
+    <apex:outputLabel value="S3. Decision Process" style="color: #000000; font-size: 10pt; width:30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTB_Q3_c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S4. Urgency" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTB_Q4_c,1)+'-5.jpg')}"  height="18"/>
+    <apex:outputLabel value="S5. Relationships" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTB_Q5_c,1)+'-5.jpg')}"  height="18"/>
+    </apex:panelGrid>
+    
+
+<!--Column2-->
+    <apex:panelGrid id="WTBO_BAR" columns="2" border="0" cellpadding="3" cellspacing="8" >
+    <apex:outputLabel value="S1. Technical Solution" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTBO_Q1_c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S2. Business Solution" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTBO_Q2_c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S3. Relationship Strength" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTBO_Q3_c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S4. Point of Preference " style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(oppplan.OG_WTBO_Q4_c,1)+'-5.jpg')}" height="18"/>
+    </apex:panelGrid>
+    
+    
+    
+    <apex:panelgrid columns="1" cellpadding="3" cellspacing="8" >
+    <apex:panelgroup ><apex:OutputLabel value="RESULT: " style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold"/><apex:OutputLabel value="{!oppplan.WTB_CBP_c}" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:OutputLabel value="SCORE: {!oppplan.WTB_Total_c}" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <apex:OutputLabel value="" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold;font-style:Italics"/><BR></BR><BR></BR>
+    <apex:OutputLabel value="Scoring Legend:" /><apex:OutputLabel value="• High:25 to 19  • Medium:18 to 12  • Low:11 to 1" />
+    </apex:panelgroup>
+    </apex:panelgrid>
+    
+    <apex:panelgrid columns="1" cellpadding="3" cellspacing="8" >
+    <apex:panelgroup ><apex:OutputLabel value="Result: " style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold"/><apex:OutputLabel value="{!oppplan.WTBO_CBP_c}" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:OutputLabel value="SCORE: {!oppplan.WTBO_Total_c}" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <apex:OutputLabel value="" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold;font-style:Italic" /><BR></BR><BR></BR>
+    <apex:OutputLabel value="Scoring Legend:" /><apex:OutputLabel value="• High:20 to 15  • Medium:14 to 10  • Low:9 to 1" />
+    </apex:panelgroup>
+    </apex:panelgrid>
+
+
+
+<!--Column1-->
+    <apex:panelGrid columns="1" id="CBP_h" style="width:100%; background-color:#66CCFF;border: 2px solid gray;" cellpadding="3">
+    <apex:Outputlabel value="Combined Buying Potential" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+    </apex:panelGrid>   
+
+<!--Column2-->    
+    <apex:panelGrid columns="1" id="SPM_h" style="width:100%; background-color:#66CCFF;border: 2px solid gray;" cellPadding="3">
+    <apex:Outputlabel value="Sales Buying Potential" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+    </apex:panelGrid>
+
+<!--Column1-->  
+
+     
+    <apex:panelGrid id="Result" columns="1" cellpadding="3" cellspacing="8" style="border: 2px solid gray;" >
+    <apex:panelgroup >
+    <apex:OutputLabel value="Will They Buy? :" style="color: #000000; font-size: 10pt;font-weight:bold"/><apex:OutputLabel value=" {!oppplan.WTB_CBP_c}"  style="color: #000000; font-size: 10pt;font-weight:bold"/>
+    </apex:panelgroup>
+    <apex:panelgroup >
+    <apex:OutputLabel value="Will They Buy Ours? :" style="color: #000000; font-size: 10pt;font-weight:bold"/><apex:OutputLabel value=" {!oppplan.WTBO_CBP_c}" style="color: #000000; font-size: 10pt;font-weight:bold"/>
+    </apex:panelgroup>
+    <apex:panelgroup >
+    <apex:OutputLabel value="Combined Buy Potential :" style="color: #000000; font-size: 10pt;font-weight:bold"/><apex:OutputLabel value=" {!oppplan.Combined_Buying_Potential_c}%" style="color: #000000; font-size: 10pt;font-weight:bold"/>
+    </apex:panelgroup>  
+    <apex:panelgroup >
+    </apex:panelgroup>
+    </apex:panelGrid>
+
+<!--Column2-->
+    <apex:panelGrid columns="1" >
+       
+    <table border="0" cellspacing="1" cellpadding="1" style="text-align:center;border: 2px solid gray;" >
+     
+    <tr height="20">
+    <td rowspan="4" valign="bottom" style="vertical-align: bottom;text-align: bottom;" ><img src="{!$Resource.willtheybuy_vertical}" style="width:26px;height:109px;" /></td>
+    <td>High</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='HL','#999999','white')};border:solid 3px gray" >30%</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='HM','#999999','white')};border:solid 3px gray" >60%</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='HH','#999999','white')};border:solid 3px gray" >80%</td>
+    </tr>
+    <tr height="20">
+    
+    <td>Med</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='ML','#999999','white')};border:solid 3px gray" >25%</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='MM','#999999','white')};border:solid 3px gray" >50%</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='MH','#999999','white')};border:solid 3px gray" >60%</td>
+    </tr>
+    <tr height="20">
+    
+    <td>Low</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='LL','#999999','white')};border:solid 3px gray" >15%</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='LM','#999999','white')};border:solid 3px gray" >25%</td>
+    <td style="background-color:{!IF(oppplan.OG_CBP_S_c='LH','#999999','white')};border:solid 3px gray" >30%</td>
+    </tr>
+    
+    <tr>
+    
+    <td ></td>
+    <th>Low</th>
+    <th>Med</th>
+    <th>High</th>
+    </tr>
+    <tr><td></td><td></td><td colspan="4"><b>Will They Buy Ours</b></td></tr>
+    
+    
+    
+    </table>
+    </apex:panelGrid>
+     
+</apex:panelgrid></div>
+
+<hr />
+
+<div style="page-break-inside:avoid;">
+<h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decision Grid Summary</h1>  
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="prodSummaryTable " >
+  <tr style="background-color:#eee;">
+    <th scope="col"  class="prodSummaryTable ">Step</th>
+    <th scope="col" class="prodSummaryTable ">Decision</th>
+    <th scope="col" class="prodSummaryTable ">When</th>
+    <th scope="col" class="prodSummaryTable ">Who</th>
+    <th scope="col" class="prodSummaryTable ">Criteria</th>
+    <th scope="col" class="prodSummaryTable ">Status</th>
+  </tr>
+  <apex:repeat value="{!relatedDecisions}" var="table2">
+  
+  <tr>
+    <td class="prodSummaryTable ">{!table2.Step_c}</td>
+    <td class="prodSummaryTable ">{!table2.Decision_c}</td>
+    <td class="prodSummaryTable "><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!table2.When_c}" /> 
+</apex:outputText></td>
+    <td class="prodSummaryTable ">{!table2.Who_c}</td>
+    <td class="prodSummaryTable ">{!table2.Criteria_c}</td>
+    <td class="prodSummaryTable ">{!table2.Status_c}</td>
+  </tr>
+  
+  </apex:repeat>
+  
+</table>
+</div>
+
+<hr />
+
+
+<div style="page-break-inside:avoid;">
+<h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Relationship Suite Summary</h1>  
+<!--Heading of Relationship ScoreCard  -->   
+
+<table  border="1" bordercolor="#00000" cellspacing="2" Cellpadding="2" class="relscore">
+      <tr >
+        <td colspan="6" rowspan="2" class="style_column columnHeading">Political Power Radar Results</td>
+    <td  width="0" rowspan="2" style="background-color: #404040;"></td> 
+        <td colspan="5" rowspan="2" class="style_column columnHeading">Relationship Meter Results</td>
+    <td  width="0" rowspan="2" style="background-color: #404040;"></td>
+        <td height="26" colspan="8" class="style_column columnHeading">Relationship Map Results</td>
+      </tr>
+      <tr>
+       
+        <td colspan="2" class="style_column columnHeading" style="width:60px">Authorizor</td>
+        <td colspan="2" class="style_column columnHeading" style="width:60px">Influencer</td>
+       <td colspan="2" class="style_column columnHeading" style="width:60px">Justifier</td>
+        <td colspan="2" class="style_column columnHeading" style="width:60px">Operationalizer</td>
+      </tr>
+      <tr>
+       
+        <td class="style_column columnHeading" >Contact Name</td>
+        <td class="style_column2 columnHeading" >Title</td>
+        <td class="style_column columnHeading" >Reports To</td>
+        <td class="style_column2 columnHeading" >No of Decisions Owned</td>
+        <td class="style_column columnHeading" >Total Score</td>
+        <td class="style_column columnHeading">Result</td>
+
+     <td  width="0" style="background-color: #404040;"> </td>
+
+        <!--<td style="color: #000000; font-weight:bold;width:40px;height:150px" class="rotation">Total Score</td>-->
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'potential-adversary.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'detractor.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'neutral.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'supporter.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'partner-ally.gif')}" /></td>
+
+        <td   width="0" style="background-color: #404040;"></td>
+
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'executive.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'decision-maker.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'political-influencer.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'consultant.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'financial-buyer.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'sme.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'end-user.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.rsheaders, 'internal-enabler.gif')}" /></td>
+      </tr>
+      
+    
+    <apex:repeat value="{!RelSuite2}" var="RS" id="RSTable" >
+  <tr>
+
+    <td align="Left">{!RS.Cr_Name}</td>
+    <td align="Left">{!RS.Cr_Title}</td>
+    <td align="Left">{!RS.parent_contact}</td>
+    <td align="Center">{!RS.decision_count}</td>
+    <td align="Center">{!ROUND(RS.PPS,0)}</td>
+    <td align="Left"><apex:image url="{!If(RelSuiteMax=RS.PPS,URLFOR($Resource.OPBar, 'BOP.jpg'),If(RelSuiteSMax=RS.PPS,URLFOR($Resource.OPBar, 'PDZ.jpg'),If(RelSuiteMin=RS.PPS,URLFOR($Resource.OPBar, 'PWI.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))))}" height="20" /></td>
+
+    <td  width="0" style="background-color: #404040;" ></td>
+
+    <td align="center"><apex:image url="{!IF(AND(NOT(ISBLANK(RS.RMS)),RS.RMS<16),URLFOR($Resource.OPBar, 'Red.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(NOT(ISBLANK(RS.RMS)),RS.RMS>15,RS.RMS<23),URLFOR($Resource.OPBar, 'Amber.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(NOT(ISBLANK(RS.RMS)),RS.RMS>22,RS.RMS<30),URLFOR($Resource.OPBar, 'dgrey.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(NOT(ISBLANK(RS.RMS)),RS.RMS>29,RS.RMS<36),URLFOR($Resource.OPBar, 'green.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(NOT(ISBLANK(RS.RMS)),RS.RMS>35),URLFOR($Resource.OPBar, 'Blue.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+
+     <td  width="0" style="background-color: #404040;"></td>
+
+
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Executive"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Decision Maker"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Political Influencer"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Consultant"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Financial Buyer"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Subject Mater Expert"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"End User"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.relationship_map,"Internal Enabler"),URLFOR($Resource.OPBar, 'dgreen.jpg'),URLFOR($Resource.OPBar, 'White.jpg'))}" height="20" /></td>
+   </tr>
+   </apex:repeat>
+    </table>
+
+    
+</div>
+
+<hr />
+
+<div style="page-break-inside:avoid;">
+<h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Competitive Sales Plan</h1>  
+<table>
+<apex:repeat value="{!CSPSummaries}" var="cspsum" id="cspsumTable" >
+<tr><td colspan="6"><b>Competitor Name:</b> {!cspsum.compname}  </td></tr>
+<tr><td colspan="6"><b>Offensive Strategy: </b>{!cspsum.offensivestrat}</td></tr>
+<tr><td colspan="6"><b>Defensive Strategy: </b>{!cspsum.defensivestrat}</td></tr>
+<tr style="background: #eeeeee;"><td class="prodSummaryTD "><b>HP Strength</b></td><td class="prodSummaryTD "><b>Competitor Weakness</b></td><td class="prodSummaryTD "><b>Tactics</b></td><td class="prodSummaryTD "><b>Competitor Strength</b></td><td class="prodSummaryTD "><b>HP Weakness</b></td><td class="prodSummaryTD "><b>Countertactics</b></td></tr>
+<tr><td class="prodSummaryTD ">{!cspsum.hpstrength}</td><td class="prodSummaryTD ">{!cspsum.compweakness}</td><td class="prodSummaryTD ">{!cspsum.tactics}</td><td class="prodSummaryTD ">{!cspsum.compstrength}</td><td class="prodSummaryTD ">{!cspsum.hpweakness}</td><td class="prodSummaryTD ">{!cspsum.countertactics}</td></tr>
+<tr><td>&nbsp;</td></tr>
+</apex:repeat>
+</table>
+</div>
+
+<hr />
+
+<div style="page-break-inside:avoid;">
+<h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Client Resources</h1>  
+<table align="middle">
+<tr>
+<th valign="Bottom">Time:
+</th>
+
+</tr>
+<tr>
+<td  class="prodSummaryTable "><apex:outputText value="{!oppplan.DG_Time_c}"/>
+</td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+<tr>
+<th valign="Bottom">People:
+</th>
+</tr>
+<tr>
+<td  class="prodSummaryTable "><apex:outputText value="{!oppplan.DG_People_c}" />
+</td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+<tr>
+<th valign="Bottom">Money:
+</th>
+</tr>
+<tr>
+<td class="prodSummaryTable "><apex:outputText value="{!oppplan.DG_Money_c}" />
+</td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+<tr>
+<th valign="Bottom">Compelling Event:
+</th>
+</tr>
+<tr>
+<td  class="prodSummaryTable "><apex:outputText value="{!oppplan.DG_Compelling_Event_c}" />
+</td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+</table>
+</div>
+
+<hr />
+<div style="page-break-inside:avoid;">
+<h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Deal Health Checklist</h1>  
+
+<table width="100%" border="1" cellpadding="5" cellspacing="0" class="table">
+  <tr>
+    <th class="csfth" scope="col">Critical Success Factors</th>
+    <th class="statusth" scope="col"></th>
+    <th class="assessmentth" scope="col">Assessment</th>
+    <th class="commentsth" scope="col">Get to Green Plan</th>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Will They Buy?"/></td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Will_the_client_buy_c,1)+'_dhc.gif')}');">&nbsp;</td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Will_the_client_buy_c}"/></td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_WTB_c}" /></td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Buyer Experience with HP"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Buyer_experience_with_HP_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Buyer_experience_with_HP_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Buyer_experience_with_HP_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Buyer_Experience_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Client Relationship and Insight"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Client_Relationship_and_Insight_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Client_Relationship_and_Insight_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Client_Relationship_and_Insight_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Client_Relationship_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Client Decision Process"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Client_Decision_Process_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Client_Decision_Process_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Client_Decision_Process_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Client_Decision_Process_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Competitive Position"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Competitive_Position_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Competitive_Position_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Competitive_Position_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Competitive_Position_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Solution Scope"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Solution_Scope_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Solution_Scope_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Solution_Scope_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Solution_Scope_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Differentiation"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Differentiation_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Differentiation_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Differentiation_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Differentiation_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Teaming"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Teaming_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Teaming_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Teaming_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Teaming_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Sales Team Staffing"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Sales_Team_Staffing_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Sales_Team_Staffing_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Sales_Team_Staffing_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Sales_Team_Staffing_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Deal Shape and Pricing"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Deal_Shape_and_Pricing_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Deal_Shape_and_Pricing_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Deal_Shape_and_Pricing_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Deal_Shape_and_Pricing_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Delivery Leadership Team"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Delivery_Leadership_Team_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Delivery_Leadership_Team_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Delivery_Leadership_Team_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Delivery_Leadership_Team_c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText value="Terms and Conditions"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Terms_and_Conditions_c,1)+'_dhc.gif')}');"><img src="{!URLFOR($Resource.dhc,LEFT(oppplan.DHC_2_Terms_and_Conditions_c,1)+'_dhc.gif')}" style="width:100%;height:100%;" /></td>
+    <td class="assessmentth"><apex:outputText value="{!oppplan.DHC_2_Terms_and_Conditions_c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputText value="{!oppplan.DHC_Comments_Terms_and_Conditions_c}" />&nbsp;</td>
+  </tr>
+</table>
+
+</div> 
+
+<hr />
+
+</div>
+
+<div style="page-break-inside:avoid;">
+<h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Full Product Listing</h1>  
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="prodSummaryTable">
+  <tr style="background:#eeeeee;">
+    <th scope="col" class="prodSummaryTable">Product</th>
+    <th scope="col" class="prodSummaryTable">Business Group</th>
+    <th scope="col" class="prodSummaryTable">GBU</th>
+    <th scope="col" class="prodSummaryTable">Unit Price</th>
+    <th scope="col" class="prodSummaryTable">Quantity</th>
+    <th scope="col" class="prodSummaryTable">Schedule</th>
+    <th scope="col" class="prodSummaryTable">Subtotal</th>
+    <th scope="col" class="prodSummaryTable">Book/Ship Date</th>
+    <th scope="col" class="prodSummaryTable">Retain</th>
+    <th scope="col" class="prodSummaryTable">Quote #</th>
+  </tr>
+  <apex:repeat value="{!ProductList}" var="ps" ><tr>
+    <td class="prodSummaryTable">{!IF(ps.Sub_Product_Line_c != null, ps.Sub_Product_Line_c ,ps.Product_Line_c)}</td>
+    <td class="prodSummaryTable">{!ps.Business_Group_c}</td>
+    <td class="prodSummaryTable">{!ps.GBU_c}</td>
+    <td class="prodSummaryTable"><apex:outputText value="{0,number,###,###,###,###.00}">
+    <apex:param value="{!ps.UnitPrice }" /></apex:outputtext></td>
+    <td class="prodSummaryTable">{!ps.Quantity}</td>
+    <td class="prodSummaryTable">{!IF(ps.HasSchedule,'Yes','')}</td>
+    <td class="prodSummaryTable"><apex:outputText value="{0,number,###,###,###,###.00}">
+    <apex:param value="{!ps.Subtotal}" /></apex:outputtext></td>
+    <td class="prodSummaryTable"><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+    <apex:param value="{!ps.ServiceDate}" /> 
+</apex:outputText></td>
+    <td class="prodSummaryTable">{!IF(ps.RTS_c,'Yes','')}</td>
+    <td class="prodSummaryTable">{!ps.Quote_Number_c}</td>
+  </tr>
+  </apex:repeat>
+</table>
+</div>
+
+<div style="page-break-inside:avoid;">
+                  <h1 style="color: #5ABBE8;font-size: 28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Participating Countries/GBU</h1>  
+       
+<table width="100%" class="CountryTable">
+<tr style="background-color:#eeeeee;">
+    <th class="CountryTable " scope="col">Region</th>
+    <th class="CountryTable " scope="col">Country</th>
+    <th class="CountryTable " scope="col" style="text-align: Right;">Estimated Opportunity Value</th>
+  </tr>
+  <apex:repeat value="{!CountryList}" var="country">
+   <td class="CountryTable">{!country.Region}</td>
+   <td class="CountryTable">{!country.Country}</td>
+   <td class="CountryTable" style="text-align: Right;">USD {!country.EstOpportunityValue}</td>
+  </apex:repeat>
+</table>
+</div>
+
+</apex:page>

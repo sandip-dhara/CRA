@@ -1,0 +1,160 @@
+<!-- 
+/**********************************************************
+* Page Name: OpptyOwnerChange
+* Author: hp
+* Date: 25-Sep-2012 
+* Requirement # Request Id :
+* Description: To change the opportunity owner
+* R4 Changes: Req No:4091
+*             The requirement is  to replace the 2 radio buttons with check-boxes
+***********************************************************/
+-->
+<apex:page Standardcontroller="opportunity" extensions="OpportunityOwnerChangeController" tabStyle="Opportunity" id="page">
+<apex:includeScript value="{!$Resource.jQuery}"/>
+    <apex:sectionHeader title="Ownership Edit" >
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><apex:outputtext value="{!opportunity.name}"></apex:outputtext>  </b> </apex:sectionHeader>
+       <ol>
+        This screen allows you to transfer an opportunity from one user to another. When you transfer ownership of an opportunity, the new user will own:
+        <br />
+        <li>all notes that were recorded for this opportunity owned by you</li>
+        <li>all activities (tasks and events) that were recorded for this opportunity owned by you</li>
+        Note that completed activities will not be transferred. Opportunity teams will be maintained for closed opportunity.
+   
+        </ol>
+    
+        <apex:form id="frm" >
+            
+            
+            <apex:pageBlock id="pageBlock" title="  ">
+            <apex:messages />
+              <apex:panelgrid >
+                <apex:panelgroup >
+                   <b> <apex:outputText value="Transfer this opportunity" /> </b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputtext value="{!opportunity.name}"></apex:outputtext>
+                </apex:panelgroup>
+       
+               </apex:panelgrid>  
+                <apex:pageBlockButtons location="bottom">
+                   <!-- <apex:commandButton action="{!Save}" value="Save"/> -->
+                   <apex:commandButton action="{!Save}" value="Save"/>
+                    <apex:commandButton action="{!Cancel}" value="Cancel"/>
+                </apex:pageBlockButtons>
+                <apex:DataTable value="{!opportunityTeamMemberList}" var="team" cellspacing="5" id="dataTable">
+                <apex:column headerValue="">
+                    <b><apex:outputLabel value="Owner"></apex:outputLabel></b>
+                 </apex:column>
+                    <apex:column headerValue="">
+                        <select name="userType" id="{!$Component.UserId}_mlktp" size="1" onblur="modifyAccountLookupButton(this,'{!$Component.userID}')" onchange="changeLookupTypeParam('{!$Component.UserId}');">
+                            <option value="TeamEligibleUserLookup" selected="selected">User</option>
+                            <option value="PartnerUserLookup">Partner User</option>
+                        </select>&nbsp;&nbsp;
+                        <apex:inputField value="{!team.teamMember.UserId}" id="UserId" required="false" />&nbsp;&nbsp;&nbsp;
+                    </apex:column>
+                   
+                    <apex:column >
+                        <apex:inputhidden id="opptyid" value="{!opptyID}"/>
+                    </apex:column>
+                </apex:DataTable> <br/> 
+                
+               <!-- R4 Change: The requirement is  to replace the 2 radio buttons with check-boxes -->
+               
+               <apex:selectCheckBoxes value="{!ownerAddToST}" id="OwnerRW"  layout="pageDirection">
+               <apex:selectOption itemValue="Read" id="readSelecttion" itemLabel="Give current owner Read access to opportunity upon transfer." /> <br></br>
+               <apex:selectOption itemValue="RW" id="readWriteSection" itemLabel="Give current owner Read/Write access to opportunity upon transfer." />
+               </apex:selectCheckBoxes>
+               &nbsp;<apex:inputCheckbox id="opptyteam" value="{!keepOptyTeamFlag}"> </apex:inputCheckbox> 
+               &nbsp;<apex:outputText value="Keep Opportunity Team"></apex:outputText>
+               <br/>  
+               &nbsp; <apex:inputCheckbox id="EmialNotify" value="{!sendEmailNotificationFlag}"> </apex:inputCheckbox> 
+               &nbsp;<apex:outputText value="Send Notification Email"></apex:outputText>
+                          
+                
+            </apex:pageBlock>
+        </apex:form>
+        <!--
+        /**********************/
+        Added by PRM:Sameer:CR4091:Start
+        @Description: Either of the checkBox should be checked.
+        -->
+        <script type="text/javascript">
+            var j$ = jQuery.noConflict();
+            j$(document).ready(function(){
+                j$("#page\\:frm\\:pageBlock\\:OwnerRW\\:0").attr("checked","Checked");
+                j$("#page\\:frm\\:pageBlock\\:opptyteam").attr("checked","Checked");
+            });
+            
+            j$("#page\\:frm\\:pageBlock\\:OwnerRW\\:0").bind('change', function(){
+                if(j$(this).is(":checked") && j$("#page\\:frm\\:pageBlock\\:OwnerRW\\:1").is(":checked")){
+                    j$("#page\\:frm\\:pageBlock\\:OwnerRW\\:1").removeAttr("checked");
+                }
+            });
+            
+            j$("#page\\:frm\\:pageBlock\\:OwnerRW\\:1").bind('change', function(){
+                if(j$(this).is(":checked") && j$("#page\\:frm\\:pageBlock\\:OwnerRW\\:0").is(":checked")){
+                    j$("#page\\:frm\\:pageBlock\\:OwnerRW\\:0").removeAttr("checked");
+                }
+            });
+        </script>
+        <!-- Added by PRM:Sameer:CR4091:END -->
+        <script>
+            window.onload = function(){
+                
+                for(var i=0;i<1;i++){
+                    changeLookupTypeParam('page:frm:pageBlock:dataTable:'+i+':UserId');
+                    var userTypelookupId = 'page:frm:pageBlock:dataTable:'+i+':UserId';
+                    var userTypeObj = document.getElementById(userTypelookupId+'_mlktp');
+                    modifyAccountLookupButton(userTypeObj,userTypelookupId);
+                   
+                 }
+            }
+            function changeLookupTypeParam(lookupInputType){
+                var lookupUserType = document.getElementById(lookupInputType+'_mlktp');
+                var lookupTypeParam = document.getElementById(lookupInputType+'_lktp');
+                lookupTypeParam.value = lookupUserType.value;
+            }
+            
+            function modifyAccountLookupButton(userTypeObj,userTypelookupId){
+                var usertypelookObj = document.getElementById(userTypelookupId+'_lkwgt');
+                if(userTypeObj.value== 'PartnerUserLookup'){
+                    var userTypeObj1='Partner User';
+                }
+                else {
+                    var userTypeObj1='User';
+                }     
+                var opid='{!opptyid}';
+                var teamid='{!teamid}';
+                            
+                //alert(opid);
+                if (usertypelookObj != null && userTypeObj.value !='' ) {
+                    usertypelookObj.href = "javascript: openLookup('/apex/salesteamLookup?lkfm=page%3Afrm&optyid="+opid+"&teamid="+teamid+"&userType="+userTypeObj1+"&lknm="+userTypelookupId+"&lktp=' + getElementByIdCS('"+userTypelookupId+"_lktp').value,670,'1','&lksrch=' + escapeUTF(getElementByIdCS('"+userTypelookupId+"').value.substring(0, 80)))";
+                                 
+                    
+                }
+            }
+            function checkKeepSalesteam(){
+                if(document.getElementById('page:frm:pageBlock:OwnerRW:0').checked==true || document.getElementById('page:frm:pageBlock:OwnerRW:1').checked==true){
+                   if(document.getElementById('page:frm:pageBlock:opptyteam').checked==false){
+                        document.getElementById('page:frm:pageBlock:opptyteam').checked=true;
+                    }
+                }
+            
+            }
+            function uncheckOwnerAddtoST(){
+                 if(document.getElementById('page:frm:pageBlock:opptyteam').checked==false){
+                    if(document.getElementById('page:frm:pageBlock:OwnerRW:0').checked==true || document.getElementById('page:frm:pageBlock:OwnerRW:1').checked==true){
+                        document.getElementById('page:frm:pageBlock:OwnerRW:0').checked=false;
+                        document.getElementById('page:frm:pageBlock:OwnerRW:1').checked=false;
+                    }
+                  }  
+                    var ownerflag={!isOwnerSTMember};
+                    
+                    if(ownerflag==true){
+                        if(document.getElementById('page:frm:pageBlock:opptyteam').checked==true)
+                        document.getElementById('page:frm:pageBlock:OwnerRW:0').checked=true;
+                    
+                    
+                    }
+             }
+            
+            
+        </script> 
+</apex:page>

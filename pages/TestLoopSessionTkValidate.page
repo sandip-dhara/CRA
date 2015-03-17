@@ -1,0 +1,49 @@
+<apex:page sidebar="false">
+<apex:includeScript value="{!URLFOR($Resource.SessionTkGwLoginMinJs)}"/>    
+<apex:form > 
+    Gateway Login TEST. POSTs a login to the SRP/Gateway, then validates every 20 seconds infinitely (GET to the SRP/Gateway).<br/>
+    The validation keeps the session alive, but will expire after 8 hours--so don't run this test more than 8 hours :)<br/>
+    (<a href="https://it-services-gw-itg.external.hp.com">https://it-services-gw-itg.external.hp.com</a>)<br/>
+    <br/>
+    <div id='status-text'></div>
+</apex:form>
+<script type="text/javascript">     
+    function getTime() {
+        var time = new Date();
+        return ("0" + time.getHours()).slice(-2)   + ":" + 
+               ("0" + time.getMinutes()).slice(-2) + ":" + 
+               ("0" + time.getSeconds()).slice(-2);
+    }
+    
+    function login(st) {
+        st.innerHTML += getTime() + ' &nbsp;-&nbsp;';           
+        
+        GWSessionTk.login();
+        
+        var text = getTime() + ' &nbsp';
+        text += GWSessionTk.errorStatus ? GWSessionTk.errorStatus : 'OK';
+        text += '<br/>';
+        st.innerHTML += text;
+    }    
+ 
+    function isValid(st) {
+        GWSessionTk.isValid(function() {
+            st.innerHTML += getTime() + ' &nbsp;-&nbsp;';                   
+            var text = getTime() + ' &nbsp';
+            text += 'isValid: ' + GWSessionTk.isValidStateCheck;
+            text += ' <br/><br/>' + GWSessionTk.errorStatus ? GWSessionTk.errorStatus : GWSessionTk.debugStatus;
+            text += ' <br/>';
+            st.innerHTML += text;                   
+        });
+    }
+    
+    var waitMs = 20 * 1000;
+    var st = document.getElementById('status-text');
+
+    st.innerHTML += getTime() + ' &nbsp;-&nbsp;Please wait (logging in)...<br/>';  
+    login(st, waitMs);
+    st.innerHTML += getTime() + ' &nbsp;-&nbsp;Login complete. Will now validate every 20 seconds...<br/>';
+    
+    setInterval(function(){isValid(st);}, waitMs);
+</script>
+</apex:page>

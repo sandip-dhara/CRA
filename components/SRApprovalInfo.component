@@ -1,0 +1,28 @@
+<apex:component controller="SupportReqApprovalInfoCompController" access="Global" >
+ <apex:attribute Name="SupportRequestId" assignTo="{!SRId}" type="Id" description="S"/>
+   <apex:outputpanel >
+             <apex:outputLabel rendered="{!isOpportunityApprovalListEmpty}">
+               {!$Label.No_records_to_display}<br></br>
+            </apex:outputLabel>
+            </apex:outputpanel>
+           <apex:outputText value="{!info}"/>
+           <apex:outputLabel value="Approvers :" rendered="{!NOT(isOpportunityApprovalListEmpty)}" />
+           <apex:outputText label="Approvers:" value="{!approvernames}" rendered="{!NOT(isOpportunityApprovalListEmpty)}"/>
+           <br></br>
+          
+           <apex:outputLabel value="Status :" rendered="{!NOT(isOpportunityApprovalListEmpty)}"/>
+           <apex:outputField label="Status:" value="{!ApprovalList1[0].Status__c}" rendered="{!NOT(isOpportunityApprovalListEmpty)}"/>   
+           <br></br>
+            <apex:outputLabel value="Pursuit Budget:" rendered="{!NOT(isOpportunityApprovalListEmpty)}"/>
+            <apex:outputField label="Pursuit Budget:" value="{!ApprovalList1[0].Pursuit_Budget_USD__c}" rendered="{!NOT(isOpportunityApprovalListEmpty)}"/> 
+            <br></br>
+            <apex:outputLabel value="Date Approved:" rendered="{!NOT(isOpportunityApprovalListEmpty)}"/>    
+           <apex:outputtext label="Date Approved:" value="{!ApprovalList1[0].Approved_Date__c}" rendered="{!NOT(isOpportunityApprovalListEmpty)}"/>
+           <br></br>
+            <apex:dataTable columns="3" value="{!PrList}" var="pr" border="2" width="100%" rendered="{!NOT(isOpportunityApprovalListEmpty)}">
+            <apex:facet name="caption"><b>Pursuit Resource Information</b></apex:facet>
+            <apex:column headerValue="Resource : Name/Role" value="{!pr.Pursuit_Team_Name_Role__c}"/>
+            <apex:column headerValue="Start date" value="{!pr.Estimated_Start_Date__c}"/>
+            <apex:column headerValue="End Date" value="{!pr.Estimated_End_Date__c }" />
+            </apex:dataTable>
+</apex:component>

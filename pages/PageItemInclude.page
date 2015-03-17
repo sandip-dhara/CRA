@@ -1,0 +1,91 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<apex:page standardController="PageToItem__c" extensions="PageItemIncludeController">
+
+
+	<apex:PageMessages id="messages"/>
+	<apex:form >
+		
+		<apex:pageBlock title="Select an existing item to include">
+			<apex:pageBlockButtons >
+				<apex:commandButton value="Cancel" action="{!cancel}"/>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection title="Information" columns="1">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Display in Content Block" for="blocks"/>
+					<apex:selectList id="blocks" value="{!p.Display_in_Contentblock__c}" size="1">
+						<apex:SelectOptions value="{!blocknameselect}"/>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+			<apex:inputField value="{!p.Order__c}"/>			
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection title="Browse through the folders and pages to navigate to an existing item you want to include" id="selectblock" columns="3">
+				<!-- Folders Select -->
+				<apex:outputPanel >
+				<apex:commandLink value="Back to previous folder" action="{!back}" rerender="selectblock,messages" rendered="{!NOT(ISNULL(currentfolder))}"/><br/>
+				<!-- <apex:outputText value="{!currentfolder.Name} / {!currentfolder.Parent_CMSFolder__c}" rendered="{!NOT(ISNULL(currentfolder))}"/> -->
+				<apex:pageBlockTable value="{!folders}" var="f" rendered="{!folders != null}">
+					<apex:column headervalue="Folder : {!IF(NOT(ISNULL(currentfolder)),currentfolder.Name,'')}">
+						<apex:image url="{!URLFOR($Resource.CMSForce, '/JSTree/folder_blue.png')}"/>&nbsp;
+						<apex:commandLink value="{!f.Name}" action="{!selectFolder}" rerender="selectblock,messages">
+							<apex:param name="folderid" value="{!f.Id}"/>
+						</apex:commandLink>
+					</apex:column>
+				</apex:pageBlockTable>
+				</apex:outputPanel>
+				
+				<!-- Pages Select -->
+				<apex:outputPanel >
+				<br/>
+				<apex:pageBlockTable value="{!pages}" var="p" rendered="{!NOT(ISNULL(pages))}">
+					<apex:column headerValue="Page">
+						<apex:image url="{!URLFOR($Resource.CMSForce, '/JSTree/file.png')}"/>&nbsp;
+						<apex:commandLink value="{!p.Name}" action="{!selectPage}" rerender="selectblock,messages">
+							<apex:param name="pid" value="{!p.Id}"/>
+						</apex:commandLink>
+					</apex:column>
+				</apex:pageBlockTable>
+				</apex:outputPanel>
+				
+				<!-- Items Select -->
+				<apex:outputPanel >
+				<br/>
+				<apex:pageBlockTable value="{!items}" var="i" rendered="{!NOT(ISNULL(items))}">					
+					<apex:column headerValue="Item (click to select)">						
+						<apex:commandLink action="{!selectItem}" value="{!i.ContentBlockItem__r.Name}">
+							<apex:param name="itemid" value="{!i.ContentBlockItem__r.Id}"/>
+						</apex:commandLink>
+					</apex:column>					
+					<apex:column headerValue="Displayed in">
+						{!i.Display_in_Contentblock__c}
+					</apex:column>
+					<apex:column headerValue="Preview">
+						<a href="{!previewurl}/ContentBlockItemSitePreview?id={!i.ContentBlockItem__r.Id}" target="_blank">Preview</a>
+					</apex:column>
+				</apex:pageBlockTable>
+				</apex:outputPanel>
+				
+			</apex:pageBlockSection>
+		
+		</apex:pageBlock>
+
+
+	</apex:form>
+
+</apex:page>

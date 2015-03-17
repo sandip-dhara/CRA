@@ -1,0 +1,190 @@
+<!-- 
+/**********************************************************
+* Page Name: TMDisplayTerritoryUsersAccts
+* Author:  Sunder Singh Tanwar
+* Date: July 1, 2013
+* Requirement # US-2489 / R6.0
+* Description: Display Territory user's button will display a AF page report which will have sorting option on most of the fields and option to export the report in excel.
+**********************************************************/
+-->
+
+<apex:page standardController="Account" extensions="TMDisplayTerritoryUsersControllerAccts" sidebar="false"><!-- contentType="application/vnd.ms-excel#ExportedContracts.xls"-->
+    <apex:form >
+        <apex:pageBlock id="displayAccBlock">
+           <!-- <apex:outputLink value="{!$Page.Location_Tab_Override}">« Back to Locations Home page</apex:outputLink> -->
+           <apex:commandLink action="{!backPage}" value="« Back to the Account Detail" />
+            <br/><br/>
+                <apex:pageBlockButtons location="both" id="buttons">
+                   <apex:outputPanel id="myButtons">
+                        <apex:commandButton action="{!Beginning}" title="Beginning" value="first" disabled="{!disablePrevious}" status="status" reRender="displayAccBlock"/>
+                        <apex:commandButton action="{!Previous}" title="Previous" value="previous" disabled="{!disablePrevious}" status="status" reRender="displayAccBlock"/>        
+                        <apex:commandButton action="{!Next}" title="Next" value="next" disabled="{!disableNext}" status="status" reRender="displayAccBlock"/>
+                        <apex:commandButton action="{!End}" title="End" value="last" disabled="{!disableNext}" status="status" reRender="displayAccBlock"/>
+                        <apex:commandButton action="{!exportToExcel}" title="ExporttoXLS" value="Export to XLS"  disabled="{!DisableExportToXLS}"  id="theButton" />
+                   </apex:outputPanel>
+               </apex:pageBlockButtons>
+        
+            <apex:pageblockSection columns="1" title="Display Territory Users" id="myDataSection" collapsible="false">
+            STUA - Sales Territory User Assignments
+             <div style="position: relative;" id="myDiv">
+                <apex:outputpanel id="myPanel">
+                    <apex:actionstatus id="status">
+                        <apex:facet name="start">
+                            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                               height: 100%;opacity:0.65;width:100%;">
+                                <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription">Loading...</span>
+                                </div>
+                            </div>
+                        </apex:facet>
+                    </apex:actionstatus>   
+                    
+                    
+                    
+                    <apex:pageBlockTable value="{!salesTerritoryLocAssign}" var="a" rendered="{!NOT(ISNULL(salesTerritoryLocAssign))}" style="width:1485px;">
+                     
+                       <apex:column width="25%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="User{!IF(sortExpression=='User__r.Name',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSort">
+                             <apex:param value="User__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputLink target="_top" value="/{!a.User__c}" title="{!a.User__r.Name}">{!a.User__r.Name}</apex:outputLink>
+                         <!--<apex:outputtext >{!a.User__r.Name}</apex:outputText>-->
+                       </apex:column>                      
+                     
+                       
+                       <apex:column width="25%" headerValue="Territory Name">
+                           <apex:outputLink target="_top" value="/{!a.Sales_Territory__c}" title="{!a.Sales_Territory__r.MyComp_Sales_Territory_Name__c}">{!a.Sales_Territory__r.MyComp_Sales_Territory_Name__c}</apex:outputLink>
+                       </apex:column>
+                       
+                       <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="Territory Region{!IF(sortExpression=='Sales_Territory__r.MyComp_Territory_Region__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd13Sort">
+                             <apex:param value="Sales_Territory__r.MyComp_Territory_Region__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.Sales_Territory__r.MyComp_Territory_Region__c}</apex:outputtext>
+                       </apex:column>
+                       
+                         <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="Territory Country{!IF(sortExpression=='Sales_Territory__r.MyComp_Territory_Country__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd12Sort">
+                             <apex:param value="Sales_Territory__r.MyComp_Territory_Country__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.Sales_Territory__r.MyComp_Territory_Country__c}</apex:outputtext>
+                       </apex:column>
+                       
+                       <apex:column width="25%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="Territory Id{!IF(sortExpression=='Sales_Territory__r.Id',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd1Sort">
+                             <apex:param value="Sales_Territory__r.Id" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputLink target="_top" value="/{!a.Sales_Territory__c}" title="{!a.Sales_Territory__r.Id}">{!a.Sales_Territory__r.Id}</apex:outputLink>
+                       </apex:column>
+                       
+                       <apex:column width="25%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="Role{!IF(sortExpression=='User__r.UserRole.Name',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd2Sort">
+                             <apex:param value="User__r.UserRole.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.User__r.UserRole.Name}</apex:outputtext>
+                       </apex:column>
+                    
+                       <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink title="Add to Account Team" action="{!ViewData}" value="Acc Team{!IF(sortExpression=='Add_to_Account_Team__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd3Sort">
+                             <apex:param value="Add_to_Account_Team__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.Add_to_Account_Team__c}</apex:outputtext>
+                       </apex:column>
+                       
+                    <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="User Role Type{!IF(sortExpression=='Team_Role__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd11Sort">
+                             <apex:param value="Team_Role__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.Team_Role__c}</apex:outputtext>
+                       </apex:column>
+                       
+                       <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink title="STUA - Sales Territory User Assignments" action="{!ViewData}" value="STUA Active{!IF(sortExpression=='IsActive__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd4Sort">
+                             <apex:param value="IsActive__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.IsActive__c}</apex:outputtext>
+                       </apex:column>
+                       
+                       <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="Speciality{!IF(sortExpression=='User__r.Proudct_speciality__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd5Sort">
+                             <apex:param value="User__r.Proudct_speciality__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <!--<apex:outputLink target="_top" value="/{!a.Specialty__c}" title="{!a.User__r.Proudct_speciality__c}">{!a.User__r.Proudct_speciality__c}</apex:outputLink>-->
+                         <apex:outputtext >{!a.User__r.Proudct_speciality__c}</apex:outputtext>
+                       </apex:column>    
+                       
+                       <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="Email{!IF(sortExpression=='User__r.Email',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd6Sort">
+                             <apex:param value="User__r.Email" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.User__r.Email}</apex:outputtext>
+                       </apex:column>                                                                                      
+                    
+                   <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink title="Lead Eligibility Flag" action="{!ViewData}" value="Lead Eligibility{!IF(sortExpression=='User__r.Lead_Eligibility_Flag__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd7Sort">
+                             <apex:param value="User__r.Lead_Eligibility_Flag__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.User__r.Lead_Eligibility_Flag__c}</apex:outputtext>
+                       </apex:column>                    
+                    
+                       <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink title="Renewal Eligible Status" action="{!ViewData}" value="Renewal Eligible{!IF(sortExpression=='User__r.Renewal_Eligible_Status__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd8Sort">
+                             <apex:param value="User__r.Renewal_Eligible_Status__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.User__r.Renewal_Eligible_Status__c}</apex:outputtext>
+                       </apex:column>                                                                                      
+                    
+                   <apex:column width="5%">
+                         <apex:facet name="header">   
+                           <apex:commandLink action="{!ViewData}" value="User Active{!IF(sortExpression=='User__r.IsActive',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd9Sort">
+                             <apex:param value="User__r.IsActive" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>
+                         <apex:outputtext >{!a.User__r.IsActive}</apex:outputtext>
+                       </apex:column>  
+                       
+                   <apex:column width="5%">
+                         <apex:facet name="header"> 
+                   
+                           <apex:commandLink title="STUA - Sales Territory User Assignments" action="{!ViewData}" value="18 Digit STUA Record Id{!IF(sortExpression=='Id',IF(sortDirection='ASC','▼','▲'),'')}" id="cmd10Sort">
+                             <apex:param value="Id" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink>
+                         </apex:facet>     
+                         <apex:outputLink target="_top" value="/{!a.Id}" title="{!a.Id}">{!a.Id}</apex:outputLink>          
+                       </apex:column>                                       
+     
+                    </apex:pageBlockTable>
+                    <apex:outputText >Showing {!IF(total_size != null && total_size > 0,(PageNumber*ListSize)+1 - ListSize,0)}-{!IF((PageNumber*ListSize)>total_size,total_size,(PageNumber*ListSize))} of {!total_size} Users</apex:outputText>
+  
+            </apex:outputpanel>
+            </div>
+            </apex:pageblockSection>
+
+       </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

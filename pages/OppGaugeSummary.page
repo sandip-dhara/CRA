@@ -1,0 +1,227 @@
+<apex:page standardController="Opportunity_Plan__c"  showHeader="false" sidebar="false" standardStylesheets="true" >
+<body style="padding-left:10px;padding-right:10px" onload="window.scroll(0,0);">
+
+<style type="text/css">
+
+body {
+    padding:10px;
+}
+
+//.bPageBlock.pbBody{background-color:#FFFFFF;} 
+
+.rotation {    
+
+/* Safari */
+-webkit-transform: rotate(-90deg);
+
+/* Firefox */
+-moz-transform: rotate(-90deg);
+
+/* IE */
+-ms-transform: rotate(-90deg);
+
+/* Opera */
+-o-transform: rotate(-90deg);
+
+/* Internet Explorer */
+filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+
+}
+
+//.trquestion {
+    //background-color: #5ABBE8;
+    ////font-weight: bold;
+    border: 1px solid #000;   
+//}
+
+</style>
+
+<apex:form style="background-color:#FFFFFF"> 
+<div><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<h1 style="font-size:28px;color:#5ABBE8;">Opportunity Gauge Summary</h1></div>
+<hr size="1"></hr>
+<!--<apex:pageblock>-->
+<!--<div style="background-color:#FFFFFF">-->
+<!--End-->
+
+<BR/>
+
+<span style="width:200px; text-align:center">
+<apex:panelGrid columns="1" style="width:100%;" cellPadding="3">
+<div style="width:200px;margin-left:auto;margin-right:auto;text-align:center;">
+    <input type="button" class="btn" value="Begin/Edit" title="edit"  onclick="location.href='/apex/OpportunityGuageEdit?id={!Opportunity_Plan__c.id}&retURL=/apex/OppGaugeSummary?id={!Opportunity_Plan__c.id}'"/>
+    <input type="button" class="btn" value="Print" title="Print" onclick="window.open('/apex/OpportunityGaugePrint_pdf?id={!Opportunity_Plan__c.id}')"/>
+    <input type="button" class="btn" value="Help" title="Help" onclick="window.open('/apex/OGHelp','OG_Help','width=600,height=400')"/>
+</div>
+</apex:panelgrid>    
+</span>
+
+<BR/>
+
+<!--Heading of Opportunity Gauge-->   
+<apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+</apex:panelgrid>
+<!--End-->
+<!--; background-color:#FFFFFF-->
+<apex:panelgrid columns="2" border="0" style="width:100%;table-layout:fixed">
+
+<!--Column1-->
+    <apex:panelGrid columns="2" id="WTB_Score" style="width:100%; background-color:#66CCFF" cellPadding="3">
+
+    <apex:Outputlabel value="Will They Buy?" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold" />
+    </apex:panelGrid>
+
+<!--Column2-->
+    <apex:panelGrid columns="2" id="WTBO_Score" style="width:100%; background-color:#66CCFF" cellPadding="3" >
+    
+    <apex:Outputlabel value="Will They Buy Ours?" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+    </apex:panelGrid>
+
+<!--Column1-->
+    <apex:panelGrid id="WTB_BAR" columns="2" border="0" cellpadding="3"   cellspacing="8" >
+    <apex:outputLabel value="S1. Business Case" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTB_Q1__c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S2. Resources" style="color: #000000; font-size:10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTB_Q2__c,1)+'-5.jpg')}"  height="18"/>
+    <apex:outputLabel value="S3. Decision Process" style="color: #000000; font-size: 10pt; width:30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTB_Q3__c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S4. Urgency" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTB_Q4__c,1)+'-5.jpg')}"  height="18"/>
+    <apex:outputLabel value="S5. Relationships" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTB_Q5__c,1)+'-5.jpg')}"  height="18"/>
+    </apex:panelGrid>
+    
+
+<!--Column2-->
+    <apex:panelGrid id="WTBO_BAR" columns="2" border="0" cellpadding="3" cellspacing="8" >
+    <apex:outputLabel value="S1. Technical Solution" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTBO_Q1__c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S2. Business Solution" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTBO_Q2__c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S3. Relationship Strength" style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTBO_Q3__c,1)+'-5.jpg')}" height="18"/>
+    <apex:outputLabel value="S4. Point of Preference " style="color: #000000; font-size: 10pt; width: 30%"></apex:outputLabel>
+    <apex:image url="{!URLFOR($Resource.OPBar, LEFT(Opportunity_Plan__c.OG_WTBO_Q4__c,1)+'-5.jpg')}" height="18"/>
+    </apex:panelGrid>
+    
+    
+    
+    <apex:panelgrid columns="1" cellpadding="3" cellspacing="8" >
+    <apex:panelgroup ><apex:OutputLabel value="RESULT: " style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold"/><apex:OutputLabel value="{!Opportunity_Plan__c.WTB_CBP__c}" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:OutputLabel value="SCORE: {!Opportunity_Plan__c.WTB_Total__c}" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <apex:OutputLabel value="" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold;font-style:Italics"/><BR></BR><BR></BR>
+    <apex:OutputLabel value="Scoring Legend:" /><apex:OutputLabel value="• High:25 to 19  • Medium:18 to 12  • Low:11 to 1" />
+    </apex:panelgroup>
+    </apex:panelgrid>
+    
+    <apex:panelgrid columns="1" cellpadding="3" cellspacing="8" >
+    <apex:panelgroup ><apex:OutputLabel value="Result: " style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold"/><apex:OutputLabel value="{!Opportunity_Plan__c.WTBO_CBP__c}" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:OutputLabel value="SCORE: {!Opportunity_Plan__c.WTBO_Total__c}" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <apex:OutputLabel value="" style="color: #000000; font-size: 10pt; width: 300px;font-weight:bold;font-style:Italic" /><BR></BR><BR></BR>
+    <apex:OutputLabel value="Scoring Legend:" /><apex:OutputLabel value="• High:20 to 15  • Medium:14 to 10  • Low:9 to 1" />
+    </apex:panelgroup>
+    </apex:panelgrid>
+
+
+
+<!--Column1-->
+    <apex:panelGrid columns="1" id="CBP_h" style="width:100%; background-color:#66CCFF" cellpadding="3">
+    <apex:Outputlabel value="Combined Buying Potential" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+    </apex:panelGrid>   
+
+<!--Column2-->   
+<!--    <apex:panelGrid >-->
+    <apex:panelGrid columns="1" id="SPM_h" style="width:100%;height:400%;background-color:#66CCFF"  cellPadding="13">
+        <apex:Outputlabel value="" style="color: #00000; font-size: 12pt; width: 300px; font-weight:bold"/>
+    </apex:panelGrid>
+
+<!--Column1-->  
+
+     
+    <apex:panelGrid id="Result" columns="1" cellpadding="3" cellspacing="8" >
+    <apex:panelgroup >
+    <apex:OutputLabel value="Will They Buy? :" style="color: #000000; font-size: 10pt;font-weight:bold"/><apex:OutputLabel value=" {!Opportunity_Plan__c.WTB_CBP__c}"  style="color: #000000; font-size: 10pt;font-weight:bold"/>
+    </apex:panelgroup>
+    <apex:panelgroup >
+    <apex:OutputLabel value="Will They Buy Ours? :" style="color: #000000; font-size: 10pt;font-weight:bold"/><apex:OutputLabel value=" {!Opportunity_Plan__c.WTBO_CBP__c}" style="color: #000000; font-size: 10pt;font-weight:bold"/>
+    </apex:panelgroup>
+    <apex:panelgroup >
+    <apex:OutputLabel value="Combined Buy Potential :" style="color: #000000; font-size: 10pt;font-weight:bold"/><apex:OutputLabel value=" {!Opportunity_Plan__c.Combined_Buying_Potential__c}%" style="color: #000000; font-size: 10pt;font-weight:bold"/>
+    </apex:panelgroup>  
+    <apex:panelgroup >
+    <apex:outputText value="Note:" style="font-weight:bold"></apex:outputText><BR></BR>
+    <apex:outputtext value=" 1. Score will not exceed MEDIUM if 'Disagree, Strongly Disagree, or Clear Disadvantage' are selected." ></apex:outputtext><BR></BR>
+    <apex:outputtext value="2. Use these guidelines to validate Combined Buy Potential against CDSM sales stage:" ></apex:outputtext><BR></BR>
+    <apex:outputtext value="Sales Stage 1 - 25%;  Sales Stages 2 and 3 - 50%;  Sales Stage 4 - 60%;  Sales Stage 5 - 80%." style="font-weight:bold" ></apex:outputtext>
+    </apex:panelgroup>
+    </apex:panelGrid>
+
+<!--Column2-->
+    <apex:panelGrid columns="1" >
+       
+    <table border="0" cellspacing="1" cellpadding="1" style="text-align:center;vertical-align:Center" >
+     
+    <tr height="20">
+    <th rowspan="4" class="rotation" style="vertical-align:bottom;" >Will They Buy<br />&nbsp;</th>
+    <th>High</th>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='HL','#999999','white')};border:solid 3px grey" >30%</td>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='HM','#999999','white')};border:solid 3px grey" >60%</td>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='HH','#999999','white')};border:solid 3px grey" >80%</td>
+    </tr>
+    <tr height="20">
+    <th>Med</th>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='ML','#999999','white')};border:solid 3px grey" >25%</td>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='MM','#999999','white')};border:solid 3px grey" >50%</td>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='MH','#999999','white')};border:solid 3px grey" >60%</td>
+    </tr>
+    <tr height="20">
+    <th>Low</th>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='LL','#999999','white')};border:solid 3px grey" >15%</td>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='LM','#999999','white')};border:solid 3px grey" >25%</td>
+    <td style="background-color:{!IF(Opportunity_Plan__c.OG_CBP_S__c='LH','#999999','white')};border:solid 3px grey" >30%</td>
+    </tr>
+    
+    <tr>
+    <td ></td>
+    <th>Low</th>
+    <th>Med</th>
+    <th>High</th>
+    </tr>
+    <th></th>
+    <th></th>
+    <th colspan="4">Will They Buy Ours</th>
+    
+    </table>
+    </apex:panelGrid>
+     
+</apex:panelgrid>
+
+<apex:panelGrid id="CBP" columns="2" style="color: #000000; font-size: 10pt; width: 60%; cellpadding:3" cellspacing="1" >
+
+</apex:panelGrid>
+
+<br />
+<br />
+<!--background-color:#FFFFFF -->
+<apex:panelgrid columns="1" border="0" style="width:100%;table-layout:fixed">
+<apex:panelGrid columns="1">
+<apex:panelGroup >
+<B>Last Modified By: </b><apex:outputfield value="{!Opportunity_Plan__c.OG_Last_Modified_By__c}"/>
+</apex:panelGroup>
+</apex:panelGrid>
+<!--
+<apex:panelGrid columns="2" cellpadding="3">
+<apex:panelGroup >
+<B>Last Modified Date: </b><apex:outputfield value="{!Opportunity_Plan__c.OG_Last_Modified_Date__c}"/>
+</apex:panelGroup>
+</apex:panelGrid>
+-->
+</apex:panelGrid>  
+
+<apex:variable var="c" value="True" />
+<!---</apex:pageblock>--->
+<!--</div>--->
+</apex:form>
+</body>
+<br></br>
+Copyright © 2001–2013 Revenue Storm Corp. All Rights Reserved <br/>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

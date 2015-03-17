@@ -1,0 +1,26 @@
+<!-- 
+/**********************************************************
+* Page Name: SupReqoptuSalesTeam
+* Author: Accenture
+* Date: 12-June-2012 
+* Requirement # Request Id :
+* Description: UI to display opty Sales team on support request detail page
+***********************************************************/
+-->
+<apex:page standardController="Support_Request__c" extensions="SupReqOptySalesTeamController">
+    <apex:form >
+        <apex:inputHidden value="{!Support_Request__c.Opportunity__c}"/>
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!OpportunityTeamMembersList}" rendered="{!Not(isOpportunityTeamMembersListEmpty)}" var="Team">
+                <apex:column value="{!Team.User.Name}"/>
+                <apex:column value="{!Team.TeamMemberRole}"/>
+                <apex:column value="{!Team.User.Business_Group__c}"/>
+                <apex:column value="{!Team.User.Global_Business_Unit__c}"/>
+                <apex:column value="{!Team.OpportunityAccessLevel}"/>
+            </apex:pageBlockTable>
+            <apex:outputLabel rendered="{!isOpportunityTeamMembersListEmpty}">
+                {!$Label.No_records_to_display}
+            </apex:outputLabel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

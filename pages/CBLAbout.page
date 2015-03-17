@@ -1,0 +1,88 @@
+<apex:page >
+<apex:includeScript value="{!URLFOR($Resource.videobox, 'video/js/mootools.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.videobox, 'video/js/swfobject.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.videobox, 'video/js/videobox.js')}"/>
+
+<apex:stylesheet value="{!URLFOR($Resource.videobox, 'video/css/videobox.css')}"/>
+
+<p>
+  <h1>Chatter Blacklist - <i>"Keeping the conversation clean."</i></h1>
+</p><p>  
+  <h2>What is it?</h2>
+  </p><p>  
+  Chatter Blacklist is an application that allows organizations to add a series of words or phrases to a 
+  blacklist---a list of words which do are disallowed by company policies or compliance rules. Such words may include 
+  swear words, racist statements, sexist remarks, and more.
+  </p><p>  
+  Words added to the blacklist will be automatically checked whenever a user posts via Chatter with the offending words
+  scrubbed from the post, comment, or User's current status with the option of an administrator being notified of the breach of conduct.
+   </p><p>
+   If you want to get started quickly, check out <a href="http://www.youtube.com/watch?v=aExYvke-M98" rel="vidbox 800 600" title="Chatter Blacklist by Quinton Wall">this quick 3min intro video</a> which will cover everything you need. (Go on, I know you really want to click it, don't you?)
+  </p><p>  
+  <h3>How do I get started?</h3>
+  </p><p>  
+  Using Chatter Blacklist is easy, simply navigate to the Blacklisted Words tab, add a word or phrase, and save the record.
+  By default, words are scrubbed from posts using the '****' annotation. Scrubmarks can be defined for each particular word by modify the Substitution field when entering a Blacklisted word.
+  </p><p>  
+  <h3>How it works</h3>
+  </p><p>  
+  Each blacklisted word or phrase is converted into a Regular Expression. You can see the generated expression in the RegexValue field of a particular
+  record. This field can be manually updated by someone familiar with regular expressions. Warning: manually updating a regular expression
+  should be done with care. Regular Expressions can be complicated and may cause Chatter Blacklist to fail to match a work correctly.
+   <h3>What are the current options</h3>
+  </p>For each word you can configure the following<p>
+  <ul>
+  <li><b>Word</b> - the actual word which you wish to black list. This will be ignored if you have set a value in the Common Expression field (see below)</li>
+  <li><b>Substitution string</b> - what characters do you wish to substitute the blacklisted word with? defauts to ***</li>
+  <li><b>Add To Compliance Audit</b> - checking this will write the out of compliance post, in its unscrubbed form to the Blacklist Audit object
+   including the word which caused the breach, and the user who entered the post. <b>Note:</b> Email notifications etc, can easily be created based on inserts into the Blacklist Audit table via 
+   standard Salesforce workflow and field update rules.</li>
+  <li><b>Prevent Post on Breach</b> - if checked, the system will return an error message to the user rather than posting a scrubbed version of their post. 
+  Posts will still be sent to Blacklist Audit if the Add to Compliance check is enabled.</li>
+  <li><b>Match Whole Words Only</b> - checking this will match the word if only the entire word matches. eg: If the blacklisted word was 'bum'. 'bummer' would not</li>
+   trigger a compliance breach if Match Whole Words Only was checked.
+   <li><b>Is Active</b> - This field, which is checked by default, allows you enable or disable specific words without deleting them. When unchecked, a specific
+   word will not be used in filters.</li>
+   <li><b>Regex Value</b> - Chatter Blacklist generates the regular expression value required to match the words. This field is read only and used internally by the system.
+   If you want to write your own custom regular expression, and not have one generated based on a word you enter, use the custom expression field described below.</li>
+   <li><b>Custom Expression</b> You can now enter your own custom regex expressions to handle common patterns such as SSN. <a href="http://www.regexlib.com/">Regexlib</a> provides
+    a wide selection of regular expressions you can leverage. Once you find the regular expression that suits
+     your need, simply copy and paste it into the common expression field, and leave the <i>word</i> field blank.
+     (The word field will be ignored, and blanked out for you if you add it in addition to a custom expression)
+     </li>
+  </ul> 
+  </p>
+  
+  <h3>An important note about custom expressions</h3>
+  <p>
+  Most expressions you will find on the internet are written as samples for a single word, not always part of 
+  a block of text. This is true for expressions listed on the <a href="http://www.regexlib.com">Regexlib</a> site reference above. In order for the expression
+  to work correctly on Chatter posts and comments, you need to <i>bound</i> the word using a leading and trailing \b.
+  For example, the following expression, from Regexlib, matches SSNs: 
+  </p>
+ <pre> ^\d{3}-\d{2}-\d{4}$</pre>
+  <p>
+  Note the leading ^ and trailing $. This means <i>check from the beginning of the line to the end of the line.</i>
+  If the SSN was the only thing in a Chatter post, this would work fine, but that is not usually the case. The correct regex expression to <i>find</i> a SSN in a post is:
+  </p>
+  <pre>\b\d{3}-\d{2}-\d{4}\b</pre>
+  <p>
+  Notice how I we changed the leading ^ and trailing $ to using the bounding character \b. This expression now says <i>within my post, look for a word (separated by spaces) that match my expression.</i>
+  If you add that expression to the Custom Expression field when adding a blacklist, you will now have
+   a working blacklist entry that will filter out SSNs. Cool huh :)
+  </p>
+  <p>  
+  <h3>Other important notes</h3>
+  </p><p>
+  1. Add to Audit will not work if "Prevent post on Breach" is checked. This is due to the platform managing transactions for us. It's a techie thing, but trust me, I tried to make it work.
+  <br/>
+  2. Breached by User Id on Audits will not work due to UserIds not being available on "before insert" triggers. Another technie thing :P
+  </p> 
+  <p>  
+  <h3>Who do I go to if I want more features, offer feedback etc?</h3>
+  </p><p>  
+  Chatter Blacklist was written by Quinton Wall. The best way to provide feedback is follow him on 
+  <a href="http://twitter.com/quintonwall">Twitter</a>, and send comments there. Of course, the source is yours to do whatever
+  you like with it :)
+  </p>
+</apex:page>

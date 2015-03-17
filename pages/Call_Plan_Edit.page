@@ -1,0 +1,94 @@
+<apex:page standardController="Call_Plan__c" extensions="CallPlanExtension" sidebar="false" showHeader="false">
+<style>
+
+body {
+    padding:10px;
+}
+
+</style>
+<body>
+<div>
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="font-size:28px;color:#5ABBE8;">Call Plans<apex:outputText value="{!Call_Plan__c.Customer__c}" /></h1></div>
+<hr size="1"/>
+<apex:outputpanel rendered="{!$CurrentPage.parameters.printView != 'true'}">
+
+</apex:outputpanel>
+<br />
+<apex:form >
+<apex:messages />
+
+<div style="margin-left:auto;margin-right:auto;width:250px;text-align:center;">
+<!--apex:commandButton action="{!save}" value="Save" -->
+<apex:commandButton action="{!saveoppPlan}" value="Save" />
+<apex:commandButton action="{!cancel}" value="Cancel" />
+</div>
+<br />
+<apex:pageBlock mode="maindetail">
+<apex:pageblocksection collapsible="false" columns="2" title="Call Plan Info" >
+<apex:inputfield value="{!Call_Plan__c.HP_Participants__c}" style="width:90%;"/>
+<apex:inputfield Label="Duration(Hours)" value="{!Call_Plan__c.Duration_of_Call__c}" style="width:90%;"/>
+<apex:inputfield Label="Date of Meeting" value="{!Call_Plan__c.Meeting_Date__c}"/>
+<apex:inputfield value="{!Call_Plan__c.Customer_Participants__c}" style="width:90%;"/>
+<apex:inputfield value="{!Call_Plan__c.Opportunity_Plan__c}" rendered="{!$CurrentPage.parameters.id != null}" />
+<apex:inputfield Label="Phone or live?" value="{!Call_Plan__c.Call_Plan_Type__c}"/>
+<apex:inputField value="{!Call_Plan__c.Name}"/>
+
+</apex:pageblocksection>
+
+<apex:pageblocksection collapsible="false" columns="1" title="Value Proposition & EIM" >
+
+    <apex:inputfield Label="Articulate customer view of the Opportunity" value="{!Call_Plan__c.Value_Proposition__c}" style="width:90%;" />
+    <apex:inputfield Label="Clearly define Meeting Objectives (What needs  to be accomplished by  the end of the meeting)" value="{!Call_Plan__c.End_In_Mind__c}" style="width:90%;" />
+    <apex:inputfield Label="What you will say to introduce and position your EIM?" value="{!Call_Plan__c.Introduction__c}" style="width:90%;" />
+
+</apex:pageblocksection>
+
+
+<apex:pageblocksection collapsible="false" columns="2" title="Key Beliefs" >
+
+    <apex:inputfield Label="What key beliefs must the customer hold to agree with the objectives?" value="{!Call_Plan__c.Key_Beliefs__c}" />
+    <apex:inputfield Label="What will we do to address and satisfy the key beliefs?" value="{!Call_Plan__c.Actions_to_Key_Beliefs__c}" />
+
+
+</apex:pageblocksection>
+
+<apex:pageblocksection collapsible="false" columns="1" title="Agenda/Critical Path" >
+
+    <apex:inputfield Label="What is the high level agenda for the meeting?" value="{!Call_Plan__c.Agenda__c}" style="width:90%;" />
+
+</apex:pageblocksection>
+
+<apex:pageblocksection collapsible="false" columns="1" title="End of Meeting" >
+
+    <apex:inputfield Label="What will you say at the end of the meeting to execute your EIM?" value="{!Call_Plan__c.End_of_Meeting_Dialog__c}" style="width:90%;"  />
+    <apex:inputfield Label="What next steps might you suggest to the customer at the end of the metting?" value="{!Call_Plan__c.Next_Steps__c}" style="width:90%;"  />
+    <apex:inputfield Label="What will be said to open the meeting succinctly with the customer to gain their interest, engagement and agreement that this is a useful spend of their time?" value="{!Call_Plan__c.Putting_it_all_together__c}" style="width:90%;"  />
+
+</apex:pageblocksection>
+
+<apex:pageblocksection collapsible="false" columns="2" title="Checklist for Success" >
+
+    <apex:inputfield Label="The intent driving our meeting is..." value="{!Call_Plan__c.Intent__c}"  style="width:100%;"  />
+    <apex:inputfield Label="Are the right people(Customer) attending the meeting?" value="{!Call_Plan__c.Customer_attending_meeting__c}" />
+    <apex:inputfield Label="Our team's roles and responsibilities are..." value="{!Call_Plan__c.Roles_and_Responsibilities__c}" style="width:100%;" />
+    <apex:inputfield Label="Do we have adequate time(too much or too little)?" value="{!Call_Plan__c.Adequate_Time__c}" />
+    <apex:inputfield Label="What topics, issues,questions, or behaviors are inappropriate for meeting?" value="{!Call_Plan__c.Topics_issues_questions__c}" style="width:100%;" />
+    <apex:inputfield Label="Have we set the right expectations for the meeting?" value="{!Call_Plan__c.Right_Expectations__c}" />
+    <apex:panelgroup ></apex:panelgroup>
+    <apex:inputfield Label="Is the environment or venue appopriate?" value="{!Call_Plan__c.Environment_Appropriate__c}" />
+    <apex:panelgroup ></apex:panelgroup>
+    <apex:inputfield Label="Have we scrutinized our visual aids to be sure they support our EIM?" value="{!Call_Plan__c.Support_EIM__c}" />
+
+</apex:pageblocksection>
+
+<br />
+<div style="margin-left:auto;margin-right:auto;width:250px;text-align:center;">
+<apex:commandButton action="{!save}" value="Save" />
+<apex:commandButton action="{!cancel}" value="Cancel" />
+</div>
+
+</apex:pageBlock>
+</apex:form>
+</body>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

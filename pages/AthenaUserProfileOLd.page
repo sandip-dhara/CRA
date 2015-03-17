@@ -1,0 +1,299 @@
+<apex:page controller="AthenaUserProfileOld" showheader="false" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'js/jquery-1.9.1.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom.min.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+  <html>
+  <head>
+  <title>Social Learning Platform</title>
+<script>
+    $j = jQuery.noConflict();
+    $j(document).ready(function() {
+        var feedList = $j("ul[class$=publisherFeedItemTypeChoices]").children("li");
+        feedList[1].style.display="none";
+        feedList[2].style.display="none";
+        feedList[3].style.display="none"; 
+    });
+</script>
+  <!-- Athena Style Starts -->
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/style.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.jscrollpane.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/jquery-ui.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/theme.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.dropdown.css')}"/>
+  <!-- Example of an application-specific style -->
+  <style type="text/css">
+body {
+    width: 99%;
+    margin: 0 auto;
+    margin-top: 1%;
+}
+#hpit_top {
+    min-width: 960px;
+}
+#hpit_centerBox {
+    min-width: 960px;
+}
+.hpit_athena_ca-wrapper {
+    width: 88%;
+}
+.hpit_Athena_contRow2 {
+    margin-bottom: 1%;
+    padding: 1%;
+}
+.hpit_athena_LikeBtn {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 none !important;
+    background: none !important;
+}
+.hpit_athena_UnLikeBtn {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 none !important;
+    background: none !important;
+}
+</style>
+  <script type="text/javascript">      
+
+       
+     function validate()
+               {                  
+                    if(document.getElementById('{!$Component.UPForm.searchText}').value!=''){                        
+                        return true;
+                    }
+                    else{
+                        document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                        return false;
+                    }
+                   //return true;
+                }
+</script>
+  <!-- Athena Style Ends -->
+  </head>
+  
+  <body class="hpit_body">
+  <!-- begin themed header -->
+  <header>
+    <div id="hpit_top" class="">
+      <div id="hpit_topTitle">
+        <h1>Social Learning Platform</h1>
+        <h3>Learning on your terms!</h3>
+      </div>
+      <div id="hpit_topLogo"></div>
+      <apex:form id="UPform">
+        <div id="hpit_topSearch"> 
+          <!--<input id="hpit_topSearchBox" type="text" value="Search" />-->
+          <apex:inputText id="searchText" styleClass="TopSearchInput" value="{!strSearchValue}" title="Enter value to search Learning Board"/>
+          <!-- <button class="SearchBtn" id="hpit_topSearchGo"><span>Search</span></button>-->
+          <apex:commandButton action="{!dosearch}" onclick="return validate()" value="Search" styleClass="SearchBtn"  id="searchButton" title="Click to Search for Learning Board"/>
+        </div>
+        <apex:commandButton />
+      </apex:form>
+      
+      <!-- Begin Themed User Greeting and Menu -->
+      <div id="hpit_topUser"> <span>Welcome {!LoggedinUserDtls.Name}</span>
+        <ul id="hpit_topUserMenu">
+          <li><a href="https://{!getSfInstance}/secur/logout.jsp">Logout</a></li>
+        </ul>
+      </div>
+      <!-- End Themed User Greeting and Menu --> 
+      
+    </div>
+    <div style="background-color: #393939;height: 40px; min-width:1000px; margin:0 auto"> <a href="https://{!getSfInstance}/apex/AthenaSocialLearningOld">
+      <apex:image url="{!URLFOR($Resource.athena_images, 'images/Icon_Home.png')}" style="margin: 8px;"/>
+      </a> <a href="#" data-dropdown="#dropdown-1">
+      <apex:image url="{!URLFOR($Resource.athena_images, 'images/Icon_Menu.png')}" style="margin: 2px;"/>
+      </a>
+      <div id="dropdown-1" class="dropdown dropdown-tip">
+        <ul class="dropdown-menu">
+              <li><a href="https://{!getSfInstance}">Salesforce Home</a></li>
+              <li><a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank">Help &amp; Support</a></li>
+              <br/>
+              <li><a href="http://amp.corp.hp.com/" target="_blank">Account Management Portal(AMP)</a></li>
+              <li><a href="http://ent241.sharepoint.hp.com/teams/GSCDC/es/ITO.aspx" target="_blank">Portfolio Accrediation</a></li>
+              <li><a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html" target="_blank">What We Sell</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+  <!-- end themed header --> 
+  
+  <!-- Athena Body Content Starts -->
+  <div style="width:1000px; margin:0 auto"></div>
+  <span class="err_msg hpit_error" id="err_msg"></span>
+  <div class="hpit_Athena_ProfileCont">
+    <div class="hpit_athena_profileLeft">
+      <apex:form id="LBform1">
+        <div class="hpit_athena_ProfileImg">
+          <apex:image Url="{!UserDtls.FullPhotoUrl}" width="135" height="140" styleClass="hpit_athena_ProfileImgBor" />
+          <div class="hpit_athena_ProIcon cf">
+            <div class="hpit_athena_left" style="margin-right:10px"> <a href="mailto:{!UserDtls.Email}">
+              <apex:image url="{!URLFOR($Resource.athena_images, 'images/MailImg.png')}" width="32" height="20"/>
+              </a> </div>
+            <chatter:follow entityid="{!UserDtls.id}"  />
+            <!-- <div class="hpit_athena_left hpit_athena_MargL"> <button class="hpit_athena_button">Follow</button></div> --> 
+          </div>
+          
+        </div>
+        <div class="hpit_athena_rightDiv" style="margin:5px">
+              <chatter:followers entityid="{!UserDtls.Id}"/>
+        </div>
+                
+        <div class="hpit_athena_rightDiv" style="margin:5px">
+          <div class="hpit_athena_ProLink cf">
+            <p>Expertise:</p>
+            <apex:repeat value="{!Expertise}" var="exp" >
+              <li>{!exp.Name__c}</li>
+            </apex:repeat>
+          </div>
+          </div>
+      </apex:form>
+    </div>
+    <div class="hpit_athena_profileRight">
+      <div>
+        <apex:form id="LBform2">
+          <div class="hpit_athena_profileName">
+            <h1>{!UserDtls.name}</h1>
+            <apex:outputPanel id="oPnlLikeUnlike" layout="block">
+              <!--<div style="float:right;" class="testImage"> {!UserLikeCount}
+                <apex:outputPanel id="likeBtn" rendered="{!if(getUserLikeStatus==1,true,false)}">
+                  <apex:commandButton styleClass="hpit_athena_LikeBtn"  action="{!UserLike}" id="LBlike" value="" image="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIcon.png')}"  rerender="oPnlLikeUnlike" />
+                </apex:outputPanel>
+                <apex:outputPanel id="unlikeBtn" rendered="{!if(getUserLikeStatus==2,true,false)}">
+                  <apex:commandButton styleClass="hpit_athena_UnLikeBtn"  action="{!UserUnLike}" id="LBUnlike" value="" image="{!URLFOR($Resource.athena_images, 'images/hpit_athena_UnlikeIcon.png')}"  reRender="oPnlLikeUnlike" />
+                </apex:outputPanel>
+                <apex:outputPanel id="likeBtnDisabled" rendered="{!if(getUserLikeStatus==0,true,false)}">
+                  <apex:commandButton styleClass="hpit_athena_LikeBtn" disabled="true"  action="{!UserLike}" id="LBlikeDisabled" value="" image="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIcon.png')}"  rerender="oPnlLikeUnlike" />
+                </apex:outputPanel>
+              </div >-->
+              
+            </apex:outputPanel>
+            <div style="height:22px">
+              <h2>{!UserDtls.Title}</h2>
+            </div>
+          </div>
+          <div class="hpit_athena_profBio" style="margin-bottom:5px;">
+            <p class="hpit_athena_conText">Bio</p>
+            <p class="hpit_athena_conText">{!UserDtls.AboutMe}</p>
+          </div>
+          <div id="Futured" class="hpit_Athena_container">
+            <apex:outputPanel id="uOwnedLBTable" layout="block">
+              <div class="hpit_Athena_contRow1">
+                <div class=""></div>
+                <div id="hpit_athena_ca-container" class="hpit_athena_ca-container">
+                  <div class="hpit_athena_ca-wrapper">
+                    <apex:commandlink styleClass="ca-nav-prev" action="{!UserOwnedPrevious}" rendered="{!UserOwnedCon.hasPrevious}" rerender="uOwnedLBTable" status="counterStatus"> </apex:commandlink>
+                    <apex:repeat value="{!UserOwnedLBList}" var="uOwndlb"> 
+                      <!--<a  href="/apex/athenaLearningBoardDtlsOld?id={!uOwndlb.id}">-->
+                      <div class="hpit_athena_Profile_item">
+                        <div class="hpit_athena_Profile_item_main">
+                          <div class="hpit_athena_ca-Profileitem-firstHalf">
+                            <div class="hpit_athena_ca-item-topBar">
+                              <div class="hpit_athena_ca-item-topBarDate">
+                                <apex:OutputText value="{0,date,MM'/'dd'/'yyyy}">
+                                  <apex:param value="{!uOwndlb.LBCrtDate}"/>
+                                </apex:outputtext>
+                              </div>
+                              <div class="hpit_athena_ca-item-topBarLikes">
+                                <div class="hpit_athena_ca-item-topBarLikesImg">
+                                  <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIcon.png')}" width="14" height="14"/>
+                                </div>
+                                <div class="hpit_athena_ca-item-topBarLikesValue">{!uOwndlb.LBNoOfLikes} </div>
+                              </div>
+                              <div class="hpit_athena_ca-item-topBarChat">
+                                <div class="hpit_athena_ca-item-topBarChatImg">
+                                  <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIcon.png')}" width="14" height="14"/>
+                                </div>
+                                <!--{!uOwndlb.LBNoOfComments}-->
+                                <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndlb.LBNoOfComments}</div>
+                              </div>
+                            </div>
+                            <div class="hpit_athena_ca-item-BottomBar"> <a  href="/apex/athenaLearningBoardDtlsOld?id={!uOwndlb.id}">
+                              <h3>{!uOwndlb.LBName}</h3>
+                              </a> </div>
+                            <div class="ca-icon"> <a  href="/apex/athenaLearningBoardDtlsOld?id={!uOwndlb.id}">
+                              <apex:outputPanel rendered="{!!uOwndlb.StaticImage}"> 
+                                <!-- <img src="data:{!uOwndlb.AttContentType};base64,{!uOwndlb.Attbody}"  width="181" height="180"/> -->
+                                <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndlb.AttachmentId)}" width="181" height="181" />
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!uOwndlb.StaticImage}">
+                                                            <img src='{!uOwndlb.DefaultImageName}' width="181" height="181"/>
+                               <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}" width="181" height="181"/>-->
+                              </apex:outputPanel>
+                              </a> </div>
+                          </div>
+                          <div class="hpit_athena_ca-item-SecondHalf">
+                            <div class="hpit_athena_ca-item-PersonPost">
+                              <p>{!uOwndlb.LBDescription}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!--</a> --> 
+                    </apex:repeat>
+                    <apex:commandlink styleClass="ca-nav-next" action="{!UserOwnedNext}" rendered="{!UserOwnedCon.hasNext}" rerender="uOwnedLBTable" status="counterStatus"> </apex:commandlink>
+                  </div>
+                </div>
+              </div>
+            </apex:outputPanel>
+          </div>
+        </apex:form>
+      </div>
+    </div>
+  </div>
+  <div class="hpit_Athena_ProfileCont">
+    <div class="hpit_athena_profileLeft"> &nbsp; </div>
+    <div class="hpit_athena_profileRight">
+      <div class="hpit_Athena_contRow2">
+        <div>
+          <apex:outputPanel >
+            <div class="menu_container">
+              <p class="menu_head"><span class="plusminus">+</span> Comments </p>
+              <div class="menu_body">
+                <div  style="overflow-x:hidden;height:360px;" class="menu_bodyDiv">
+                  <chatter:feed entityid="{!UserDtls.id}" />
+                 
+                </div>
+              </div>
+            </div>
+          </apex:outputPanel>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Athena Body Content Ends --> 
+  
+  <!-- begin themed footer -->
+  <div>
+    <footer>
+      <div id="hpit_btm">
+        <div id="hpit_btmCopyright">&copy; <span class="hpit_year"></span> Hewlett-Packard Development Company, L.P. &nbsp; &nbsp; | &nbsp; &nbsp; HP Restricted</div>
+      </div>
+    </footer>
+  </div>
+  <!-- end themed footer --> 
+  
+  <!-- ETR JavaScript -->
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery-ui.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/hp-esm_theme.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/theme.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_js, '/athena_js/jquery.dropdown.js')}"/>
+  <script type="text/javascript">
+        //toggle the componenet with class menu_body
+    $(".menu_body").show();
+    $(".menu_head").click(function(){
+        $(this).next(".menu_body").slideToggle(600); 
+        var plusmin;
+        plusmin = $(this).children(".plusminus").text();
+        
+        if( plusmin == '+')
+        $(this).children(".plusminus").text('-');
+        else
+        $(this).children(".plusminus").text('+');
+    });
+
+    </script>
+  </body>
+  </html>
+</apex:page>

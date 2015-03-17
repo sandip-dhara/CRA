@@ -1,0 +1,38 @@
+<apex:page controller="AttachmentController" >
+<style>
+    descWidth{
+         Width : 500px;
+         }
+</style>
+    <apex:form >    
+        <apex:pageBlock title="Upload Multiple Attachment to Approval" mode="Edit">  
+            <apex:pagemessages ></apex:pagemessages>
+            <apex:pageBlockButtons >  
+                <apex:commandButton value="Upload"  action="{!SaveAttachments}"/>
+                <apex:commandButton value="Cancel"  action="{!Cancel}"/> 
+            </apex:pageBlockButtons>  
+            
+            <!--<apex:pageBlockSection title="Select Files">-->
+                 
+              <apex:PageBlockTable value="{!allFileList}" var="files" columns="2" width="100%">
+              
+                  <apex:column >
+                      <apex:facet name="header">Description</apex:facet>
+                      <apex:inputField value="{!files.description}"  Style="Width:80%"/>  
+                  </apex:column>
+                  <apex:column >
+                      <apex:facet name="header">Attachments</apex:facet>
+                      <apex:inputfile value="{!files.body}" filename="{!files.Name}" />  
+                  </apex:column>
+              
+              </apex:PageBlockTable>    
+        
+  
+               
+            <!--</apex:pageBlockSection>  -->
+              
+        </apex:pageBlock> 
+       
+    </apex:form>
+ 
+</apex:page>

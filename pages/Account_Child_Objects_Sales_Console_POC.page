@@ -1,0 +1,88 @@
+<apex:page controller="AccountRelatedListCustomControllerPOC" showheader="true" tabstyle="account" id="thepage">
+<apex:includeScript value="/support/console/22.0/integration.js"/> 
+
+<script type="text/javascript">
+function openSubTab(recid) {
+    sforce.console.getEnclosingPrimaryTabId(function(result) {
+        sforce.console.openSubtab(result.id, '/'+recid , true);
+    });
+}
+</script>
+
+<apex:pageBlock mode="edit" id="block1">
+    <apex:pageBlockSection title="Opportunities" id="OpportunityList" columns="1">
+        <apex:pageBlockTable Title="Opportunities" value="{!OpportunityList}" var="oppys" rendered="{!NOT(ISNULL(OpportunityList))}">
+            <apex:column headerValue="Action" style="white-space: nowrap">
+            <!-- <a href="javascript:sforce.console.openPrimaryTab(null,'/{!oppys.Id}',true);">View </a> -->
+            <a href="#" onClick="openSubTab('{!oppys.Id}');return false">View</a>
+            </apex:column>
+            <apex:column value="{!oppys.name}"/>
+            <apex:column value="{!oppys.RecordTypeId}"/>
+            <apex:column value="{!oppys.StageName}"/>
+            <apex:column value="{!oppys.CloseDate}"/>
+            <apex:column value="{!oppys.Value__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock mode="edit" id="block2">
+    <apex:pageBlockSection title="Contacts" id="ContactList" columns="1">
+        <apex:pageBlockTable Title="Contacts" value="{!ContactList}" var="contacts" rendered="{!NOT(ISNULL(ContactList))}">
+            <apex:column headerValue="Action" style="white-space: nowrap">
+            <!-- <a href="javascript:sforce.console.openPrimaryTab(null,'/{!contacts.Id}',true);">View </a> -->
+            <a href="#" onClick="openSubTab('{!contacts.Id}');return false">View</a>
+            </apex:column>
+            <apex:column value="{!contacts.Name}"/>
+            <apex:column value="{!contacts.Title}"/>
+            <apex:column value="{!contacts.Email}"/>
+            <apex:column value="{!contacts.Phone__c}"/>
+            <apex:column value="{!contacts.Left_Company__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock mode="edit" id="block3">
+    <apex:pageBlockSection title="Leads" id="LeadList" columns="1">
+        <apex:pageBlockTable Title="Leads" value="{!LeadList}" var="leads" rendered="{!NOT(ISNULL(LeadList))}">
+            <apex:column headerValue="Action" style="white-space: nowrap">
+            <!-- <a href="javascript:sforce.console.openPrimaryTab(null,'/{!leads.Id}',true);">View </a> -->
+            <a href="#" onClick="openSubTab('{!leads.Id}');return false">View</a>
+            </apex:column>
+            <apex:column value="{!leads.Name}"/>
+            <apex:column value="{!leads.Company}"/>
+            <apex:column value="{!leads.Country}"/>
+            <apex:column value="{!leads.Email}"/>
+            <apex:column value="{!leads.Status}"/>
+            <apex:column value="{!leads.Created_Calendar_Date__c}"/>
+            <apex:column value="{!leads.Timeframe_to_Buy_1__c}"/>
+            <apex:column value="{!leads.Estimated_Budget__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock mode="edit" id="block4">
+    <apex:pageBlockSection title="Activities" id="ActivityList" columns="1">
+        <apex:pageBlockTable Title="Activities" value="{!ActivityList}" var="activities" rendered="{!NOT(ISNULL(ActivityList))}">
+            <apex:column headerValue="Action" style="white-space: nowrap">
+            <!-- <a href="javascript:sforce.console.openPrimaryTab(null,'/{!activities.Id}',true);">View </a> -->
+            <a href="#" onClick="openSubTab('{!activities.Id}');return false">View</a>
+            </apex:column>
+            <apex:column value="{!activities.Subject}"/>
+            <apex:column headerValue="Name" style="white-space: nowrap">
+            <!-- <a href="javascript:sforce.console.openPrimaryTab(null,'/{!activities.WhoId}',true);">{!activities.Who.Name}</a> -->
+            <a href="#" onClick="openSubTab('{!activities.WhoId}');return false">{!activities.Who.Name}</a>
+            </apex:column>
+            <!-- WhatId will not work without causing an error
+            <apex:column value="{!activities.WhatId}"/> -->
+            <apex:column value="{!activities.ActivityDate}"/>
+            <apex:column value="{!activities.Status}"/>
+            <apex:column value="{!activities.Priority}"/>
+            <apex:column headerValue="Assigned To" style="white-space: nowrap">
+            <!-- <a href="javascript:sforce.console.openPrimaryTab(null,'/{!activities.OwnerId}',true);">{!activities.Owner.Name}</a> -->
+            <a href="#" onClick="openSubTab('{!activities.OwnerId}');return false">{!activities.Owner.Name}</a>
+            </apex:column>
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:page>

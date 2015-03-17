@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>ODP_Page_WorkElementPredecessor</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>ODP_Page_WorkElementPredecessor</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Include__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF (  Stage_Work_Element__r.Include__c = TRUE &amp;&amp;  Predecessor_Stage_Work_Element_ID__r.Include__c = TRUE,TRUE,FALSE)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Include</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Predecessor_Stage_Work_Element_ID__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Predecessor  Work Element ID</label>
+        <referenceTo>Stage_Work_Element__c</referenceTo>
+        <relationshipLabel>Work Element Predecessors (Predecessor Stage Work Element ID)</relationshipLabel>
+        <relationshipName>Stage_Work_Element_Predecessors</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Predecessor_Stage_Work_Element_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Predecessor_Stage_Work_Element_ID__r.Name__c</formula>
+        <label>Predecessor Work Element Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Stage_Work_Element_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Stage_Work_Element__r.Name__c</formula>
+        <label>Work Element Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Stage_Work_Element__c</fullName>
+        <externalId>false</externalId>
+        <label>Work Element Id</label>
+        <referenceTo>Stage_Work_Element__c</referenceTo>
+        <relationshipLabel>Work Element Predecessors (Stage Work Element Id)</relationshipLabel>
+        <relationshipName>Stage_Work_Element_Predecessors1</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>true</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Work_Element__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Predecessor Process Work Element Id</label>
+        <referenceTo>Work_Element__c</referenceTo>
+        <relationshipLabel>Work Element Predecessors</relationshipLabel>
+        <relationshipName>Stage_Work_Element_Predecessors</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <label>Work Element Predecessor</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>WEP-{0000000000}</displayFormat>
+        <label>Work Element Predecessor ID</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Work Element Predecessors</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Stage_Work_Element_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Include__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Stage_Work_Element_Name__c</lookupDialogsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+</CustomObject>

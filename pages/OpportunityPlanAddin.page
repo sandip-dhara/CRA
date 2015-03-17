@@ -1,0 +1,71 @@
+<!-- 
+/**********************************************************
+* Page Name: OpportunityPlanAddin
+* Author: HP
+* Date: 06-August-2012 
+* Requirement # Complex/Confidential Opportunity
+* Description: To Display Inline Visual Force Page having Various Opportunity Plan Tool Tabs
+***********************************************************/
+-->
+
+
+<apex:page standardController="Opportunity_Plan__c" tabstyle="Opportunity_Plan__c" extensions="OPExtensionClass">
+
+
+
+
+<style>
+     .activeTab {background-color:ADEBEB; color:black; background-image:none}
+     .inactiveTab { background-color: lightgrey; color:black; background-image:none}
+     .headerStyle1{background-color:#ADEBEB;color:#000000}
+     .headerStyle2{background-color:#638658;color:#000000}  
+     .inactive {  color:#000000; background-image:none; } 
+     .active { font-family: "Arial Black", Arial, sans-serif; color:#000000; background-image:none; }  
+     
+</style>
+
+
+
+<apex:tabPanel switchType="client" value="{!TabInFocus}" id="theTabPanel" tabClass="activeTab" inactiveTabClass="inactiveTab">
+
+<!--Call Plan Tab-->
+<apex:tab label="Call Plans" name="Call Plans" id="CP" StyleClass="{!OPToolMapCP}" >
+
+<iframe src="/apex/cp_list?id={!Opportunity_Plan__c.id}" width="100%" height="700px" /> 
+</apex:tab>
+<!--Value Proposition Tab-->
+<apex:tab label="Value Proposition" name="Value Proposition" id="VP" StyleClass="{!OPToolMapVP}" >
+<iframe src="/apex/value_proposition_summary?id={!Opportunity_Plan__c.id}" width="100%" height="700px"/>
+</apex:tab>
+<!--Opportunity Gauge Tab-->
+<apex:tab label="Opportunity Gauge" name="OpportunityGauge" id="OG" StyleClass="{!OPToolMapOG}">
+<apex:iframe frameborder="true" src="/apex/OppGaugeSummary?id={!Opportunity_Plan__c.id}" width="100%" height="700px" scrolling="true"/>
+</apex:tab>  
+<!--Decision Grid Tab-->
+<apex:tab label="Decision Grid" name="Customer Decision Grid" id="DG" StyleClass="{!OPToolMapDG}">
+<iframe src="/apex/decision_grid_summary?id={!Opportunity_Plan__c.id}" width="100%" height="700px"/>
+</apex:tab> 
+<!--Client Resources-->
+<apex:tab label="Client Resources" name="ClientResources" id="ClientResources" StyleClass="{!OPToolMapCR}">
+<iframe src="/apex/client_resources_summary?id={!Opportunity_Plan__c.id}&retURL=/apex/client_resources_summary?id={!Opportunity_Plan__c.id}" width="100%" height="700px"/>
+</apex:tab>
+<!--Relationship Suite Tab-->
+<apex:tab label="Relationship Suite" name="Relationship Suite" id="RS" StyleClass="{!OPToolMapRS}">
+<apex:iframe frameborder="false" src="/apex/RelationshipSuiteSummary?id={!Opportunity_Plan__c.id}" width="100%" height="700px"  scrolling="true"/>
+</apex:tab> 
+<!--Competitive Sales Plan Tab-->
+<apex:tab label="Competitive Sales Plans" name="CSP" id="CSP" StyleClass="{!OPToolMapCSP}">
+<apex:iframe frameborder="false" src="/apex/CSP_List?id={!Opportunity_Plan__c.id}" width="100%" height="700px" scrolling="true"/>
+</apex:tab> 
+<!--Deal Health Check List-->
+<apex:tab label="Deal Health Checklist" name="DealHealthCheckList" id="DHCL" StyleClass="{!OPToolMapDHCL}">
+
+<iframe src="/apex/dhc_summary?id={!Opportunity_Plan__c.id}" width="100%" height="700px"/>
+</apex:tab>
+<!--Close Plan-->
+<apex:tab label="Close Plan" name="ClosePlan" id="ClsP" StyleClass="{!OPToolMapCLSP}">
+<iframe src="/apex/closeplanpage?id={!Opportunity_Plan__c.id}" width="100%" height="700px"/>
+</apex:tab>
+</apex:tabPanel>
+
+</apex:page>

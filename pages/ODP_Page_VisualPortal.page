@@ -1,0 +1,943 @@
+<apex:page standardController="Offering_Release__c" recordSetVar="accounts" extensions="ODP_Extension_VisualPortal">
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM, 'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css')}" />
+<!-- <apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/winstyle.css')}" /> -->
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/HpstandIcon.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/style.css')}" />
+<!-- athena style -->
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" /> 
+
+
+<style>
+[class^="icon-"], [class*=" icon-"] {
+    background-image: none;
+}
+    a.disabledODP {
+    pointer-events: none;
+    cursor: default;
+    }
+.VPBody1 {
+    width: 800px;
+    clear: both;
+    margin:0 auto;
+    margin-top: 60px;
+    padding-left: 600px;
+}
+.VPBody {
+    width: 800px;
+    clear: both;
+    margin:0 auto;
+    margin-top: 60px;
+    padding-left: 200px;
+}
+.VPBlock {
+    width: 125px;
+    margin: 30px 75px 0 0;
+    float: left;
+    text-align: center;
+}
+.VPBlockCircle {
+    position: relative;
+    display: block;
+    width: 125px;
+    height: 125px;
+    border-radius: 9999px;
+    background-color: white;
+    margin-bottom: 15px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.17);
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+}
+.VPCircle {
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+    -moz-transform: scale(1);
+    transform: scale(1);
+    -moz-transition: -moz-transform 0.25s ease-in-out;
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+    -o-transition: -o-transform 0.25s ease-in-out;
+    transition: transform 0.25s ease-in-out;
+    display: block;
+    position: relative;
+    width: 125px;
+    height: 125px;
+    background-size: auto 125px;
+    background-position: left center;
+}
+.VPCircleLarge {
+    -webkit-transform: scale(0.7);
+    -o-transform: scale(0.7);
+    -ms-transform: scale(0.7);
+    -moz-transform: scale(0.7);
+    transform: scale(0.7);
+    -moz-transition: -moz-transform 0.25s ease-in-out;
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+    -o-transition: -o-transform 0.25s ease-in-out;
+    transition: transform 0.25s ease-in-out;
+    display: block;
+    position: relative;
+    width: 125px;
+    height: 125px;
+    background-size: auto 125px;
+    background-position: left center;
+}
+
+
+.VPTitle {
+    color: #4c4c4c;
+    font-size: 16px;
+    line-height: 19px;
+    cursor: pointer;
+}
+.VPOpportunity, .VPBlock .VPOpportunity:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #0096D6), color-stop(95%, #00b7f5));
+    background-image: -webkit-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -moz-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -o-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -ms-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -o-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: linear-gradient(to bottom, #0096D6 5%, #00b7f5 95%);
+    background-color: #0096D6;
+}
+.VPContribution, .VPBlock .VPContribution:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #C1401A), color-stop(95%, #C0401A));
+    background-image: -webkit-linear-gradient(top, #C1401A 5%, #C0401A 95%);
+    background-image: -moz-linear-gradient(top, #C1401A 5%, #C0401A 95%);
+    background-image: -o-linear-gradient(top, #C1401A 5%, #C0401A 95%);
+    background-image: -ms-linear-gradient(top, #C1401A 5%, #C0401A 95%);
+    background-image: -o-linear-gradient(top, #C1401A 5%, #C0401A 95%);
+    background-image: linear-gradient(to bottom, #C1401A 5%, #C0401A 95%);
+    background-color: #C1401A;
+}
+.VPReview, .VPBlock .VPReview:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #008424), color-stop(95%, #018424));
+    background-image: -webkit-linear-gradient(top, #008424 5%, #018424 95%);
+    background-image: -moz-linear-gradient(top, #008424 5%, #018424 95%);
+    background-image: -o-linear-gradient(top, #008424 5%, #018424 95%);
+    background-image: -ms-linear-gradient(top, #008424 5%, #018424 95%);
+    background-image: -o-linear-gradient(top, #008424 5%, #018424 95%);
+    background-image: linear-gradient(to bottom, #008424 5%, #018424 95%);
+    background-color: #008424;
+}
+.VPApproval, .VPBlock .VPApproval:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #822980), color-stop(95%, #812980));
+    background-image: -webkit-linear-gradient(top, #822980 5%, #812980 95%);
+    background-image: -moz-linear-gradient(top, #822980 5%, #812980 95%);
+    background-image: -o-linear-gradient(top, #822980 5%, #812980 95%);
+    background-image: -ms-linear-gradient(top, #822980 5%, #812980 95%);
+    background-image: -o-linear-gradient(top, #822980 5%, #812980 95%);
+    background-image: linear-gradient(to bottom, #822980 5%, #812980 95%);
+    background-color: #822980;
+}
+
+.VPNewOpp, .VPBlock .VPNewOpp:hover {
+
+    background-color:#006699;
+}
+
+
+.icon-6x{
+    font-size: 60px;
+    padding-top: 30px;
+}
+.VPBlockCircle:hover>.VPCircle{
+    -webkit-transform: scale(1.32);
+    -o-transform: scale(1.32);
+    -ms-transform: scale(1.32);
+    -moz-transform: scale(1.32);
+    transform: scale(1.32);
+    background-position: left center;
+}
+
+.VPBlockCircle:hover>.VPCircleLarge{
+    -webkit-transform: scale(0.9);
+    -o-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    -moz-transform: scale(0.9);
+    transform: scale(0.9);
+    background-position: left center;
+}
+
+.VPCount {
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(45%, #ff7a45), color-stop(95%, #f47245));
+    background-image: -webkit-linear-gradient(top, #ff7a45 45%, #f47245 95%);
+    background-image: -moz-linear-gradient(top, #ff7a45 45%, #f47245 95%);
+    background-image: -o-linear-gradient(top, #ff7a45 45%, #f47245 95%);
+    background-image: -ms-linear-gradient(top, #ff7a45 45%, #f47245 95%);
+    background-image: -o-linear-gradient(top, #ff7a45 45%, #f47245 95%);
+    background-image: linear-gradient(to bottom, #ff7a45 45%, #f47245 95%);
+    display: block;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+    border-radius: 9999px;
+    background-color: #ff7a45;
+    min-width: 10px;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 9px;
+    padding: 5px;
+    position:relative;
+    top:-55px;
+    right:-50px;
+    width:15px;
+    height:15px;
+}
+.span5 {
+    width: 99%;
+}
+.modal {
+    width: 90%;
+    left: 20%;
+    background-color: transparent;
+}
+.VPmore{
+    font-size:24px;
+    margin-right:30px;
+}
+.pageNationDiv{
+    display:none;
+}
+.dataGrid{
+    width:100%;
+}
+.modal-body{
+    height:480px;
+    background-color:white;
+}
+.modal-body .loading{
+    margin-top:230px;
+    margin-left:600px;
+}
+
+
+.DataTables_sort_icon {
+    display: inline-block;
+    float: right;
+    vertical-align: middle;
+}
+.ui-widget.tabs > div {
+    border: 1px solid gray !important;
+    padding: 2px;
+    background-color: white;
+}
+</style>
+<script type="text/javascript">
+     $j = jQuery.noConflict();
+
+     $j(function(){
+         var currentPage=1;
+         var mytotalResults = 1;
+         var showLength = 10;
+         var totalPage = 1;
+         var loadKey='';
+         var sortColumn = '';
+         var direction = '';
+         var showPageNation=function(totalResults){
+            mytotalResults = totalResults;
+            totalPage=Math.ceil(totalResults/showLength);
+            if(currentPage<1 || currentPage>totalPage){
+                currentPage = 1;
+            }
+            if(totalPage<=5){
+                $("#"+loadKey+"Page").eq(0).children().removeClass("cstmeinput");
+                for(var i=5; i>totalPage; i--){
+                    $("#"+loadKey+"Page").eq(0).find("[name='1']").val(1);
+                    $("#"+loadKey+"Page").eq(0).find("[name='2']").val(2);
+                    $("#"+loadKey+"Page").eq(0).find("[name='3']").val(3);
+                    $("#"+loadKey+"Page").eq(0).find("[name='4']").val(4);
+                    $("#"+loadKey+"Page").eq(0).find("[name='5']").val(5);
+                    $("#"+loadKey+"Page").eq(0).find("[name="+i+"]").addClass("cstmeinput");
+                }
+            }
+            if (totalPage>5) {
+                $("#"+loadKey+"Page").eq(0).children().removeClass("cstmeinput");
+                if (currentPage<=3){
+                    $("#"+loadKey+"Page").eq(0).find("[name='1']").val(1);
+                    $("#"+loadKey+"Page").eq(0).find("[name='2']").val(2);
+                    $("#"+loadKey+"Page").eq(0).find("[name='3']").val(3);
+                    $("#"+loadKey+"Page").eq(0).find("[name='4']").val(4);
+                    $("#"+loadKey+"Page").eq(0).find("[name='5']").val(5);
+                }
+                if (currentPage>3 && (currentPage+2)<totalPage) {
+                    $("#"+loadKey+"Page").eq(0).find("[name='1']").val(currentPage-2);
+                    $("#"+loadKey+"Page").eq(0).find("[name='2']").val(currentPage-1);
+                    $("#"+loadKey+"Page").eq(0).find("[name='3']").val(currentPage);
+                    $("#"+loadKey+"Page").eq(0).find("[name='4']").val(currentPage+1);
+                    $("#"+loadKey+"Page").eq(0).find("[name='5']").val(currentPage+2);
+                }
+                if ((currentPage+2)>=totalPage) {
+                    $("#"+loadKey+"Page").eq(0).find("[name='1']").val(totalPage-4);
+                    $("#"+loadKey+"Page").eq(0).find("[name='2']").val(totalPage-3);
+                    $("#"+loadKey+"Page").eq(0).find("[name='3']").val(totalPage-2);
+                    $("#"+loadKey+"Page").eq(0).find("[name='4']").val(totalPage-1);
+                    $("#"+loadKey+"Page").eq(0).find("[name='5']").val(totalPage);
+                }
+            }
+            if (currentPage==1) {
+                $("#" + loadKey+"Page" + " .pageBtn[name='firstBtn']").attr("disabled",true);
+                $("#" + loadKey+"Page" + " .pageBtn[name='previousBtn']").attr("disabled",true);
+                $("#" + loadKey+"Page" + " .pageBtn[name='nextBtn']").attr("disabled",false);
+                $("#" + loadKey+"Page" + " .pageBtn[name='lastBtn']").attr("disabled",false);
+    
+            }
+            else if (currentPage==totalPage) {
+                $("#" + loadKey+"Page" + " .pageBtn[name='firstBtn']").attr("disabled",false);
+                $("#" + loadKey+"Page" + " .pageBtn[name='previousBtn']").attr("disabled",false);
+                $("#" + loadKey+"Page" + " .pageBtn[name='nextBtn']").attr("disabled",true);
+                $("#" + loadKey+"Page" + " .pageBtn[name='lastBtn']").attr("disabled",true);
+            }
+            else if (totalPage==1) {
+                $("#" + loadKey+"Page" + " .pageBtn[name='firstBtn']").attr("disabled",true);
+                $("#" + loadKey+"Page" + " .pageBtn[name='previousBtn']").attr("disabled",true);
+                $("#" + loadKey+"Page" + " .pageBtn[name='nextBtn']").attr("disabled",true);
+                $("#" + loadKey+"Page" + " .pageBtn[name='lastBtn']").attr("disabled",true);
+            }
+            else{
+                $("#" + loadKey+"Page" + " .pageBtn[name='firstBtn']").attr("disabled",false);
+                $("#" + loadKey+"Page" + " .pageBtn[name='previousBtn']").attr("disabled",false);
+                $("#" + loadKey+"Page" + " .pageBtn[name='nextBtn']").attr("disabled",false);
+                $("#" + loadKey+"Page" + " .pageBtn[name='lastBtn']").attr("disabled",false);
+            }
+            $("#" + loadKey+"Page" + " div.dataTables_info").html("<span class='number_highlight'>"+totalResults+"</span> items, <span class='number_highlight'>"+totalPage+"</span> pages");
+             $("#" + loadKey+"Page" + " input.gotoPage_Txt").val(currentPage);
+             $("#" + loadKey+"Page" + " .pageNumber").each(function(){
+                if($(this).val()==currentPage){
+                    $(this).addClass("selectedPage").siblings().removeClass("selectedPage");
+                }
+             });
+        }
+        $j(document).on("click",".pageNationDiv .pageChange",function(event){
+            var pageValue =this.value;
+            if(pageValue=="<<"){
+                currentPage=1;
+            }
+            else if (pageValue==">>") {currentPage=totalPage;}
+            else if (pageValue=="<") {currentPage=currentPage-1;}
+            else if (pageValue==">") {currentPage=currentPage+1;}
+            else{
+                currentPage=parseInt(pageValue);
+            }
+            showPageNation(mytotalResults);
+            LoadData(currentPage,'page');
+    
+         });
+         
+         $(document).on("click",".pageNationDiv .goToPage_Btn",function(event){
+            var pageNumber =  $("#"+loadKey+"Page").find("input.gotoPage_Txt").val();
+            if (parseInt(pageNumber) == pageNumber)
+            {   
+                pageNumber=parseInt(pageNumber);
+                if(pageNumber < 1){
+                    currentPage=1;
+                }
+                else if(pageNumber > totalPage){
+                    currentPage=totalPage;
+                }
+                else{currentPage=parseInt(pageNumber);}
+                showPageNation(mytotalResults);
+                LoadData(currentPage,'page');
+            }
+            else{
+                return false;
+            }
+        });
+         
+         $(document).on("click",".dataGrid .DataTables_sort_icon",function(event){
+            var obj = $(this);
+            sortColumn = obj.attr('value');
+            if(obj.hasClass("icon-arrow-up-down"))
+            {
+                direction="asc";
+                obj.removeClass("icon-arrow-up-down");
+                obj.addClass("icon-arrow-up");
+            }
+            else if(obj.hasClass("icon-arrow-up"))
+            {
+                direction="desc";
+                obj.removeClass("icon-arrow-up");
+                obj.addClass("icon-arrow-down");
+            }
+            else
+            {
+                direction="asc";
+                obj.removeClass("icon-arrow-down");
+                obj.addClass("icon-arrow-up");
+            }
+            
+                       
+            $.each(obj.parents(".GridHeaderRow").find("span"),function(i,n){
+                if($(this).attr("value") != obj.attr("value") && !$(this).hasClass("icon-arrow-up-down")){
+                    $(this).addClass("icon-arrow-up-down").removeClass("icon-arrow-down").removeClass("icon-arrow-up");
+                }
+            });
+            
+            LoadData(1,'sort');
+        });
+        
+        var funcDeserialize = function(result, event){
+            if (event.status) {
+                $('#'+loadKey+'Loading').hide();
+                if(result.Total > 0){
+                    $('#'+loadKey+'Body').show();
+                    $('#'+loadKey+'Page').show();
+                    showPageNation(result.Total);
+                    try{
+                        if(result.Status){
+                             var arr = eval(result.Result);
+                             $('#'+loadKey+'Table tr:gt(0)').remove();
+                             
+                             for(var i=0;i<arr.length;i++){
+                                 var trClass = "odd";
+                                 if((i+1)%2 == 0){
+                                     trClass = "even";
+                                 }
+                                 
+                                 var newRow = '';
+                                 if(loadKey == 'Opportunity'){                         
+                                     newRow  = '<tr class="' + trClass + '"><td class="center"><a href="/'+arr[i].id+'" target="_blank">'+arr[i].name+'</a></td>';
+                                     //newRow += '<td class="center">'+arr[i].bep+'</a></td>';
+                                     newRow += '<td class="left"><span class="label hpit_athenaListPersonImg"><a href="sip:'+arr[i].email+'"><img title="'+arr[i].bep+'" src="'+arr[i].photo+'" /></a></span>'+arr[i].bep+'</td>'
+                                     newRow += '<td class="center">'+arr[i].sponsor+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].category+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].status+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].created+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].modified+'</a></td></tr>';
+                                 }
+                                 else if(loadKey == 'Contribution' || loadKey == 'Review' || loadKey == 'conAccountable' || loadKey == 'revAccountable'){
+                                     newRow  = '<tr class="' + trClass + '"><td class="center"><a href="/'+arr[i].id+'" target="_blank">'+arr[i].swe+'</a></td>';
+                                     //newRow += '<td class="center">'+arr[i].owner+'</a></td>';
+                                     newRow += '<td class="left" width="200px"><span class="label hpit_athenaListPersonImg"><a href="sip:'+arr[i].email+'"><img title="'+arr[i].owner+'" src="'+arr[i].photo+'" /></a></span>'+arr[i].owner+'</td>'
+                                     newRow += '<td class="center">'+arr[i].role+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].stage+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].opportunity+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].status+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].modified+'</a></td></tr>';
+                                 }
+                                 else if(loadKey == 'Approval'){
+                                     newRow  = '<tr class="' + trClass + '"><td class="center"><a href="/apex/ODP_ReleaseStageApprovalDetail?id='+arr[i].id+'" target="_blank">'+arr[i].opportunity+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].stage+'</a></td>';
+                                     //newRow += '<td class="center">'+arr[i].bep+'</a></td>';
+                                     newRow += '<td class="left" width="200px"><span class="label hpit_athenaListPersonImg"><a href="sip:'+arr[i].email+'"><img title="'+arr[i].bep+'" src="'+arr[i].photo+'" /></a></span>'+arr[i].bep+'</td>'
+                                     newRow += '<td class="center">'+arr[i].status+'</a></td>';
+                                     newRow += '<td class="center">'+arr[i].modified+'</a></td></tr>';
+                                 }
+                                 $('#'+loadKey+'Table tr:last').after(newRow);
+                             }
+                             //*/
+                         }
+                         else{
+                             $('#'+loadKey+'Body').html(result.Status + "|" + result.Result);
+                         }
+                    }
+                    catch(e){
+                       alert(e.name  +   " :  "   +  e.message);
+                    }
+                }
+                else
+                {
+                    $('#'+loadKey+'Body').html('<h1 style="margin-left:300px;margin-top:200px;">No Pending Tasks</h1>');
+                    $('#'+loadKey+'Body').show();
+                }
+            } else if (event.type === 'exception') {
+                $('#'+loadKey+'Body').html(event.message + "<br/>\n<pre>" + event.where + "</pre>");
+            } else {
+                $('#'+loadKey+'Body').html(event.message);
+            }
+         }
+         
+        var LoadData = function(page,type){
+            currentPage = page;
+                 
+            $('#'+loadKey+'Loading').show();
+            $('#'+loadKey+'Body').hide();
+            if(type=='initial'){
+                $('#'+loadKey+'Page').hide();
+            }
+            var loadingURL = '{!$RemoteAction.ODP_Extension_VisualPortal.getMyOpportunitys}';
+            if(loadKey == 'Contribution'){
+                loadingURL = '{!$RemoteAction.ODP_Extension_VisualPortal.getMyContributions}';
+            }
+            else if(loadKey == 'Review'){
+                loadingURL = '{!$RemoteAction.ODP_Extension_VisualPortal.getMyReviews}';
+            }
+            else if(loadKey == 'Approval'){
+                loadingURL = '{!$RemoteAction.ODP_Extension_VisualPortal.getMyApprovals}';
+            }
+            else if(loadKey == 'conAccountable'){
+                loadingURL = '{!$RemoteAction.ODP_Extension_VisualPortal.getMyConAccountable}';
+            }
+            else if(loadKey == 'revAccountable'){
+                loadingURL = '{!$RemoteAction.ODP_Extension_VisualPortal.getMyRevAccountable}';
+            }
+            
+            Visualforce.remoting.Manager.invokeAction(
+                loadingURL, 
+                currentPage,sortColumn,direction,
+                funcDeserialize,
+                {escape: false}
+            );
+        }
+         
+         $j("#OpportunityBtn").click(function(){
+             $('#OpportunityList').modal('show');
+             if(loadKey != 'Opportunity'){
+                 loadKey = 'Opportunity';
+                 sortColumn = 'CreatedDate';
+                 direction = 'desc';
+                 LoadData(1,'initial');
+            }
+         });
+         $j("#ContributionBtn").click(function(){
+             $('#ContributionList').modal('show');
+             if(loadKey != 'Contribution'){
+                 loadKey = 'Contribution';
+                 sortColumn = 'LastModifiedDate';
+                 direction = 'desc';
+                 LoadData(1,'initial');
+            }
+         });
+         $j("#ReviewBtn").click(function(){
+             $('#ReviewList').modal('show');
+             if(loadKey != 'Review'){
+                 loadKey = 'Review';
+                 sortColumn = 'LastModifiedDate';
+                 direction = 'desc';
+                 LoadData(1,'initial');
+            }
+         });
+         $j("#ApprovalBtn").click(function(){
+             $('#ApprovalList').modal('show');
+             if(loadKey != 'Approval'){
+                 loadKey = 'Approval';
+                 sortColumn = 'LastModifiedDate';
+                 direction = 'desc';
+                 LoadData(1,'initial');
+             }
+         });
+         $j("#HelpShowBtn").click(function(){
+             $('#HelpShow').modal('show');
+         });
+         $( "div.tabs" ).tabs();
+         
+         $("div.tabs").on('tabsactivate', function(event, ui) {
+            if(ui.newPanel.attr("id") == 'tab-conAcc'){
+                loadKey = 'conAccountable';
+                sortColumn = 'LastModifiedDate';
+                direction = 'desc';
+                LoadData(1,'initial');
+            }
+            else if(ui.newPanel.attr("id") == 'tab-con'){
+                loadKey = 'Contribution';
+                sortColumn = 'LastModifiedDate';
+                direction = 'desc';
+                LoadData(1,'initial');
+            }
+            else if(ui.newPanel.attr("id") == 'tab-revAcc'){
+                loadKey = 'revAccountable';
+                sortColumn = 'LastModifiedDate';
+                direction = 'desc';
+                LoadData(1,'initial');
+            }
+            else if(ui.newPanel.attr("id") == 'tab-rev'){
+                loadKey = 'Review';
+                sortColumn = 'LastModifiedDate';
+                direction = 'desc';
+                LoadData(1,'initial');
+            }
+         });
+     });
+     
+      
+</script>
+<div id="HelpShowBtn">
+    <a href="#HelpShow"><span class="VPCircle blue icon-repeat icon-3x icon-help" style="float:right;top:5px;" title="ESIT ODP User Guide"/></a>
+</div>
+    <!--
+<iframe src="https://onedrive.live.com/embed?cid=5823C93BDF197DFF&resid=5823C93BDF197DFF%21285&authkey=AOENGntT5gIX_84&em=2" 
+    width="400" 
+    height="300" 
+    frameborder="0" 
+    scrolling="no"
+    style="float:right;">
+</iframe>
+-->
+         
+<div style="text-align:center;height:550px;">
+    <div class="VPBody1">
+        <div class="VPBlock" id="OpportunityBtn">
+            <span class="VPBlockCircle VPOpportunity">
+                <span class="VPCircle white icon-repeat icon-6x icon-hp-smart-update-manager"/>
+            </span>
+            <span title="Opportunity" class="VPTitle">Opportunity</span>
+            <span class="VPCount" title="{!OpptunityCount}">{!OpptunityCount}</span>
+        </div>
+    </div>
+    <div class="VPBody">
+        <div class="VPBlock" id="ContributionBtn">
+            <span class="VPBlockCircle VPContribution">
+                <span class="VPCircle white icon-repeat icon-6x icon-accountability"/>
+            </span>
+            <span title="Contributions" class="VPTitle">Contributions</span>
+            <span class="VPCount" title="{!contributorCount}">{!contributorCount}</span>
+        </div>
+        <a href="{!URLFOR($Action.Offering_Release__c.New,null,[RetURL=1])}" class="{!IF(IsBizEngaPartners,'','disabledODP')}">
+            <div class="VPBlock" id="OppNewBtn">
+                <span class="VPBlockCircle VPNewOpp">
+                    <!--<span class="VPCircle white icon-repeat icon-6x icon-sandboxing"/>-->
+                    <span class="VPCircleLarge" title="Create Opportunity" style="background-image: url(https://hp--esit--c.cs11.content.force.com/servlet/servlet.ImageServer?id=015Z00000006xrY&oid=00DZ000000N9IbI&lastMod=1413423318000);"></span>
+                </span>
+                <span title="Create Opportunity" class="VPTitle">New Opportunity</span>
+            </div>
+        </a>
+        <div class="VPBlock" id="ReviewBtn">
+            <span class="VPBlockCircle VPReview">
+                <span class="VPCircle white icon-repeat icon-6x icon-new-product-introduction"/>
+            </span>
+            <span title="Reviews" class="VPTitle">Reviews</span>
+            <span class="VPCount" title="{!reviewCount}">{!reviewCount}</span>
+        </div>
+        
+    </div>
+    <div class="VPBody1">
+        <div class="VPBlock" id="ApprovalBtn">
+            <span class="VPBlockCircle VPApproval">
+                <span class="VPCircle white icon-repeat icon-6x icon-sandboxing"/>
+            </span>
+            <span title="Approvals" class="VPTitle">Approvals</span>
+            <span class="VPCount" title="{!approvalCount}">{!approvalCount}</span>
+        </div>
+   </div>
+</div>
+
+
+<div id="OpportunityList" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+    <apex:pageBlock >
+          <div class="modal-header">
+            <span class="VPCircle blue icon-repeat icon-6x icon-hp-smart-update-manager" style="Height: 60px;" title="My Related Opportunities" />
+          </div>
+          <div class="modal-body">
+            <img id="OpportunityLoading" class="loading" src="{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />
+            <div id="OpportunityBody" class="span5 ml0">
+                <table id="OpportunityTable" class="dataGrid">
+                    <thead>
+                    <tr class="GridHeaderRow">
+                    <th class="center">Opportunity Name <span class="DataTables_sort_icon icon-arrow-up-down" value="Name__c"></span></th>
+                    <th class="center">Business Engagement Partner</th>
+                    <th class="center">Sponsor</th>
+                    <th class="center">Category <span class="DataTables_sort_icon icon-arrow-up-down" value="Offering_Category__c"></span></th>
+                    <th class="center">Status <span class="DataTables_sort_icon icon-arrow-up-down" value="status__c"></span></th>
+                    <th class="center">Created Date <span class="DataTables_sort_icon icon-arrow-down" value="CreatedDate"></span></th>
+                    <th class="center">Last Updated Date <span class="DataTables_sort_icon icon-arrow-up-down" value="LastModifiedDate"></span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <div id="OpportunityPage" class="pageNationDiv" style="float:left;background-color: #f5f5f5;">
+                <input class="pageBtn pageChange" type="button" name="firstBtn" value="<<" disabled="true" />
+                <input class="pageBtn pageChange" type="button" name="previousBtn" value="<" />
+                <input class="pageNumber pageChange selectedPage" name="1" type="button" value="1" />
+                <input class="pageNumber pageChange" name="2" type="button" value="2" />
+                <input class="pageNumber pageChange" name="3" type="button" value="3" />
+                <input class="pageNumber pageChange" name="4" type="button" value="4" />
+                <input class="pageNumber pageChange" name="5" type="button" value="5" />
+                <input class="pageBtn pageChange" type="button" name="nextBtn" value=">" />
+                <input class="pageBtn pageChange" type="button" name="lastBtn" value=">>" />
+                <div class="dataTables_info"></div>
+                <input type="text" class="gotoPage_Txt" value="" name="pageNumber"/>
+                <a class="btn btn-Secondary goToPage_Btn">Go</a>
+              </div>
+              <a href="{!URLFOR($Action.Offering_Release__c.List,$ObjectType.Offering_Release__c)}" target="_blank" class="VPmore"><span class="blue icon-repeat icon-3x icon-scan-to-archive" title="more"/></a>
+              <a href="#" class="VPmore"><span class="blue icon-repeat icon-3x icon-refresh" title="refresh"/></a>
+              <a href="#" class="VPmore" data-dismiss="modal" aria-hidden="true"><span class="blue icon-repeat icon-3x icon-close2" title="close"/></a>
+          </div>
+    </apex:pageBlock>
+</div>
+
+<div id="ContributionList" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+    <apex:pageBlock >
+        <div class="tabs">
+            <!-- <span class="VPCircle blue icon-repeat icon-6x icon-accountability" style="Height: 60px;" title="My Work Elements"/> -->
+              <ul>
+                <li><a href="#tab-con">Contributions</a></li>
+                <li><a href="#tab-conAcc">Accountables</a></li>
+              </ul>
+              <div id="tab-con">
+                  <div class="modal-body">
+                    <img id="ContributionLoading" class="loading" src="{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />
+                    <div id="ContributionBody" class="span5 ml0">
+                          <!-- <apex:pageBlockTable var="con" value="{!contributorList }">
+                            <apex:column headerValue="Work Element"><a href="/{!con.id}" target="_blank">{!con.Stage_Work_Element_Name__c}</a></apex:column>
+                            <apex:column headerValue="Owner/Accountable" value="{!con.Stage_Work_Element__r.Accountable_User__c}" />
+                            <apex:column headerValue="My Role" value="{!con.Role_Name__c}" />
+                            <apex:column headerValue="Stage" value="{!con.Stage_Work_Element__r.Stage_Name__c}" />
+                            <apex:column headerValue="Opportunity" value="{!con.Stage_Work_Element__r.Release_Name__c}" />
+                            <apex:column headerValue="Status" value="{!con.Stage_Work_Element__r.Status__c }" />
+                          </apex:pageBlockTable> -->
+                          <table id="ContributionTable" class="dataGrid">
+                            <thead>
+                            <tr class="GridHeaderRow">
+                            <th class="center">Work Element<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element_Name__c"></span></th>
+                            <th class="center">Accountable<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Accountable_User__c"></span></th>
+                            <th class="center">My Role<span class="DataTables_sort_icon icon-arrow-up-down" value="Role_Name__c"></span></th>
+                            <th class="center">Stage<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Stage_Name__c"></span></th>
+                            <th class="center">Opportunity<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Release_Name__c"></span></th>
+                            <th class="center">Status<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Status__c"></span></th>
+                            <th class="center">Last Updated<span class="DataTables_sort_icon icon-arrow-down" value="LastModifiedDate"></span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div id="ContributionPage" class="pageNationDiv" style="float:left;background-color: #f5f5f5;">
+                        <input class="pageBtn pageChange" type="button" name="firstBtn" value="<<" disabled="true" />
+                        <input class="pageBtn pageChange" type="button" name="previousBtn" value="<" />
+                        <input class="pageNumber pageChange selectedPage" name="1" type="button" value="1" />
+                        <input class="pageNumber pageChange" name="2" type="button" value="2" />
+                        <input class="pageNumber pageChange" name="3" type="button" value="3" />
+                        <input class="pageNumber pageChange" name="4" type="button" value="4" />
+                        <input class="pageNumber pageChange" name="5" type="button" value="5" />
+                        <input class="pageBtn pageChange" type="button" name="nextBtn" value=">" />
+                        <input class="pageBtn pageChange" type="button" name="lastBtn" value=">>" />
+                        <div class="dataTables_info"></div>
+                        <input type="text" class="gotoPage_Txt" value="" name="pageNumber"/>
+                        <a class="btn btn-Secondary goToPage_Btn">Go</a>
+                      </div>
+                      <a href="/apex/ODP_NewContributionsPage" target="_blank" class="VPmore"><span class="blue icon-repeat icon-3x icon-scan-to-archive" title="more"/></a>
+                      <a href="#" class="VPmore"><span class="blue icon-repeat icon-3x icon-refresh" title="refresh"/></a>
+                      <a href="#" class="VPmore" data-dismiss="modal" aria-hidden="true"><span class="blue icon-repeat icon-3x icon-close2" title="close"/></a>
+                  </div>
+              </div>
+              <div id="tab-conAcc">
+                <div class="modal-body">
+                    <img id="conAccountableLoading" class="loading" src="{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />
+                    <div id="conAccountableBody" class="span5 ml0">
+                          <table id="conAccountableTable" class="dataGrid">
+                            <thead>
+                            <tr class="GridHeaderRow">
+                            <th class="center">Work Element<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element_Name__c"></span></th>
+                            <th class="center">Accountable<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Accountable_User__c"></span></th>
+                            <th class="center">My Role<span class="DataTables_sort_icon icon-arrow-up-down" value="Role_Name__c"></span></th>
+                            <th class="center">Stage<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Stage_Name__c"></span></th>
+                            <th class="center">Opportunity<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Release_Name__c"></span></th>
+                            <th class="center">Status<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Status__c"></span></th>
+                            <th class="center">Last Updated<span class="DataTables_sort_icon icon-arrow-down" value="LastModifiedDate"></span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div id="conAccountablePage" class="pageNationDiv" style="float:left;background-color: #f5f5f5;">
+                        <input class="pageBtn pageChange" type="button" name="firstBtn" value="<<" disabled="true" />
+                        <input class="pageBtn pageChange" type="button" name="previousBtn" value="<" />
+                        <input class="pageNumber pageChange selectedPage" name="1" type="button" value="1" />
+                        <input class="pageNumber pageChange" name="2" type="button" value="2" />
+                        <input class="pageNumber pageChange" name="3" type="button" value="3" />
+                        <input class="pageNumber pageChange" name="4" type="button" value="4" />
+                        <input class="pageNumber pageChange" name="5" type="button" value="5" />
+                        <input class="pageBtn pageChange" type="button" name="nextBtn" value=">" />
+                        <input class="pageBtn pageChange" type="button" name="lastBtn" value=">>" />
+                        <div class="dataTables_info"></div>
+                        <input type="text" class="gotoPage_Txt" value="" name="pageNumber"/>
+                        <a class="btn btn-Secondary goToPage_Btn">Go</a>
+                      </div>                    
+                      <a href="#" class="VPmore" data-dismiss="modal" aria-hidden="true"><span class="blue icon-repeat icon-3x icon-close2" title="close"/></a>
+                  </div>
+              </div>
+        </div>
+    </apex:pageBlock>
+</div>
+
+<div id="ReviewList" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+    <apex:pageBlock >
+          <!--<div class="modal-header">
+            <span class="VPCircle blue icon-repeat icon-6x icon-new-product-introduction" style="Height: 60px;" title="My Related Review"/>
+          </div>-->
+        <div class="tabs">
+          <ul>
+            <li><a href="#tab-rev">My Related Review</a></li>
+            <li><a href="#tab-revAcc">Accountables</a></li>
+          </ul>
+          <div id="tab-rev">
+              <div class="modal-body">
+                <img id="ReviewLoading" class="loading" src="{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />
+                <div id="ReviewBody" class="span5 ml0">
+                      <!-- <apex:pageBlockTable var="rew" value="{!reviewList }">
+                        <apex:column headerValue="Work Element"><a href="/{!rew.id}" target="_blank">{!rew.Stage_Work_Element_Name__c}</a></apex:column>
+                        <apex:column headerValue="Owner/Accountable" value="{!rew.Stage_Work_Element__r.Accountable_User__c}" />
+                        <apex:column headerValue="My Role" value="{!rew.Role_Name__c}" />
+                        <apex:column headerValue="Stage" value="{!rew.Stage_Work_Element__r.Stage_Name__c}" />
+                        <apex:column headerValue="Opportunity" value="{!rew.Stage_Work_Element__r.Release_Name__c}" />
+                        <apex:column headerValue="Status" value="{!rew.Stage_Work_Element__r.Status__c }" />
+                      </apex:pageBlockTable> -->
+                      <table id="ReviewTable" class="dataGrid">
+                        <thead>
+                        <tr class="GridHeaderRow">
+                        <th class="center">Work Element<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element_Name__c"></span></th>
+                        <th class="center">Accountable<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Accountable_User__c"></span></th>
+                        <th class="center">My Role<span class="DataTables_sort_icon icon-arrow-up-down" value="Role_Name__c"></span></th>
+                        <th class="center">Stage<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Stage_Name__c"></span></th>
+                        <th class="center">Opportunity<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Release_Name__c"></span></th>
+                        <th class="center">Status<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Status__c"></span></th>
+                        <th class="center">Last Updated<span class="DataTables_sort_icon icon-arrow-down" value="LastModifiedDate"></span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+              <div class="modal-footer">
+                  <div id="ReviewPage" class="pageNationDiv" style="float:left;background-color: #f5f5f5;">
+                    <input class="pageBtn pageChange" type="button" name="firstBtn" value="<<" disabled="true" />
+                    <input class="pageBtn pageChange" type="button" name="previousBtn" value="<" />
+                    <input class="pageNumber pageChange selectedPage" name="1" type="button" value="1" />
+                    <input class="pageNumber pageChange" name="2" type="button" value="2" />
+                    <input class="pageNumber pageChange" name="3" type="button" value="3" />
+                    <input class="pageNumber pageChange" name="4" type="button" value="4" />
+                    <input class="pageNumber pageChange" name="5" type="button" value="5" />
+                    <input class="pageBtn pageChange" type="button" name="nextBtn" value=">" />
+                    <input class="pageBtn pageChange" type="button" name="lastBtn" value=">>" />
+                    <div class="dataTables_info"></div>
+                    <input type="text" class="gotoPage_Txt" value="" name="pageNumber"/>
+                    <a class="btn btn-Secondary goToPage_Btn">Go</a>
+                  </div>
+                  <a href="/apex/ODP_ReviewPage" target="_blank" class="VPmore"><span class="blue icon-repeat icon-3x icon-scan-to-archive" title="more"/></a>
+                  <a href="#" class="VPmore"><span class="blue icon-repeat icon-3x icon-refresh" title="refresh"/></a>
+                  <a href="#" class="VPmore" data-dismiss="modal" aria-hidden="true"><span class="blue icon-repeat icon-3x icon-close2" title="close"/></a>
+              </div>
+          </div>
+          <div id="tab-revAcc">
+                <div class="modal-body">
+                    <img id="revAccountableLoading" class="loading" src="{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />
+                    <div id="revAccountableBody" class="span5 ml0">
+                          <table id="revAccountableTable" class="dataGrid">
+                            <thead>
+                            <tr class="GridHeaderRow">
+                            <th class="center">Work Element<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element_Name__c"></span></th>
+                            <th class="center">Accountable<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Accountable_User__c"></span></th>
+                            <th class="center">My Role<span class="DataTables_sort_icon icon-arrow-up-down" value="Role_Name__c"></span></th>
+                            <th class="center">Stage<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Stage_Name__c"></span></th>
+                            <th class="center">Opportunity<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Release_Name__c"></span></th>
+                            <th class="center">Status<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Work_Element__r.Status__c"></span></th>
+                            <th class="center">Last Updated<span class="DataTables_sort_icon icon-arrow-down" value="LastModifiedDate"></span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div id="revAccountablePage" class="pageNationDiv" style="float:left;background-color: #f5f5f5;">
+                        <input class="pageBtn pageChange" type="button" name="firstBtn" value="<<" disabled="true" />
+                        <input class="pageBtn pageChange" type="button" name="previousBtn" value="<" />
+                        <input class="pageNumber pageChange selectedPage" name="1" type="button" value="1" />
+                        <input class="pageNumber pageChange" name="2" type="button" value="2" />
+                        <input class="pageNumber pageChange" name="3" type="button" value="3" />
+                        <input class="pageNumber pageChange" name="4" type="button" value="4" />
+                        <input class="pageNumber pageChange" name="5" type="button" value="5" />
+                        <input class="pageBtn pageChange" type="button" name="nextBtn" value=">" />
+                        <input class="pageBtn pageChange" type="button" name="lastBtn" value=">>" />
+                        <div class="dataTables_info"></div>
+                        <input type="text" class="gotoPage_Txt" value="" name="pageNumber"/>
+                        <a class="btn btn-Secondary goToPage_Btn">Go</a>
+                      </div>                    
+                      <a href="#" class="VPmore" data-dismiss="modal" aria-hidden="true"><span class="blue icon-repeat icon-3x icon-close2" title="close"/></a>
+                  </div>
+              </div>
+        </div>
+    </apex:pageBlock>
+</div>
+
+<div id="ApprovalList" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+    <apex:pageBlock >
+          <div class="modal-header">
+            <span class="VPCircle blue icon-repeat icon-6x icon-sandboxing" style="Height: 60px;" title="My Related Approval"/>
+          </div>
+          <div class="modal-body">
+            <img id="ApprovalLoading" class="loading" src="{!URLFOR($Resource.HPLoading,'HPLoadingImage/HPLoading.gif')}" />
+            <div id="ApprovalBody" class="span5 ml0">
+                 <!--<apex:pageBlockTable var="app" value="{!approvalList }">
+                    <apex:column headerValue="Opportunity"><a href="/apex/ODP_ReleaseStageApprovalDetail?id={!app.Release_Stage_ID__c}" target="_blank">{!app.Release_Stage_ID__r.Release_Name__c}</a></apex:column>
+                    <apex:column headerValue="Stage" value="{!app.Stage_Name__c}" />
+                    <apex:column headerValue="Business Engagement Partner" value="{!app.Release_Stage_ID__r.Offering_Release_ID__r.Facilitator__c}" />
+                    <apex:column headerValue="Status" value="{!app.Release_Stage_ID__r.status__c }" />
+                  </apex:pageBlockTable>-->
+                  <table id="ApprovalTable" class="dataGrid">
+                    <thead>
+                    <tr class="GridHeaderRow">
+                    <th class="center">Opportunity<span class="DataTables_sort_icon icon-arrow-up-down" value="Release_Stage_ID__r.Release_Name__c"></span></th>
+                    <th class="center">Stage<span class="DataTables_sort_icon icon-arrow-up-down" value="Stage_Name__c"></span></th>
+                    <th class="center">Business Engagement Partner<span class="DataTables_sort_icon icon-arrow-up-down" value="Release_Stage_ID__r.Offering_Release_ID__r.Facilitator__c"></span></th>
+                    <th class="center">Status<span class="DataTables_sort_icon icon-arrow-up-down" value="Release_Stage_ID__r.status__c"></span></th>
+                    <th class="center">Last Updated Date<span class="DataTables_sort_icon icon-arrow-down" value="LastModifiedDate"></span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <div id="ApprovalPage" class="pageNationDiv" style="float:left;background-color: #f5f5f5;">
+                <input class="pageBtn pageChange" type="button" name="firstBtn" value="<<" disabled="true" />
+                <input class="pageBtn pageChange" type="button" name="previousBtn" value="<" />
+                <input class="pageNumber pageChange selectedPage" name="1" type="button" value="1" />
+                <input class="pageNumber pageChange" name="2" type="button" value="2" />
+                <input class="pageNumber pageChange" name="3" type="button" value="3" />
+                <input class="pageNumber pageChange" name="4" type="button" value="4" />
+                <input class="pageNumber pageChange" name="5" type="button" value="5" />
+                <input class="pageBtn pageChange" type="button" name="nextBtn" value=">" />
+                <input class="pageBtn pageChange" type="button" name="lastBtn" value=">>" />
+                <div class="dataTables_info"></div>
+                <input type="text" class="gotoPage_Txt" value="" name="pageNumber"/>
+                <a class="btn btn-Secondary goToPage_Btn">Go</a>
+              </div>
+              <a href="/apex/ODP_ReleaseSatgeApproval" target="_blank" class="VPmore"><span class="blue icon-repeat icon-3x icon-scan-to-archive" title="more"/></a>
+              <a href="#" class="VPmore"><span class="blue icon-repeat icon-3x icon-refresh" title="refresh"/></a>
+              <a href="#" class="VPmore" data-dismiss="modal" aria-hidden="true"><span class="blue icon-repeat icon-3x icon-close2" title="close"/></a>
+          </div>
+    </apex:pageBlock>
+</div>
+
+<div id="HelpShow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="height:80%;top:-10px;">
+    <apex:pageBlock ><center>
+          <div class="modal-body" style="height:800px;">
+            <div class="span5 ml0" style="height:800px;">
+                <center>
+                <iframe src="https://onedrive.live.com/embed?cid=5823C93BDF197DFF&resid=5823C93BDF197DFF%21285&authkey=AOENGntT5gIX_84&em=2" 
+                    width="98%" 
+                    height="800" 
+                    frameborder="0" 
+                    scrolling="no">
+                </iframe>
+                </center>
+            </div>
+          </div></center>
+    </apex:pageBlock>
+</div>
+
+</apex:page>

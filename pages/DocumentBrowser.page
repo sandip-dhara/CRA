@@ -1,0 +1,82 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<apex:page controller="DocumentBrowserController" showheader="false">
+
+<script type="text/javascript">
+
+	function SelectFile( fileId )
+	{
+		// /servlet/servlet.ImageServer?id=01580000000hp9P&oid=00D80000000ay25&lastMod=1238363434000
+		var url = top.location.protocol + '//' + top.location.hostname + '/servlet/servlet.ImageServer?id='+fileId+'&oid={!$Organization.Id}';
+		
+		if(window.parent.opener != null) {
+			window.parent.opener.SetUrl( url ) ;
+			window.parent.close();
+		}
+		else {
+			alert('Could not reach editor window. If your user profile has development mode enabled, please disable it.');
+		}
+
+		//TODO : added the lastmodified datetime in long format (Apex : DateTime.getTime() ) to the url. This is better for caching
+	}
+	
+
+</script>
+
+
+<apex:form >
+
+	<apex:pageBlock title="Document Browser">
+		<apex:pageBlockSection title="Folders">
+			<apex:selectList value="{!folderid}" size="1">
+				<apex:selectoptions value="{!folderoptions}"/>
+				<apex:actionSupport event="onchange" action="{!selectFolder}" rerender="documents" status="status"/>							
+			</apex:selectList>
+			
+			<apex:commandButton value="Refresh" action="{!selectFolder}"  rerender="documents" status="status"/>
+		</apex:pageBlockSection>
+		
+		<apex:pageBlockSection title="Documents" id="documents" columns="1">
+			<apex:actionStatus id="status" startText="(please wait...)" stopText=""/>			
+			
+			<apex:pageBlockTable value="{!documents}" var="d">
+				<apex:column headerValue="Name">
+					<a href="javascript:SelectFile('{!d.Id}');">{!d.Name}</a>
+				</apex:column>				
+				<apex:column headerValue="Description">
+					{!d.Description}
+				</apex:column>
+				<apex:column headerValue="Content Type">
+					{!d.ContentType}
+				</apex:column>
+				<apex:column headerValue="Size">
+					{!d.BodyLength}
+				</apex:column>
+				<apex:column headerValue="Type">
+					{!d.Type}
+				</apex:column>
+				<apex:column headerValue="URL">
+					{!d.Url}
+				</apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+
+</apex:form>
+</apex:page>

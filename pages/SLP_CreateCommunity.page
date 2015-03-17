@@ -1,0 +1,227 @@
+<apex:page showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false" controller="SLP_CreateCommunity">
+  <html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <title>Create Community</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta content="" name="description" />
+  <meta content="" name="hp" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-fileupload.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/tagit.ui-zendesk.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/jquery.tagit.css')}" />
+  </head>
+  
+  <body>
+  <header>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-fluid">          <!-- <a class="HpLogo"> -->
+         <!--<apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/insight_web_logo.png')}" style="width:220px" alt="HP Logo"/></a>    --> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo" styleclass="HpLogo"/>
+<!--          </a> -->
+          <div class="nav mtop20">
+            <h1 class="h1fontS">insight</h1>
+            <h3>Information - on your terms</h3>
+          </div>
+          <ul class="nav pull-right top-menu">
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span>
+              <apex:image value="{!LoggedinUserDtls.SmallPhotoUrl}" styleClass="userImage" alt="no_username"/>
+              </span> 
+              <!--<b class="caret"></b>--> 
+              </a>
+              <ul class="dropdown-menu extended logout">
+                <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a></li>
+                <li><a href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!LoggedinUserDtls.id}">Edit Profile</a></li>
+                <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+              </ul>
+            </li>
+            <!-- END USER LOGIN DROPDOWN -->
+          </ul>
+          <c:SLP_SearchCustomComponent InputString="Create Community Page"/>
+          <div class="alert alert-error topSearchEr" style="display:none;" id="err_msg"> </div>
+          <div class="alert alert-error topSearchEr" style="display:none;" id="Div1"> </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar-inner">
+      <div class="container-fluid menunavBar">
+<a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/slp_activity" title="Home"></a>
+<a class="icon-book topNavIcon"  href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Library"></a>
+
+        
+        <apex:OutputPanel rendered="{!IsProducerOrModerator}"> <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus"></span></a> </apex:OutputPanel>
+        <apex:outputPanel rendered="{!IsUserRoleMappingVisible}"> <a class="topNavRoll topNavIconCom" href="https://{!getSfInstance}/apex/SLP_UserRoleAndExpertiseMapping" title="User Role & Expert Mapping"><span class="NaviconPlus"></span></a> </apex:outputPanel>
+        <!-- <a class="icon-question-sign topNavIcon pull-right" href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank" title="Help"></a> --> 
+      </div>
+    </div>
+  </header>
+  <!-- END HEADER --> 
+  <!-- BEGIN CONTAINER -->
+  <div id="container" class="row-fluid"> 
+    <!-- BEGIN PAGE -->
+    <div id="main-content"> 
+      <!-- BEGIN PAGE CONTAINER-->
+      <div class="container-fluid"> 
+        
+        <!-- SEARCH BTN -->
+        <div class="row-fluid">
+          <div class="span12 mtop20">
+            <div class="span8">
+              <apex:form id="LBDName">
+                <div class="control-group">
+                  <apex:pageMessages />
+                  <label class="control-label">Community Name</label>
+                  <div class="controls controls-row">
+                    <apex:inputText id="Communitytitle" styleClass="input-block-level" value="{!CommunityName}" title="Enter Community Title" required="true" maxlength="100"/>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">Description</label>
+                  <div class="controls controls-row">
+                    <apex:inputTextarea required="true" style="height: 214px; width: 100%;" id="CommunityTextarea" value="{!CommunityDescription}" styleclass="span12" title="Enter Community Description"/>
+                  </div>
+                </div>
+                <label>Community Image :</label>
+                <div id="EditImage" class="span7">
+                  <div class="control-group">
+                    <div class="controls clearfix">
+                      <div class="R_C_btnWidth R_C_btnWidthTable">
+                        <apex:selectRadio Styleclass="" id="imgCommunity" value="{!ImageSelectionOption}"  onclick="ShowHideDefaultImage(this)">
+                          <apex:selectOptions value="{!ImageOptions}"/>
+                        </apex:selectRadio>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="check ShowuploadImage bgImage"  id="showLoadImg">
+                    <p>This image appears at the top of each learning board Recommended size is 920px * 320px</p>
+                    <div class="controls">
+                      <div data-provides="fileupload" class="fileupload fileupload-new">
+                        <div class="previewImgWidth fileupload-new thumbnail">
+                          <apex:image id="imgUpload" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+                        </div>
+                        <div class="previewNoImg fileupload-preview fileupload-exists thumbnail"></div>
+                        <div> <span class="btnAthena btn-file btn_cancel"><span class="fileupload-new">Select image</span> <span class="fileupload-exists">Change</span> 
+                          
+                          <!--<input type="file" class="default" /></span>-->
+                          <apex:inputFile styleclass="default" value="{!Communityattach.body}" filename="{!Communityattach.name}" contentType="{!Communityattach.contentType}"/>
+                          </span> </div>
+                      </div>
+                      <span class="label label-important">NOTE!</span> <span>Attached image thumbnail is supported in Latest Firefox, Chrome, Opera,Safari and Internet Explorer 10 only </span> </div>
+                  </div>
+                  <div class="check ShowDefaultImage bgImage" style="display:none" id="DefaultDrop">
+                    <div class="control-group">
+                      <label class="control-label">Select Default Image </label>
+                      <div class="controls">
+                        <apex:selectList multiselect="false" size="1" value="{!dropSelectedval}" id="dropDefault" onchange="defaultImgChanged(this, '{!getStaticImagePath}')" >
+                          <apex:selectOptions value="{!DefaultImagefilename}" ></apex:selectOptions>
+                        </apex:selectList>
+                        <div class="viewDefaultImage thumbnail">
+                          <apex:image id="imgDefault" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <hr />
+                  <div class="span12 clearB mtop10 show-right">
+                    <div class="control-group">
+                      <div class="controls">
+                        <apex:commandButton action="{!CreateCommunity}"   value="Save" styleClass="btnAthena btn-primary pull-right"  id="Savebutton" title="Click to Save Learning Board" onclick="funcSaveChanges()"> </apex:commandButton>
+                        <a type="button" class="btnAthena pull-right btn_cancel"  onclick="clearCommunity()">Reset</a>
+                        <apex:image id="imgNoImage" style="display:none" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </apex:form>
+            </div>
+            <div class="span4"></div>
+          </div>
+        </div>
+        
+        <!-- END PAGE CONTENT--> 
+      </div>
+      <!-- END PAGE CONTAINER--> 
+    </div>
+    <!-- END PAGE --> 
+  </div>
+  
+  <!-- END CONTAINER --> 
+  
+  <!-- BEGIN FOOTER -->
+  <div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+  <!-- END FOOTER --> 
+  
+  <!-- BEGIN JAVASCRIPTS --> 
+  <!-- Load javascripts at bottom, this will reduce page load time
+         -->
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+  
+  <!-- page js files -->
+  
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-fileupload.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}"/>
+  <!-- Add Tags  -->
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+  
+  <!-- ie8 fixes --> 
+  <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]--> 
+  
+  <!--common script for all pages-->
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+  <script type="text/javascript">
+
+      function clearCommunity() {
+          $('[id$=Communitytitle]').val('');
+          $('[id$=CommunityTextarea]').val('');
+
+      }
+
+      function ShowHideDefaultImage(data) {
+
+          if ($(data).val() == 'UFC') {
+              $('#showLoadImg').show();
+              $('#DefaultDrop').hide();
+          }
+          else {
+              $('#DefaultDrop').show();
+              $('#showLoadImg').hide();
+          }
+
+      }
+
+      function defaultImgChanged(selObj, path) {
+          var selText = selObj.options[selObj.selectedIndex].text;
+          var selVal = selObj.options[selObj.selectedIndex].value;
+          var selPath = path + selVal;
+          if (selVal != '') {
+              $('[id$=imgDefault]').attr("src", selPath);
+              $('[id$=imgDefault]').attr("alt", selText);
+              $('[id$=imgDefault]').attr("class", "");
+          }
+          else {
+              $('[id$=imgDefault]').attr("src", noImgSrc);
+              $('[id$=imgDefault]').attr("alt", "no image");
+              $('[id$=imgDefault]').attr("class", "viewDefNoImage");
+          }
+      }
+
+      $(function () {
+          $('#showLoadImg').show();
+      });
+
+        </script>
+  </body>
+  </html>
+</apex:page>

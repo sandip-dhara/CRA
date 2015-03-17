@@ -1,0 +1,63 @@
+<apex:page standardController="Account" extensions="AccountSearchController">
+    <apex:form >
+        
+    <script language="javascript">          
+              function validate(){
+    var Merge= confirm("These records will be merged into one record using the selected values.Merging cannot be undone.Proceed with the record merge?");
+    if (Merge== true) {
+    return true;
+    }else {
+    return false;  
+    }      
+  }                
+   </script>
+    <apex:pageBlock title="Donor Account Details:" mode="maindetail">
+    
+        <apex:pageblocksection columns="1">
+        
+                   <apex:pageBlockTable value="{!Account}" var="act" style="width:1500px">               
+                    <apex:column value="{!act.Name}" style="width:300px"/>
+                    <apex:column value="{!act.MDCP_Organization_ID__c}"/>
+                    <apex:column value="{!act.WorldRegion_SubRegion1__c}" style="width:100px"/>
+                    <apex:column value="{!act.WorldRegion_SubRegion2__c}" style="width:150px"/>
+                    <apex:column value="{!act.Site}"/>
+                    <apex:column value="{!act.ShippingCountry}"/>
+                    <apex:column value="{!act.ShippingState}"/>
+                    <apex:column value="{!act.ShippingCity}"/>
+                    <apex:column value="{!act.ShippingStreet}"/>
+                    <apex:column value="{!act.ShippingPostalCode}"/>
+                    <apex:column value="{!act.AMID_L2__c}"/>
+
+                </apex:pageBlockTable>
+
+        </apex:pageblocksection>
+
+    </apex:pageBlock>
+
+        <apex:pageBlock > 
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!back}" value="Back"/>
+                <apex:commandButton action="{!AccountMerge}" value="Merge" onclick="return validate()"/>
+            </apex:pageBlockButtons>
+            <apex:pageMessages />
+ 
+            <apex:pageBlockSection title="Survivor Account Details" columns="1" >
+                     <apex:pageBlockTable value="{!selectedAccounts}" var="c">
+                     <apex:selectRadio value="{!selectedAccounts}"/>                                                                                                                                        
+                     <apex:column value="{!c.cat.Name}" style="width:300px"/>
+                    <apex:column value="{!c.cat.MDCP_Organization_ID__c}"/>
+                    <apex:column value="{!c.cat.WorldRegion_SubRegion1__c}" style="width:100px"/>
+                    <apex:column value="{!c.cat.WorldRegion_SubRegion2__c}" style="width:150px"/>
+                    <apex:column value="{!c.cat.Site}"/>
+                   <apex:column value="{!c.cat.ShippingCountry}"/>
+                    <apex:column value="{!c.cat.ShippingState}"/>
+                    <apex:column value="{!c.cat.ShippingCity}"/>
+                    <apex:column value="{!c.cat.ShippingStreet}"/>
+                    <apex:column value="{!c.cat.ShippingPostalCode}"/>
+                    <apex:column value="{!c.cat.AMID_L2__c}"/>
+                    </apex:pageBlockTable>
+            </apex:pageBlockSection>           
+ 
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

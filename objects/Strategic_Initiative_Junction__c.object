@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>This is a junction object between Strategic initiative and Sub plan</description>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>GBU_Specialization_Plan__c</fullName>
+        <externalId>false</externalId>
+        <label>Sub Plan</label>
+        <referenceTo>GBU_Specialization_Plans__c</referenceTo>
+        <relationshipLabel>Strategic Initiative</relationshipLabel>
+        <relationshipName>Strategic_Initiative_Junctions</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>true</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Strategic_Initiative__c</fullName>
+        <externalId>false</externalId>
+        <label>Strategic Initiative</label>
+        <referenceTo>JBP_Strategic_Initiative__c</referenceTo>
+        <relationshipLabel>Sub - Plan</relationshipLabel>
+        <relationshipName>Strategic_Initiative_Junctions</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>true</writeRequiresMasterRead>
+    </fields>
+    <label>Sub Plan - SI Association</label>
+    <nameField>
+        <displayFormat>SIJ-{000000000}</displayFormat>
+        <label>Strategic Initiative Junction Name</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Sub Plan - SI Association</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <webLinks>
+        <fullName>Pick_GBU_specialization_Plan</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>url</linkType>
+        <masterLabel>Pick Sub Plans</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>/apex/JBP_pickGBUPage?jbpId={!JBP_Strategic_Initiative__c.Joint_Business_PlanId__c}&amp;siId={!JBP_Strategic_Initiative__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Pick_Strategic_Initiatives</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>url</linkType>
+        <masterLabel>Pick Strategic Initiatives</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>/apex/JBP_pickSIPage?jbpId={!GBU_Specialization_Plans__c.Joint_Business_PlanId__c}&amp;gbuId={!GBU_Specialization_Plans__c.Id}</url>
+    </webLinks>
+</CustomObject>

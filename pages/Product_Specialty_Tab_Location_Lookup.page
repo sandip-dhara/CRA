@@ -1,0 +1,65 @@
+<!-- 
+/**********************************************************
+* Page Name: Product_Specialty_Tab_Location_Lookup
+* Author: HP: Nazeer
+* Date: 10-Apr-2013 
+* Requirement # Request Id :CR-0474
+* Description: To display Partner Account According to the Territoriesof Logged in User
+***********************************************************/
+-->
+<apex:page controller="SpecialtyMatchesforPartnerAccounts" showHeader="false" sideBar="false" tabStyle="Account" action="{!searchLoc}" >
+<!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+<body class="lookupTab  LookupSearchFrame, marginCls">
+    <apex:form >
+        <apex:sectionHeader title="{!$Label.Location_Search}" />
+            <apex:actionRegion >  
+                <!-- Output Panel for showing search options -->
+                <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">                    
+                    <apex:outputLabel value="{!$ObjectType.Location__c.fields.Location_Name__c.label}" styleClass="searchLabelCls" for="txtSearch"/>                    
+                    <br/>
+                    <apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>
+                    <apex:inputText id="txtSearch" value="{!searchString}" onkeypress="return searchLocationOnEnter(event,this);"/>
+                        <span Class="searchspanCls"><apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!searchLoc}" rerender="searchResults"></apex:commandButton></span>
+                </apex:outputPanel>
+                <p>{!$Label.Wildcard_Usage}</p>
+                
+                <!-- Page block for showing search result -->
+                <apex:pageBlock id="searchResults">
+                <apex:outputpanel styleClass="resultPanelCls" layout="block"> 
+                    <apex:pageBlockTable value="{!locResults}" var="locObj" id="tblResults">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputPanel >{!$ObjectType.Location__c.fields.Location_Name__c.label}</apex:outputPanel>
+                            </apex:facet>
+                           <!--<apex:outputLink value="javascript:testFunction('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!a.Id}','{!a.Name}', false)" rendered="{!NOT(ISNULL(a.Id))}">{!a.Name}</apex:outputLink>-->
+                            <apex:outputLink onclick="top.window.opener.lookupPick('{!FormTag}','{!TextBox}_lkid','{!TextBox}','','{!locObj.Id}','{!locObj.Location_Name__c}','null','');" >{!locObj.Location_Name__c}</apex:outputLink>
+                        </apex:column>                        
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.Business_Relationship__c.label}" value="{!locObj.Business_Relationship__c}" />                        
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.City__c.label}" value="{!locObj.City__c}" />
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.Country__c.label}" value="{!locObj.Country__c}" />
+                        <apex:column headerValue="{!$Label.Partner_Name}" value="{!locObj.account__r.Name}" />
+                    </apex:pageBlockTable>
+                    
+                    <apex:outputLabel rendered="{!isResultEmpty}">
+                        <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+                    </apex:outputLabel>
+                    </apex:outputpanel>
+                </apex:pageBlock>
+            </apex:actionRegion>
+        <!-- defining action function for searching accounts -->
+        <apex:actionFunction action="{!searchLoc}" name="searchLocationOnEnterKey" rerender="searchResults">
+           <apex:param name="firstParam" assignTo="{!searchString}" value="" />
+        </apex:actionFunction>
+    </apex:form>
+</body>
+  <script>
+    function searchLocationOnEnter(ev,searchTextObj)  {
+        var searchTextValue=searchTextObj.value;
+        if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+            searchLocationOnEnterKey(searchTextValue);  
+            return false;           
+         } 
+     }
+  </script>
+</apex:page>

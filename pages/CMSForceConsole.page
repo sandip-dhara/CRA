@@ -1,0 +1,492 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<apex:page showheader="true" controller="CMSForceConsoleController" id="consolepage" action="{!checkSetup}">
+
+        <script type="text/javascript" src="{!URLFOR($Resource.CMSForce, '/JSTree/jquery.js')}"></script>
+        <script type="text/javascript" src="{!URLFOR($Resource.CMSForce, '/JSTree/jquery.jstree.js')}"></script>
+        <script type="text/javascript" src="{!URLFOR($Resource.CMSForce, '/JSTree/jquery.cookie.js')}"></script>
+        <script type="text/javascript" src="{!URLFOR($Resource.CMSForce, '/JSTree/jquery.hotkeys.js')}"></script>     
+        
+        <style type="text/css">
+            #tree, #tree input, .jstree-dnd-helper, #vakata-contextmenu { font-size:10px; font-family:Verdana; }
+            #container { position:relative; }
+            #container .tree { width:780px; border:0; padding:0; }
+            #container #tree { width:778px; float:none; height:400px; overflow:auto; border:1px solid gray; }
+            #menub { height:30px; overflow:auto; }
+            #text { margin-top:1px; }
+            #alog { font-size:9px !important; margin:5px; border:1px solid silver; }
+            
+            .commandlink {
+                color: #FFFFFF;
+                text-decoration:none;
+                padding-left: 5px;
+                padding-right: 5px;
+                            
+            }
+            
+            .commandlink:hover {
+                color: #FFFFFF;
+                background-color:#0066A7;
+                text-decoration:underline;
+                cursor: pointer;
+                padding-right: 5px;
+                                
+            }
+            
+        </style>
+
+
+        <apex:pageMessages id="messages"/>
+        
+        <table border="0" width="100%">
+            <tr>
+                <td valign="top" align="left" width="250">
+                    <!-- TREE MENU -->
+                    <div id="mmenu" style="overflow:auto; background-color:#6AACD8;background-image:none;color:#EEECD1;left-padding:15px;margin-top: 3px;">&nbsp;
+                        <a id="refresh"><apex:image styleClass="commandlink" url="{!URLFOR($Resource.CMSForce, '/JSTree/recur.png')}" title="Refresh"/></a>
+                        <a id="add_folder"><apex:image styleClass="commandlink" url="{!URLFOR($Resource.CMSForce, '/JSTree/folder_new.png')}" title="Add Folder"/></a>
+                        <a id="add_default"><apex:image styleClass="commandlink" url="{!URLFOR($Resource.CMSForce, '/JSTree/file_new.png')}" title="Add Page/Template/Web Form"/></a>
+                        <a id="rename"><apex:image styleClass="commandlink" url="{!URLFOR($Resource.CMSForce, '/JSTree/fonts.png')}" title="Rename Selected Node"/></a>
+                        <a id="remove"><apex:image styleClass="commandlink" url="{!URLFOR($Resource.CMSForce, '/JSTree/edit_remove.png')}" title="Delete Selected Node"/></a>
+                        <a id="showstandard"><apex:image styleClass="commandlink" url="{!URLFOR($Resource.CMSForce, '/JSTree/CloudIconTransparent.png')}" title="Show in Standard Page Layout"/></a>
+                    </div>
+                    <!-- TREE -->
+                    <div id="tree" class="tree"></div>
+                </td>
+                <td valign="top">               
+                    <table width="100%">
+                        <tr>
+                            <td id="pagecell">
+                                <apex:form id="cmsform">
+                                    <apex:toolbar id="theToolbar" style="background-color:#6AACD8;background-image:none;color:#EEECD1;" id="toolbar">
+                                            <apex:commandLink value="Page Properties" action="{!editPageProperties}" rerender="pageproperties,messages,buttons" id="btnproperties" styleClass="commandlink"/>
+                                            <a href="" onclick="top.location.href='/apex/PageItemEdit?masterpage='+document.getElementById('{!$Component.consolepage:cmsform:cmsblock:selectednode}').value + '&console=true';"  class="commandlink">Add Item</a>
+                                            <a href="" onclick="top.location.href='/apex/PageItemInclude?pageid='+document.getElementById('{!$Component.consolepage:cmsform:cmsblock:selectednode}').value + '&console=true';"  class="commandlink">Include Item</a>
+                                            <a href="" onclick="top.location.href='/apex/FormItemInclude?pageid='+document.getElementById('{!$Component.consolepage:cmsform:cmsblock:selectednode}').value + '&console=true';" class="commandlink">Include Web Form</a>                                                                                                                                    
+                                            <a href="" onclick="window.open('/apex/PreviewPage?pageid='+document.getElementById('{!$Component.consolepage:cmsform:cmsblock:selectednode}').value + '&console=true&fullscreen=true','fullscreenwindow');"  class="commandlink">Full Screen Editing</a>
+                                            <a href="" onclick="window.open('/apex/PreviewPage?pageid='+document.getElementById('{!$Component.consolepage:cmsform:cmsblock:selectednode}').value,'fullscreenpreviewwindow');"  class="commandlink">Full Screen Preview</a>
+                                        </apex:toolbar>                                                                 
+                                    <apex:PageBlock id="cmsblock">                                      
+                                        
+                                        <apex:outputPanel id="pageproperties">
+                                            <apex:PageBlock >
+                                                <apex:PageBlockButtons location="bottom">
+                                                    <apex:commandbutton value="Save" action="{!savePage}" rerender="pageproperties,messages,buttons" status="status"/>                                                    
+                                                    <input type="button" class="btn" value="Close" id="btnclose" onclick="$(document.getElementById('{!$Component.consolepage:cmsform:cmsblock}')).hide();"/>
+                                                </apex:PageBlockButtons>
+                                                <apex:PageBlockSection >
+                                                    <apex:inputField value="{!page.Name}"/>
+                                                    <apex:inputField value="{!page.PageTemplate__c}"/>
+                                                    <apex:inputField value="{!page.Home_Page__c}"/>
+                                                    <apex:inputField value="{!page.Cache_expires__c}"/>
+                                                    <apex:inputField value="{!page.Folder__c}"/>                                                    
+                                                    <apex:inputField value="{!page.FriendlyUrl__c}"/>
+                                                    <apex:pageBlockSectionItem >
+                                                    	<!-- Action Status -->
+														<apex:actionStatus stopText="" id="status">	
+															<apex:facet name="start">				
+																<apex:image url="{!URLFOR($Resource.CMSForce, '/Icons/Colored/PNG/time.png')}" title="Wait..."/>									
+															</apex:facet>
+														</apex:actionStatus>
+                                                    </apex:pageBlockSectionItem>
+                                                    <apex:outputText rendered="{!NOT(ISBLANK(page.FriendlyUrl__c))}">
+                                                    Friendly Url : <a href="{!siteurl}/cms/{!page.FriendlyUrl__c}" target="_blank">Friendly Url Preview</a>
+                                                    </apex:outputText>                                                        
+                                                </apex:PageBlockSection>
+                                            </apex:PageBlock>
+                                            <apex:inputHidden value="{!selectednode}" id="selectednode"/>                                   
+                                            <apex:inputHidden value="{!selectednodetype}" id="selectednodetype"/>
+                                            <!-- <apex:inputHidden value="{!pageproperties}" id="pagepropertieson"/>  -->
+                                        </apex:outputPanel>
+                                    </apex:PageBlock>
+                                </apex:form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <apex:outputPanel id="pageframe">                                                                       
+                                        <iframe id="sfdcview" src ="" width="100%" height="1000"></iframe>                                  
+                                </apex:outputPanel>
+                            </td>
+                        </tr>                   
+                    </table>
+                </td>
+            </tr>
+        </table>
+        
+    
+        <script type="text/javascript">
+        $(function () {
+        
+        	//solve IE's issues with JQuery
+        	jQuery.ajaxSetup( {xhr:function(){
+		 		//return new window.XMLHttpRequest();
+		 		try{
+		 			if(window.ActiveXObject)
+						return new window.ActiveXObject("Microsoft.XMLHTTP");
+		 		} catch(e){}
+		 		return new window.XMLHttpRequest();
+		 	 	}  
+			 });
+        
+            var pageform = document.getElementById('{!$Component.consolepage:cmsform:cmsblock}');
+            var propertieslink = document.getElementById('{!$Component.consolepage:cmsform:btnproperties}');
+            
+            var newpageid = 'na';            
+            
+            // Settings up the tree
+            $("#tree")
+                .jstree({ 
+                    // the list of plugins to include
+                    "plugins" : [ "themes", "json_data", "ui", "crrm", "cookies", "dnd", "search", "types" ],
+                    "json_data" : {                 
+                        "ajax" : {                          
+                            "url" : "/apex/CMSFolders",
+                            "data" : function (n) {
+                                return { 
+                                    "operation" : "get_children", 
+                                    "id" : n.attr ? n.attr("id").replace("node_","") : 1 
+                                } 
+                            }
+                        }
+                    },                    
+                    "types" : {
+                        //both options to -2, as I do not need depth and children count checking
+                        "max_depth" : -2,
+                        "max_children" : -2,
+                        // I want only `drive` nodes to be root nodes 
+                        // This will prevent moving or creating any other type as a root node
+                        "valid_children" : [ "site" ],
+                        "types" : {
+                            // The default type
+                            "default" : {
+                                // I want this type to have no children (so only leaf nodes)
+                                // In my case - those are files
+                                "valid_children" : "none",
+                                // If we specify an icon for the default type it WILL OVERRIDE the theme icons
+                                "icon" : {
+                                    "image" : "{!URLFOR($Resource.CMSForce, '/JSTree/file.png')}"
+                                }
+                            },
+                            // The `folder` type
+                            "folder" : {
+                                // can have files and other folders inside of it, but NOT `drive` nodes
+                                "valid_children" : [ "default", "folder" ],
+                                "icon" : {
+                                    "image" : "{!URLFOR($Resource.CMSForce, '/JSTree/folder_blue.png')}"
+                                }
+                            },
+                            // The 'root' nodes 
+                            "site" : {
+                                // can have files and folders inside, but NOT other `site` nodes
+                                "valid_children" : ["folder"],
+                                "icon" : {
+                                    "image" : "{!URLFOR($Resource.CMSForce, '/JSTree/Globe.png')}"
+                                },
+                                // those options prevent the functions with the same name to be used on the `drive` type nodes
+                                // internally the `before` event is used
+                                "start_drag" : false,
+                                "move_node" : false,
+                                "delete_node" : false,
+                                "remove" : false
+                            },
+                            "templates" : {
+                                // can have files and folders inside, but NOT other `site` nodes
+                                "valid_children" : ["folder"],
+                                "icon" : {
+                                    "image" : "{!URLFOR($Resource.CMSForce, '/JSTree/katomic.png')}"
+                                },
+                                // those options prevent the functions with the same name to be used on the `drive` type nodes
+                                // internally the `before` event is used
+                                "start_drag" : false,
+                                "move_node" : false,
+                                "delete_node" : false,
+                                "remove" : false
+                            },
+                            "webforms" : {
+                                // can have files and folders inside, but NOT other `site` nodes
+                                "valid_children" : ["folder"],
+                                "icon" : {
+                                    "image" : "{!URLFOR($Resource.CMSForce, '/JSTree/kwin4.png')}"
+                                },
+                                // those options prevent the functions with the same name to be used on the `drive` type nodes
+                                // internally the `before` event is used
+                                "start_drag" : false,
+                                "move_node" : false,
+                                "delete_node" : false,
+                                "remove" : false
+                            },
+                            "setup" : {
+                                // can have files and folders inside, but NOT other `site` nodes
+                                "valid_children" : ["folder"],
+                                "icon" : {
+                                    "image" : "{!URLFOR($Resource.CMSForce, '/JSTree/setup.png')}"
+                                },                              
+                                "start_drag" : false,
+                                "move_node" : false,
+                                "delete_node" : false,
+                                "remove" : false
+                            }
+                        }
+                    }
+                })                
+                .bind("move_node.jstree", function (e, data) {
+                    $(pageform).hide();                    
+                    
+                    data.rslt.o.each(
+                        function (i) {                          
+                            $.ajax({
+                                    async : false,
+                                    type: 'POST',               
+                                    url: "/apex/CMSFolders",                
+                                    data : {                
+                                        "operation" : "move_node",                                                      
+                                        "ref" : data.rslt.np.attr("id").replace("node_",""),                
+                                        "position" : data.rslt.cp + i,              
+                                        "title" : data.rslt.name,       
+                                        "copy" : data.rslt.cy ? 1 : 0,
+                                        "objectid" : $(this).attr("id"),
+                                        "targetobjectid" : data.rslt.np[0].id,
+                                        "targetfoldertype" : $(this).attr("sfdcnodetype")               
+                                    },              
+                                    success : function (r) {                
+                                         if(r.status == 0) {
+                                               alert(r.id);
+                                               $.jstree.rollback(data.rlbk);
+                                          }
+                                          //special case : a template got moved on a pages folder : create a new page with that template in the folder
+                                          else if(r.status == 2) {
+                                          		$.jstree.rollback(data.rlbk);
+                                          		$("#sfdcview").attr("src", '/apex/PreviewPage?pageid='+r.id+'&console=true');
+                                          		$('#tree').jstree('refresh',$("#"+r.parentid));
+                                          		newpageid = r.id;
+                                          		$('#pagecell').show();												                        						                                          
+                                          }
+                                            //$(data.rslt.oc).attr("id", "node_" + r.id);               
+                                            //if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {               
+                                            //    data.inst.refresh(data.inst._get_parent(data.rslt.oc));               
+                                            //}             
+                                                                                                               
+                                    }               
+                                })
+                        }
+                    );
+                })
+                .bind("create.jstree", function (e, data) {                	              
+                    $.post(
+                        "/apex/CMSFolders", 
+                        { 
+                            "operation" : "create_node", 
+                            "id" : data.rslt.parent.attr("id").replace("node_",""), 
+                            "position" : data.rslt.position,
+                            "title" : data.rslt.name,
+                            "type" : data.rslt.obj.attr("rel")
+                        }, 
+                        function (r) {
+                            if(r.status == 1) {
+                                $(data.rslt.obj).attr("id", r.id);
+                                $(data.rslt.obj).attr("sfdcnodetype", r.sfdcnodetype);
+                                //{ "status" : 1, "id" : "a028000000CCASyAAP", "sfdcnodetype" : "page" }
+                                if(r.sfdcnodetype == 'page') top.location.href = "/"+r.id+"/e?retURL=%2Fapex%2FCMSForceConsole";
+                                //if(r.sfdcnodetype == 'pagetemplate') top.location.href = "/apex/PageTemplateEdit?retURL=%2Fapex%2FCMSForceConsole&folderid="+r.parentid;                                                              
+                            }
+                            else {
+                                $.jstree.rollback(data.rlbk);
+                                alert(r.id);
+                            }
+                        }
+                    );                    
+                })
+                .bind("remove.jstree", function (e, data) {
+                    data.rslt.obj.each(function () {
+                        $.ajax({
+                            async : false,
+                            type: 'POST',
+                            url: "/apex/CMSFolders",
+                            data : { 
+                                "operation" : "remove_node", 
+                                "id" : this.id,
+                                "sfdcnodetype" : $(this).attr("sfdcnodetype")
+                            }, 
+                            success : function (r) {
+                                if(r.status == 0) {
+                                    if(r.status == 0) alert(r.id);                                  
+                                    data.inst.refresh();                                    
+                                }
+                                else if(r.status == 1){
+                                	//clear the preview window when a page/webform/template was deleted
+                                	if(r.nodetypedeleted == 'page' || r.nodetypedeleted == 'pagetemplate' || r.nodetypedeleted == 'webform' ) {$("#sfdcview").attr("src", ''); }
+                                }
+                            }
+                        });
+                    });
+                })
+                .bind("rename.jstree", function (e, data) {
+                    $.post(
+                        "/apex/CMSFolders", 
+                        { 
+                            "operation" : "rename_node", 
+                            "id" : data.rslt.obj.attr("id"),
+                            "title" : data.rslt.new_name,
+                            "sfdcnodetype" : data.rslt.obj.attr("sfdcnodetype")
+                        }, 
+                        function (r) {
+                            if(!r.status) {
+                                $.jstree.rollback(data.rlbk);
+                            }
+                        }
+                    );
+                })                          
+                .bind("select_node.jstree", function (e, data) {
+                	//alert('select fired');
+                	
+                	//this will trap the autoselect. When a 'pagetemplate to folder' is done, there should be a newpageid waiting
+                	if(newpageid != 'na') {
+                		var temp = newpageid; 
+                		newpageid = 'na'; //clear to avoid loops                		
+                		var node = $.jstree._reference('#tree').get_selected();
+						$("#tree").jstree("deselect_node", node);
+                		$("#tree").jstree("select_node", "#"+temp);
+                	}
+                	
+                	
+                    $("#mmenu a").hide();
+                    var node = data.inst.get_selected()[0];             
+                    //drop the node in a VF hidden field. The controller will need to know
+                    var sn = document.getElementById("{!$Component.consolepage:cmsform:cmsblock:selectednode}");
+                    var snt = document.getElementById("{!$Component.consolepage:cmsform:cmsblock:selectednodetype}");
+                    
+                    sn.value = node.id;
+                    snt.value = $(node).attr("sfdcnodetype");
+                    
+                    
+                    //alert($(node).attr("sfdcnodetype"));
+                    if($(node).attr("sfdcnodetype") == "page") {
+                        $('#pagecell').show();
+                        $(pageform).hide();
+                        $("#refresh").show();
+                        $("#rename").show();
+                        $("#remove").show();
+                        $("#showstandard").show();              
+                        $("#sfdcview").attr("src", '/apex/PreviewPage?pageid='+node.id+'&console=true');
+                    }
+                    else if($(node).attr("sfdcnodetype") == "pagesfolder" || $(node).attr("sfdcnodetype") == "pagetemplatesfolder" || $(node).attr("sfdcnodetype") == "webformsfolder"){
+                        $("#refresh").show();
+                        $("#add_folder").show();
+                        $("#add_default").show();
+                        $("#rename").show();
+                        $("#remove").show();
+                        $("#showstandard").show();
+                        $("#pagecell").hide();
+                        //$("#sfdcview").attr("src", '/apex/CMSFolderDetail?id='+node.id);
+                    }
+                    else if($(node).attr("sfdcnodetype") == "site"){
+                        $("#refresh").show();
+                        $("#add_folder").show();                        
+                        $("#showstandard").show();
+                        $("#pagecell").hide();
+                        $("#sfdcview").attr("src", '/apex/CMSSiteDetail?id='+node.id);
+                    }
+                    else if($(node).attr("sfdcnodetype") == "pagetemplatesroot"){
+                        $("#refresh").show();
+                        $("#add_folder").show();                                                
+                        $("#pagecell").hide();                      
+                    }
+                    else if($(node).attr("sfdcnodetype") == "webformsroot"){
+                        $("#refresh").show();
+                        $("#add_folder").show();                                                
+                        $("#pagecell").hide();                      
+                    }
+                    else if($(node).attr("sfdcnodetype") == "pagetemplate"){
+                        $("#refresh").show();
+                        $("#rename").show();
+                        $("#remove").show();
+                        $("#showstandard").show();
+                        $("#pagecell").hide();
+                        $("#sfdcview").attr("src", '/apex/'+ $(node).attr("vfpage"));                       
+                    }
+                    else if($(node).attr("sfdcnodetype") == "webform"){
+                        $("#refresh").show();
+                        $("#rename").show();
+                        $("#remove").show();
+                        $("#showstandard").show();
+                        $("#pagecell").hide();
+                        $("#sfdcview").attr("src", '/apex/Form?id='+node.id);                   
+                    }
+                    else if($(node).attr("sfdcnodetype") == "setup"){
+                        $("#pagecell").hide();
+                        $("#sfdcview").attr("src", '/apex/CMSForceSetup');
+                    }           
+                });
+                    
+                $(pageform).hide();             
+                $(propertieslink).click(function() {
+                  $(pageform).show();
+                });     
+        });
+        </script>
+
+        <script type="text/javascript">
+        $(function () { 
+            $("#mmenu a").click(function () {
+                switch(this.id) {
+                    case "add_default":
+                    	var node = $.jstree._reference('#tree').get_selected();
+                    	if($(node).attr('sfdcnodetype') == 'pagetemplatesfolder') {
+                    		top.location.href = "/apex/PageTemplateEdit?retURL=%2Fapex%2FCMSForceConsole&folderid="+$(node).attr('id');
+                    		break;
+                    	}
+                    	if($(node).attr('sfdcnodetype') == 'webformsfolder') {
+                    		top.location.href = "/apex/WebFormEditor?retURL=%2Fapex%2FCMSForceConsole&folderid="+$(node).attr('id')+"&console=true";
+                    		break;
+                    	}
+                    case "add_folder":                      
+                        $("#tree").jstree("create", null, "last", { "attr" : { "rel" : this.id.toString().replace("add_", "") } });
+                        break;
+                    case "refresh":
+                        $('#tree').jstree('refresh',-1);
+                        break;
+                    case "remove":if(confirm('Are you sure you want to delete this ?')) {$("#tree").jstree(this.id);break;}
+                    case "text": break;
+                    case "showstandard": 
+                        var sn = document.getElementById("{!$Component.consolepage:cmsform:cmsblock:selectednode}");
+                        var snt = document.getElementById("{!$Component.consolepage:cmsform:cmsblock:selectednodetype}");
+                        window.open('/'+sn.value,'standardpagewindow');
+                        break;
+                    default:
+                        $("#tree").jstree(this.id);
+                        break;
+                }
+            });
+        });
+        
+        //reset explorer menu
+        function showMenu() {
+            
+            $("#refresh").show();
+            $("#add_folder").show();
+            $("#add_default").show();
+            $("#rename").show();
+            $("#remove").show();
+            $("#showstandard").show();
+        }
+		
+        
+        </script>
+        
+</apex:page>

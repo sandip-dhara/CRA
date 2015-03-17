@@ -1,0 +1,1821 @@
+<apex:page standardcontroller="Learning_Board__c" extensions="SumanEditBoardDtls" showheader="false" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Edit</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="hp" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-fileupload.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/tagit.ui-zendesk.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/jquery.tagit.css')}" />
+    <script type="text/javascript">
+
+        function SubmitSearchForm(event) {
+            if (event.keyCode == 13) {
+                var txtSearch = document.getElementById('{!$Component.UPForm.searchText}');
+                if (txtSearch.value.length == 0) {
+                    document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                    document.getElementById('err_msg').style.display = 'block';
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+                else {
+                    document.getElementById('err_msg').style.display = 'none';
+                    var button = document.getElementById("{!$Component.UPForm.searchButton}");
+                    button.click();
+                }
+                return true;
+            }
+        }
+</script> 
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+    
+    <!-- BEGIN HEADER -->
+<header>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container-fluid"> <a class="HpLogo"> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/></a>
+        <div class="nav mtop10">
+          <h1>Social Learning Platform</h1>
+          <h3>Learning on your terms</h3>
+        </div>
+        <ul class="nav pull-right top-menu mtop16">
+          <!-- BEGIN USER LOGIN DROPDOWN -->
+          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span><apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="userImage" alt="no_username"/></span> 
+            <!--<b class="caret"></b>--> 
+            </a>
+            <ul class="dropdown-menu extended logout">
+              <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a></li>
+              <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+            </ul>
+          </li>
+          <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+          <apex:form id="UPform">
+            <div class="nav notify-row"> <span class="add-on icon-search topSearchIcon topSearch"></span>
+              <apex:inputText id="searchText" styleClass="typeahead-devs" size="20" value="{!strSearchValue}" html-Placeholder="Please Enter Search Text" onkeydown="SubmitSearchForm(event);"/>
+              <apex:commandButton action="{!doSearch}" value="Search" id="searchButton" title="Click to Search for Learning Board" style="display:none;"/>
+            </div>
+        </apex:form>
+      </div>
+        <div class="alert alert-error span4 pull-right mr30" style="display:none" id="err_msg">
+    </div>
+    </div>
+  </div>
+  <div class="navbar-inner">
+      <div class="container-fluid menunavBar"> 
+        <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Home"></a> 
+        <a class="icon-book topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Library"></a>
+        <a class="topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"></a>
+        <a class="icon-question-sign topNavIcon pull-right" href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank" title="Help"></a>
+      </div>
+    </div>
+</header>
+<!-- END HEADER --> 
+<!-- BEGIN CONTAINER -->
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+   
+        
+<div id="main-content">
+     <apex:form id="EditBoard">
+         <apex:inputHidden value="{!DTopicId}" id="hdnLId" />
+<div class="BDbg">
+  <div class="BDheading">
+    <apex:inputText id="txtLName" styleclass="span6" value="{!BoardName}"/>
+  </div>
+  <div class="container-fluid">
+    <div class="row-fluid mtop10">
+      <div class="span8">
+        <div class="PositionR"> <a class="a_underNone" data-toggle="modal" href="#EditImage" id="aEditBoardTitleImage">
+          <div class="EditBoardTitImg icon-pencil"> </div>
+          </a>
+          <div id="EditImage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+            <div class="modal-header">
+              <h3>Board header image</h3>
+            </div>
+            <div class="modal-body">
+              <div class="control-group Editratio">
+                <label class="control-label">Choose image</label>
+                <div class="controls">
+                     <span class="mr10">
+                 <!-- <input type="radio" id="ShowuploadImage" name="optionsRadios1" value="option2"  />
+                  Upload from Computer </span> <span>
+                  <input id="ShowDefaultImage" type="radio" name="optionsRadios1" value="option1"  />
+                  Default Image -->
+                        
+                         
+            <apex:selectRadio value="{!ImageSelectionOption}"  onclick="ShowHideDefaultImage(this)">
+                 <apex:selectOptions value="{!ImageOptions}"/>
+            </apex:selectRadio>
+                  </span>
+
+                </div>
+              </div>
+              <div class="check ShowuploadImage clearB" style="display: none"  id="ShowHideDefault">
+                <p>This image appears at the top of each learning board Recommended size is 920px * 320px</p>
+                <div class="controls">
+                  <div data-provides="fileupload" class="fileupload fileupload-new">
+                    <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail"> 
+                        
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"   style="width: auto; border: 0 none;"/>
+                    </div>
+                    <div style="max-width: 200px; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                    <div> <span class="btnAthena btn-file"><span class="fileupload-new">Select image</span> <span class="fileupload-exists">Change</span>
+                      <apex:inputFile styleclass="default" value="{!BoardAttach.body}" filename="{!BoardAttach.name}" contentType="{!BoardAttach.contentType}"/>
+                      </span> </div>
+                  </div>
+                  <span class="label label-important">NOTE!</span> <span>Attached image thumbnail is
+                  supported in Latest Firefox, Chrome, Opera,
+                  Safari and Internet Explorer 10 only </span> </div>
+              </div>
+             
+                <div class="check ShowDefaultImage" style="display:none" id="DefaultDrop">
+                                                        <div class="control-group">
+                                                            <label class="control-label">Select Default Image </label>
+                                                            <div class="controls">
+ 
+                                                           <apex:selectList multiselect="false" size="1" value="{!dropDefaultSelected}" id="dropDefault" onchange="defaultImgChanged(this, '{!getStaticImagePath}')" >
+                                                                <apex:selectOptions value="{!DefaultImagefilename}" ></apex:selectOptions>
+                                                           </apex:selectList>
+
+                                                            <div class="viewDefaultImage thumbnail">
+                                                                <apex:image id="imgDefault" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+                                                            </div>
+ 
+                                                        </div>
+                                                        </div>
+                                                    </div>  
+            </div>
+            <div class="modal-footer">
+              <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+               <apex:commandButton styleclass="btnAthena btn-primary"  action="{!BoardImageupload}" value="Save" id="theButton"/>
+            </div>
+          </div>
+
+             <apex:outputPanel rendered="{!!BoardStaticImage}"> 
+            
+            <apex:image url="{!URLFOR($Action.Attachment.Download, AttachmentId)}" styleClass="BoardDetailImage" />
+          </apex:outputPanel>
+          <apex:outputPanel rendered="{!BoardStaticImage}">
+                              <img src='{!BoardDefaultImageName}' styleClass="BoardDetailImage" />
+          
+          </apex:outputPanel>
+
+          <div class="BoardTit">
+            <div class="span8 mtop5">
+              
+                <apex:inputTextarea id="txtSubTitle"   styleclass="span11 inp5"   value="{!BoardSubTitle}" title="Enter Sub Title"/>
+
+            </div>
+            <div class="span4">
+              <button class="icon-edit btnAthena btn-primary edit_item-personPhoto" href="#ChangeOwner" data-toggle="modal" id="btnChangeOwner"></button>
+            <div id="ChangeOwner" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                                                    <div class="modal-header">
+ 
+                                                        <h3>Change Owner</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!--<div class="span5">
+                                                            <label>Curent Owner : {!Learning_Board__c.ownerid}</label>
+                                                        </div>-->
+                                                        <div class="span5">
+                                                            <label>Current Owner</label>
+                                                            </div>
+                                                        <div class="span5">
+                                                            <span> {!LearningBoardOwnerDtls.Name}</span>
+                                                        </div>
+                                                        <div class="span5 ml0 clearB">
+                                                            <label>New Owner </label>
+                                                        </div>
+                                                        <div class="span5">
+                                                            <span>
+                                                                
+                                                              <apex:inputField value="{!Learning_Board__c.ownerid}" id="chgOnwerInputUser" onmousemove="document.getElementById('{!$Component.chgOnwerInputUser}').value = ''; return false;" label="CurrentOwner" />   
+                                                             
+                                                              
+                                                            </span>
+                                                            <!--<a><i class="icon-search"></i></a>-->
+                                                            <!-- search owner -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                                                        <apex:inputHidden value="{!hdnChangeOwnerId}" id="hiddenChangeOwner" />
+                                                        <apex:commandButton Styleclass="btnAthena b<tn-primary" action="{!BoardChangeOwner}" value="save"  onclick="funcChangeOwner('{!$Component.formLB.inputUser_lkid}');" />
+                                                    </div>
+                                                </div>
+              <div class="hpit_athena_ca-item-personPhoto mtop10"> 
+                  <apex:image url="{!LearningBoardOwnerDtls.FullPhotoUrl}" width="35" height="35" alt="no_username_small."  />
+                  
+              </div>
+              <a class="a_underNone">
+                  <div class="hpit_athena_ca-item-personName colorWhite mtop10">
+                       <a id="aLearningBoardName" style="color:#fff" class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!LearningBoardOwnerDtls.id}">  {!LearningBoardOwnerDtls.Name}  </a> </div>
+              </a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="span4">
+        <div>
+          <div>
+            
+              <apex:inputTextarea id="txtBoardDesc"  rows="3"  styleclass="span12" style="height: 214px; width: 97%;"  value="{!BoardDescription}" title="Enter Learning Board Description"  />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Add Tags</label>
+            <div class="controls">
+              <input name="tags" id="learningTags" value="{!LBAssociatedTags}" class="hide" />
+              <!-- Tag Hidden Value -->
+              <ul id="learningTagsTop">
+              </ul>
+            </div>
+              <div id="dvInputAsscotiateTags" style="display:none">
+                  <apex:inputText value="{!UserTags}" id="txtUserTag"/>
+              </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Learning Board Template</label>
+            <div class="controls controls-row">
+            <apex:selectList multiselect="false" size="1" value="{!BoardTemplateId}" id="dropTemplate" >
+                   <apex:selectOptions value="{!BoardTemplates}" ></apex:selectOptions>
+                </apex:selectList>
+            </div>
+          </div>
+          <div class="controls mtop10"> <span class="mr10">
+            <!--<input type="checkbox" />-->
+              <apex:inputCheckbox value="{!BoardPublish}" id="chkPublish">
+              </apex:inputCheckbox>
+            Publish </span> <span class="mr10">
+            <!--<input type="checkbox" />-->
+               <apex:inputCheckbox value="{!BoardFeatured}" id="chkFeatured">
+              </apex:inputCheckbox>
+            Featured </span> <span class="pull-right mtop10">
+                <!--<a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a></li>
+            <input type="button" class="btnAthena" value="Cancel" id="btnHeaderBoardCancel"/>-->
+                <apex:commandButton styleclass="btnAthena btn-primary"  action="{!DoCancel}" id="btnHeaderBoardCancel"  value="Cancel"/>
+                  <apex:commandButton styleclass="btnAthena btn-primary"  action="{!UpdateBoard}" id="btnHeaderBoardSave"  value="Save"  onclick="functionSaveChanges();"/>
+            </span> </div>
+            <apex:inputHidden value="{!hdnAddTag}" id="InputHiddenTag" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </apex:form>
+    <apex:form id="EditTopic">
+    <div class="container-fluid">
+    <div class="row-fluid mtop20">
+      <div class="span8">
+        <div class="panel-group" id="accordion">
+           <div class="" id="DivLearnings">
+              
+            </div>
+        </div>
+      </div>
+      <div class="span4">
+        <div class="row-fluid ">
+          <div class="hpit_athena_rightDiv span12"> Contributors 
+              <apex:OutputPanel rendered="{!IsBoardModeratorOrOwner}"> 
+                <a class="ml10 icon-plus" href="#AddContributors" data-toggle="modal" id="aAddContributor"> Add</a>
+              </apex:OutputPanel>
+                <div id="AddContributors" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                  <div class="modal-header">
+                    <h3>Add Contributor</h3>
+                  </div>
+                  <div class="modal-body">
+                    <div class="span5 ml0">
+                      <label>New Contributor :</label>
+                    </div>
+                    <div class="span5"> 
+                        <span>
+                            <!--onmousemove="document.getElementById('{!$Component.inputUser}').value = ''; return false;"-->
+                      <apex:inputField value="{!Learning_Board__c.ownerid}" id="inputUser" label="CurrentOwner" /> 
+                        </span>
+                      <!-- search owner --> 
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                      <apex:inputHidden value="{!hdnNewContributorId}" id="hdnNewContributor" />
+                      <apex:commandButton Styleclass="btnAthena b<tn-primary" action="{!AddContributor}" value="save"  onclick="AddContributor('{!$Component.formLB.inputUser_lkid}');" />
+                  </div>
+                </div>
+            <hr />
+
+<!--Suman Contributors Code Start-->
+                  
+                <apex:repeat value="{!Contributors}" var="cont" >
+                    <div class="removeFdiv">
+                      <li class="dropdown" id="header_inbox_bar"> 
+                        <a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!cont.id}" title="{!cont.Name}" class="hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> 
+                          <apex:image width="35" height="35" url="{!cont.FullPhotoUrl}"  />
+                        </a>
+                      </li>
+                        <apex:OutputPanel rendered="{!IsBoardModeratorOrOwner}"> 
+                            <!--<apex:commandLink styleClass="icon-remove-sign removeFbtn" action="{!RemoveContributor}" id="btnContributorsRemove">
+                                 <apex:param name="q" value="{!cont.id}" assignTo="{!contrId}"/>
+                            </apex:commandLink>-->
+                            <a class="icon-remove-sign removeFbtn" id="btnContributorsRemove" data-contrbtrID="{!cont.id}" onclick="functionContributorsRemove(this)"></a>
+                        </apex:OutputPanel>
+
+                    </div>
+                </apex:repeat>
+
+                <div id="dvModalContributor" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                <div id="Div1" style="Display:none">
+                    <apex:inputText id="txtContributorId" value="{!ContributorId}" />
+                </div>
+
+                  <div class="modal-header">
+                    <h3>Are you sure you want to delete?</h3>
+                  </div>
+                  <div class="modal-body">
+                    <p> </p>
+                  </div>
+                  <div class="modal-footer">
+                    <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="No" />
+                    <apex:commandButton styleclass="btnAthena btn-primary"  action="{!RemoveContributor}" value="Yes" id="CommandButton1"/>
+                  </div>
+                </div>
+
+
+              <!--Suman Contributors Code End-->
+
+          </div>
+
+        </div>
+        <div class="row-fluid ">
+          <div class="hpit_athena_rightDiv span12"> Followers
+            <hr />
+            
+               <!--Suman Followers Code Start-->
+                  
+                <apex:repeat value="{!Followers}" var="cont" >
+                    <a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!cont.id}" title="{!cont.Name}" class="hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> 
+                        <apex:image width="35" height="35" url="{!cont.FullPhotoUrl}"  />
+                    </a>
+                </apex:repeat>
+              
+              <!--Suman Followers Code End-->
+
+          </div>
+        </div>
+        
+        <div class="row-fluid ">
+       
+             <!--Suman Followers Code Start For Related Boards-->
+
+          <div class="hpit_athena_rightDiv span12"> Related boards 
+              <a class="icon-sort-by-order btnAthena btn-primary" data-toggle="modal" href="#ChangeRelatedOrder" ></a>
+              <a class="ml10 icon-plus" data-toggle="modal" href="#AddBoards" > Add</a>
+              <div id="AddBoards" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static" style="width: 55%; left: 44%;">
+              <div class="modal-header">
+                <h3>Add Related Boards</h3>
+              </div>
+              <div class="modal-body">
+                <div class="row-fluid">
+                  <div class="span12">
+                    <div class="span8"> <span>
+                      <input type="text" placeholder="Enter title of learning board" id="txtAddRelative" class="span11"  />
+                      </span> </div>
+                    <div class="span4">
+                      <input type="button" value="Search" class="btnAthena btn-primary" onclick="SearchAddRelatedBoard()" />
+                    </div>
+                    <div class="alert alert-error span4 pull-right mr30" style="display:none" id="dvReleatedBoardErrorMsg">
+                    </div>
+                    <div class="clearB">
+                        <label>Available boards :</label>
+                    </div>
+                    <div id="AddRelative">                
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <apex:inputHidden value="{!hdnRelatedLB}" id="hiddenRelatedSearch" />
+                <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                <apex:commandButton styleclass="btnAthena btn-primary" onclick="SaveRelatedBoard();" action="{!SaveRelatedLB}" value="Save" id="CommandButton2"/>
+              </div>
+            </div>
+
+              <div id="ChangeRelatedOrder" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" data-backdrop="static" aria-hidden="true" style="width: 55%; left: 44%;">
+                  <div class="modal-header">
+                    <h3>Change Related boards Order</h3>
+                  </div>
+                  <div class="modal-body">
+                      <!--<div class="span12 mtop20">-->
+                            <c:ListUpandDown rightLabel="Related Learning Board Ordering" rightOptions1="{!ChangeOrderRelatedLearningBoard}" size="10" width="70%" />      
+                      <!--</div>-->
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <apex:commandButton styleclass="btnAthena btn-primary"  action="{!SaveRelatedChangeOrder}" value="Save" id="CommandButton5"/>
+                  </div>
+              </div>
+
+               <hr />
+              <!--<apex:inputhidden value="{!hdnRelBrdId}" id="hdrlbrdId"></apex:inputhidden>-->
+          <apex:repeat value="{!RelatedLearningBoards}" var="rlb" > <a class="hpit_athena_ca_itemLink" href="/apex/athenaLearningBoardDtls?id={!rlb.Lbid}">
+              <p class="hpit_athena_rightHeading" style="margin:0"> <span style="font-size:15px" >{!rlb.LBName}</span> </p>
+              </a>
+              <p style="margin:0"><span style="color:#7A7878"> {!rlb.LBOwnerName}</span></p>
+              <a class="hpit_athena_ca_itemLink" href="/apex/athenaLearningBoardDtls?id={!rlb.Lbid}">
+              <p>
+              <li class="dropdown pull-right" id="Li1"> 
+                  <!--<apex:commandLink styleclass="btnAthena icon-remove-sign removeFbtn" onclick="RemoveRelLearningBoard('{!rlb.Lbid}')"   action="{!RemoveRelLearningBoard}">
+                  </apex:commandLink>-->
+                  <!--<apex:commandButton styleclass="btnAthena icon-remove-sign removeFbtn" onclick="RemoveRelLearningBoard('{!rlb.Lbid}')" value="Yes" id="CommandButton7"/>-->
+                  <a class="icon-remove-sign removeFbtn" id="A1" onclick="RemoveRelLearningBoard('{!rlb.Lbid}')"></a>
+              </li>
+              <apex:outputPanel rendered="{!!rlb.StaticImage}"> 
+                <apex:image url="{!URLFOR($Action.Attachment.Download, rlb.AttachmentId)}"  width="220" height="162" />
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!rlb.StaticImage}">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}" width="220" height="162"/>
+              </apex:outputPanel>
+            </p>
+            </a>
+            <hr />
+          </apex:repeat>
+
+             <div id="dvRelatedBoardRemove" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                <div id="Div3" style="Display:none">
+                    <apex:inputText id="hdrlbrdId" value="{!hdnRelBrdId}" />
+                </div>
+
+                  <div class="modal-header">
+                    <h3>Are you sure you want to delete?</h3>
+                  </div>
+                  <div class="modal-body">
+                    <p> </p>
+                  </div>
+                  <div class="modal-footer">
+                    <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="No" />
+                    <apex:commandButton styleclass="btnAthena btn-primary"  action="{!RemoveRelLearningBoard}" value="Yes" id="CommandButton6"/>
+                  </div>
+             </div>
+
+          </div>
+
+            <!--Suman Followers Code End For Related Boards-->
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div id="AddTopics" class="modal hide fade" tabindex="-1" role="dialog" style="width:800px; left:43%;" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                          <div class="modal-header">
+                            <h3>Add Topics</h3>
+                          </div>
+                          <div class="modal-body">
+                            <div class="TABclass">
+                              <ul class="nav nav-tabs" id="myTab">
+                                <li class="active"><a data-toggle="tab" href="#SearchTopics" class="icon-search"> Search Existing</a></li>
+                                <li><a data-toggle="tab" href="#CreateNewTopics" class="icon-plus"> Create New</a></li>
+                              </ul>
+                              <div class="tab-content" id="myTabContent">
+                                <div id="SearchTopics" class="tab-pane fade active in">
+                                  <div class="row-fluid">
+                                    <div class="span12">
+                                      <div class="span7">
+                                        <div class="control-group">
+                                          <label class="control-label">Search Learning</label>
+                                          <div class="controls controls-row">
+                                            
+                                              <input type="text" class="input-block-level" value="" id="txtLearningBrd" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="span5">
+                                        <input type="button" class="btnAthena btn-primary mtop30" value="Search" onClick="SearchLearningBoard()"/>
+                                      </div>
+                                      <p class="searchResult clearB">Search result </p>
+                                    </div>
+                                  </div>
+                                   <div class="row-fluid">
+                                       <div class="span12" id="AddLearningSearch">
+                                                        
+                                           </div>
+                                       </div>
+                                  
+                                  <div class="mbot20">
+                                    <div class="controls mtop10"> <span class="pull-right mtop30">
+                                      <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                                      <input type="button" class="btnAthena btn-primary" value="Save" />
+                                        <apex:commandButton styleclass="btnAthena btn-primary" onclick="SaveSearchLearningBoard();" action="{!CreateSearchTopic}" value="Save" id="CommandButton7"/>
+
+                                      </span> </div>
+                                  </div>
+                                </div>
+                                <div id="CreateNewTopics" class="tab-pane fade ">
+                                  <div class="row-fluid">
+                                    <div class="span12">
+                                      <div class="control-group">
+                                       <!-- <h1 class="catHeading">What Category</h1>
+                                        <hr />-->
+                        <label class="control-label">Category</label>
+                                    <div class="controls controls-row">
+                                        <label class="control-label"  id="lblCategory"></label>
+                                        
+                                    <apex:selectList multiselect="false" size="1" value="{!CreateTopicCtgryId}" id="Ctgry" >
+                                           <apex:selectOptions value="{!TopicCategory}" ></apex:selectOptions>
+                                        </apex:selectList>
+                                    </div>
+                                          <apex:inputHidden value="{!hdnTopicCatId}" id="hdnTopicCtgry" />
+                                        <label class="control-label">Select type of learning</label>
+                                        <div class="controls controls-row">
+                                        
+                                             <apex:selectList styleclass="span12 "  multiselect="false" size="1" value="{!CreateTypeOfTopic}" id="LearningTopic"  onchange="ShowTopicOnType(this)">
+                                               <apex:selectOptions value="{!LearningType}" ></apex:selectOptions>
+                                            </apex:selectList>
+                                        </div>
+                                      </div>
+                                     
+                                          <div  id="divTopicCommon" style="display:none">
+                                        <div class="control-group">
+                                          <label class="control-label">Topic</label>
+                                          <div class="controls controls-row">
+                                              <apex:inputText id="txtTopic" styleclass="input-block-level" value="{!CreateTopicName}"/>
+                                            
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Description </label>
+                                          <div class="controls controls-row">
+                                              <apex:inputTextarea id="txtTopicArea"   styleclass="span12"   value="{!CreateTopicDesc}" title="Enter Topic Description"/>
+                                            
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Add Tags</label>
+                                            
+                                            <div id="AddTopicTags" style="display:none">
+                                                <apex:inputText id="txtAddTopicTags"  value="{!TopicTags}"></apex:inputText>
+
+                                            </div>
+
+                                          <div class="controls">
+                                              
+                                            <input name="tags" id="txtTopicTags" value="{!LBAssociatedTags}" class="hide" />
+                                            <!-- Tag Hidden Value -->
+                                            <ul id="TopicTags">
+                                            </ul>
+                                          </div>
+                                        </div>
+
+                                               <div id="urlLearning" style="display:none"  class="span5 ml0 mtop10" >
+
+                                                <label>URL :</label>
+                                                <span>
+                                                                <apex:inputText id="InputTextURL" styleclass="span10" value="{!CreateTopicVideoURL}"/>
+                                                                <!--<apex:commandButton styleclass="btnAthena btn-primary mtop-10" action="{!ShowVideoPreview}" value="Test"  />-->
+                                                                <button type="button" class="btnAthena btn-primary mtop-10" id="playvideo"  onclick="openNewWindow()">Test</button>
+
+                                                    <!--<iframe id="video1" width="520" height="360"  frameborder="0" ></iframe>-->
+
+                                                    
+                                                    </span>
+                                            </div>
+                                              </div>
+
+
+                                            <div class="span5 ml0 mtop10"  id="VideoLearning"  style="display:none">
+                                                <span>
+                                                               <!-- <apex:inputText id="txtVideoURL" styleclass="span10" value="{!LVideoURL}"/>
+                                                              
+                                                                <button type="button" class="btnAthena btn-primary mtop-10">Test</button>-->
+                                                                <span class="colorBlue">Vedio Preview</span><br />
+                                                                <span>
+                                                                    <div class="span10">
+                                                                        <apex:image id="novideo" url="{!URLFOR($Resource.img_athena, 'img_athena/no_video.png')}" alt="no_video" styleClass="span12"/>                                                                        
+                                                                        <iframe    src=""  id="testvideo" frameborder="0"   scrolling="no" style="border:1px solid #999999"></iframe>
+                                                                    </div>
+                                                                </span>
+                                                                <br />
+                                                                <div class="clearB"><a>View instructions for uploading Brainshark videos</a></div>
+                                                                <br />
+                                                                <span>YouTube video must be in below format</span><br />
+                                                                <span>http ://www.youtube.com/watch?v=TSNLsBiep31 </span>
+                                                            </span>
+               <p class="span12 BoardImgList ml0 clearB">
+
+                  </p>
+                  
+                                                </div>
+
+
+                                              <div id="TopicTextImage" style="display:none">
+
+                                        <div class="control-group Editratio">
+                                          <label class="control-label">Choose image</label>
+                                          <div class="controls"> <span class="mr10">
+                                              <apex:selectRadio value="{!CreateImageSelectionTopic}"  onclick="ShowHideDefaultTopicImage(this)">
+                                             <apex:selectOptions value="{!ImageOptions}"/>
+                                        </apex:selectRadio>
+                                             </span> </div>
+                                        </div>
+                                        
+                                              <div class="check ShowuploadImage clearB" style="display: none"  id="ShowTopicUpload">
+                <p>This image appears at the top of each learning board Recommended size is 920px * 320px</p>
+                <div class="controls">
+                  <div data-provides="fileupload" class="fileupload fileupload-new">
+                    <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail"> 
+                        
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"   style="width: auto; border: 0 none;"/>
+                    </div>
+                    <div style="max-width: 200px; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                    <div> <span class="btnAthena btn-file"><span class="fileupload-new">Select image</span> <span class="fileupload-exists">Change</span>
+                      <apex:inputFile styleclass="default" value="{!BoardTopicAttach.body}" filename="{!BoardTopicAttach.name}" contentType="{!BoardTopicAttach.contentType}"/>
+                      </span> </div>
+                  </div>
+                  <span class="label label-important">NOTE!</span> <span>Attached image thumbnail is
+                  supported in Latest Firefox, Chrome, Opera,
+                  Safari and Internet Explorer 10 only </span> </div>
+              </div>
+             
+                <div class="check ShowDefaultImage" style="display:none" id="ShowTopicDefault">
+                                                        <div class="control-group">
+                                                            <label class="control-label">Select Default Image </label>
+                                                            <div class="controls">
+ 
+                                                           <apex:selectList multiselect="false" size="1" value="{!CreateTopicDefaultSelected}" id="SelectList1" onchange="defaultImgTopic(this, '{!getStaticImagePath}')" >
+                                                                <apex:selectOptions value="{!DefaultImagefilename}" ></apex:selectOptions>
+                                                           </apex:selectList>
+
+                                                            <div class="viewDefaultImage thumbnail">
+                                                                <apex:image id="TopicDefaultImage" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+                                                            </div>
+ 
+                                                        </div>
+                                                        </div>
+                                                    </div> 
+                                        </div>
+
+                                        <hr />
+
+                                        <div class="mbot20"  id="TopicCheckPublish"  style="display:none">
+                                          <div class="controls mtop10"> <span class="mr10">
+                                            <apex:inputCheckbox value="{!CreateTopicPublish}" />
+                                            Publish </span> 
+                                               <span class="mr10">
+                                            <apex:inputCheckbox value="{!CreateTopicClientFacing}"  />
+                                            Client Facing </span> <span class="mr10">
+                                            <apex:inputCheckbox value="{!CreateTopicPracticeApprv}"  />
+                                            Practice Approved </span> <span class="pull-right mtop30">
+                                            <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                                                
+                                            <apex:commandButton styleclass="btnAthena btn-primary"  onclick="funcCreateTopic()"  action="{!CreateLearningAndAssociate}" value="Save" id="SaveTopic"/>
+                                            </span> </div>
+                                        </div>
+                                      
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                                  
+        <!--- Delete Topic -->
+        <div id="DeleteTopics" class="modal hide fade" tabindex="-1" role="dialog" style="width:800px; left:43%;" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+<div class="modal-header">
+                            <h3>Delete Topic</h3>
+                          </div>
+            <div class="controls mtop10" >
+<div id="DeleteTopicId" style="Display:none">
+ <apex:inputText id="txtTId" value="{!DTopicId}" />
+</div>
+                <div class="modal-body">
+<span> Do you want to Delete Topic </span>
+<span class="pull-right mtop30">
+<input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+    
+<apex:commandButton styleclass="btnAthena btn-primary"  action="{!DeleteTopic}" value="Save" id="CommandButton4"/>
+</span>
+ </div>
+                </div>
+
+
+            </div>
+        
+        <!--- Edit Topic-->
+        <div id="EditTopics" class="modal hide fade" tabindex="-1" role="dialog" style="width:800px; left:43%;" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+<div class="modal-header">
+                            <h3>Edit Topics</h3>
+                          </div>
+           
+    <div class="modal-body">
+                                  <div class="row-fluid">
+                                    <div class="span12">
+                                      <div class="control-group">
+                                       <!-- <h1 class="catHeading">What Category</h1>
+                                        <hr />-->
+                        <label class="control-label">Category</label>
+                                    <div class="controls controls-row">
+                                    <apex:selectList multiselect="false" size="1" value="{!TopicCtgryId}" id="TopicCategory" >
+                                           <apex:selectOptions value="{!TopicCategory}" ></apex:selectOptions>
+                                        </apex:selectList>
+                                    </div>
+                                          <apex:inputHidden value="{!hdnTopicCatId}" id="InputHidden1" />
+                                        <label class="control-label">Select type of learning</label>
+                                        <div class="controls controls-row">
+                                        
+                                             <apex:selectList styleclass="span12 "  multiselect="false" size="1" value="{!TypeOfTopic}" id="TypeOfTopic"  >
+                                               <apex:selectOptions value="{!LearningType}" ></apex:selectOptions>
+                                            </apex:selectList>
+                                        </div>
+                                      </div>
+                                     
+                                        <div id="EditTopicId"  style="display:none">
+                                            <apex:inputText id="txtEditTopicId" value="{!TopicId}" styleclass="input-block-level" >
+                                            </apex:inputText>
+                                        </div>
+                                          <div  id="EditCommonTopic" style="display:none">
+                                        <div class="control-group">
+                                          <label class="control-label">Topic</label>
+                                          <div class="controls controls-row">
+                                              <apex:inputText id="txtEditTopicName" styleclass="input-block-level" value="{!TopicName}"/>
+                                            
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Description </label>
+                                          <div class="controls controls-row">
+                                              <apex:inputTextarea id="txtEditTopicDesc"   styleclass="span12"   value="{!TopicDesc}" title="Enter Topic Description"/>
+                                            
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Add Tags</label>
+                                          <div class="controls">
+                                            <input name="tags" id="Text1" value="Social, Learning" class="hide" />
+                                            <!-- Tag Hidden Value -->
+                                            <ul id="Ul2">
+                                            </ul>
+                                          </div>
+                                        </div>
+
+                                               <div id="EditLinkDoc" style="display:none"  class="span5 ml0 mtop10" >
+
+                                                <label>URL :</label>
+                                                <span>
+                                                                <apex:inputText id="InputText2" styleclass="span10" value="{!TopicVideoURL}"/>
+                                                                <!--<apex:commandButton styleclass="btnAthena btn-primary mtop-10" action="{!ShowVideoPreview}" value="Test"  />-->
+                                                                <button type="button" class="btnAthena btn-primary mtop-10" id="Button1"  onclick="openNewWindow()">Test</button>
+
+                                                    <!--<iframe id="video1" width="520" height="360"  frameborder="0" ></iframe>-->
+
+                                                    
+                                                    </span>
+                                            </div>
+                                              </div>
+
+
+                                            <div class="span5 ml0 mtop10"  id="EditTopicVideo"  style="display:none">
+                                                <span>
+                                                               <!-- <apex:inputText id="txtVideoURL" styleclass="span10" value="{!LVideoURL}"/>
+                                                              
+                                                                <button type="button" class="btnAthena btn-primary mtop-10">Test</button>-->
+                                                                <span class="colorBlue">Vedio Preview</span><br />
+                                                                <span>
+                                                                    <div class="span10">
+                                                                        <apex:image id="Image1" url="{!URLFOR($Resource.img_athena, 'img_athena/no_video.png')}" alt="no_video" styleClass="span12"/>                                                                        
+                                                                        <iframe    src=""  id="Iframe1" frameborder="0"   scrolling="no" style="border:1px solid #999999"></iframe>
+                                                                    </div>
+                                                                </span>
+                                                                <br />
+                                                                <div class="clearB"><a>View instructions for uploading Brainshark videos</a></div>
+                                                                <br />
+                                                                <span>YouTube video must be in below format</span><br />
+                                                                <span>http ://www.youtube.com/watch?v=TSNLsBiep31 </span>
+                                                            </span>
+               <p class="span12 BoardImgList ml0 clearB">
+
+                  </p>
+                  
+                                                </div>
+
+
+                                              <div id="EditTopicImage" style="display:none">
+
+                                        <div class="control-group Editratio">
+                                          <label class="control-label">Choose image</label>
+                                          <div class="controls"> <span class="mr10">
+                                              <apex:selectRadio value="{!ImageSelectionTopic}"  onclick="ShowHideEditTopicImage(this)">
+                                             <apex:selectOptions value="{!ImageOptions}"/>
+                                        </apex:selectRadio>
+                                             </span> </div>
+                                        </div>
+                                        
+                                              <div class="check ShowuploadImage clearB" style="display: none"  id="EditTopicUpload">
+                <p>This image appears at the top of each learning board Recommended size is 920px * 320px</p>
+                <div class="controls">
+                  <div data-provides="fileupload" class="fileupload fileupload-new">
+                    <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail"> 
+                        
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"   style="width: auto; border: 0 none;"/>
+                    </div>
+                    <div style="max-width: 200px; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                    <div> <span class="btnAthena btn-file"><span class="fileupload-new">Select image</span> <span class="fileupload-exists">Change</span>
+                      <apex:inputFile styleclass="default" value="{!BoardTopicAttach.body}" filename="{!BoardTopicAttach.name}" contentType="{!BoardTopicAttach.contentType}"/>
+                      </span> </div>
+                  </div>
+                  <span class="label label-important">NOTE!</span> <span>Attached image thumbnail is
+                  supported in Latest Firefox, Chrome, Opera,
+                  Safari and Internet Explorer 10 only </span> </div>
+              </div>
+             
+                <div class="check ShowDefaultImage" style="display:none" id="EditDefaultTopic">
+                                                        <div class="control-group">
+                                                            <label class="control-label">Select Default Image </label>
+                                                            <div class="controls">
+ 
+                                                           <apex:selectList multiselect="false" size="1" value="{!dropTopicDefaultSelected}" id="SelectList4" onchange="defaultImgTopic(this, '{!getStaticImagePath}')" >
+                                                                <apex:selectOptions value="{!DefaultImagefilename}" ></apex:selectOptions>
+                                                           </apex:selectList>
+
+                                                            <div class="viewDefaultImage thumbnail">
+                                                                <apex:image id="Image2" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+                                                            </div>
+ 
+                                                        </div>
+                                                        </div>
+                                                    </div> 
+                                        </div>
+
+                                        <hr />
+
+                                        <div class="mbot20"  id="EditCommonchkBox"  style="display:none">
+                                          <div class="controls mtop10"> <span class="mr10">
+                                            <apex:inputCheckbox value="{!TopicPublish}"  id="chkTopicPublish"/>
+                                            Publish </span> 
+                                               <span class="mr10">
+                                            <apex:inputCheckbox value="{!TopicClientFacing}"  id="chkTopicCF" />
+                                            Client Facing </span> <span class="mr10">
+                                            <apex:inputCheckbox value="{!TopicPracticeApprv}" id="chkTopicPA" />
+                                            Practice Approved </span> <span class="pull-right mtop30">
+                                            <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                                                
+                                            <apex:commandButton styleclass="btnAthena btn-primary"  action="{!UpdateTopic}" value="Save" id="CommandButton3"/>
+                                            </span> </div>
+                                        </div>
+                                      
+                                    </div>
+                                  </div>
+                                
+            </div>
+    </div>
+        <!--- End Edit Topic -->  
+                        
+     </apex:form>
+</div>
+           
+        
+  <!-- END PAGE --> 
+</div>
+<!-- END CONTAINER --> 
+
+<!-- BEGIN FOOTER -->
+<div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+<!-- END FOOTER --> 
+
+    <!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    
+    <!-- page js files --> 
+
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-fileupload.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}"/>
+<!-- Add Tags  --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+
+    <!-- END JAVASCRIPTS -->   
+    <script>
+
+        function funcCreateTopic()
+        {
+            
+            var topicTags = $('[id$=txtTopicTags]').val();
+            // $('#')
+            $('[id$=txtAddTopicTags]').val(topicTags);
+
+        }
+
+        function funcDeleteTopic(data) {
+            
+            $('#DeleteTopics').modal('show');
+            var topicId = $(data).attr('data-topicId');
+            $('[id$=txtTId]').val(topicId);
+
+        }
+
+
+
+        // Utility; parse out parameter by name from URL query string
+        $.urlParam = function (name) {
+            
+            var resultData = '';
+            var results = new RegExp('[\\?&]' + name + '=([^&#]*)')
+                .exec(window.location.href);
+            if (results == null) {
+                resultData = '';
+            }
+            else {
+                resultData = results[1] || 0;
+            }
+            return resultData;
+        }
+
+        function LoadTopics() {
+            var LearningBoardId = $.urlParam('id');
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.SumanEditBoardDtls.getLrngWithCat}',
+                LearningBoardId,
+                DisplayTopics
+            );
+        }
+
+        function ShowHideCategory(data) {
+            
+            if ($(data).parent().find(".icon-plus-sign-alt").hasClass("icon-plus-sign-alt")) {
+                $(data).parent().find(".icon-plus-sign-alt").removeClass("icon-plus-sign-alt").addClass("icon-check-minus");
+            }
+            else {
+                $(data).parent().find(".icon-check-minus").removeClass("icon-check-minus").addClass("icon-plus-sign-alt");
+            }
+
+        }
+
+        function DisplayTopics(result, event) {
+            
+            for (var icount = 0; icount < result.length; icount++) {
+
+                var CategoryName = result[icount].CategoryName;
+                var CategoryId = result[icount].CategoryId;
+                var spacehref = result[icount].CategoryName.replace(/ /g, "_");
+                var hrefurl = '#' + spacehref;
+                var generateLearning = ("<div class='panel panel-default'> <div class='panel-heading'>" +
+                "<h4 class='panel-title'> <a   onclick='ShowHideCategory(this)'  class='accordion-toggle a_underNone' data-toggle='collapse' data-parent='#accordion' href='" + hrefurl + "'> <span class='icon-plus-sign-alt'></span> " + result[icount].CategoryName + " </a>  </h4>" +
+                      "</div>");
+
+                $('#DivLearnings').append(generateLearning);
+
+                var generateL = ("<div id='" + spacehref + "' class='panel-collapse collapse'>" +
+                     "<div>  <a class='icon-sort-by-order btnAthena btn-primary pull-right'></a> <a class='btnAthena btn-primary pull-right icon-plus' data-toggle='modal'  data_ctgryNm='"+ CategoryName +"'  data-ctgry=" + CategoryId + "  onclick='ShowTopicDtls(this)' > Add Topics</a>" +
+                                              "</div> " +
+                                              "<div></div>");
+
+                var GenerateUrl = '';
+                var generateLText = '';
+                var IntegrateContent = '';
+                var generateVideo = '';
+                var LinkRelatedPDF = '';
+                var clientFacing = '';
+                var NextDviToComplete = '';
+                IntegrateContent = generateL;
+
+
+                for (var icnt = 0; icnt < result[icount].lstlrngs.length; icnt++) {
+                    
+                    //var spacehrefLearning = result[icount].lstlrngs[icnt].LName.replace(/ /g, "_");
+                    var spacehrefLearning = $.trim(result[icount].lstlrngs[icnt].LName).replace(/([~!@#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, '-').replace(/^(-)+|(-)+$/g, '');
+                    var hrefurlLearning = '#' + spacehrefLearning;
+                    
+                    //var splitLst='';
+                    var DefaultTags="No Tags Associated";
+                    var sliptTagsData='';
+                    if (result[icount].lstlrngs[icnt].LType == 'Text') {
+                        
+                        GenerateUrl = (
+                               "<div class='panel-body'>" +
+                             "<div><a class='icon-remove pull-right a_underNone editTopic_a colorRed'   data-topicId=" + result[icount].lstlrngs[icnt].Lid + "  data-topicName='" + result[icount].lstlrngs[icnt].LName + "'  onclick='funcDeleteTopic(this)' ></a> " +
+                             "<a class='icon-pencil pull-right a_underNone editTopic_a e_IconColor'  data-topicId='" + result[icount].lstlrngs[icnt].Lid + "'  data-PractApprv='" + result[icount].lstlrngs[icnt].PracticeApprv + "'  data-ClientFacing='" + result[icount].lstlrngs[icnt].ClientFacing + "'  data-publish='" + result[icount].lstlrngs[icnt].IsActive + "'  data-TopicDesc='" + result[icount].lstlrngs[icnt].LDescription + "' data-TopicName='" + result[icount].lstlrngs[icnt].LName + "'  data-LType='" + result[icount].lstlrngs[icnt].LType + "'  data-ctgry=" + CategoryId + "  onclick='EditTopic(this)'  ></a>" +
+                             "</div>" +
+                                         " <div class='span12' >" +
+
+
+                                          "  <div class='span4'>" +
+
+                                           "   <div class='m10'> <img src=" + result[icount].lstlrngs[icnt].DefaultImageName + "  /> " +
+
+                                           "</div>" +
+                                            "</div>" +
+                                            "<div class='span8'>" +
+
+                                             " <div class='m10'>" +
+                                              "  <h4>" + result[icount].lstlrngs[icnt].LName + " </h4>" +
+                                               " <p> " + result[icount].lstlrngs[icnt].LShortDescription + "  </p>" +
+
+                                               "<a class='' data-toggle='modal' href='" + hrefurlLearning + "'> Read more </a>");
+
+                        if (result[icount].lstlrngs[icnt].Tags==DefaultTags) {
+                            var TempTags= ("<div class='tagBack'><ul class='tags'><li class='tag'>" + result[icount].lstlrngs[icnt].Tags + " </li></ul><a class='pull-right m5'>Read more</a></div>");
+                            sliptTagsData+=TempTags;
+                        }
+                        else {
+
+                            
+                            if (result[icount].lstlrngs[icnt].Tags.length>0) {
+                                
+                                var spltTags=result[icount].lstlrngs[icnt].Tags;
+                                var splitBr="<div class='tagBack'><ul class='tags'>";
+                                sliptTagsData+=splitBr;
+                                for (var icntTag = 0; icntTag < spltTags.length; icntTag++) {
+                                    var TempTags= ("<li class='tag'>" + spltTags[icntTag] + " </li>");
+                                    sliptTagsData+=TempTags;
+                                }
+                                var AfterSplit= "</ul><a class='pull-right m5'>Read more</a></div>";
+                                sliptTagsData+=AfterSplit;
+                            }
+                        }
+                        GenerateUrl+=sliptTagsData;
+                        
+                        
+                        var AfterTags=("<div id='" + spacehrefLearning + "' class='modal hide fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel1' aria-hidden='true' data-backdrop='static'>" +
+      "<div class='modal-header'>" +
+      " <h3>Topic Description</h3>" +
+      "</div>" +
+      "<div class='modal-body'>" +
+      " <p> " +
+
+        "'" + result[icount].lstlrngs[icnt].LDescription + "'" +
+      "</p>" +
+      "</div>" +
+      "<div class='modal-footer'>" +
+      " <button class='btnAthena' data-dismiss='modal' aria-hidden='true'>Cancel</button>" +
+
+      "</div>" +
+      "</div>" +
+
+                                "<div>" );
+                        GenerateUrl+=  AfterTags;
+                        IntegrateContent += GenerateUrl;
+
+                        if (result[icount].lstlrngs[icnt].ClientFacing) {
+                            
+                            clientFacing = (" <span><img src=" + result[icount].lstlrngs[icnt].hpsharedIcon + " class='pull-right mrl' /></span>");
+                            IntegrateContent += clientFacing;
+                        }
+
+                        
+                        if (result[icount].lstlrngs[icnt].PracticeApprv) {
+                            var HPCrt= ("<span><img src=" + result[icount].lstlrngs[icnt].HPCertification + " class='pull-right mrl' /></span>");
+                            IntegrateContent += HPCrt;
+                        }
+
+                        if (result[icount].lstlrngs[icnt].IsActive) {
+                            var HPPublish= ("<span><img src=" + result[icount].lstlrngs[icnt].HPPublish + " class='pull-right mrl' /></span>");
+                            IntegrateContent += HPPublish;
+                        }
+
+                        NextDviToComplete = ("</div>" +
+                                          "</div>" +
+                                        "</div>" +
+                                      "</div>" +
+                                      "</div>");
+                        IntegrateContent += NextDviToComplete;
+
+
+                    }
+                    else if (result[icount].lstlrngs[icnt].LType == 'Link or Document') {
+                        GenerateUrl = (
+                          "<div class='panel-body'>" +
+                          "<div><a class='icon-remove pull-right a_underNone editTopic_a colorRed'   data-topicId=" + result[icount].lstlrngs[icnt].Lid + "  data-topicName='" + result[icount].lstlrngs[icnt].LName + "'  onclick='funcDeleteTopic(this)' ></a> " +
+                          " <a class='icon-pencil pull-right a_underNone editTopic_a e_IconColor'  data-topicId='" + result[icount].lstlrngs[icnt].Lid + "'  data-PractApprv='" + result[icount].lstlrngs[icnt].PracticeApprv + "'  data-ClientFacing='" + result[icount].lstlrngs[icnt].ClientFacing + "'  data-publish='" + result[icount].lstlrngs[icnt].IsActive + "'  data-TopicDesc='" + result[icount].lstlrngs[icnt].LDescription + "' data-TopicName='" + result[icount].lstlrngs[icnt].LName + "'  data-ctgry=" + CategoryId + "  data-LType='" + result[icount].lstlrngs[icnt].LType + "'  onclick='EditTopic(this)' ></a>" +
+                             "</div>" +
+                                    " <div class='span12' >" +
+                                     "  <div class='span4'>" +
+                                      "   <div class='m10'> <img src=" + result[icount].lstlrngs[icnt].DefaultImageName + "  />  </div>" +
+                                       "</div>" +
+                                       "<div class='span8'>" +
+                                        " <div class='m10'>" +
+                                         "  <h4>" + result[icount].lstlrngs[icnt].LName + " </h4>" +
+                                          " <p> " + result[icount].lstlrngs[icnt].LShortDescription + "  </p>" );
+
+                        if (result[icount].lstlrngs[icnt].Tags==DefaultTags) {
+                            var TempTags= ("<div class='tagBack'><ul class='tags'><li class='tag'>" + result[icount].lstlrngs[icnt].Tags + " </li></ul><a class='pull-right m5'>Read more</a></div>");
+                            sliptTagsData+=TempTags;
+                        }
+                        else {
+
+                            if (result[icount].lstlrngs[icnt].Tags.length>0) {
+                                
+                                var spltTags=result[icount].lstlrngs[icnt].Tags;
+                                var splitBr="<div class='tagBack'><ul class='tags'>";
+                                sliptTagsData+=splitBr;
+                                for (var icntTag = 0; icntTag < spltTags.length; icntTag++) {
+                                    var TempTags= ("<li class='tag'>" + spltTags[icntTag] + " </li>");
+                                    sliptTagsData+=TempTags;
+                                }
+                                var AfterSplit= "</ul><a class='pull-right m5'>Read more</a></div>";
+                                sliptTagsData+=AfterSplit;
+                            }
+                        }
+                        GenerateUrl+=sliptTagsData;
+
+
+                        var AfterTags=("<div id='" + spacehrefLearning + "' class='modal hide fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel1' aria-hidden='true' data-backdrop='static'>" +
+                                              "<div class='modal-header'>" +
+                                               " <h3>Topic Description</h3>" +
+                                              "</div>" +
+                                              "<div class='modal-body'>" +
+                                               " <p> " +
+                                                      "'" + result[icount].lstlrngs[icnt].LDescription + "'" +
+                                                "</p>" +
+                                              "</div>" +
+                                              "<div class='modal-footer'>" +
+                                               " <button class='btnAthena' data-dismiss='modal' aria-hidden='true'>Cancel</button>" +
+
+                                              "</div>" +
+                                            "</div>" +
+
+
+                                           "<div>");
+                        GenerateUrl+=AfterTags;
+                        IntegrateContent += GenerateUrl;
+
+                        if (result[icount].lstlrngs[icnt].DocType == 'PDF') {
+
+                            LinkRelatedPDF = ( "<span class='detailDoc'> " +
+                            "<a target='_blank' href=" + result[icount].lstlrngs[icnt].LURL + "> <img class='mrl' width='25' height='25' src=" + result[icount].lstlrngs[icnt].filePDFUpload + " /> </a> " +
+                            "</span> ");
+                            IntegrateContent += LinkRelatedPDF;
+                            if (result[icount].lstlrngs[icnt].ClientFacing) {
+                                clientFacing = (" <span><img src=" + result[icount].lstlrngs[icnt].hpsharedIcon + " class='pull-right mrl' /></span>");
+                                IntegrateContent += clientFacing;
+                            }
+                            
+                            if (result[icount].lstlrngs[icnt].PracticeApprv) {
+                                var HPCrt= ("<span><img src=" + result[icount].lstlrngs[icnt].HPCertification + " class='pull-right mrl' /></span>");
+                                IntegrateContent += HPCrt;
+                            }
+
+                            NextDviToComplete = ("</div>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                          "</div>");
+                            IntegrateContent += NextDviToComplete;
+
+
+                        }
+
+                        else if (result[icount].lstlrngs[icnt].DocType == 'PPT') {
+
+                            LinkRelatedPDF = ( "<span class='detailDoc'> " +
+                            "<a target='_blank' href=" + result[icount].lstlrngs[icnt].LURL + "> <img class='mrl' width='25' height='25' src=" + result[icount].lstlrngs[icnt].filePPTUpload + " /> </a> " +
+                            "</span> ");
+
+                            IntegrateContent += LinkRelatedPDF;
+                            if (result[icount].lstlrngs[icnt].ClientFacing) {
+                                clientFacing = (" <span><img src=" + result[icount].lstlrngs[icnt].hpsharedIcon + " class='pull-right mrl' /></span>");
+                                IntegrateContent += clientFacing;
+                            }
+
+                            NextDviToComplete = ("</div>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                          "</div>");
+                            IntegrateContent += NextDviToComplete;
+
+                        }
+
+                        else if (result[icount].lstlrngs[icnt].DocType == 'DOC') {
+
+                            LinkRelatedPDF = ("<span class='detailDoc'> " +
+                            "<a target='_blank' href=" + result[icount].lstlrngs[icnt].LURL + "> <img class='mrl' width='25' height='25' src=" + result[icount].lstlrngs[icnt].fileWordUpload + " /> </a> " +
+                            "</span> ");
+
+                            IntegrateContent += LinkRelatedPDF;
+                            if (result[icount].lstlrngs[icnt].ClientFacing) {
+                                clientFacing = (" <span><img src=" + result[icount].lstlrngs[icnt].hpsharedIcon + " class='pull-right mrl' /></span>");
+                                IntegrateContent += clientFacing;
+                            }
+                            if (result[icount].lstlrngs[icnt].IsActive) {
+                                var HPPublish= ("<span><img src=" + result[icount].lstlrngs[icnt].HPPublish + " class='pull-right mrl' /></span>");
+                                IntegrateContent += HPPublish;
+                            }
+
+                            NextDviToComplete = ("</div>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                          "</div>");
+                            IntegrateContent += NextDviToComplete;
+
+                        }
+
+                        else if (result[icount].lstlrngs[icnt].DocType == 'OTHER') {
+
+
+                            LinkRelatedPDF = ("<span class='detailDoc'> " +
+                            "<a target='_blank' href=" + result[icount].lstlrngs[icnt].LURL + "> <img class='mrl' width='25' height='25' src=" + result[icount].lstlrngs[icnt].fileURLUpload + " /> </a> " +
+                            "</span> ");
+
+                            IntegrateContent += LinkRelatedPDF;
+                            if (result[icount].lstlrngs[icnt].ClientFacing) {
+                                clientFacing = (" <span><img src=" + result[icount].lstlrngs[icnt].hpsharedIcon + " class='pull-right mrl' /></span>");
+                                IntegrateContent += clientFacing;
+                            }
+                            if (result[icount].lstlrngs[icnt].IsActive) {
+                                var HPPublish= ("<span><img src=" + result[icount].lstlrngs[icnt].HPPublish + " class='pull-right mrl' /></span>");
+                                IntegrateContent += HPPublish;
+                            }
+                            NextDviToComplete = ("</div>" +
+                                              "</div>" +
+                                            "</div>" +
+                                          "</div>" +
+                                          "</div>");
+                            IntegrateContent += NextDviToComplete;
+
+                        }
+
+                    }
+
+
+                    else if (result[icount].lstlrngs[icnt].LType == 'Video') {
+                        var someText = "<a>" + result[icount].lstlrngs[icnt].LName + "</a>";
+                        generateLText = ("<div class='panel-body'>" +
+                            "<div><a class='icon-remove pull-right a_underNone editTopic_a colorRed'  data-topicId=" + result[icount].lstlrngs[icnt].Lid + "  data-topicName='" + result[icount].lstlrngs[icnt].LName + "'  onclick='funcDeleteTopic(this)' ></a>" +
+                            " <a class='icon-pencil pull-right a_underNone editTopic_a e_IconColor'  data-topicId='" + result[icount].lstlrngs[icnt].Lid + "'  data-PractApprv='" + result[icount].lstlrngs[icnt].PracticeApprv + "' data-ClientFacing='" + result[icount].lstlrngs[icnt].ClientFacing + "'  data-publish='" + result[icount].lstlrngs[icnt].IsActive + "'  data-TopicDesc='" + result[icount].lstlrngs[icnt].LDescription + "' data-TopicName='" + result[icount].lstlrngs[icnt].LName + "'  data-ctgry=" + CategoryId + "  data-LType='" + result[icount].lstlrngs[icnt].LType + "'  onclick='EditTopic(this)' ></a>" +
+                             "</div>" +
+                                               " <div class='span12'>" +
+                                                "  <div class='span4'>" +
+                                                 "   <div class='m10'> <iframe src=" + result[icount].lstlrngs[icnt].LURL + " class='hpit_athena_detailPostIfram' frameborder='0'   scrolling='no' style='border:1px solid #999999'></iframe>  </div>" +
+                                                  "</div>" +
+                                                  "<div class='span8'>" +
+                                                   " <div class='m10'>" +
+                                                    "  <h4>" + result[icount].lstlrngs[icnt].LName + " </h4>" +
+                                                     " <p> " + result[icount].lstlrngs[icnt].LShortDescription + "  </p>" +
+                                                     "<a class='' data-toggle='modal' href=" + hrefurlLearning + "> Read more </a>" );
+
+                        if (result[icount].lstlrngs[icnt].Tags==DefaultTags) {
+                            var TempTags= ("<div class='tagBack'><ul class='tags'><li class='tag'>" + result[icount].lstlrngs[icnt].Tags + " </li></ul><a class='pull-right m5'>Read more</a></div>");
+                            sliptTagsData+=TempTags;
+                        }
+                        else {
+
+                            if (result[icount].lstlrngs[icnt].Tags.length>0) {
+                                
+                                var spltTags=result[icount].lstlrngs[icnt].Tags;
+                                var splitBr="<div class='tagBack'><ul class='tags'>";
+                                sliptTagsData+=splitBr;
+                                for (var icntTag = 0; icntTag < spltTags.length; icntTag++) {
+                                    var TempTags= ("<li class='tag'>" + spltTags[icntTag] + " </li>");
+                                    sliptTagsData+=TempTags;
+                                }
+                                var AfterSplit= "</ul><a class='pull-right m5'>Read more</a></div>";
+                                sliptTagsData+=AfterSplit;
+                            }
+                        }
+                        generateLText+=sliptTagsData;
+
+
+                        var AfterTags=("<div id=" + spacehrefLearning + " class='modal hide fade' tabindex='-1' role='dialog' aria-labelledby='myModalLabel1' aria-hidden='true' data-backdrop='static'>" +
+"<div class='modal-header'>" +
+" <h3>Topic Description</h3>" +
+"</div>" +
+"<div class='modal-body'>" +
+" <p> " +
+
+                        "'" + result[icount].lstlrngs[icnt].LDescription + "'" +
+"</p>" +
+"</div>" +
+"<div class='modal-footer'>" +
+" <button class='btnAthena' data-dismiss='modal' aria-hidden='true'>Cancel</button>" +
+
+"</div>" +
+"</div>" +
+
+
+                                                      "<div>" );
+                        //GenerateUrl+=AfterTags;
+                        generateLText+=AfterTags;
+                        IntegrateContent += generateLText;
+                        if (result[icount].lstlrngs[icnt].ClientFacing) {
+                            clientFacing = (" <span><img src=" + result[icount].lstlrngs[icnt].hpsharedIcon + " class='pull-right mrl' /></span>");
+                            IntegrateContent += clientFacing;
+                        }
+                        
+                        if (result[icount].lstlrngs[icnt].PracticeApprv) {
+                            var HPCrt= ("<span><img src=" + result[icount].lstlrngs[icnt].HPCertification + " class='pull-right mrl' /></span>");
+                            IntegrateContent += HPCrt;
+                        }
+                        if (result[icount].lstlrngs[icnt].IsActive) {
+                            var HPPublish= ("<span><img src=" + result[icount].lstlrngs[icnt].HPPublish + " class='pull-right mrl' /></span>");
+                            IntegrateContent += HPPublish;
+                        }
+
+                        NextDviToComplete = ("</div>" +
+                                          "</div>" +
+                                        "</div>" +
+                                      "</div>" +
+                                      "</div>");
+                        IntegrateContent += NextDviToComplete;
+
+                    }
+
+                }
+                var LastDiv = "</div>";
+                IntegrateContent += LastDiv;
+                $('#DivLearnings').append(IntegrateContent);
+
+            }
+        }
+
+
+        function SetBoardTags(data) {
+            
+            var addTags = $('#learningTags').val();
+            $('[id$=InputHiddenTag]').val(addTags);
+        }
+
+        function ShowHideDefaultImage(data) {
+            
+            if ($(data).val() == 'UFC') {
+                $('#ShowHideDefault').show();
+                $('#DefaultDrop').hide();
+            }
+            else {
+                $('#DefaultDrop').show();
+                $('#ShowHideDefault').hide();
+            }
+
+        }
+        function ShowHideDefaultTopicImage(data) {
+            
+            if ($(data).val() == 'UFC') {
+                $('#ShowTopicUpload').show();
+                $('#ShowTopicDefault').hide();
+            }
+            else {
+                $('#ShowTopicDefault').show();
+                $('#ShowTopicUpload').hide();
+            }
+
+        }
+
+        function defaultImgChanged(selObj, path) {
+            
+            var selText = selObj.options[selObj.selectedIndex].text;
+            var selVal = selObj.options[selObj.selectedIndex].value;
+            var selPath = path + selVal;
+            if (selVal != '') {
+                $('[id$=imgDefault]').attr("src", selPath);
+                $('[id$=imgDefault]').attr("alt", selText);
+                $('[id$=imgDefault]').attr("class", "");
+            }
+            else {
+                $('[id$=imgDefault]').attr("src", noImgSrc);
+                $('[id$=imgDefault]').attr("alt", "no image");
+                $('[id$=imgDefault]').attr("class", "viewDefNoImage");
+            }
+        }
+
+        function defaultImgTopic(selObj, path) {
+            
+            var selText = selObj.options[selObj.selectedIndex].text;
+            var selVal = selObj.options[selObj.selectedIndex].value;
+            var selPath = path + selVal;
+            if (selVal != '') {
+                $('[id$=TopicDefaultImage]').attr("src", selPath);
+                $('[id$=TopicDefaultImage]').attr("alt", selText);
+                $('[id$=TopicDefaultImage]').attr("class", "");
+            }
+            else {
+                $('[id$=TopicDefaultImage]').attr("src", noImgSrc);
+                $('[id$=TopicDefaultImage]').attr("alt", "no image");
+                $('[id$=TopicDefaultImage]').attr("class", "viewDefNoImage");
+            }
+        }
+
+        $(document).ready(function () {
+            $('input.typeahead-devs').typeahead({
+                name: 'accounts',
+                local: []
+            });
+        });
+    </script> 
+<script>
+
+    function SearchLearningBoard() {
+        var searchData = $('#txtLearningBrd').val();
+        var QueryStringId = $.urlParam('id');
+        //jQuery('[id$=hiddenSearch]').val(searchData);
+        Visualforce.remoting.Manager.invokeAction(
+   '{!$RemoteAction.SumanEditBoardDtls.LearningSearch}',
+   searchData,
+   QueryStringId,
+    DisplaySearchLearning
+);
+    }
+
+
+    // Suman Start code Friday
+
+    function DisplaySearchLearning(result, event) 
+    {debugger
+        
+        $('#AddLearningSearch').empty();
+        if (result.length > 0)
+        {
+            for (var icnt = 0; icnt < result.length; icnt++)
+            {
+                //$('#AddLearningSearch').append("<div class='clearB mbot10 clearfix'>" +
+                //                        "<div class='STsearch'>" +
+                //                          "<div class='m5 pull-left mtop25'>" +
+                //                           " <input type='checkbox'  value=" + result[icnt].Id + "/>" +
+
+                //                          "</div>" +
+                //                          "<div class='STimage'> <img src='img_athena/no_searchResult.jpg' /> </div>" +
+                //                          "<div class='pull-left'>" +
+                //                           " <h1><a href='https://{!getSfInstance}/apex/AthenaViewLearning?id=" + result[icnt].Id + "' target='_blank'>" + result[icnt].Name__c + " </a></h1>" +
+                //                            "<div> <a class='STdocIcon'><img src='img_athena/fileExcelUpload.png' /></a> </div>" +
+                //                          "</div>" +
+                //                        "</div>" +
+                //                      "</div>");
+
+
+                //$('#AddLearningSearch').append("<div><span><input type='checkbox' name='LearningSearch' value=" + result[icnt].Id + "  /></span> " + result[icnt].Name__c + " <div>");
+
+                $('#AddLearningSearch').append("<div><span><input type='checkbox' name='LearningSearch' value=" + result[icnt].LBid + "  /></span> <span> <img width='50' height='50' src="+ result[icnt].DefaultImageName +" /></span><span id=" + result[icnt].LBid + ">" + result[icnt].LBName + " </span><br/> <span>" + result[icnt].LBOwnerName + " </span> <div>");
+
+            }
+        }
+        else
+        {
+            $('#AddLearningSearch').append("<div> Search Result not found </div>");
+        }
+    }
+
+    function SaveSearchLearningBoard() { 
+        var strRel = ''; 
+        $('input[name="LearningSearch"]:checked').each(function () { 
+            if (strRel == '') { 
+                strRel = $(this).val(); 
+            } 
+            else { 
+                strRel = strRel + ',' + $(this).val(); 
+            } 
+
+        }); 
+        $('[id$=txtSearchTopic]').val(strRel); 
+
+    }
+
+    // Suman End code Friday
+
+    function ShowTopicDtls(data) {
+        
+        $('#AddTopics').modal('show');
+        var CategoryId = $(data).attr('data-ctgry');
+        var CategoryName=$(data).attr('data_ctgryNm');
+        $('[id$=hdnTopicCtgry]').val(CategoryId);
+        $('[id$=Ctgry]').val(CategoryId);
+        $('[id$=lblCategory]').val(CategoryId);
+        $('[id$=lblCategory]').text(CategoryName);
+        $('[id$=Ctgry]').hide();
+        //$('[id$=Ctgry]').attr('disabled', 'disabled');
+        $('[id$=LearningTopic]').val('TopicType');
+        //$('[id$=txtTopic]').val('');
+        //$('[id$=txtTopicArea]').val('');
+        //$('[id$=txtTopicTags]').val('');
+        //$('[id$=InputTextURL]').val('');
+        $('#divTopicCommon').hide();
+        $('#VideoLearning').hide();
+        $('#TopicTextImage').hide();
+        $('#TopicCheckPublish').hide();
+    }
+
+    function ShowTopicOnType(data) {
+        
+        $('#divTopicCommon').show();
+        $('#TopicCheckPublish').show();
+        if (data.value == 'Text') {
+            $('#TopicTextImage').show();
+            $('#VideoLearning').hide();
+            $('#urlLearning').hide();
+
+        }
+        else if (data.value == 'Video') {
+            $('#TopicTextImage').hide();
+            $('#VideoLearning').show();
+            $('#urlLearning').show();
+
+        }
+        else if (data.value == 'LinkORDoc') {
+            $('#TopicTextImage').show();
+            $('#VideoLearning').hide();
+            $('#urlLearning').show();
+
+
+        }
+
+    }
+
+    function funcChangeOwner(data) {
+        
+        //var te='{!$Component.formLB.inputUser}';
+        //var test=document.getElementById('{!$Component.formLB.inputUser_lkid}').value;
+        var lkfield = document.getElementById('{!$Component.EditBoard.chgOnwerInputUser}_lkid').value;
+
+        $('[id$=hiddenChangeOwner]').val(lkfield);
+
+        // lkfield.value now has the selected ID value
+    }
+
+    function openNewWindow() {
+        
+        var TestURL = document.getElementById('{!$Component.EditTopic:LearningTopic}').value;
+        //var LType = $('input[name=optionsRadios1]:checked').val();
+        if (TestURL == "Video") {
+            var srcurl1 = $('[id$=InputTextURL]').val();
+            srcurl1 = srcurl1.replace("watch?v=", "embed/");
+            srcurl1 = srcurl1.replace("http:", "https:");
+            $('#testvideo').attr('src', srcurl1);
+            $('#testvideo').reload(true);
+        }
+        else {
+            
+            var href = $('[id$=InputTextURL]').val();
+            var link = $('<a href="http://' + href + '" />');
+            link.attr('target', '_blank');
+            window.open(link.attr('href'));
+        }
+
+    }
+
+    /*Suman Script Start Code*/
+           
+    function SaveRelatedBoard() {
+        var strRel = '';
+        $('input[name="RelatedSearch"]:checked').each(function () {
+            if (strRel == '') {
+                strRel = $(this).val();
+            }
+            else {
+                strRel = strRel + ',' + $(this).val();
+            }
+
+        });
+        $('[id$=hiddenRelatedSearch]').val(strRel);
+    }
+        
+    /*Suman Script End Code*/
+
+    function AddContributor(data) {
+        
+        var lkfield = document.getElementById('{!$Component.EditTopic.inputUser}_lkid').value;
+        $('[id$=hdnNewContributor]').val(lkfield);
+    }
+
+    // Code modfied Today - Friday
+    function DisplaySearchLB(result, event)
+    {
+        debugger
+        $('#AddRelative').empty();
+        if (result.length > 0)
+        {
+            for (var icnt = 0; icnt < result.length; icnt++)
+            {
+                //$('#AddRelative').append("<div><span><input type='checkbox' name='RelatedSearch' value=" + result[icnt].Id + "  /></span> <span id=" + result[icnt].Id + ">" + result[icnt].Name__c + " </span> <div>");
+                $('#AddRelative').append("<div><span><input type='checkbox' name='RelatedSearch' value=" + result[icnt].LBid + "  /></span> <span> <img width='50' height='50' src="+ result[icnt].DefaultImageName +" /></span><span id=" + result[icnt].LBid + ">" + result[icnt].LBName + " </span><br/> <span>" + result[icnt].LBOwnerName + " </span> <div>");
+            }
+        }
+        else
+        {
+            $('#AddRelative').append("<div> Search Result not found </div>");
+        }
+    }
+
+    function SearchAddRelatedBoard() {debugger
+        var searchData = $('#txtAddRelative').val();
+        
+        if (searchData != '') {
+    
+            var warehouseId = $.urlParam('id');
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.SumanEditBoardDtls.AddRelatedLB}', searchData, warehouseId, DisplaySearchLB);
+        }
+        else
+        {
+            document.getElementById('dvReleatedBoardErrorMsg').innerHTML = "Enter Value For Search";
+            document.getElementById('dvReleatedBoardErrorMsg').style.display = 'block';
+        }
+    }
+
+    function RemoveRelLearningBoard(data) {
+        
+        $('#dvRelatedBoardRemove').modal('show');
+        $('[id$=hdrlbrdId]').val(data);
+
+        //$('[id$=hdrlbrdId]').val(data);
+    }
+
+    // Suman End Code Friday
+
+    $(function () {
+        
+        LoadTopics();
+
+        $("select[id$=chgOnwerInputUser_mlktp]").hide();
+        $("select[id$=inputUser_mlktp]").hide();
+        var sampleTags = [{!AvailTags}]; 
+
+        //-------------------------------
+        // Single TAG field
+        //-------------------------------
+        $('#learningTagsTop').tagit({
+            availableTags: sampleTags,
+            // This will make Tag-it submit a single form value, as a comma-delimited field.
+            singleField: true,
+            singleFieldNode: $('#learningTags')
+        });
+
+        $('#TopicTags').tagit({
+            availableTags: sampleTags,
+            // This will make Tag-it submit a single form value, as a comma-delimited field.
+            singleField: true,
+            singleFieldNode: $('#txtTopicTags')
+        });
+
+
+        //show hide imageUpload
+        $("input[type=radio]").change(function () {
+            var divId = $(this).attr("id");
+            $("div.check").hide();
+            $("." + divId).show();
+            $("input[type=checkbox]").change();
+        });
+
+        document.getElementById('{!$Component.EditBoard.dropTemplate}').disabled = true;
+        document.getElementById('{!$Component.EditBoard.dropTemplate}').style.cursor = "default";
+        document.getElementById('{!$Component.EditTopic.inputUser}').disabled = true;
+        document.getElementById('{!$Component.EditBoard.chgOnwerInputUser}').disabled = true;
+
+        // Suman Start Code Friday
+        
+        document.getElementById('{!$Component.EditTopic.inputUser}').value = '';
+        document.getElementById('{!$Component.EditBoard.chgOnwerInputUser}').value = '';
+
+        if ('{!IsBoardModerator}') 
+            document.getElementById('{!$Component.EditBoard.chkFeatured}').disabled = true;
+        else
+            document.getElementById('{!$Component.EditBoard.chkFeatured}').disabled = true;
+
+        var btnHeaderSave = document.getElementById('{!$Component.EditBoard.btnHeaderBoardSave}');
+        btnHeaderSave.onclick = function (event) {
+
+            if ('{!!IsBoardModeratorOrOwner}') {
+                event.preventDefault();
+                document.getElementById('{!$Component.EditBoard.btnHeaderBoardSave}').style.cursor = "default";
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        // Suman End Code Friday
+
+    });
+
+    function RemoveLearning(data) {
+
+        $('[id$=hdnLId]').val(data);
+    }
+
+    function EditTopic(data) {
+        
+        $('#EditTopics').modal('show');
+        $('#EditCommonTopic').show();
+
+        var ctgryId = $(data).attr('data-ctgry');
+        var TopicType = $(data).attr('data-LType');
+        $('[id$=TopicCategory]').val(ctgryId);
+        var TName = $(data).attr('data-TopicName');
+        var TDesc = $(data).attr('data-TopicDesc');
+        $('[id$=txtEditTopicName]').val(TName);
+        $('[id$=txtEditTopicDesc]').val(TDesc);
+        var TId = $(data).attr('data-topicId');
+        $('[id$=txtEditTopicId]').val(TId);
+
+        if ($(data).attr('data-publish').toUpperCase() == "TRUE") {
+
+            $('[id$=chkTopicPublish]').attr('checked', 'checked');
+        }
+        else {
+            $('[id$=chkTopicPublish]').removeAttr('checked');
+        }
+
+        if ($(data).attr('data-ClientFacing').toUpperCase() == "TRUE") {
+            $('[id$=chkTopicCF]').attr('checked', 'checked');
+        }
+        else {
+            $('[id$=chkTopicCF]').removeAttr('checked');
+        }
+
+        if ($(data).attr('data-PractApprv').toUpperCase() == "TRUE") {
+            $('[id$=chkTopicPA]').attr('checked', 'checked');
+        }
+        else {
+            $('[id$=chkTopicPA]').removeAttr('checked');
+        }
+
+        if (TopicType == 'Text') {
+            $('[id$=TypeOfTopic]').val(TopicType);
+            //$('[id$=TypeOfTopic]').attr('disabled', 'disabled');
+            $('#EditTopicImage').show();
+            //$('#EditTopicUpload').show();
+            $('#EditCommonchkBox').show();
+            $('#EditLinkDoc').hide();
+        }
+        else if (TopicType == 'Video') {
+            $('[id$=TypeOfTopic]').val(TopicType);
+            //$('[id$=TypeOfTopic]').attr('disabled', 'disabled');
+            $('#EditLinkDoc').show();
+            $('#EditTopicImage').hide();
+            $('#EditCommonchkBox').show();
+        }
+        else if (TopicType == 'Link or Document') {
+            var Link = 'LinkORDoc';
+            $('[id$=TypeOfTopic]').val(Link);
+            $('#EditLinkDoc').show();
+            //$('[id$=TypeOfTopic]').attr('disabled', 'disabled');
+            $('#EditTopicImage').show();
+            $('#EditTopicUpload').show();
+            $('#EditCommonchkBox').show();
+        }
+
+
+    }
+
+    function ShowHideEditTopicImage(data) {
+        
+        if ($(data).val() == 'UFC') {
+            $('#EditTopicUpload').show();
+            $('#EditDefaultTopic').hide();
+        }
+        else {
+            $('#EditDefaultTopic').show();
+            $('#EditTopicUpload').hide();
+        }
+
+    }
+
+    function functionSaveChanges()
+    {
+        var LBTags=$('#learningTags').val();
+        $('[id$=txtUserTag]').val(LBTags);
+    }
+    
+    function functionContributorsRemove(data)
+    {
+        $('#dvModalContributor').modal('show');
+        var contributorId = $(data).attr('data-contrbtrID');
+        $('[id$=txtContributorId]').val(contributorId);
+    }
+        
+    </script> 
+
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

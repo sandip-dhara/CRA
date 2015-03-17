@@ -1,0 +1,84 @@
+<apex:page standardController="Opportunity" recordSetvar="opportunities" extensions="NotificationtoSalesTeamController">
+<!-- styling to hide mass edit/update functionality from partner users -->
+    <style>
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "mass_update", "aw9sh2hud92")}] {
+display: none;
+}
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "mass_edit", "aw9sh2hud92")}] {
+display: none;
+}
+</style>
+    <script src="/resource/jQuery"></script>
+    <script>
+    var j$ = jQuery.noConflict();
+    var isPartner = '{!$Profile.Name}';
+    
+    j$(function(){
+        if(j$("select[name$='fcf']").children('option').length == 1 && j$("select[name$='fcf']").children("option:first").attr('value')=='00Bd00000031GxK'){
+            j$(".pbBody").children("table.list").children("tbody").children("tr.dataRow").hide();
+            j$("div.fewerMore").hide();
+        }else{
+             j$('select[name$="fcf"]').children('option').each(function(){
+                 if(j$(this).attr('value')== '00Bd00000031GxK'  && j$(this).attr('selected')=='selected' && isPartner.indexOf('Partner')!=-1){
+                     var nextOption;
+                     if(j$(this).prev('option').attr('value') != undefined || j$(this).prev('option').attr('value') != '' || j$(this).prev('option').attr('value') != null){
+                         nextOption = j$(this).prev('option').attr('value');
+                     }else{
+                        nextOption = j$(this).next('option').attr('value');
+                     }     
+                     j$(this).parent('select').val(nextOption).trigger('change');
+                     j$(this).remove();
+                 }
+                 if(j$(this).attr('value')== '00Bd00000031GxK' && isPartner.indexOf('Partner')!=-1){
+                     j$(this).remove();
+                 }
+                 
+             });
+         }
+    });
+    </script>
+    <apex:sectionHeader title="{!$ObjectType.Opportunity.LabelPlural}" subtitle="{!$Label.Home}" />
+     <!--NASIR JAWED for requirement 2087:adding a link on opportunity tab to view reports on
+       views of both Opportunities and Specialty Opportunity Matches -->
+    <apex:pageBlock rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),False, True)}">   
+    <apex:pageBlockSection title="Speciality Opportunity Match" >    
+        <apex:pageBlockSectionItem > 
+            <apex:outputLink value="{!$Page.Product_Specialty_Tab}" >My Speciality Opportunity Matches</apex:outputLink>  
+            <!--<apex:outputLink value="apex/SalesTeamNotificationPage" > View Sales Team Request</apex:outputLink>-->
+            <apex:outputLink value="apex/SalesTeamNotificationPage" > View Sales Team Request({!PendingRequestCount})</apex:outputLink>
+        </apex:pageBlockSectionItem>
+        <!-- TM:Debmalya:Cr0474:Link to Partner Specialty Matches View:Start-->
+        <apex:pageBlockSectionItem > 
+            <apex:outputLink value="{!$Page.Product_Specialty_Tab_Partner}" >My Speciality Opportunity Matches - Filtered By Partner</apex:outputLink>
+        </apex:pageBlockSectionItem>    
+        <!-- TM:Debmalya:Cr0474:Link to Partner Specialty Matches View:End-->
+    </apex:pageBlockSection>
+    
+    </apex:pageBlock>
+    <!-- NASIR JAWED END-->
+    <apex:listViews type="Opportunity" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),True, False)}"/>
+    <apex:enhancedList type="Opportunity" height="400" rowsPerPage="200" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),False, True)}"></apex:enhancedList>
+    <apex:pageblock >
+   
+    <apex:pageBlockSection title="Tools" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),False, True)}">
+    <apex:pageBlockSectionItem >
+    <apex:outputLink value="{!$Label.salesmethod_link}" id="theLink">{!$Label.salesmethod_label}</apex:outputLink>
+    </apex:pageBlockSectionItem>
+    <BR/>
+    
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection title="Useful Reports" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),False, True)}">
+    
+    <apex:outputLink value="{!$Label.opptytab_replink1}" >{!$Label.opptytab_replabel1}</apex:outputLink>
+    <apex:outputLink value="{!$Label.opptytab_replink2}" >{!$Label.opptytab_replabel2}</apex:outputLink>
+    <apex:outputLink value="{!$Label.opptytab_replink3}" >{!$Label.opptytab_replabel3}</apex:outputLink>
+    <apex:outputLink value="{!$Label.opptytab_replink4}" >{!$Label.opptytab_replabel4}</apex:outputLink>
+<!--    <apex:outputLink value="javaScript:void();" onclick="window.open('http://itg.yotta.hp.com/Explorer/Dialogs/DocumentViewer/DocumentViewer.aspx?documentID=0f848619-6fdd-459c-ad70-726f70e160d2');">VPN Required – PipelineSalesForecast(Any on OpportunitySalesTeam) </apex:outputLink> -->
+<!--    <apex:outputLink value="https://hp--configdev.cs10.my.salesforce.com/apex/SalesManagerReports" target="_parent">PipelineSalesForecast(Any on OpportunitySalesTeam) </apex:outputLink> -->
+    <apex:outputLink value="{!$Label.opptytab_gotoreportslink}" id="theLink">{!$Label.opptytab_gotoreports}</apex:outputLink>
+    
+    </apex:pageBlockSection>
+    
+    </apex:pageblock>
+</apex:page>

@@ -1,0 +1,329 @@
+<apex:page standardcontroller="Community__c" extensions="SLP_ViewCommunity,mobileActivityController" cache="false"
+           docType="html-5.0" sidebar="false" showheader="false" standardStylesheets="false">
+    <apex:includeScript value="{!$Resource.jquery172}"/>
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+    
+    <head>
+        <!-- Include the css files. -->
+        <!--<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />-->
+        <!--<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />-->
+        <!--<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" /> -->
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+    
+        <!-- Scale the content for mobile.-->
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+    
+    <script type="text/javascript">
+         var chatterList= new Array();
+    </script>
+    
+    <div data-role="page" id="startpage" style="background:#ffffff;">
+        <div data-role="header" style="padding:5px 0px 0px 0px; background:#ffffff;" data-position="fixed" data-tap-toggle="false">
+            <img src="/resource/1396857212000/img_athena/img_athena/HP_Blue_Logo.png" class="circular ui-btn-left" alt="HP Logo"/>
+            <h1 style="text-align:left; margin-left:55px;padding:0px;">Social Learning Platform</h1>
+            <h1 style="text-align:left; margin-left:55px;padding:0px;color:#888888;">Learning on your terms</h1>
+            <apex:image url="{!LoggedInUserDetails.FullPhotoUrl}" styleClass="circular ui-btn-right" alt="no_username"/>
+            <div data-role="header" style="padding:2px 0px 2px 0px;background:#0099CC;">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left"> 
+            <a href="/apex/mLandingPage" data-role="none" data-ajax="false" id="buttonHome"><img src="{!URLFOR($Resource.mobileassests, 'images/home.png')}" id="headerImage" class="navIcons"/></a>
+            </div>
+            <h1></h1>
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.mobileassests, 'images/search.png')}" id="searchImage" class="navIcons"/></a> 
+              <a href="/apex/mLandingPage" data-role="none" data-ajax="false"><img src="{!URLFOR($Resource.mobileassests, 'images/questionmark.png')}" id="headerImage" class="navIcons"/></a>
+            </div>
+             <div data-role="content" class="ui-content" id="seach-container"> 
+           <input type="search" name="search" id="search-basic" data-mini="true" value=""  />
+           </div>
+     </div>    
+     </div>
+     
+    <div data-role="content" data-scroll="true"> <!-- Content -->
+                <div>
+                    <div style="display:table-cell; padding-left: 5px; float:right;" align="center">
+                        <div>
+                            <!-- <apex:image styleClass="communityOwnerImg" url="{!CommunityOwnerDetails.FullPhotoUrl}" />  -->
+                            <img src="{!CommunityOwnerDetails.FullPhotoUrl}" class="communityOwnerImg"/>
+                        </div>
+                        <div>
+                            <p style="padding:0px;font-weight:bold;margin:0px">{!CommunityOwnerDetails.Name}</p>
+                            <p style="padding:0px;margin:0px;">{!CommunityOwnerDetails.Title}</p>
+                        </div>
+                    </div>
+                    <div style="display:table-cell;">
+                        <apex:outputPanel rendered="{!!CommunityStaticImage}"> 
+                            <img src="{!URLFOR($Action.Attachment.Download, AttachmentId)}" style="float:left; max-width: 100%; height:auto; max-height:150px; border-top-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px; background: #888888;" />
+                            <!--
+                            <apex:image url="{!URLFOR($Action.Attachment.Download, AttachmentId)}" styleClass="communityImage" />
+                            -->
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!CommunityStaticImage}">
+                            <img src="{!CommunityDefaultImageName}" style="float:left; max-width: 100%; height:auto; max-height:150px; border-top-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px; background: #888888;" />
+                            <!--
+                            <apex:image url="{!CommunityDefaultImageName}" styleClass="communityImage" />
+                            -->
+                        </apex:outputPanel>
+                    </div>
+                    <div style="clear:both;">
+                    </div>
+                </div>
+    
+        <!-- Code for chatter feed - Begin -->
+        <div align="center">
+        <fieldset class="ui-grid-a" align="center">
+          <div class="ui-block-a" style="width:80%"><input type="text" placeholder="Enter your comment..." name="fname" id="fname" data-clear-btn="true" data-mini="false"/></div>
+           <div class="ui-block-b" style="width:20%;" align="center"><a href="#" data-role="button" style="background: #669900; color: white;margin-top:9px;" data-mini="true" onclick="postComment()">Post</a></div>
+           </fieldset> 
+          <div style="visibility:hidden; height:0px">
+          <apex:form id="frmPostInput" onsubmit="return isPopulated('txtPostInput');">
+            <fieldset class="ui-grid-a">
+            <div class="ui-block-a" style="width:70%"><apex:inputText id="txtPostInput" value="{!feedItemInputText}" html-placeholder="Enter your post here..." style="min-height: 2.8em"/></div>
+            <div class="ui-block-b" style="width:30%;" ><apex:commandButton id="cmdBtnPost" rerender="feedOutputPanel" action="{!postNewFeedItem}" value="Post"/></div>
+            </fieldset> 
+        </apex:form>
+        </div>
+        </div>
+        <div id="spacer" style="height:20px;">
+        </div>
+          <ul id="chatterList" data-role="listview" data-inset="false">
+        <apex:repeat value="{!feedItemPage.items}" var="feedItem">
+              
+                    <li data-icon="false" style="background:#ffffff;" id="foo">
+                        
+                        <img src="{!feedItem.photoUrl}" class="circular-image-container"/>
+                        <h2>{!feedItem.actor.name}</h2>         
+                        <p id="postedText">{!feedItem.body.text}</p>
+                        <span class="ctrl" style="text-align:right;"><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" style="padding-right:15px;">
+                            <apex:outputText value="{0, date, dd MMM yy}" rendered="{!NOT(ISNULL(feedItem.createdDate))}">
+                                <apex:param value="{!feedItem.CreatedDate}" />
+                            </apex:outputText>
+                        </fieldset></span>
+                        
+                         <span>
+                         <ul data-role="listview" data-inset="true" style="box-shadow: 0 0px 0px rgba(0,0,0,0) !Important;">
+                         <apex:repeat value="{!feedItem.comments.comments}" var="comment">
+                         <li style="margin-left:40px; margin-right:15px; ">
+                             <img src="{!comment.user.photo.smallPhotoUrl}" class="circular-image-container"/>
+                             <h2>{!comment.user.firstname} {!comment.user.lastname}</h2>
+                             <p id="postedText">
+                             <apex:repeat value="{!comment.body.messageSegments}" var="segment">
+                                            <apex:outputPanel layout="none" rendered="{!segment.type == TextSegmentType}">
+                                                {!segment.text}
+                                            </apex:outputPanel>
+                                            <apex:outputPanel layout="none" rendered="{!segment.type == MentionSegmentType}">
+                                                <a href="/{!segment['record'].id}">@{!segment['record'].name}</a>
+                                            </apex:outputPanel>
+                                        </apex:repeat>
+                             </p>
+                             <span class="ctrl" style="text-align:right"><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" >
+                            <apex:outputText value=" {0, date, dd MMM yy}" rendered="{!NOT(ISNULL(comment.createdDate))}">
+                                <apex:param value="{!comment.CreatedDate}" />
+                            </apex:outputText>
+                        </fieldset></span>
+                        </li>
+                         </apex:repeat>
+                         
+                         </ul>
+                        
+                          <script>chatterList.push({'id':'{!feedItem.id}'});</script>
+                            </span>
+                    </li>
+                
+               
+        </apex:repeat>
+        </ul>
+        
+    <!-- Code for chatter feed - End -->
+     </div> <!-- Content -->
+    
+    <div data-role="footer" data-position="fixed" class="communityFooter" data-tap-toggle="false">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="/apex/mobileCommunityCollaterals?id={!CommunityId}" data-role="tab" data-ajax="false">Topic</a></li>
+                    <li><a href="/apex/mobileCommunityActivity?id={!CommunityId}" data-role="tab" class="ui-btn-active" data-ajax="false">Chat</a></li>
+                    <li><a href="/apex/mobileCommunityMembers?id={!CommunityId}" data-ajax="false">Members</a></li>
+                    <li><a href="/apex/mobileCommunityBoards?id={!CommunityId}" data-role="tab" data-ajax="false">More</a></li>
+                </ul>
+            </div> 
+        </div> 
+        
+        
+        <div data-role="popup" id="form" data-theme="a" data-overlay-theme="a" style="width:100%;" data-position-to="window">
+        <fieldset class="ui-grid-a" align="center">
+          <div class="ui-block-a" style="width:80%"><input type="text" placeholder="Enter your reply..." name="fname" id="fname2" data-clear-btn="true" data-mini="false"/></div>
+           <div class="ui-block-b" style="width:20%;" align="center"><a href="#" id="replyButton" data-role="button" style="background: #669900; color: white;margin-top:9px;" data-mini="true" onclick="postReply()">Post</a></div>
+           </fieldset> 
+         <div style="visibility:hidden; height:0px">
+        <apex:form id="frmPostInput2" onsubmit="return isPopulated('txtPostInput2');">
+            <fieldset class="ui-grid-a">
+            <div class="ui-block-a" style="width:70%"><apex:inputText id="txtPostInput2" value="{!feedItemInputText}" html-placeholder="Enter your reply here..." style="min-height: 2.8em"/></div>
+            <div class="ui-block-b" style="width:30%"><apex:commandButton id="cmdBtnPost2" rerender="feedOutputPanel" action="{!postNewComment}" value="Post"/></div>
+            </fieldset> 
+            <div style="visibility:hidden; height:0px">
+                <apex:inputTextarea id="txtUserTopicComment" value="{!feedCommentID}" title="Comment"/>
+            </div>
+        </apex:form>
+        </div>
+        </div>
+        
+    
+    </div>
+    
+    <script type="text/javascript">
+        // Javascript functions
+        $(document).ready(function () {
+             $('#seach-container').hide();
+             $("#startpage").trigger("create");
+             
+        });
+        
+        
+        
+        $("#chatterList").on("ontap mousedown click", "li", function() {
+                var index = $(this).index();
+                console.log(chatterList[index].id);
+                $("#form").popup('open');
+                $("[id$=txtUserTopicComment]").text(chatterList[index].id);
+         });
+        
+        $('#buttonHome').on('ontap mousedown', '', function () {
+                $('#buttonHome img').css('background','#33B5E5');
+                setTimeout(function(){ $('#buttonHome img').css('background','transparent');},500)
+        });
+        
+         $('#buttonSearch').on('ontap mousedown', '', function () {
+               
+               if (!$('#seach-container').is(':visible')) {
+                  $('#seach-container').slideDown("fast",function(){
+                    $("#startpage").trigger("create");
+                    // JS to remove the left arrow
+                    $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+                        $(this).removeClass('ui-btn-icon-left');
+                    });
+                });
+               }
+               else{
+                  $('#seach-container').slideUp("fast",function(){
+                     
+                    $("#startpage").trigger("create");
+                    // JS to remove the left arrow
+                    $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+                        $(this).removeClass('ui-btn-icon-left');
+                    });
+                });
+               }
+               
+                
+                $('#buttonSearch img').css('background','#33B5E5');
+                setTimeout(function(){ $('#buttonSearch img').css('background','transparent');},200);
+
+            });
+            
+            $('#search-basic').live("keypress", function(e) {
+            /* ENTER PRESSED*/
+            if (e.keyCode == 13) {
+                var searchTerm= $('#search-basic').val();
+                window.location = "/apex/mobileGlobalSearch?SearchOptions=Select+all&multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+searchTerm;
+                $.mobile.loading( "show", {
+                      text: "Loading...",
+                      textVisible: true,
+                      textOnly: false
+                } ); // Displays load spinner while loading
+            }
+        });
+        
+        // *** Other Javascript Functions ***
+        function isPopulated(elementId)
+        {
+            console.log("isPopulated function");
+            var populated = false;    
+            
+            // check if the value of the html element has a truthy value or not.     
+            if ($("[id$=" + elementId + "]").val())
+            {
+                populated = true;
+            }
+            console.log("The text input populated - " +populated ); 
+            return populated;
+        }
+        
+        function postComment() {
+        
+            // Get values from jQM form
+            var comment= $("#fname").val();
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtPostInput]").val(comment);
+            // Simulate click on SF submit button
+            $("[id$=cmdBtnPost]").click();
+            //return false;
+        }
+        
+        function postReply() {
+        
+            // Get values from jQM form
+            var comment= $("#fname2").val();
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtPostInput2]").val(comment);
+            // Simulate click on SF submit button
+            $("[id$=cmdBtnPost2]").click();
+            //return false;
+        }
+        
+    </script>
+    
+    <style type="text/css">
+        .circular-image-container {
+            margin: 5px;
+            padding: 1px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #000000;
+        }
+        
+        .simple-textarea {
+            /*display: inline-block;*/
+            /*width: 35%;*/
+            /*background-color: green;*/
+            -webkit-box-shadow: none;
+            outline: none;
+        }
+        
+        .right-pos {
+            display: inline-block;
+        }
+        
+        .bgColour {
+            background-color: red; /* used for test purposes */
+        }
+        
+        #postedText{
+            white-space: normal;
+        }
+        
+        .postButton{
+            background-color:#555555;
+        }
+        
+        #foo {
+            padding: 0;
+        }
+
+        #foo > p, #foo > h2 {
+            padding-left: 100px;
+        }
+
+        #foo .ui-listview {
+            margin-top: 34px;
+        }
+        
+        
+    </style>
+</apex:page>

@@ -1,0 +1,65 @@
+<apex:page standardController="Requirement__c" extensions="OAE_RQ_EditExt">   
+<apex:sectionheader title="Requirement" />
+  <apex:form >
+    <apex:pageBlock id="fullPage">
+<table width="100%">
+<tr>
+<td width="30%"><br/>
+<apex:pageBlockSection title="Parameter" collapsible="false">
+<apex:outputPanel id="selectParam">
+<apex:selectList value="{!Requirement__c.Parameter__c}" size="1" style="width:200px" onChange="swapPanels()">
+<apex:selectOptions value="{!paramItems}"/>
+</apex:selectList>
+</apex:outputPanel>
+</apex:pageBlockSection>
+</td>
+<td width="30%">
+<apex:pageBlockSection title="Value" collapsible="false" rendered="{!!showNumbers}" >
+<apex:outputPanel id="selectValue">
+<apex:selectList value="{!Requirement__c.Value__c}" size="1" style="width:200px" id="boom">
+<apex:selectOptions value="{!valueItems}"/>
+</apex:selectList>
+</apex:outputPanel>
+</apex:pageBlockSection>
+<apex:pageBlockSection title="Min" collapsible="false" rendered="{!showNumbers}">
+<apex:inputfield value="{!Requirement__c.MinValue__c}"/>
+</apex:pageBlockSection>
+</td>
+<td width="30%">
+<apex:pageBlockSection title="Level" collapsible="false" rendered="{!!showNumbers}">
+<apex:outputPanel id="levelValue">
+<apex:selectList value="{!Requirement__c.Level__c}" size="1" style="width:200px">
+<apex:selectOptions value="{!levelItems}"/>
+</apex:selectList>
+</apex:outputPanel>
+</apex:pageBlockSection>
+<apex:pageBlockSection title="Max" collapsible="false" rendered="{!showNumbers}">
+<apex:inputfield value="{!Requirement__c.MaxValue__c}"/>
+</apex:pageBlockSection>
+</td>
+<td width="10%">
+<apex:pageBlockSection title="." collapsible="false"></apex:pageBlockSection>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<apex:commandButton value="Save" action="{!save}" />
+</td>
+</tr>
+</table>
+<br/>
+    </apex:pageBlock>
+
+    <apex:actionFunction action="{!refreshValues}" name="swapPanels" rerender="fullPage,selectValue,levelValue" />
+<apex:inputHidden value="{!Requirement__c.RuleScenario__c}" rendered="false"/>
+<apex:inputHidden value="{!Requirement__c.ParamNumber__c}" rendered="false"/>
+<apex:inputHidden value="{!Requirement__c.isMinutesOnShift__c}" rendered="false"/>
+<apex:inputHidden value="{!Requirement__c.isOnShiftNow__c}" rendered="false"/>
+  </apex:form>
+</apex:page>

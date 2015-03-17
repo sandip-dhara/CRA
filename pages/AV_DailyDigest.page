@@ -1,0 +1,181 @@
+<apex:page controller="AV_DailyDigest" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<style>
+body {
+    background: #f6f4f1;
+    font-family: "HP Simplified", Arial;
+    width: 99%;
+}
+h1, h2 {
+    font-size: 25px;
+    font-weight: normal;
+    margin: 0;
+}
+h2 {
+    font-size: 20px;
+}
+.mtop10 {
+    margin-top: 10px;
+}
+.wrapper {
+    width: 80%;
+    margin: 0 auto;
+    height: auto;
+}
+.userName {
+    background: #fbf9f7;
+    border: 1px solid #dedede;
+    padding: 2%;
+    font-size: 17px;
+    margin-top: 30px;
+    width:100%;
+}
+.userNameColor {
+    color: #F51666;
+}
+.boardName {
+    border: 1px solid #dedede;
+    border-bottom: none !important;
+    background: #fbf9f7;
+    padding: 10px;
+    margin-top: 20px;
+    font-size: 16px;
+    color: #4A8BC2;
+    -moz-border-radius-topleft: 4px;
+    border-top-left-radius: 4px;
+    -moz-border-radius-topright: 4px;
+    border-top-right-radius: 4px;
+}
+.PostCommentBg {
+    background: #FFFFFF;
+    border: 1px solid #DEDEDE;
+    font-size: 14px;
+    padding: 1%;
+    width: 100%;
+}
+.postDiv {
+    background: #f6f5f3;
+    padding: 1%;
+    width: 98.5%;
+    float: right;
+}
+.postUser, .commentBy {
+    color: #4a8bc2;
+    font-size: 13px;
+}
+.postDate, .postLikeCount, .commentDate {
+    font-size: 13px;
+    color: #929293;
+    padding-left: 5px;
+}
+.postLikeCount {
+    color: #B8B8B9;
+}
+.postLikeCount span {
+    color: #4b8f02;
+}
+.comments {
+    background: #F6F5F3;
+    border: 1px solid #EAEAE9;
+    float: right;
+    margin-top: 13px;
+    padding: 10px;
+    width: 92%;
+}
+.clear {
+    clear: both;
+}
+</style>
+<table>
+</table>
+
+  <apex:form >
+      <!--
+    <apex:repeat value="{!DailyDiggest}" var="DS" id="theRepeat">
+      <div class="userName">
+        <h1>Social Learning Platform</h1>
+        <h2>HP Enterprise Services</h2>
+        <div class="mtop10"> Hi <span class="userNameColor"> {!DS.UserName} </span> your Daily Digest </div>
+      </div>
+      <apex:repeat value="{!DS.lstCommB}" var="DsComm">
+        <div class="boardName clear "> {!DsComm.BoardOrCommNm} </div>
+        <apex:repeat value="{!DsComm.ListFeedPost}" var="DsCommFI">
+          <div class="PostCommentBg ">
+            <div class="postComments "> {!DsCommFI.PostName} </div>
+            <div class="clear"> <span class="postUser"> {!DsCommFI.PostedUserName} </span> <span class="postDate"> {!DsCommFI.PostedDate} </span> <span class="postLikeCount">Persons Likes <span>{!DsCommFI.PostLikes}</span> </span> </div>
+            
+            <!-- Comments Start
+            <apex:repeat value="{!DsCommFI.lstFCmt}" var="Comment">
+              <div class="comments clear">
+                <div class="postComments"> {!Comment.CommentBody} </div>
+                <div class="clear"> <span class="commentBy clear"> {!Comment.CreatedBy.name} </span> <span class="commentDate"> {!Comment.CreatedDate} </span> </div>
+              </div>
+            </apex:repeat>
+          </div>
+        </apex:repeat>
+      </apex:repeat>
+    </apex:repeat>
+    -->
+    <!--new desing-->
+    
+    <apex:repeat value="{!DailyDiggest}" var="DS" id="Repeat1">
+      <table class="wrapper">
+        <tr>
+          <td><table class="userName">
+              <tr>
+                <td><h1>Social Learning Platform</h1></td>
+              </tr>
+              <tr>
+                <td><h2>HP Enterprise Services</h2></td>
+              </tr>
+              <tr>
+                <td> Hi <span class="userNameColor"> {!DS.UserName} </span> your Daily Digest </td>
+              </tr>
+            </table></td>
+        </tr>
+        <tr>
+          <td><apex:repeat value="{!DS.lstCommB}" var="DsComm">
+              <table style="width:100%">
+                <tr>
+                  <td><div class="boardName clear "> {!DsComm.BoardOrCommNm} </div></td>
+                </tr>
+                <tr>
+                  <td><apex:repeat value="{!DsComm.ListFeedPost}" var="DsCommFI">
+                      <table class="PostCommentBg ">
+                        <tr>
+                          <td>
+                              <div class="postComments "> {!DsCommFI.PostName} </div> 
+                              <div class="clear"> 
+                                  <span class="postUser"> {!DsCommFI.PostedUserName} </span> 
+                                  <span class="postDate"> {!DsCommFI.PostedDate} </span> 
+                                  <span class="postLikeCount">Persons Likes <span>{!DsCommFI.PostLikes}</span> </span> 
+                              </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><apex:repeat value="{!DsCommFI.lstFCmt}" var="Comment">
+                              <table style="width:100%">
+                                <tr>
+                                  <td>
+                                      
+                                      <div class="comments clear">
+                                      <div class="postComments"> {!Comment.CommentBody} </div>
+                                      <div class="clear"> <span class="commentBy clear"> {!Comment.CreatedBy.name} </span> <span class="commentDate"> {!Comment.CreatedDate} </span> </div>
+                                    </div></td>
+                                </tr>
+                              </table>
+                            </apex:repeat></td>
+                        </tr>
+                        
+                        <!-- Comments Start -->
+                        
+                      </table>
+                    </apex:repeat></td>
+                </tr>
+              </table>
+            </apex:repeat></td>
+        </tr>
+      </table>
+    </apex:repeat>
+  </apex:form>
+
+</apex:page>

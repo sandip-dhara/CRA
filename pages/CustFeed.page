@@ -1,0 +1,24 @@
+<apex:page controller="CustFeed">
+<apex:form >
+ <apex:inputText />
+ <apex:commandButton title="post" />
+ </apex:form>
+ <a href="mailto:?Subject=Hi&Body=Test Mail">Mail</a>
+  <apex:outputPanel >
+  <apex:repeat value="{!NewsFeed}" var="f">
+  <apex:image url="{!f.photourl}"/><br/>
+  
+  User:<b>{!f.actor.name} </b><br/>
+    Text:<b>{!f.body.text} </b><br/>
+    <apex:outputPanel >
+    <apex:repeat value="{!f.comments.comments}" var="c">
+     <apex:image url="{!c.user.photo.smallphotourl}"/><br/>
+  
+  User:<b>{!c.user.name} </b><br/>
+    Text:<b>{!C.body.text} </b><br/>
+    </apex:repeat>
+    </apex:outputPanel>
+  </apex:repeat>
+  </apex:outputPanel>
+  
+</apex:page>

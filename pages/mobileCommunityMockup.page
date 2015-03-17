@@ -1,0 +1,2548 @@
+<apex:page standardcontroller="Community__c" extensions="SLP_ViewCommunity,mobileUserData,mobileActivityController" action="{!InserSession}" cache="false" docType="html-5.0" sidebar="false" showheader="false" standardStylesheets="false">
+    <head>
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mslp_res, 'fonts/icomoon/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/icomoon/iconMoon.css')}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
+    </head>
+    <script type="text/javascript">
+        var membersList = new Array();
+        var chatterList= new Array()
+    </script>
+    <div data-role="page" id="learningBoardDefault" style="background-color:#5a5a5a;">
+        <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+                <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+            </div>
+            <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+                <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+            </div>
+        </div>
+        <apex:outputPanel rendered="{!!CommunityStaticImage}"> 
+            <img src="{!URLFOR($Action.Attachment.Download, AttachmentId)}" width="100" height="auto" style="display: block; min-width: 100%; max-height:450px; min-height:185px;" />
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!CommunityStaticImage}">
+            <img src="{!CommunityDefaultImageName}" style="display: block; min-width: 100%; min-height:200px; max-height:200px; max-width:100%;"/>
+        </apex:outputPanel>
+        <div id="myLabel">
+            <p id="commName">{!CommunityName}</p>
+        </div>
+        <div id="myLabel2">
+            <div class="column1">
+                <apex:outputPanel rendered="{!!isloggedUser}">
+                    <apex:outputPanel rendered="{!!IsFollowOwner}">
+                        <span onclick="performFollowAction()" class="icon-follow" style="font-size:26pt;text-align:center;color:#ffffff;line-height:50px;margin-right:5px;display:none;"></span>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IsFollowOwner}">
+                        <span onclick="performUnfollowAction()" class="icon-unfollow" style="font-size:26pt;text-align:center;color:#ffffff;line-height:50px;margin-right:5px;display:none;"></span>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <span id="icoShareButton" onclick="shareBoard()" class="icon-share" style="display:none; font-size:16pt;text-align:center;color:#ffffff;line-height:60px;"></span>
+            </div>
+            <div class="column3" style="width:50%;">
+            
+            
+            
+<div data-role="popup" id="popupArrow" data-arrow="true" data-overlay-theme="b" data-theme="b">
+<style>
+.ui-popup>span {
+    margin:0;
+    margin-right:4px;
+    float:left;
+}
+</style>
+<apex:outputPanel rendered="{!!isloggedUser}">
+    <apex:outputPanel rendered="{!!IsFollowOwner}">
+        <a href="#" onclick="performFollowAction()">Follow </a>                  
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!IsFollowOwner}">
+        <a href="#" onclick="performUnfollowAction()">Unfollow </a>                  
+    </apex:outputPanel>
+</apex:outputPanel>
+<a href="#" data-rel="back" onclick="viewOwnerProfile()">View Profile</a>
+</div>
+<a href="#" id="open-popupArrow" class="clickable-area"><img src="{!CommunityOwnerDetails.FullPhotoUrl}" class="communityOwnerImg" style="float:right; display:inline;"/></a>
+<script>
+$.mobile.document.on( "click", "#open-popupArrow", function( evt ) {
+    $( "#popupArrow" ).popup( "open", { x: evt.pageX, y: evt.pageY } );
+    evt.preventDefault();
+});
+</script>
+<style>
+.clickable-area {
+    display: block;
+    width: 100%;
+}
+.clickable-area:focus {
+    outline: 0;
+}
+</style>         
+
+
+            
+            
+            <!--<img src="{!CommunityOwnerDetails.FullPhotoUrl}" class="communityOwnerImg" style="float:right; display:inline;"/>
+            -->
+            <p style="float: right; display: inline; padding: 0; margin: 0; padding-right: 10px;">{!CommunityOwnerDetails.Name}</p>
+            </div>
+        </div>
+        <div data-role="content" style="position:relative; top: -60px; padding:0;">
+            <div data-role="tabs" id="tabs" style="padding:0;">
+                <div id="scrollTime" style="overflow-x:auto;width: 100%;max-width: 480px;">
+                    <div data-role="navbar" style="width:100%; max-width:none; min-width:480px;">
+                        <ul>
+                            <li id="tab1"><a href="#one" data-ajax="false" class="ui-btn-2 ui-btn-active ui-state-persist" style="whitespace:normal !important;color:#ffffff;font-family:HP Simplified,sans-serif;text-shadow:none; font-size:15pt;">Content</a></li>
+                            <li id="tab2"><a href="#two" data-ajax="false" class="ui-btn-2" style="whitespace:normal !important;color:#ffffff;font-family:HP Simplified,sans-serif;text-shadow:none; font-size:15pt;">Chat</a></li>
+                            <li id="tab3"><a href="#three" data-ajax="false" class="ui-btn-2" style="whitespace:normal !important;color:#ffffff;font-family:HP Simplified,sans-serif;text-shadow:none; font-size:15pt;">Members</a></li>
+                            <li id="tab4"><a href="#four" data-ajax="false" class="ui-btn-2" style="whitespace:normal !important;color:#ffffff;font-family:HP Simplified,sans-serif;text-shadow:none; font-size:15pt;">Related</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="one" class="ui-body-d ui-content" style="background-color:#929497; padding: 1em;">
+                    <div id="noContentMsg" style="display:none;"><h3 style="color:white; text-shadow:none; font-weight:100; margin-top:0;">No content has been added to this community.</h3></div>
+                    <ul data-role="listview" id="collateralList" class="listviewTopic" data-filter="true" data-inset="false">
+                        <li id="description" style="color:#ffffff;border-bottom:2px solid #a7a8a9; display:none;">
+                            <div id="boardDesc" class="less" style="whitespace:normal !important;color:#ffffff;font-family:HP Simplified,sans-serif;text-shadow:none;">
+                                {!CommunityDescription}
+                            </div>
+                            <div class="text-size">more <span class="icon-caret-down"></span></div>
+                        </li>
+                    </ul>
+                    <!-- collapsibleset -->
+                </div>
+                <div id="two" style="background-color:#929497; padding:1em;">
+                    <!-- Code for chatter feed - Begin -->
+                    <div align="center" style="background-color:transparent !important;white-space:wrap !important;border:none !important;">
+                        <fieldset class="ui-grid-a" align="center">
+                            <div class="ui-block-a" style="width:70%"><input type="text" placeholder="Enter your comment..." name="fnameComment" id="fnameComment2" data-clear-btn="true" data-mini="false" data-corners="false"/></div>
+                            <div class="ui-block-b" style="width:30%;" align="center"><a href="#" id="commentButton" data-role="button" style="background: #F9A006; color:#ffffff;margin-top:9px; text-shadow:none; border:none;" data-mini="true" onclick="postComment()">Post</a></div>
+                        </fieldset>
+                        <div style="visibility:hidden; height:0px">
+                            <apex:form id="frmPostInputComment2" onsubmit="return isPopulated('fnameComment2');">
+                                <fieldset class="ui-grid-a">
+                                    <div class="ui-block-a" style="width:70%">
+                                        <apex:inputText id="txtPostInputComment2" value="{!feedItemInputText}" html-placeholder="Enter your reply here..." style="min-height: 2.8em"/>
+                                    </div>
+                                    <div class="ui-block-b" style="width:30%">
+                                        <apex:commandButton id="cmdBtnPostComment2" rerender="feedOutputPanel" action="{!postNewFeedItem}" value="Post"/>
+                                    </div>
+                                </fieldset>
+                                <div style="visibility:hidden; height:0px">
+                                    <apex:inputTextarea id="txtUserTopicCommentC" value="{!feedCommentID}" title="Comment"/>
+                                </div>
+                            </apex:form>
+                        </div>
+                    </div>
+                    <div id="spacer" style="height:20px;"></div>
+                    <ul id="chatterList" data-role="listview" data-inset="false" style="transparent !important;white-space:wrap !important;border:none !important;">
+                        <apex:repeat value="{!feedItemPage.items}" var="feedItem">
+                            <li data-icon="false" class="actvitylist" style="background:transparent !important;" id="foo">
+                                <img src="{!feedItem.photoUrl}" class="circular-image-container-chatter"/>
+                                <h2 class="hpFont" style="background:transparent;text-align:left;color:#2765C2;text-shadow:none; height:auto; line-height:1; min-height:0 !important;">{!feedItem.actor.name}</h2>
+                                <p id="postedText" class="hpFont" style="background:transparent;text-align:left;color:#f2f2f2;text-shadow:none;white-space:normal!important;word-wrap: break-word!important;word-break: break-word!important;">{!feedItem.body.text}</p>
+                                <span class="ctrl hpFont" style="text-align:left;">
+                                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" style="padding-right:15px;">
+                                        <apex:outputText value="{0, date, dd MMM yy}" rendered="{!NOT(ISNULL(feedItem.createdDate))}">
+                                            <apex:param value="{!feedItem.CreatedDate}" />
+                                        </apex:outputText>
+                                    </fieldset>
+                                </span>
+                                <span>
+                                    <ul data-role="listview" data-inset="true" style="box-shadow: 0 0px 0px rgba(0,0,0,0) !Important; background:transparent !important;border:none !important;">
+                                        <apex:repeat value="{!feedItem.comments.comments}" var="comment">
+                                            <li style="margin-left:-15px; margin-right:15px; background:transparent !important; border:none !important;">
+                                                <img src="{!comment.user.photo.smallPhotoUrl}" class="circular-image-container-chatter"/>
+                                                <h2 class="hpFont" style="background:transparent;text-align:left;color:#38c;text-shadow:none;">{!comment.user.firstname} {!comment.user.lastname}</h2>
+                                                <p id="postedText"  class="hpFont" style="background:transparent;text-align:left;color:black;text-shadow:none;white-space:normal!important;">
+                                                    <apex:repeat value="{!comment.body.messageSegments}" var="segment">
+                                                        {!segment.text}
+                                                    </apex:repeat>
+                                                </p>
+                                                <span class="ctrl hpFont" style="text-align:left">
+                                                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" >
+                                                        <apex:outputText value=" {0, date, dd MMM yy}" rendered="{!NOT(ISNULL(comment.createdDate))}">
+                                                            <apex:param value="{!comment.CreatedDate}" />
+                                                        </apex:outputText>
+                                                    </fieldset>
+                                                </span>
+                                            </li>
+                                        </apex:repeat>
+                                    </ul>
+                                    <script>chatterList.push({'id':'{!feedItem.id}'});</script>
+                                </span>
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                    <!-- Code for chatter feed - End -->
+                </div>
+                <div id="three" style="padding:1em; background-color:#929497;">
+                    <ul id="membersList" data-role="listview" data-inset="false" data-filter="true" data-filter-placeholder=" ">
+                        
+                        <apex:repeat value="{!CommunityMembers}" var="peopleRslt"></apex:repeat>
+                    </ul>
+                </div>
+                <div id="four" style="padding:1em; background-color:#929497;">
+                    <div id="custom-collapsible" class="my-page" style="margin-top:7px;">
+                        <ul id="featuredList" data-role="listview" data-inset="false">
+                            <apex:repeat id="featuredListLB1" value="{!RelatedLearningBoards}" var="brdRslt">
+                                <li>
+                                    <a href="/apex/mobileLearningBoardMockup?id={!brdRslt.Lbid}" onclick="communityLogMetrics(this)" data-FullName="{!brdRslt.LBName}" data-actionTyp='Board Image Click' data-section='Related Boards Tab' data-ObjNm='User Profile' data-CMID= "{!brdRslt.LBid}" data-CMName="{!brdRslt.LBName}" data-url="/apex/AthenaLearningBoardDtls?id={!brdRslt.LBid}&CommunityId={!CommunityId}" data-host="{!getSfInstance}" data-ajax="false">
+                                        <img>
+                                        <apex:outputPanel rendered="{!!brdRslt.StaticImage}"> 
+                                            <img src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" class="ui-li-thumb"/>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!brdRslt.StaticImage}">
+                                            <img src="{!brdRslt.DefaultImageName}"  class="ui-li-thumb"/>
+                                        </apex:outputPanel>
+                                        </img>
+                                        <h2>{!brdRslt.LBName}</h2>
+                                    </a>
+                                </li>
+                            </apex:repeat>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="outter">
+                <div id="emptyResultMsg">
+                    <h3 style="color:white; text-shadow:none;">You must be a member to view the content of this community.</h3>
+                </div>
+            </div>
+        </div>
+        <!-- START SHARE PANEL -->
+        <style>
+            #sharePanel {
+            background-color:#F3F3F3;
+            }
+            #sharePanel .ui-panel-inner {
+            padding: 10px !important;
+            }
+            #sharePanel h1 {
+            display:block;
+            width:230px;
+            }
+            #sharePanel h2 {
+            display:block;
+            font-size: 13px;
+            padding-bottom: 20px;
+            }
+        </style>
+        <script>
+            function changePage(index) {
+              var hTree = $('#contacts').controlgroup("container").children();
+              var indices = [];
+              for (var v =0; v < hTree.length; v++) {
+                  console.log( v + ' ' + $( hTree[v] ).text() + ': ' + $( hTree[v] ).hasClass('sResult') );
+                  if ( $( hTree[v] ).hasClass('sResult') ) {
+                      indices.push(v);
+                  }
+              }
+              
+              var lstLen = indices.length;
+              if ( lstLen <= 0 ) {
+                  lstLen = hTree.length;
+              }
+              var numOfTabs = Math.ceil( lstLen / 5 );
+              console.log('num of tabs: ' + numOfTabs);
+            
+            
+              if (index == -1) {    // Go Left
+                  var jmp = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) - 1;
+                  if (jmp >= 1) {
+                      changePage(jmp);
+                      $('#'+jmp).attr("checked",true).checkboxradio("refresh");
+                      $('#'+(jmp+1)).attr("checked",false).checkboxradio("refresh");
+                      
+                                      var nextBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) + 1;
+                      if (nextBox > 5) {
+                          nextBox = 0;
+                      }
+            
+                      var prevBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) - 1;
+                      if (prevBox < 0) {
+                          prevBox = 0;
+                      }
+                                                      
+                      if ($('#'+(nextBox)).css('display') == 'none') {
+                          $('#'+(nextBox)).css('display','');
+                          $('#l_'+(nextBox)).css('display','');
+                          $('#'+(nextBox-3)).css('display','none');
+                          $('#l_'+(nextBox-3)).css('display','none');
+                      }
+                      
+                      if ($('#'+(prevBox)).css('display') == 'none') {
+                          $('#'+(prevBox)).css('display','');
+                          $('#l_'+(prevBox)).css('display','');
+                          $('#'+(prevBox+3)).css('display','none');
+                          $('#l_'+(prevBox+3)).css('display','none');
+                      }
+                  }
+                  return;            
+              }
+              else if (index == -2) {    // Go Right
+                  var jmp = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) + 1;
+                  if (jmp >= 1 && jmp <= numOfTabs) {
+                      changePage(jmp);
+                      $('#'+jmp).attr("checked",true).checkboxradio("refresh");
+                      $('#'+(jmp-1)).attr("checked",false).checkboxradio("refresh");
+                      
+                      var nextBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) + 1;
+                      if (nextBox > 5) {
+                          nextBox = 0;
+                      }
+            
+                      var prevBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) - 1;
+                      if (prevBox < 0) {
+                          prevBox = 0;
+                      }
+                                                      
+                      if ($('#'+(nextBox)).css('display') == 'none') {
+                          $('#'+(nextBox)).css('display','');
+                          $('#l_'+(nextBox)).css('display','');
+                          $('#'+(nextBox-3)).css('display','none');
+                          $('#l_'+(nextBox-3)).css('display','none');
+                      }
+                      
+                      if ($('#'+(prevBox)).css('display') == 'none') {
+                          $('#'+(prevBox)).css('display','');
+                          $('#l_'+(prevBox)).css('display','');
+                          $('#'+(prevBox+3)).css('display','none');
+                          $('#l_'+(prevBox+3)).css('display','none');
+                      }
+            
+                  }
+                  return;
+              }
+            
+              index--;
+              
+              /*var rsPage = 5;    // number of results per page
+              var start = index * rsPage;
+              var end = Math.min((start + rsPage) - 1, hTree.length - 1);
+              //console.log('(' + start + ', ' + end + ')');
+              
+              for (var v=0; v < hTree.length; v++) {
+                  if ((v >= start) && (v <= end)) {
+                      $( hTree[v] ).css('display','');
+                  }
+                  else {
+                      $( hTree[v] ).css('display','none');
+                  }
+              }*/     
+                           
+              
+              
+              if ( indices.length == 0 ) {
+                  for ( var d =0; d <= hTree.length; d++ ) {
+                      indices.push(d);
+                  }   
+              }
+              
+              var rsPage = 5;    // number of results per page
+              var start = index * rsPage;
+              var end = Math.min((start + rsPage) - 1, indices.length - 1);
+              console.log('(' + start + ', ' + end + ')');
+            
+              for (var v=0; v < indices.length; v++) {
+                  if ((v >= start) && (v <= end)) {
+                      $( hTree[indices[v]] ).css('display','');
+                  }
+                  else {
+                      $( hTree[indices[v]] ).css('display','none');
+                  }
+              }
+              
+                              
+              $("#contacts")
+              .enhanceWithin()
+              .controlgroup("refresh");
+              
+            }
+            
+            function createPagination(nTabs) {
+            
+            if ( nTabs <= 1 ) {
+                $('#pages').css('display','none');
+                return;
+            }
+            else {
+                $('#pages').css('display','');
+            }
+            
+            $('#pages')
+                  .controlgroup("container")
+                  .html('');
+                  
+              var maxTabs = 3;
+              $('#pages')
+                  .controlgroup("container")
+                  .append('<a href="#" class="ui-btn ui-corner-all ui-icon-arrow-l ui-btn-icon-left" onclick="changePage(-1)">&nbsp;</a>');
+                  
+                  for(var i = 1; i <= nTabs; i++) {
+                      if ( i==1 ) {
+                          $('#pages')
+                          .controlgroup("container")
+                          .append('<input type="radio" name="radio-choice-h-6" id="'+ i +'" value="on" checked="checked" onclick="changePage('+ i +')"><label for="'+ i +'" id="l_'+ i +'">' + i + '</label>');
+                      }
+                      else {
+                          if (i > maxTabs) {
+                            $('#pages')
+                              .controlgroup("container")
+                              .append('<input type="radio" name="radio-choice-h-6" id="'+ i +'" onclick="changePage('+ i +')" style="display:none;"><label for="'+ i +'" id="l_'+ i +'" style="display:none;">' + i + '</label>');                    
+                          }
+                          else {
+                              $('#pages')
+                              .controlgroup("container")
+                              .append('<input type="radio" name="radio-choice-h-6" id="'+ i +'" onclick="changePage('+ i +')"><label for="'+ i +'" id="l_'+ i +'">' + i + '</label>');
+                          }
+                      }                
+                  }
+                  
+                  $('#pages')
+                  .controlgroup("container")
+                  .append('<a href="#" class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-icon-right" onclick="changePage(-2)">&nbsp;</a>');
+                  
+                  $("#pages")
+                  .enhanceWithin()
+                  .controlgroup("refresh");
+                  
+                  $("input[type='radio']").bind( "change", function(event, ui) {
+                      var nextBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) + 1;
+                      if (nextBox > 5) {
+                          nextBox = 0;
+                      }
+            
+                      var prevBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) - 1;
+                      if (prevBox < 0) {
+                          prevBox = 0;
+                      }
+                                                      
+                      if ($('#'+(nextBox)).css('display') == 'none') {
+                          $('#'+(nextBox)).css('display','');
+                          $('#l_'+(nextBox)).css('display','');
+                          $('#'+(nextBox-3)).css('display','none');
+                          $('#l_'+(nextBox-3)).css('display','none');
+                      }
+                      
+                      if ($('#'+(prevBox)).css('display') == 'none') {
+                          $('#'+(prevBox)).css('display','');
+                          $('#l_'+(prevBox)).css('display','');
+                          $('#'+(prevBox+3)).css('display','none');
+                          $('#l_'+(prevBox+3)).css('display','none');
+                      }
+            
+                  });
+            
+                  
+                  changePage(1);
+             }
+                  
+            function shareLearningBoard(topicName, topicId) {       
+              $('#topicTitle').text(topicName);
+              window.tId = topicId;
+              
+              $('#contacts').controlgroup("container").html('');
+              Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.SLP_ViewCommunity.GetNetworkUsersList}', "{!CommunityId}", ShowNetworkUsers);    
+            }
+            
+            function ShareLB(data)
+            {
+                var LearningBoardID = $(data).attr('data-BoardId');
+                window.tId = LearningBoardID;
+                Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.SLP_ViewCommunity.GetNetworkUsersList}', LearningBoardID, ShowNetworkUsers);
+            }
+            
+            
+            function ShowNetworkUsers(result, event) {
+                  for(var i = 0; i < result.length; i++) {
+                      $('#contacts')
+                      .controlgroup("container")
+                      .append('<input type="checkbox" name="itemIds" id="'+ result[i].Id +'"/> <label for="'+ result[i].Id +'" style="color:#0093D1;">'+ result[i].Name +'</label>');           
+                  }
+                  
+                  $("#contacts")
+                  .enhanceWithin()
+                  .controlgroup("refresh");
+                  
+                  // Pagination
+                  if (result.length > 5) {                
+                      var numOfTabs = Math.ceil( result.length / 5 );
+                      createPagination(numOfTabs);
+                  }
+            }
+            
+            function SaveUsers()
+            {
+            
+                  $("#shareButton").addClass('ui-disabled');
+                  
+                  var strRel = '';
+                  
+                  var operatingSystem=navigator.appVersion;
+                   operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+                   $('[id$=hdnShareOperatingSystem]').val(operatingSystem);
+                   $('[id$=hdnShareBrowser]').val(FindBrowserVersion());
+                   $('[id$=hdnShareDeviceType]').val('Mobile');
+                  
+                  var lst = $('#contacts').closest('fieldset').find(':checkbox');
+                  
+                  for (var i=0; i<lst.length; i++) {
+                      if ($("#" + lst[i].id).prop("checked")) {
+                          if (strRel == '') {
+                              strRel = lst[i].id;
+                          }
+                          else {
+                              strRel = strRel + ',' + lst[i].id;
+                          }
+                      }
+                  }
+                  console.log('SaveUsers: ' + strRel );
+            
+                if (strRel == '')
+                {
+                    alert('Select at least one user');
+                    $("#shareButton").removeClass('ui-disabled')
+                }
+                else
+                {
+                    document.cookie = "TopicCatName=" + $('[id$=hdnContentCtgyName]').val();
+            
+                    $('[id$=hdnShareContentFlag]').val('Y');
+            
+                    var ShareCmt = $('#commentArea').val();
+                    var TopicId = window.tId;
+                    var topName = $('#topicTitle').text();
+                    
+                    document.getElementById("{!$Component.SlpActv.hdnSelectedUsrsId}").value = strRel;
+                    document.getElementById("{!$Component.SlpActv.hdnShareComment}").value = ShareCmt;
+                    document.getElementById("{!$Component.SlpActv.hdnContentShareId}").value = TopicId;
+                    document.getElementById("{!$Component.SlpActv.hdnShareTopicName}").value = topName;
+                    
+                    console.log(strRel + ", " + ShareCmt + ", " + TopicId + ", " + topName);
+                    var button = document.getElementById("{!$Component.SlpActv.SActivityShare}");
+                    button.click();
+                }
+            }
+            
+            
+            function FindBrowserVersion()
+            {
+            debugger
+              var nVer = navigator.appVersion;
+              var nAgt = navigator.userAgent;
+              var browserName  = navigator.appName;
+              var fullVersion  = ''+parseFloat(navigator.appVersion); 
+              var majorVersion = parseInt(navigator.appVersion,10);
+              var nameOffset,verOffset,ix;
+                      if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+                 browserName = "Opera";
+                 fullVersion = nAgt.substring(verOffset+6);
+                 if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                   fullVersion = nAgt.substring(verOffset+8);
+              }
+              // In MSIE, the true version is after "MSIE" in userAgent
+              else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+                 browserName = "Microsoft Internet Explorer";
+                 fullVersion = nAgt.substring(verOffset+5);
+              }
+              // In Chrome, the true version is after "Chrome" 
+              else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+                 browserName = "Chrome";
+                 fullVersion = nAgt.substring(verOffset+7);
+              }
+              // In Safari, the true version is after "Safari" or after "Version" 
+              else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+                 browserName = "Safari";
+                 fullVersion = nAgt.substring(verOffset+7);
+                 if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                   fullVersion = nAgt.substring(verOffset+8);
+              }
+              // In Firefox, the true version is after "Firefox" 
+              else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+                  browserName = "Firefox";
+                  fullVersion = nAgt.substring(verOffset+8);
+              }
+              // In most other browsers, "name/version" is at the end of userAgent 
+              else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+                  browserName = nAgt.substring(nameOffset,verOffset);
+                  fullVersion = nAgt.substring(verOffset+1);
+                  if (browserName.toLowerCase()==browserName.toUpperCase()) {
+                     browserName = navigator.appName;
+                  }
+              }
+              else
+              {
+                  browserName= nAgt;
+                  fullVersion="None";
+              }
+              // trim the fullVersion string at semicolon/space if present
+              if ((ix=fullVersion.indexOf(";"))!=-1)
+                  fullVersion=fullVersion.substring(0,ix);
+              if ((ix=fullVersion.indexOf(" "))!=-1)
+                  fullVersion=fullVersion.substring(0,ix);
+            
+              majorVersion = parseInt(''+fullVersion,10);
+              if (isNaN(majorVersion)) {
+                  fullVersion  = ''+parseFloat(navigator.appVersion); 
+                  majorVersion = parseInt(navigator.appVersion,10);
+              }
+              var BrowserVer='';
+              if(fullVersion=='None')
+              {
+                BrowserVer=browserName;
+              }
+              else
+              {
+                 BrowserVer=browserName+' '+fullVersion;
+              }
+              return BrowserVer;
+            } 
+            
+            
+            
+        </script>
+        <div data-role="panel" id="sharePanel" data-position="right" data-display="overlay">
+            <h2>Select users from your network</h2>
+            <h1 id="topicTitle" style="font-family: Arial,Helvetica,sans-serif; font-size: 100%; margin: 0; -webkit-margin-before: 0.67em;  -webkit-margin-after: 0.67em;  -webkit-margin-start: 0px;  -webkit-margin-end: 0px;">HP Helion: Built for the Future, but Ready Today</h1>
+            <hr/>
+            <fieldset data-role="controlgroup" id="contacts" data-filter="true" data-icon="false">                
+            </fieldset>
+            <div data-role="controlgroup" id="pages" data-type="horizontal" data-mini="true">
+            </div>
+            <textarea name="commentArea" id="commentArea"></textarea>
+            <div id="btnPnl">
+                <a href="#" class="ui-btn" style="float:left; background-color:#767676; border-top-right-radius: 10px 10px;border-bottom-left-radius: 10px 10px; color: white;text-shadow: none; width:30%;" onclick="closePanel();">Cancel</a><a href="#" id="shareButton" class="ui-btn" style="float:right; background-color:#2fade7;border-top-right-radius: 10px 10px;border-bottom-left-radius: 10px 10px;color: white;text-shadow: none; width:30%;" onclick="SaveUsers()">Share</a>
+            </div>
+            <apex:form style="display:none !important;" id="SlpActv">
+                <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  style="display:none !important" action="{!SaveNetworkUsers}" value="hide" id="SActivityShare"/>
+                <apex:inputText id="hdnShareOperatingSystem" style="display:none"  value="{!ShareOperatingSystem}"/>
+                <apex:inputText id="hdnShareBrowser" style="display:none"  value="{!ShareBrowser}"/>
+                <apex:inputText id="hdnShareDeviceType" style="display:none"  value="{!ShareDeviceType}"/>
+                <apex:inputText id="hdnSelectedUsrsId" style="display:none"  value="{!SelectedUsrs}"/>
+                <apex:inputText id="hdnShareComment" style="display:none"  value="{!hdnSharecmt}"/>
+                <apex:inputText id="hdnContentShareId" style="display:none"  value="{!ShareTopicId}"/>
+                <apex:inputText id="hdnShareContentFlag" style="display:none"  value="{!hdnShareContentFlag}"/>
+                <apex:inputText id="hdnShareTopicName" style="display:none"  value="{!ShareTopicName}"/>
+            </apex:form>
+        </div>
+        <!-- /panel -->
+        <!-- END SHARE PANEL --> 
+        <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedInUserDetails.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name">
+                    <apex:outputLabel value="{!LoggedInUserDetails.Name}"/>
+                </p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                    <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">
+                <li data-icon="false"><a data-ajax="false" href="/apex/mSLPLanding0" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div>
+        <!--panel-->
+        <div data-role="popup" id="popupDesc" data-overlay-theme="a" data-dismissible="false">
+            <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+            <h1> Description </h1>
+            <p>{!CommunityDescription}</p>
+        </div>
+        <div data-role="popup" id="popupError" data-overlay-theme="a" data-dismissible="false">
+            <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+            <p style="margin:20px;">There is no data available for your selection at this time</p>
+        </div>
+        <div data-role="popup" id="popupDownloadErr" data-overlay-theme="a" data-dismissible="false">
+            <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+            <p style="margin:20px;">Preview and Downloading of documents is only supported on Chrome for Android.</p>
+            <a href="https://play.google.com/store/apps/details?id=com.android.chrome" class="ui-btn" style="margin:15px;background:#F9A006;color:#ffffff;text-shadow:none;">Get Chrome</a>
+        </div>
+        <div data-role="popup" id="popupDownloadErrIOS" data-overlay-theme="a" data-dismissible="false">
+            <p style="margin:20px;">Downloading of documents is currently not supported on iOS devices.</p>
+            <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+        <div data-role="popup" id="popupDownloadBlock" data-overlay-theme="a" data-dismissible="false">
+            <p style="margin:20px;">Downloading of documents is currently not supported on mobile devices.</p>
+            <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+        <div data-role="popup" id="popupDownloadMissing" data-overlay-theme="a" data-dismissible="false">
+            <p style="margin:20px;">Unfortunately we are not able to display this preview</p>
+            <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+        <div data-role="popup" id="form" data-theme="a" data-overlay-theme="a" style="box-shadow:none !important;" data-corners="false">
+            <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+            <div id="popContent">
+                <ul id="popList" data-role="listview" data-inset="false" style="transparent !important;white-space:wrap !important;border:none !important;"></ul>
+            </div>
+            <fieldset class="ui-grid-a" align="center">
+                <div class="ui-block-a" style="width:70%"><input type="text" placeholder="Enter your reply..." name="fname" id="fname2" data-clear-btn="true" data-mini="false" data-corners="false"/></div>
+                <div class="ui-block-b" style="width:30%;" align="center"><a href="#" id="replyButton" data-role="button" style="background: #F9A006; color:#ffffff;margin-top:9px; text-shadow:none; border:none;" data-mini="true" onclick="postReply()">Post</a></div>
+            </fieldset>
+            <div style="visibility:hidden; height:0px">
+                <apex:form id="frmPostInput2" onsubmit="return isPopulated('txtPostInput2');">
+                    <fieldset class="ui-grid-a">
+                        <div class="ui-block-a" style="width:70%">
+                            <apex:inputText id="txtPostInput2" value="{!feedItemInputText}" html-placeholder="Enter your reply here..." style="min-height: 2.8em"/>
+                        </div>
+                        <div class="ui-block-b" style="width:30%">
+                            <apex:commandButton id="cmdBtnPost2" rerender="feedOutputPanel" action="{!postNewComment}" value="Post"/>
+                        </div>
+                    </fieldset>
+                    <div style="visibility:hidden; height:0px">
+                        <apex:inputTextarea id="txtUserTopicComment" value="{!feedCommentID}" title="Comment"/>
+                    </div>
+                </apex:form>
+            </div>
+        </div>
+        <!-- START RATE DOCUMENT PANEL -->
+        <div data-role="panel" id="ratePanel" data-position="right" data-display="overlay" style="background:#f3f3f3;">
+            <div data-role="content" >
+                <p>Rate this topic</p>
+                <h1 id="popupDocLName">Optimize Oil Production</h1>
+                <div class="hr" style="margin-bottom:20px;">
+                    <hr />
+                </div>
+                <span>
+                    <div style="display:table-cell;margin-top:20px;">Average rating:</div>
+                    <span id="popupRatingimages" style="display:table-cell;">******</span>
+                </span>
+                <span >
+                    <div style="display:table-cell;margin-top:20px;">Rated by&nbsp;</div>
+                    <span id="popupRatingUsers" style="display:table-cell;"> 14 users</span>
+                </span>
+                <div class="hr" style="margin:20px;">
+                    <hr />
+                </div>
+                <label for="ratingSlider">My rating:</label>
+                <input name="ratingSlider" id="ratingSlider" type="range" min="1" max="5" value="3" data-show-value="true" style="clear:left"/>
+                <div class="hr" style="margin:20px;">
+                    <hr />
+                </div>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a"><a href="#ratePanel" data-role="button" style="background:#767676;color:#ffffff;text-shadow:none;">Not now</a></div>
+                    <div class="ui-block-b"><a href="#" id="rateButton" data-role="button" style="background:#F9A006;color:#ffffff;text-shadow:none;" data-mini="false" onclick="rateDocument()">Rate it</a></div>
+                </div>
+                <!-- /grid-a -->
+                <!-- Document information
+                    <div style="float: left"><img id="popupDocOwnerPhoto" src="{!CommunityOwnerDetails.FullPhotoUrl}" class="communityOwnerImg"/></div>
+                    <div id="popupDocLName">Unknown name</div>
+                    <div id="popupDocLOwnerName" style="font-weight:bold;">Unknown owner</div>
+                    <div style="clear:both"></div>
+                    <div id="popupDocLDescription" style="white-space: normal;">No description</div> -->
+                <!-- Create SF form as hidden as a proxy to interact with SF when submitting rating -->
+                <div style="visibility:hidden; height:0px">
+                    <apex:form id="SFRatingForm">
+                        <apex:inputHidden id="txtCommunityTopicID" value="{!CommunityTopicID}" />
+                        <apex:inputHidden id="txtOwnerContributor" value="{!IsOwnerOrContributor}" />
+                        <apex:outputLabel value="Your Rating" for="txtTopicScore"/>
+                        <apex:selectList id="txtTopicScore" value="{!UserTopicRating}" size="1">
+                            <apex:selectOption itemValue="1" itemLabel="1"/>
+                            <apex:selectOption itemValue="2" itemLabel="2"/>
+                            <apex:selectOption itemValue="3" itemLabel="3"/>
+                            <apex:selectOption itemValue="4" itemLabel="4"/>
+                            <apex:selectOption itemValue="5" itemLabel="5"/>
+                        </apex:selectList>
+                        <apex:outputLabel value="Rating comment (optional)" for="txtUserTopicRatingComment"/>
+                        <apex:inputTextarea id="txtUserTopicRatingComment"  rows="3" value="{!userTopicRatingComment}" title="Rating Comment"/>
+                        <apex:commandButton id="btnUserRating" action="{!SaveTopicUserRating}" value="Rate It!" >
+                        </apex:commandButton>
+                    </apex:form>
+                </div>
+            </div>
+            <!-- /panel -->
+            <!-- END RATE DOCUMENT PANEL --> 
+        </div>
+        <!-- mobileCommunityCollateralsDetails -->
+        <!-- START PEOPLE PANEL -->
+        <div data-role="panel" id="peoplePanel" data-position="right" data-display="overlay" style="background:#f3f3f3;">
+            <div id="peoplePanelContent">
+                <a href="#peoplePanel" style="text-decoration:none;text-shadow:none;"><span id="icoCloseButton"  class="icon-caret-right" style="font-size:32pt;text-align:center;color:rgb(135, 136, 138);margin-left:10px;"></span></a>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- END PEOPLE PANEL --> 
+    </div>
+    <div style="visibility:invisible;width:0px;height:0px;">
+        <apex:form styleClass="EfollowForm" >
+            <apex:outputPanel rendered="{!!isloggedUser}">
+                <apex:commandButton id="CommandButton1" value="Follow" styleclass="btnAthena btn-primary shareBtn m14 followBtn"  action="{!followOwner}" rendered="{!!IsFollowOwner}"/>
+                <apex:commandButton id="CommandButton2" value="Unfollow" styleclass="btnAthena btn-primary shareBtn m14 followBtn"  action="{!unfollowOwner}" rendered="{!IsFollowOwner}"/>
+            </apex:outputPanel>
+        </apex:form>
+    </div>
+    <script>
+        $( "#form" ).bind({
+           popupafterclose: function(event, ui) { 
+               $(this).find('#lvPop').remove();
+           
+            }
+        });
+        
+         function hideEmptyTabs( divName ) {            
+            $( divName ).remove();
+            $('#tabNav').navbar();                       
+         }
+
+        function viewOwnerProfile() {
+            var mid = '{!CommunityOwnerDetails.id}';
+            $("#peoplePanelContent #memberFrame").remove();
+            var viewportHeight = $(window).height() - 50;
+            $("#peoplePanelContent").append( '<iframe src="/apex/mobileProfileNew?id=' + mid + '" height="' + viewportHeight + '" width="100%;" style="border:0px;" id="memberFrame"></iframe>' );
+            $( "#peoplePanel" ).panel( "open" , "");
+        }
+
+
+        
+        $("#chatterList").on("click", "li", function() {
+                    var index = $(this).index();
+                    var viewportHeight = $(window).width() - 50;
+                    if(viewportHeight > 400)
+                        viewportHeight = 400;
+                        
+                    $("#form").css("width", viewportHeight);
+                        
+                    $("#form").popup('open');
+                    $('#form').popup('reposition', 'positionTo: window');
+                    $("#popList").append('<li id ="lvPop" data-icon="false" class="actvitylist ui-li-static ui-body-inherit ui-li-has-thumb" style="background:transparent !important;">'+$(this).closest('li').html());
+                    //$("#form-popup").css("top",$(window).height());
+                    $("[id$=txtUserTopicComment]").text(chatterList[index].id);
+             });
+        
+            $(document).ready( function () {
+                
+                $('#membersList').delegate('li', 'click', function () {
+                var index = $(this).index();
+                $("#peoplePanelContent #memberFrame").remove();
+                var viewportHeight = $(window).height() - 50;
+                //if(viewportHeight > 400)
+               //     viewportHeight = 400;
+                $("#peoplePanelContent").append( '<iframe src="/apex/mobileProfileNew?id=' + membersList[index].id + '" height="' + viewportHeight + '" width="100%;" style="border:0px;" id="memberFrame"></iframe>' );
+                $( "#peoplePanel" ).panel( "open" , "");
+                });
+                
+                window.domainSP = 'prime31.sharepoint.hp.com';
+                window.domainWWS = 'ensv.hp.com';
+                window.domainSP2013 = 'ea2013.sharepoint.hp.com';
+                window.domainEXO = 'it-services-gw-itg.external.hp.com';
+                window.domainIntranet = 'intranet.hp.com';
+        
+                
+                //Get community id from query string and use it to load community data
+                var LearningBoardId = getParameterByName('id'); // Id of current community
+                var docId = getParameterByName('docId'); // Id of topic (document) to set display focus on
+                LoadCommunity(LearningBoardId, docId);
+                
+                $(".text-size").click(function(){
+                $("#boardDesc").toggleClass("less");
+                $("#boardDesc").toggleClass("lessnormalwrap");
+                
+                if($(".text-size").html() == 'more <span class="icon-caret-down"></span>')
+                {
+                $(".text-size").html('less <span class="icon-caret-up"></span>');
+                }
+                else
+                {
+                    $(".text-size").html('more <span class="icon-caret-down"></span>');
+                }
+                });
+                
+                var IsTabNeeded = false;
+                if ('{!IsOwnerOrContrOrMember}' == 'true') {
+                        IsTabNeeded = true;
+                    }
+                    else if ('{!IsOwnerOrContrOrMember}' == 'false') {
+                        IsTabNeeded = false;
+                    }
+        
+                    if (IsTabNeeded == false) {                       
+                        $('#tab1').hide();
+                        $('#one').hide();
+                        $('#tab2').hide();
+                        $('#tab3').hide();
+                        $('#tab4').hide();                      
+                        
+                        $('#outter').show();        
+                    }
+                    else if (IsTabNeeded == true) {
+                        $('#outter').hide();
+                        $('#contentHeader').show();
+                        $('#contentMembers').show();
+                        $('#contentMore').show();
+                        $('#contentChatter').show();
+                        $('#icoShareButton').hide();
+                    
+                  }
+        
+                if($('#contentMore ul li').length === 0){
+                    $('#contentMore').hide();
+                }
+                
+                $('#buttonSearch').on('ontap click', function(e){
+                setTimeout(function(){
+                    $('#search-basic').focus();
+                }, 200);
+            }); 
+            
+                buildMembersList();
+                
+            if ( $( '#membersList li' ).length <= 0 ) {
+                hideEmptyTabs('#tab3');
+            }
+            if ( $( '#featuredList li' ).length <= 0 ) {
+                hideEmptyTabs('#tab4');
+            }
+
+            
+            $( "#contacts" ).on( "filterablefilter", function( event, ui ) {
+                var lastVal = $(".ui-input-search input").attr('data-lastval');
+                //console.log("Last Val = " + lastVal);
+                
+                if (lastVal == '' ) {
+                    changePage(1);
+                    $("input[name*=radio-choice-h-6]:checked").each(function() {
+                        $(this).attr("checked",false).checkboxradio("refresh");
+                    });
+                    $('#1').attr("checked",true).checkboxradio("refresh");
+                    
+                    for (var i=0; i<ui.items.length; i++) {
+                        $( ui.items[i] ).removeClass('sResult');
+                    }
+                    
+                    var numOfTabs = Math.ceil( ui.items.length / 5 );
+                    createPagination(numOfTabs);
+                    
+                    $('#pages').css('display','');
+                    return;
+                }
+                checkRange(ui);
+                
+                function checkRange(items) {
+                    var dStr = '';
+                    var visible = 0;
+                    for (var i=0; i<items.items.length; i++) {
+                        if (!($(items.items[i]).hasClass('ui-screen-hidden'))) {
+                            if (visible < 1000) {
+                                $(items.items[i]).css('display','');
+                                visible++;
+                                $(items.items[i]).addClass('sResult');
+                                dStr += $(items.items[i]).text() + '\n';
+                            }
+                            else {
+                                $(items.items[i]).css('display','none');
+                                $(items.items[i]).removeClass('sResult');
+                                $('#pages').css('display','');
+                            }                        
+                        }
+                    }
+                    
+                                
+                    $("#contacts")
+                    .enhanceWithin()
+                    .controlgroup("refresh");
+                    
+                    createPagination(Math.ceil( visible / 5 ));
+                }            
+            } );
+            
+                if (chatterList.length <= 0) {
+                    //hideEmptyTabs('#tab2');
+                }
+            });
+            
+            function isEllipsisActive(e) {
+             return (e.offsetWidth < e.scrollWidth);
+            }
+                        
+             function LoadCommunity(LearningBoardId, docId) {
+                console.log("LoadCommunity("+LearningBoardId+"): Entry");
+                
+                $.mobile.loading( "show", {
+                    text: "",
+                    textVisible: false,
+                    textOnly: false
+                } ); // Displays load spinner while loading
+                
+                var APEXAction = '{!$RemoteAction.SLP_ViewCommunity.getCommunityWithCat}';
+               // Call existing APEX controller action to get data about community
+                Visualforce.remoting.Manager.invokeAction(
+                    APEXAction,
+                    LearningBoardId,
+                    function(result, event) { // callback function receiving result of call with list of category and collaterals
+                        $.mobile.loading( "hide"); // Hide load spinner after load is complete
+                        if (result.length <= 0) {
+                            //hideEmptyTabs('#tab1');
+                            $( '#noContentMsg' ).css('display','block');
+                            $( '.ui-filterable' ).css('display','none');
+                        }
+
+                        // Iterate through the list of all categories returned
+                        for (var catCount = 0; catCount < result.length; catCount++) {
+                            var currentCat = result[catCount];
+                            if (currentCat.lstlrngs.length > 0) {
+                                $("#collateralList").append('<li data-role="list-divider" class="listDivide">' + currentCat.CategoryName + '</li>');
+                            }
+                            
+                            if (currentCat) {
+                                // Prepare display of content of each category as a list of collapsible content
+                                var catContent = "";
+                                var focusOnCat = false; // Will set to true in category contains a document we need to focus on
+                                if (currentCat.lstlrngs && currentCat.lstlrngs.length > 0) {
+                                    for (var docCount = 0; docCount < currentCat.lstlrngs.length; docCount++) {
+                                        // For each collateral, add it to the list
+                                        var currentDoc = result[catCount].lstlrngs[docCount];
+                                        if (currentDoc) {
+                                            catContent += renderDoc(currentDoc);
+                                            // If this is a document we have to focus on, remember it
+                                            if (currentDoc.Lid === docId) {
+                                                focusOnCat = true;
+                                            }
+                                        }
+                                    }
+                                    // Display Category
+                                    $("#collateralList").append(catContent);
+                                    $( "#collateralList" ).listview( "refresh" );
+        
+                                }
+                            }
+                        }
+                        $("#collateralList").collapsibleset().trigger("create");
+                        
+                        if (docId) { // If we need to focus on a specific collateral
+                            // Scroll by the number of pixels required to display focused document (document position - beginning of scroll area)
+                            $.mobile.silentScroll($('#docID_'+docId).offset().top - $('#mobileCommunityCollateralsContent').offset().top);
+        //                            $('#docLink_'+docId).click(); // call click to display popup with details
+                        }
+                    }
+                );            
+            };
+            
+            ///////////////////////////////////////////////////////
+            // Render a listview line item on a specific collateral
+            //
+            function renderDoc(currentDoc) {
+                // href to linked document, if any
+                var docHRef = "";
+                // Direct URL to document, if any
+                var docURL = "";
+                
+                // List of icons to display (document classification...)
+                var iconSet = "";
+                var badges = "";
+                
+                var isDoc = false;
+                
+                // Replaces backslashes, single quotes and end of lines
+                var escapedLDescription = currentDoc.LDescription.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+                var escapedLOwnerName = currentDoc.LOwnerName.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+                var escapedLName = currentDoc.LName/*.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ')*/;
+        
+                // Prepare icons displaying the type of document (client facing, practice approved, publish)
+                if (currentDoc.ClientFacing) {
+                    badges += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_Approved.png')}", 'Client Facing');
+                }
+                if (currentDoc.PracticeApprv) {
+                    if (currentDoc.ClientFacing) {
+                        badges += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_PracticeApproved.png')}", 'Practice Approved');   
+                    } else {
+                        badges += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_PracticeApproved.png')}", 'Practice Approved Uno');
+                    }
+                }
+                
+                // Depending on the type of collateral, prepare its display
+                if (currentDoc.LType == 'Text') {
+                    // Nothing else to do
+                    isDoc = false;
+                } else if (currentDoc.LType == 'Link or Document' || currentDoc.LType === 'Upload Document') {
+                    docURL = currentDoc.LURL;
+                    if (currentDoc.DocType == 'PDF') {
+                        isDoc = true;
+                        iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Acrobat.png')}", 'PDF');
+                    } else if (currentDoc.DocType == 'PPT') {
+                        isDoc = true;
+                        iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Powerpoint.png')}", 'PowerPoint');
+                    } else if (currentDoc.DocType == 'DOC') {
+                        isDoc = true;
+                        iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Word.png')}", 'Word');
+                    } else if (currentDoc.DocType == 'XLS') {
+                        isDoc = true;
+                        iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Excel.png')}", 'Excel');
+                    } else if (currentDoc.DocType == 'TXT') {
+                        isDoc = true;
+                        iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_TXT.png')}", 'Text');
+                    } else if (currentDoc.DocType == 'OTHER') {
+                        isDoc = false;
+                        iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Web.png')}", 'Link');
+                    };
+                } else if (currentDoc.LType == 'Video') {
+                    isDoc = false;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_Video.png')}",'Video');
+                    docURL = currentDoc.LURL;
+                    if (currentDoc.LURL.indexOf('http') != 0) {
+                        docURL = 'http://'+docURL; // Video links don't seem to have a protocol (http://) defined, so add it if needed
+                    }
+                };
+                
+                //if(isDoc){
+                  //  iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/download.png')}", 'Doc');
+                    if(docURL!=undefined)
+                        var escapedDocURL = docURL.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+                    if(escapedLName!=undefined)
+                        var escapedDocTitle = escapedLName.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+                //}
+                
+                //console.log("In list - ave = " + currentDoc.AvgRating + " count = " + currentDoc.RatersCount);
+                var avgRatingImg = renderRating(currentDoc.AvgRating);
+                
+                
+                var content = '<li style=\"background-color: #767676;height:80px; border:none; border-bottom:1px solid #a7a8a9;\">' + badges + '<div id=\"mContainer\" style="width:80%"><div id="selection_check" onclick="NavigateUrl(\''+escapedDocURL +'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\', \''+ $( '#commName' ).text() +'\', 0); sendMyRequestDownload(\''+escapedDocURL +'\',\''+currentDoc.DocType+'\',\''+escapedDocTitle +'\');\"><h3 style=\"color:white;margin:0px; font-size:13pt;\">'+escapedLName+'</h3><p style=\"white-space: normal !important; font-size:11pt; margin-top:0px; color:#a5a5a5;\">by '+escapedLOwnerName+'</p></div><div onclick="NavigateUrl(\''+escapedDocURL +'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\', \''+ $( '#commName' ).text() +'\', 1); sendMyRequestDownload(\''+escapedDocURL +'\',\''+currentDoc.DocType+'\');\" id=\"imgDescContatiner\"  style=\"float:left;\">'+iconSet +'</div><span onclick="shareContent(\''+currentDoc.Lid+'\', \''+escapedLName+'\')" class="icon-share" style="color:#ffffff;font-size:24pt;text-shadow:none;margin-left:3px;"></span><div id=\"imgDescContatiner\" style=\"float:right;margin-right:px;line-height: 40px;\"><a href="#" style="text-decoration:none;" id="docLink_'+currentDoc.Lid+'" onclick="displayDocDetails(\''+currentDoc.Lid+'\',\''+currentDoc.LType+'\',\''+currentDoc.DocType+'\',\''+escapedDocTitle+'\',\''+escapedLOwnerName+'\',\''+currentDoc.OwnerPhoto+'\',\''+escapedDocURL+'\',\''+currentDoc.AvgRating+'\',\''+currentDoc.RatersCount+'\')";>'+avgRatingImg+'</a></div></div></li>';
+                           
+               
+                // Create list entry. If there is no URL to a collateral, don't display data icon on the right
+               // var content = "";
+                /*content += '<li style="background-color: #404040;">'; 
+                content += '<div id="mContainer"><div id="imgHeaderContainer">' + 
+                 '<img id="docImg" align="left" style="width:100px;height:80px;margin-right:7px;" src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/9.png')}\'\;\"></img>' + 
+                 '</div>'
+                //content += '</div>';
+                content +='<h3 style="color:white;">'+escapedLName+'</h3>'+
+                            '<p style="white-space: normal !important;height:50px;color:white;">'+currentDoc.LShortDescription+'</p>' +
+                            '<div class="hr"><hr /></div>' +  
+                            '<div id="imgDescContatiner"  style="float:left;">'+
+                                    iconSet + 
+                                '</div>' +  
+                            '<div id="imgRateContainer" style="float:right;">';         
+               
+                // Display current rating as stars ("on" or "off" to display the current rating)
+                
+                content += avgRatingImg;
+                
+                content +='</div>';
+                content += '</li>';*/
+                
+                return content;
+            };
+            
+            function shareBoard(){
+                alert("Share board");
+            }
+            
+            function shareContent(contentId, contentName){
+                console.log('Title: ' + contentName+ ', docId: ' + contentId);
+                shareLearningBoard(contentName, contentId);
+                $( "#sharePanel" ).panel( "open" , "");
+            }
+            
+            function closePanel() {
+                $( "#sharePanel" ).panel( "close" , "");
+            }
+            
+            // 
+            function renderIcon(iconURL, description) {
+                if (description == 'PDF') {
+                        return '<span class="icon-dload-pdf" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                    } else if (description == 'PowerPoint') {
+                         return '<span class="icon-dload-powerpoint" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                    } else if (description == 'Word') {
+                         return '<span class="icon-dload-word" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                    } else if (description == 'Excel') {
+                         return '<span class="icon-dload-excel" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                    } else if (description == 'Link') {
+                         return '<span class="icon-link" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                    } else if (description == 'Text') {
+                         return '<span class="icon-dload-text" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                    }else if (description == 'Video') {
+                          return '<span class="icon-video-camera" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                    }else if (description == 'Client Facing') {
+                          return "<div class='iconDisplayBG2' style='float: right;background-color: #0096D6;min-height: 100%;margin-top: -10px; margin-right:-10px; padding-top:5px;'> <span class='icon-clientfacing_new iconPublish' style='text-shadow:none; color:white; font-size:20pt' title='Practice Approved' ></span> </div>"
+                    }
+                    else if (description == 'Practice Approved') {
+                          return "<div class='iconDisplayBG' style='float: right;background-color: #0096D6;min-height: 100%;margin-top: -10px; margin-right:5px; padding-top:5px;'> <span class='icon-certified iconPublish ml_1' style='text-shadow:none; color:white; font-size:20pt' title='Practice Approved' ></span> </div>"
+                    }
+                    else if (description == 'Practice Approved Uno') {
+                          return "<div class='iconDisplayBG2' style='float: right;background-color: #0096D6;min-height: 100%;margin-top: -10px; margin-right:-10px; padding-top:5px;'> <span class='icon-certified iconPublish ml_1' style='text-shadow:none; color:white; font-size:20pt' title='Practice Approved' ></span> </div>"
+                    };
+
+        
+                    
+                return '<span class="detailDoc"><img src="' + iconURL + '" '+(description?'title="'+description+'" ':' ')+'class="pull-right mrl"/></span>'
+            };
+            
+            // Returns HTML content with star images rendering a given rating
+            function renderRating(avgRating) {
+                // Used to display rating stars
+                var myStarOff = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-UnRated.png')}";
+                var myStarOn = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Rated.png')}";
+                var myStarHalf = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Half.png')}";
+        
+               var ratingStarImgs = "";
+                for (var i=1; i<=5; i++) {
+                    if (i <= avgRating) {  
+                        ratingStarImgs += '<span class="icon-star" style="color:#ffd31a !important; font-size:15pt;"></span>'; 
+                    } else if ((i - avgRating) <= 0.5){
+                        ratingStarImgs += '<span class="icon-star-half-empty" style="color:#ffd31a !important; font-size:15pt;"></span>'; 
+                    } else {
+                        ratingStarImgs += '<span class="icon-star" style="color:#cecece !important; font-size:15pt;"></span>'; 
+                    }
+                }
+                
+                return ratingStarImgs;
+            }
+            
+            // Display details about a document as a popup
+            function displayDocDetails(id, docLType, docDocType, docLName, docLOwnerName, docOwnerPhoto, docURL, avgRating, ratersCount) {
+                console.log("Rating = " + avgRating + " count = " + ratersCount);
+                var txtCommunityTopicID = $('[id$=txtCommunityTopicID]');
+                txtCommunityTopicID.val(id);
+               
+                $('#popupDocLName').text(docLName);
+                var ratingStarImgs = renderRating(avgRating);
+                $('#popupRatingimages').html(ratingStarImgs);
+                 var ratersCountTxt = "";
+                if (ratersCount > 0) {
+                    ratersCountTxt = ratersCount + ' user'+((ratersCount > 1)?'s':'');
+                }
+                else{
+                    ratersCountTxt = "0 users";
+                }
+                $('#popupRatingUsers').text(ratersCountTxt);
+                $( "#ratePanel" ).panel( "open" , "");
+                //$('#rateMyCollateralPop').popup('open');
+                //$('#rateMyCollateralPop').popup('reposition', 'positionTo: window');
+                /*
+                
+                if (docURL) {
+                    $("#popupDownloadButton").attr("href", docURL).css("visibility", "visible");
+                 } else {
+                    $("#popupDownloadButton").attr("href", "#").css("visibility", "hidden");
+                }
+                
+                $.mobile.pageContainer.pagecontainer('change', '#mobileCommunityCollateralsDetails');*/
+        
+                return false;
+            };
+            
+            // Function called when rating a document: copy jQM form values into SF form anf submit SF form
+            function rateDocument() {
+            
+            $("#rateButton").addClass('ui-disabled');
+            
+                // Get values from jQM form
+                var rating = $("#ratingSlider").val();
+                var ratingComments = $("#ratingComments").val();
+                
+                // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+                $("[id$=txtUserTopicRatingComment]").text(ratingComments);
+                $("[id$=txtTopicScore]").val(rating) /*.selectmenu('refresh') */;
+                
+                // Simulate click on SF submit button
+                $("[id$=btnUserRating]").click();
+                return false;
+            }
+            
+            function performFollowAction(){
+                // Simulate click on SF submit button
+                $("[id$=CommandButton1]").click();
+                return false;
+            }
+            
+            function performUnfollowAction(){
+                // Simulate click on SF submit button
+                $("[id$=CommandButton2]").click();
+                return false;
+            }
+            
+            // Read parameter from query string
+            function getParameterByName(name) {
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search);
+                return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+            
+           $('#contentHeader').on('collapsibleexpand', '', function () {
+                if (($('#boardDesc')[0].scrollWidth+32) <= $(window).width()) {
+                   $(".text-size").hide();
+                }
+                if($('#contentHeader ul li').length === 0){
+                    $('#popupError').popup('open');
+                    $('#popupError').popup('reposition', 'positionTo: window');
+                    $('#contentHeader').collapsible( "collapse" );
+                }else{
+                    $('#contentHeader h3').find('a').css('background','rgba(249, 160, 6, 0.701961)');
+                    $('#contentMembers').collapsible( "collapse" );
+                    $('#contentMore').collapsible( "collapse" );
+                    $('#contentChatter').collapsible( "collapse" );
+                }
+            }).on('collapsiblecollapse', '', function () { $('#contentHeader h3').find('a').css('background','#87888a');});
+            
+            $('#contentMembers').on('collapsibleexpand', '', function () {
+             //$('#membersList').listview('refresh');
+                if($('#contentMembers ul li').length === 0){
+                    $('#popupError').popup('open');
+                    $('#popupError').popup('reposition', 'positionTo: window');
+                    $('#contentMembers').collapsible( "collapse" );
+                }else{
+                    $('#contentMembers h3').find('a').css('background','rgba(249, 160, 6, 0.701961)');
+                    $('#contentHeader').collapsible( "collapse" );
+                    $('#contentMore').collapsible( "collapse" );
+                    $('#contentChatter').collapsible( "collapse" );
+                }
+            }).on('collapsiblecollapse', '', function () { $('#contentMembers h3').find('a').css('background','#87888a');});
+            
+            $('#contentMore').on('collapsibleexpand', '', function () {
+                if($('#contentMore ul li').length === 0){
+                    $('#popupError').popup('open');
+                    $('#popupError').popup('reposition', 'positionTo: window');
+                    $('#contentMore').collapsible( "collapse" );
+                }else{
+                    $('#contentMore h3').find('a').css('background','rgba(249, 160, 6, 0.701961)');
+                    $('#contentHeader').collapsible( "collapse" );
+                    $('#contentMembers').collapsible( "collapse" );
+                    $('#contentChatter').collapsible( "collapse" );
+                }
+            }).on('collapsiblecollapse', '', function () { $('#contentMore h3').find('a').css('background','#87888a');});
+            
+            $('#contentChatter').on('collapsibleexpand', '', function () {
+                /*if($('#contentChatter ul li').length === 0){
+                    $('#popupError').popup('open');
+                    $('#popupError').popup('reposition', 'positionTo: window');
+                    $('#contentChatter').collapsible( "collapse" );
+                }else{*/
+                    $('#contentChatter h3').find('a').css('background','rgba(249, 160, 6, 0.701961)');
+                    $('#contentHeader').collapsible( "collapse" );
+                    $('#contentMembers').collapsible( "collapse" );
+                    $('#contentMore').collapsible( "collapse" );
+                //}
+            }).on('collapsiblecollapse', '', function () { $('#contentChatter h3').find('a').css('background','#87888a');});
+            
+             
+            function showBoardDesc(){     
+                $('#popupDesc').popup('open');
+                $('#popupDesc').popup('reposition', 'positionTo: window');
+            }
+            
+            $('#search-basic').live("keypress", function(e) {
+                
+                    /* ENTER PRESSED*/
+                    if (e.keyCode == 13) {
+                        e.preventDefault();
+                        var searchTerm= $('#search-basic').val();
+                        if (searchTerm.length <=2) {
+                            alert('A minimum of 3 characters should be entered');
+                            return;
+                        }
+                        
+                        if (searchTerm.length >=3998) {
+                            alert('A maximum of 3997 characters should be entered');
+                            return;
+                        }
+        
+                        window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+encodeURIComponent(searchTerm);
+                        $.mobile.loading( "show", {
+                              text: "Loading...",
+                              textVisible: true,
+                              textOnly: false
+                        } ); // Displays load spinner while loading
+                    }
+                });
+                
+                
+                function buildMembersList(){
+           
+               var listCommContMem = '{!ContributorMember}';
+               var parseCommContM = $.parseJSON(listCommContMem);
+               
+               for (var iCount = 0; iCount < parseCommContM.length; iCount++) {
+                var DisplayContributorMem = ("<li  data-icon=\"false\" style=\"background-color:#767676; min-height:70px;\">");
+        
+                //DisplayContributorMem += ("<a href=\"#popupBasic\" data-rel=\"popup\" data-transition=\"pop\" data-position-to=\"window\">");
+                
+                DisplayContributorMem += ("<img src=" + parseCommContM[iCount].Userphoto + " class=\"circular-image-container\" style=\"margin:7px;\"/>");
+                
+                DisplayContributorMem += ("<p class=\"blue-font\"><b>" + parseCommContM[iCount].UserName + "</b></p>");
+                
+                DisplayContributorMem += (" <span class=\"ui-li-aside\" style=\"top:0.2em !important; right:0.4em !important;\">");
+                
+                 if (parseCommContM[iCount].IsExperts) {
+                    DisplayContributorMem += (" <div class=\"iconDisplayBG3\" style='float: right;background-color: #0096D6;min-height: 100%; margin-top: -10px; margin-right:-5px; padding-top:6px;'><span class='icon-expert_new iconPublish verticalText' style='text-shadow:none; color:white; font-size:6pt; background-color: #0096D6;'  title='Expert'><span> E </span><span> X </span><span> P </span><span> E </span><span> R </span><span> T </span></span> </div> ");
+                }
+                if (parseCommContM[iCount].IsContributor) {
+                   // DisplayContributorMem += (" <div class=\"ui-li-icon-right iconDisplayBG4\" style='float: right;background-color: #0096D6;min-height: 100%;margin-top: -10px; margin-right:-10px; padding-top:5px;'> <span class='icon-clientfacing_new iconPublish' style='text-shadow:none; color:white; font-size:10pt' title='Practice Approved' ></span> </div> ");
+                }
+                
+                DisplayContributorMem += (" </span>");
+                
+                if (parseCommContM[iCount].RoleName != '' && parseCommContM[iCount].RoleName != null) {
+                    DisplayContributorMem += ("<p style=\"background:transparent !important;text-shadow: none; position: relative;top: -15px; color: #fff;\">"+parseCommContM[iCount].RoleName+"</p>");
+                }
+                
+                if (parseCommContM[iCount].Region != '' && parseCommContM[iCount].Region != null) {
+                    DisplayContributorMem += ("<span style=\"font-size:12px;color:#fff;text-shadow: none; position: relative;top: -27px;\">" + parseCommContM[iCount].Region + "</span> ");
+                }
+                else {
+                    DisplayContributorMem += ("<span> &nbsp; </span> ");
+                }
+                if ((parseCommContM[iCount].Region != '' && parseCommContM[iCount].Region != null) && (parseCommContM[iCount].BusinessGroup != "" && parseCommContM[iCount].BusinessGroup != null)) {
+                    DisplayContributorMem += ("<span style=\"font-size:14px;color:#fff;text-shadow: none; position: relative;top: -27px;\"><b>" +" | "+ "</b></span> ");
+                }
+                if (parseCommContM[iCount].BusinessGroup != "" && parseCommContM[iCount].BusinessGroup != null) {
+                    DisplayContributorMem += ("<span style=\"font-size:12px;color:#fff;text-shadow: none; position: relative;top: -27px;\">" + parseCommContM[iCount].BusinessGroup + "</span> ");
+                }
+                else {
+                    DisplayContributorMem += ("<span> &nbsp; </span> ");
+                }
+                
+                membersList.push({'id':parseCommContM[iCount].UserId});
+                
+                //DisplayContributorMem += ("</a>");
+        
+                DisplayContributorMem += ("</li>");
+                $('#membersList').append(DisplayContributorMem);
+                $('#membersList').listview('refresh');
+                
+        
+            }
+           
+           } 
+                
+             function highlightRow(elem){
+                $(elem).css({background: '#FF8800'});
+                setTimeout(function(){
+                     $(elem).css({background: 'transparent'});
+                }, 800);
+            }  
+            
+            $('#listviewmenu').on('click tap mousedown', 'li', function() {
+                highlightRow($(this));
+            }); 
+            
+            $('#menuImage').on('click tap mousedown touchstart', '', function() {
+                $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+                setTimeout(function(){
+                     $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+                }, 300);
+            });
+            
+            $('#menuImageList').on('click tap mousedown touchstart', '', function() {
+                $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+                setTimeout(function(){
+                     $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+                }, 300);
+            });   
+            
+            $('#searchImage').on('click tap mousedown touchstart', '', function() {
+                $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+                setTimeout(function(){
+                     $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+                }, 300);
+            });                                
+        
+        function isThisChrome(){
+        var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+        return is_chrome;
+        }
+          
+        function isThisAndroid(){
+        var ua = navigator.userAgent.toLowerCase();
+        var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+        if(isAndroid) {
+        return true;
+        }
+        else{
+        return false;
+        }
+        }       
+            
+        function nth_occurrence (string, char, nth) {
+        var first_index = string.indexOf(char);
+        var length_up_to_first_index = first_index + 1;
+        
+        if (nth == 1) {
+            return first_index;
+        } else {
+            var string_after_first_occurrence = string.slice(length_up_to_first_index);
+            var next_occurrence = nth_occurrence(string_after_first_occurrence, char, nth - 1);
+        
+            if (next_occurrence === -1) {
+                return -1;
+            } else {
+                return length_up_to_first_index + next_occurrence;  
+            }
+        }
+        }    
+            
+        function sendMyRequest(url, doctype, docTitle) {
+        
+        var sDocType = doctype;
+        
+        if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+            if(url.indexOf('http') != 0)
+            {
+                window.location = "http://" + url;
+            }
+            else{
+                window.location = url;
+            }
+            return;
+        }
+        
+        var sDomain = getDomainName(url);
+        console.log(">>>> "+ sDomain);
+        var endpoint = '';
+        
+        var start = url.lastIndexOf("/");
+        var finish =  nth_occurrence (url, ":", 2);
+        
+        var parentDoc = url.substring(start+1, finish);
+        
+        if (sDomain == window.domainWWS) {
+        
+            if(nth_occurrence (url, ":", 2) > -1){
+                endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+            }
+            else{
+                endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+            }
+        }
+        else if (sDomain == window.domainSP) {
+            //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+            //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+            renderMyDoc(url, docTitle);
+            return;
+        }
+        else if(sDomain == window.domainSP2013){
+        
+            if(nth_occurrence (url, ":", 2) > -1){
+                endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+            }
+            else{
+                endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+            }
+        }
+        else if(sDomain == window.domainEXO){
+            endpoint = url;
+            renderMyDoc(endpoint , docTitle);
+            return;
+        }
+        else if(sDomain == window.domainIntranet){
+        
+            if(nth_occurrence (url, ":", 2) > -1){
+                endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+            }
+            else{
+                endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+            }
+        }
+
+        else {
+            // handle unknown case
+            $('#popupDownloadMissing').popup('open');
+            $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+            return;
+        }
+        
+        $.ajax({
+            url: endpoint,
+            dataType:'xml',
+            type: 'GET',
+            crossDomain: true,
+            xhrFields: {
+               withCredentials: true
+            },
+            success: function(xml) {
+                $(xml).find('autnresponse').each(function(){
+                    $(this).find("responsedata").each(function(){
+                        if ($(this).find("numhits").text() == '0'||$(this).find("numhits").text() == '') {
+                         $('#popupDownloadMissing').popup('open');
+                         $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                         return;
+                         }
+                        var links = [];
+                        $(this).find("hit").each(function(){
+                            $(this).find("content").each(function(){
+                                var link = $(this).text();
+                                links.push(link);
+                                renderMyDoc(links, sTitle);
+                            });
+                        });
+                    });
+                });
+            },
+            error: function (xhr, status) {
+            //console.log(thrownError.responseText);
+                //var er = jQuery.parseJSON(thrownError);
+                if(isThisAndroid()&&xhr.status==0){
+                    $('#popupDownloadErr').popup('open');
+                    $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+                }
+                else{
+                    alert('Error: Your security session has expired. Please sign out and sign in again');
+                }  
+            }
+        
+        });
+        }
+        
+        function sendMyRequestDownload(url, doctype, docTitle) {
+        
+         var sDocType = doctype;
+        
+        if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+             if(url.indexOf('http') != 0)
+            {
+                window.location = "http://" + url;
+            }
+            else{
+                window.location = url;
+            }
+            return;
+        }
+        
+        
+        var start = url.lastIndexOf("/");
+        var finish =  nth_occurrence (url, ":", 2);
+        
+        var parentDoc = url.substring(start+1, finish);
+        
+        var sDomain = getDomainName(url);
+        
+        var endpoint = '';
+        if (sDomain == window.domainWWS) {
+            if(nth_occurrence (url, ":", 2) > -1){
+                endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+            }
+            else{
+                endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+            }
+        }
+        else if (sDomain == window.domainSP) {
+            //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+            //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+            //renderMyDoc(url, docTitle);
+            window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + url;
+            return;
+        }
+        else if(sDomain == window.domainSP2013){
+            //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+            window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + url;
+            return;
+        }
+        else if(sDomain == window.domainEXO){
+            window.location = url;
+            return;
+        }
+        else if(sDomain == window.domainIntranet){
+            //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+            window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + url;
+            return;
+        }
+
+        else {
+            // handle unknown case
+            $('#popupDownloadMissing').popup('open');
+            $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+            return;
+        }
+        
+        $.ajax({
+            url: endpoint,
+            dataType:'xml',
+            type: 'GET',
+            crossDomain: true,
+            xhrFields: {
+               withCredentials: true
+            },
+            success: function(xml) {
+                $(xml).find('autnresponse').each(function(){
+                    $(this).find("responsedata").each(function(){
+                        if ($(this).find("numhits").text() == '0'||$(this).find("numhits").text() == '') {
+                          $('#popupDownloadMissing').popup('open');
+                          $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                         return;
+                         }
+                         
+                         var links = [];
+                        $(this).find("hit").each(function(){
+                            $(this).find("content").each(function(){
+                                var link = $(this).text();
+                                links.push(link);
+                            });
+                        });
+                        
+                       for (i = 0; i < links .length; i++) { 
+                           var downloadDoc= links[i];  
+                           doSetTimeout(i, downloadDoc)
+                       }
+           
+                   //}
+                       
+                    });
+                });
+            },
+            error: function (xhr, status) {
+                //var er = jQuery.parseJSON(thrownError);
+                if(isThisAndroid()&&xhr.status==0){
+                    $('#popupDownloadErr').popup('open');
+                    $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+                }
+                else{
+                    alert('Error: Your security session has expired. Please sign out and sign in again');
+                }  
+            }
+        });
+        
+        }
+        function doSetTimeout(i, documentTitle) {
+             setTimeout(function() {  
+                 window.location= "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + documentTitle; 
+             }, i*1000);
+        }
+        
+        function getDomainName(url) {
+        var r = /:\/\/(.[^/]+)/;
+        return url.match(r)[1];
+        }
+        
+        function renderMyDoc(url, docTitle) {
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&IgnoreCache=true&reference=' + url
+        window.location.href="/apex/mobileDocViewer?docURL=" + url + "&&docTitle=" + docTitle;
+        }
+        
+        
+            function isPopulated(elementId)
+            {
+                console.log("isPopulated function");
+                var populated = false;    
+                
+                // check if the value of the html element has a truthy value or not.     
+                if ($("[id$=" + elementId + "]").val())
+                {
+                    populated = true;
+                }
+                console.log("The text input populated - " +populated ); 
+                return populated;
+            }
+            
+            function postComment() {
+                
+                if($("#fnameComment2").val()){
+                    if($("#fnameComment2").val().length > 5000){
+                        alert("There is a limit of 5000 characters, you have entered " + $("#fnameComment2").val().length + " characters.");
+                        return;
+                        
+                    }
+                    else{
+                        $("#commentButton").addClass('ui-disabled');
+                    }
+                }
+                else{
+                    alert("Please enter some text");
+                }
+                
+                
+                // Get values from jQM form
+                var comment= $("#fnameComment2").val();
+                // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+                $("[id$=txtPostInputComment2]").val(comment);
+                // Simulate click on SF submit button
+                $("[id$=cmdBtnPostComment2]").click();
+                //return false;
+            }
+            
+            function postReply() {
+                
+                if($("#fname2").val()){
+                    if($("#fname2").val().length > 5000){
+                        alert("There is a limit of 5000 characters, you have entered " + $("#fname2").val().length + " characters.");
+                        return;
+                        
+                    }
+                    else{
+                        $("#replyButton").addClass('ui-disabled');
+                    }
+                }
+                else{
+                    alert("Please enter some text");
+                }
+                
+                // Get values from jQM form
+                var comment= $("#fname2").val();
+                // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+                $("[id$=txtPostInput2]").val(comment);
+                // Simulate click on SF submit button
+                $("[id$=cmdBtnPost2]").click();
+                //return false;
+            }        
+            
+            function NavigateUrl(link, fileType, contentName, communityName, isDownload) {
+                 if ( isDownload ) {
+                     fileType = 'Document icon download - ' + fileType;
+                 }
+                 else {
+                     fileType = 'Document preview - ' + fileType;
+                 }
+                 Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SLP_ViewCommunity.MetricForViewCommunity}',                      
+                          link,
+                          fileType,
+                          GetOSName(),
+                          GetBrowserName(),
+                          'ContentId',
+                          communityName,
+                          contentName,
+                          'Mobile',
+                          DoNothing
+                      ); 
+          }
+          
+          function DoNothing() {
+              console.log('nothing');
+          }
+          
+          function GetOSName()
+          {
+        
+              var ua = navigator.userAgent;
+              var uaindex;
+            
+              // determine OS
+              if ( ua.match(/iPad/i) || ua.match(/iPhone/i) )
+              {
+                mobileOS = 'iOS';
+                uaindex  = ua.indexOf( 'OS ' );
+              }
+              else if ( ua.match(/Android/i) )
+              {
+                mobileOS = 'Android';
+                uaindex  = ua.indexOf( 'Android ' );
+              }
+              else
+              {
+                mobileOS = ua; //'unknown-mobileOS';
+              }
+              return mobileOS;
+          }
+          
+          function GetBrowserName()
+          {
+                     
+          var nVer = navigator.appVersion;
+          var nAgt = navigator.userAgent;
+          var browserName  = navigator.appName;
+          var fullVersion  = ''+parseFloat(navigator.appVersion); 
+          var majorVersion = parseInt(navigator.appVersion,10);
+          var nameOffset,verOffset,ix;
+                                        if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+             browserName = "Opera";
+             fullVersion = nAgt.substring(verOffset+6);
+             if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                          fullVersion = nAgt.substring(verOffset+8);
+          }
+          // In MSIE, the true version is after "MSIE" in userAgent
+          else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+             browserName = "Microsoft Internet Explorer";
+             fullVersion = nAgt.substring(verOffset+5);
+          }
+          // In Chrome, the true version is after "Chrome" 
+          else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+             browserName = "Chrome";
+             fullVersion = nAgt.substring(verOffset+7);
+          }
+          // In Safari, the true version is after "Safari" or after "Version" 
+          else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+             browserName = "Safari";
+             fullVersion = nAgt.substring(verOffset+7);
+             if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                          fullVersion = nAgt.substring(verOffset+8);
+          }
+          // In Firefox, the true version is after "Firefox" 
+          else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+                         browserName = "Firefox";
+                         fullVersion = nAgt.substring(verOffset+8);
+          }
+          // In most other browsers, "name/version" is at the end of userAgent 
+          else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+                         browserName = nAgt.substring(nameOffset,verOffset);
+                         fullVersion = nAgt.substring(verOffset+1);
+                         if (browserName.toLowerCase()==browserName.toUpperCase()) {
+                            browserName = navigator.appName;
+                         }
+          }
+          var fVer = fullVersion.substring(0, fullVersion.indexOf(' '));
+          return browserName + ' ' + fVer;
+          
+         }
+         
+           function communityLogMetrics(data){
+              var communityId=$(data).attr('data-CMID');
+              var communityName= $(data).attr('data-CMName');
+              var ObjNm=$(data).attr('data-ObjNm');
+              var GenerateUrl=$(data).attr('data-host')+$(data).attr('data-url');
+              var redirectUrl=$(data).attr('data-url');
+              var section=$(data).attr('data-section');
+              var actionTyp=$(data).attr('data-actionTyp');
+        
+              Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.SLP_ViewCommunity.communityLogMetrics}',
+                  communityId,
+                  communityName, 
+                  GetOSName(),
+                  GetBrowserName(), 
+                  'Mobile',
+                  section,
+                  GenerateUrl,
+                  ObjNm,
+                  actionTyp,
+                  redirectUrl,
+                  DoNothingWithResult
+              );
+          }
+          function DoNothingWithResult(result,event)
+          {
+              return;    
+          }
+        
+            
+    </script> 
+    <style>
+        .ui-li-icon-right {
+        max-height: 40px;
+        max-width: 40px;
+        right: 10px;
+        top: .2em;
+        }
+        .lessnormalwrap{
+        white-space:normal !important;
+        word-break: break-word;
+        }
+        .less{
+        word-wrap: break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        }
+        .more{
+        white-space: normal;
+        }
+        .text-size{
+        display: block;
+        text-align: right;
+        padding-top: 10px;
+        color: #a7a8a9!important;
+        cursor: pointer;
+        font-size:12pt;
+        font-family:"HP Simplified",sans-serif;
+        text-shadow:none;
+        }
+        #outter {
+        padding-top:10px;
+        height:50vh;
+        min-width:160px;
+        }
+        #emptyResultMsg {
+        position: relative;
+        }
+        #contentHeader h3 a {
+        border-color: white;
+        background: transparent;
+        color: white;
+        text-shadow:none;
+        font-family:"HP Simplified",sans-serif;
+        }
+        #contentMembers h3 a {
+        border-color: white;
+        background: transparent;
+        color: white;
+        text-shadow:none;
+        font-family:"HP Simplified",sans-serif;
+        }
+        #contentMore h3 a {
+        border-color: white;
+        background: transparent;
+        color: white;
+        text-shadow:none;
+        font-family:"HP Simplified",sans-serif;
+        }
+        #contentChatter h3 a {
+        border-color: white;
+        background: transparent;
+        color: white;
+        text-shadow:none;
+        font-family:"HP Simplified",sans-serif;
+        }
+        .listviewTopic li h3 {
+        text-shadow: none;
+        }
+        .listviewTopic li p {
+        text-shadow: none;
+        }
+        .hr {
+        background: #a7a8a9  no-repeat scroll center;
+        height:2px;
+        margin:5px;
+        }
+        .hr hr {
+        display: none;
+        }
+        #myLabel {
+        color: white;
+        background: rgba(0, 0, 0, 0.7);
+        text-shadow: none;
+        position: absolute;
+        height: 44px;
+        width: 100%;
+        line-height: 44px;
+        display: block;
+        top: 54px;
+        /*margin-left:auto;
+        margin-right:auto;
+        padding-left:15px;*/
+        }
+        #myLabel p {
+        margin-top:0px;
+        margin-left:15px;
+        }
+        #myLabel2 {
+        color: white;
+        background: rgba(0, 0, 0, 0.7);
+        text-shadow: none;
+        position: relative;
+        height: 60px;
+        width: 100%;
+        top: -60px;
+        //float:left;
+        display: block;
+        }
+        .column1{
+        float:left;
+        line-height:55px;
+        height:55px;
+        margin-top:5px;
+        }
+        .column2{
+        float:left;
+        margin-top:5px;
+        margin-left:5px;
+        max-width:130px !important;
+        }
+        .column3{
+        float:right;
+        line-height:55px;
+        margin-right:15px;
+        margin-top:5px;
+        }
+        .communityOwnerImg {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        -webkit-border-radius: 20px;
+        -moz-border-radius: 20px;
+        border: 2px solid white;
+        }
+        .ui-content{
+        overflow-x: visible;
+        }
+        @font-face {
+        font-family:'HP Simplified';
+        src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+        src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+        url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+        url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+        font-weight:normal;
+        font-style:normal;
+        }
+        body{
+        font-family:"HP Simplified",sans-serif;
+        color:#fff;
+        }
+        #startpage{
+        background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+        background-size:100% auto;
+        }
+        #pnl .ui-content{
+        padding-top: 30px;
+        }
+        .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+        /*background: -webkit-linear-gradient(#404040, #58595b);
+        background: linear-gradient(#404040, #58595b);*/
+        }
+        .hpFont{
+        font-family:"HP Simplified",sans-serif;
+        }
+        #custom-collapsible{
+        background-color:transparent !important;
+        }
+        .my-page .ui-listview li .ui-btn,
+        .my-page .ui-listview .ui-li-thumb{
+        border-top:none;
+        border-radius:0 !important;
+        background-color:transparent;
+        }
+        .ui-listview .ui-li-has-thumb h2{
+        text-align:center;
+        height: 50px;
+        line-height: 50px;
+        max-height: 50px !important;
+        min-height: 50px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        }
+        #pnl{
+        background-color:rgb(64,64,64);
+        }
+        .infoFld{
+        position:relative;
+        }
+        .infoFld .circular{
+        position:absolute;
+        bottom:6px;
+        left:6px;
+        border:4px solid #fff;
+        border-radius:40px;
+        width:40px;
+        height:40px;
+        z-index:3;
+        }
+        .infoFld .name{
+        position:absolute;
+        bottom:0;
+        left:0;
+        margin:0;
+        padding:6px 0;
+        width:100%;
+        color:#fff;
+        text-shadow:none;
+        text-indent:60px;
+        background-color:rgba(0,0,0,0.4);
+        }
+        .featureFld{
+        padding:10px 0;
+        background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+        background-size:100% auto;
+        }
+        .featureFld .text{
+        text-indent:36px;
+        color:#fff;
+        text-shadow:none;
+        }
+        .infoFld .menu_button{
+        position:absolute;
+        top:14px;
+        right:6px;
+        width:24px;
+        height:24px;
+        z-index:3;
+        }
+        #pnl .panel-list{
+        }
+        #pnl .panel-list li{
+        background-color:transparent;
+        }
+        #pnl .panel-list li a{
+        border-color:#fff;
+        background-color:transparent;
+        }
+        .panel-searchFld{
+        padding:0 10px;
+        }
+        .searchFld{
+        padding:0 10px;                    
+        position: relative;
+        top: -60px;
+        }
+        .ui-input-has-clear, .ui-input-search {
+        position: relative;
+        background-color: #fff !important;
+        color:black !important;
+        }
+        .ui-corner-all {
+        -webkit-border-radius: .3125em;
+        border-radius: 0;
+        }
+        .ui-input-search.ui-input-has-clear .ui-btn.ui-input-clear, .ui-input-text.ui-input-has-clear .ui-btn.ui-input-clear {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            margin: -14px .3125em 0;
+            border: 0;
+            background-color: transparent;
+            display: none;
+        }
+        .ui-input-search:after {
+            position: absolute;
+            left: 98%;
+            top: 50%;
+            margin-top: -7px;
+            content: "";
+            background-position: center center;
+            background-repeat: no-repeat;
+            width: 14px;
+            height: 14px;
+            filter: Alpha(Opacity=50);
+            opacity: .6;
+        }
+        
+         @media screen and (max-width: 680px) {
+            .ui-input-search:after {
+                position: absolute;
+                left: 96%;
+                top: 50%;
+                margin-top: -7px;
+                content: "";
+                background-position: center center;
+                background-repeat: no-repeat;
+                width: 14px;
+                height: 14px;
+                filter: Alpha(Opacity=50);
+                opacity: .6;
+            }
+        }
+        
+        @media screen and (max-width: 540px) {
+            .ui-input-search:after {
+                position: absolute;
+                left: 94%;
+                top: 50%;
+                margin-top: -7px;
+                content: "";
+                background-position: center center;
+                background-repeat: no-repeat;
+                width: 14px;
+                height: 14px;
+                filter: Alpha(Opacity=50);
+                opacity: .6;
+            }
+        }
+        .ui-input-search input {
+            padding-left: .5em;            
+        }
+        
+        /*.searchIconMain{
+            -webkit-filter: invert(50%);
+            padding-right: 15px;
+            position: relative;
+            top: 4.7em;
+        */ }
+                
+       
+        .ui-body-a, .ui-page-theme-a .ui-body-inherit, html .ui-bar-a .ui-body-inherit, html .ui-body-a .ui-body-inherit, html body .ui-group-theme-a .ui-body-inherit, html .ui-panel-page-container-a {
+            border-color: #929497;
+            text-shadow: 0 1px 0 #f3f3f3;
+        }
+        /* .filterSearchBar{
+        background-color: #fff;
+        }
+        */
+        @font-face {
+            font-family: 'ElegantIcons';
+            src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+            src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+            url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+            url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+            url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+        [data-hpa-icon]{
+        background:none;
+        }
+        [data-hpa-icon]:before{
+        font-family: 'ElegantIcons';
+        color:#fff;
+        font-size:30px;
+        speak: none;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        }
+        [data-hpa-icon=menu]{
+        text-decoration:none;
+        }
+        [data-hpa-icon=menu]:before{
+        content:'\0061';
+        font-size:39px;
+        }
+        .ui-panel-inner{padding: 0}
+        .ui-panel.ui-panel-open {
+        position:fixed;
+        }
+        .my-page .ui-listview li{
+        height:150px;
+        }
+        @media all and (min-width: 420px) {
+        .my-page .ui-listview li{
+        height:200px;
+        }
+        }
+        @media all and (min-width: 550px) {
+        .my-page .ui-listview li{
+        height:260px;
+        }
+        }
+        @media all and (min-width: 650px) {
+        .my-page .ui-listview li{
+        height:350px;
+        }
+        }
+        .ui-panel .ui-panel-inner {
+        position: absolute;
+        top: 1px;
+        left: 0;
+        right: 0;
+        bottom: 0px;
+        overflow:auto;
+        -webkit-overflow-scrolling: touch;
+        }
+        starred {
+        display: block;
+        height: 35px;
+        position: absolute;
+        left: 0;
+        top: 0px;
+        width: 35px;
+        background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+        background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+        .ui-collapsible-content{
+        background:transparent !important;
+        border:0px solid transparent !important;
+        }
+        .blue-font {
+        /*color: #0096D6;  HP blue font */
+        font-size:1.2em !important;
+        background:transparent !important;
+        text-shadow: none;
+        position: relative;
+        top: -15px;
+        color: #fff;
+        }
+        .circular-image-container {
+        width:65px;
+        height:65px;
+        margin: 1px;
+        padding: 4px;
+        border-radius: 50px;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        background-color: #fff;
+        }
+        .circular-image-container-chatter {
+        width:50px;
+        height:50px;
+        margin-top: 15px;
+        margin-left:5px;
+        padding: 3px;
+        border-radius: 50px;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        background-color: #ffffff;
+        }
+        .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li-has-thumb{padding-left:95px !important}
+        .iconDisplayBG3:after, .iconDisplayBG3:before {
+        border-top: 12px solid #0096D6; 
+        bottom: -12px;
+        content: '';
+        height: 0;
+        position: absolute;
+        width: 0;
+        }
+        .iconDisplayBG3:after {
+        border-right: 12px solid transparent;  
+        right: -3px;  
+        }
+        .iconDisplayBG3:before {
+        border-left: 12px solid transparent;  
+        right: -5px;  
+        }
+        .iconDisplayBG4:after, .iconDisplayBG4:before {
+        border-top: 12px solid #0096D6; 
+        bottom: -12px;
+        content: '';
+        height: 0;
+        position: absolute;
+        width: 0;
+        }
+        .iconDisplayBG4:after {
+        border-right: 12px solid transparent;  
+        right: 8px;  
+        }
+        .iconDisplayBG4:before {
+        border-left: 12px solid transparent;  
+        right: 6px;  
+        }
+        .icon-expert_new:before {        
+        content: "\f0a3";
+        font-size:10pt;
+        }
+        .icon-contibutor_new:before {        
+        content: "\f0a3";
+        }
+        .verticalText span{
+        display: block; 
+        }
+        .ui-listview .ui-li-aside {
+        position: absolute;
+        top: 1em;
+        right: 3.333em;
+        margin: 0;
+        text-align: center;
+        }
+        #description{
+        /* IE10 Consumer Preview*/ 
+        background-image: -ms-linear-gradient(top, #5A5A5A 0%, #767676 100%);
+        /* Mozilla Firefox */ 
+        background-image: -moz-linear-gradient(top, #5A5A5A 0%, #767676 100%);
+        /* Opera  */ 
+        background-image: -o-linear-gradient(top, #5A5A5A 0%, #767676 100%);
+        /* Webkit (Safari/Chrome 10) */ 
+        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #5A5A5A), color-stop(1, #767676));
+        /* Webkit (Chrome 11+) */ 
+        background-image: -webkit-linear-gradient(top, #5A5A5A 0%, #767676 100%);
+        /* W3C Markup, IE10 Release Preview */ 
+        background-image: linear-gradient(to bottom, #5A5A5A 0%, #767676 100%); 
+        }
+        .hpFont{
+        font-family:"HP Simplified",sans-serif;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        }
+        .actvitylist{
+        background-color:transparent !important;
+        border-top:none !important;
+        border-left:none !important;
+        border-right:none !important;
+        border-bottom:solid 1px black !important;
+        margin-left:10px !important;
+        margin-right:10px !important;
+        text-shadow:none !important;
+        }
+        #contentChatter .ui-collapsible-content {
+        background-color:#ededed !important;
+        }
+        .ui-focus {
+        -moz-box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        }
+        .listDivide {
+        height:32px;
+        color: white !important;
+        font-size: 17pt !important;
+        text-shadow: none !important;
+        padding-left: 10px !important;
+        background: linear-gradient(#545456, #404041);
+        }
+        .iconDisplayBG:after, .iconDisplayBG:before {
+        border-top: 25px solid #0096D6; 
+        bottom: 0px;
+        content: '';
+        height: 0;
+        position: absolute;
+        width: 0;
+        }
+        .iconDisplayBG:after {
+        border-right: 25px solid transparent;  
+        right: 39px;  
+        }
+        .iconDisplayBG:before {
+        border-left: 25px solid transparent;  
+        right: 38px;  
+        }
+        .iconDisplayBG2:after, .iconDisplayBG2:before {
+        border-top: 25px solid #0096D6; 
+        bottom: 0px;
+        content: '';
+        height: 0;
+        position: absolute;
+        width: 0;
+        }
+        .iconDisplayBG2:after {
+        border-right: 25px solid transparent;  
+        right: 8px;  
+        }
+        .iconDisplayBG2:before {
+        border-left: 25px solid transparent;  
+        right: 6px;  
+        }
+        .ui-listview>.ui-li-divider {
+        padding: .3em 1.143em;
+        font-size: 14px;
+        font-weight: 100;
+        cursor: default;
+        outline: 0;
+        border:none;
+        }
+        /*.ui-page-theme-a .ui-btn, html .ui-bar-a .ui-btn, html .ui-body-a .ui-btn, html body .ui-group-theme-a .ui-btn, html head+body .ui-btn.ui-btn-a, .ui-page-theme-a .ui-btn:visited, html .ui-bar-a .ui-btn:visited, html .ui-body-a .ui-btn:visited, html body .ui-group-theme-a .ui-btn:visited, html head+body .ui-btn.ui-btn-a:visited {
+        background-image: linear-gradient(to bottom, #767676 0%, #5a5a5a 100%);
+        border-top: 0px;
+        border-bottom: 5px;
+        border-bottom-color: black;
+        color:white;
+        text-shadow:none;
+        font-weight:100;
+        }
+        .ui-page-theme-a .ui-btn.ui-btn-active, html .ui-bar-a .ui-btn.ui-btn-active, html .ui-body-a .ui-btn.ui-btn-active, html body .ui-group-theme-a .ui-btn.ui-btn-active, html head+body .ui-btn.ui-btn-a.ui-btn-active, .ui-page-theme-a .ui-checkbox-on:after, html .ui-bar-a .ui-checkbox-on:after, html .ui-body-a .ui-checkbox-on:after, html body .ui-group-theme-a .ui-checkbox-on:after, .ui-btn.ui-checkbox-on.ui-btn-a:after, .ui-page-theme-a .ui-flipswitch-active, html .ui-bar-a .ui-flipswitch-active, html .ui-body-a .ui-flipswitch-active, html body .ui-group-theme-a .ui-flipswitch-active, html body .ui-flipswitch.ui-bar-a.ui-flipswitch-active, .ui-page-theme-a .ui-slider-track .ui-btn-active, html .ui-bar-a .ui-slider-track .ui-btn-active, html .ui-body-a .ui-slider-track .ui-btn-active, html body .ui-group-theme-a .ui-slider-track .ui-btn-active, html body div.ui-slider-track.ui-body-a .ui-btn-active {
+        background-image: none;
+        background-color:#929497;
+        border-color: none;
+        color: #fff;
+        text-shadow:none;
+        }*/
+        .ui-btn-2 {
+            background-image: linear-gradient(to bottom, #767676 0%, #5a5a5a 100%);
+            border-top: 0px;
+            border-bottom: 5px;
+            border-bottom-color: black;
+            color:white;
+            text-shadow:none;
+            font-weight:100;
+        }
+        .ui-page-theme-a .ui-btn-2.ui-btn-active {
+            background-image: none;
+            background-color:#929497;
+            border-color: none;
+            color: #fff;
+            text-shadow:none;
+        }
+        
+        
+        ::-webkit-scrollbar { 
+            display: none; 
+        }
+        -webkit-scrollbar { 
+            display: none; 
+        }
+
+    </style>
+</apex:page>

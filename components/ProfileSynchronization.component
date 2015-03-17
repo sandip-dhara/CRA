@@ -1,0 +1,22 @@
+<apex:component controller="ProfileSynchronizationController" allowDML="true" >
+    <apex:pageMessages /> 
+
+    <style type="text/css" >
+        .imageUrlWidth{
+            width:500px;
+        }
+    </style>
+    <apex:form >
+        <apex:pageBlock title="{!$Label.Update_Profile_pic}">
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton value="{!$Label.Sync_Profile_Picture}" action="{!updateProfilePicture}" />
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection columns="1" collapsible="false" >
+                <apex:inputText styleClass="imageUrlWidth" label="{!$Label.Image_Url}" value="{!imageUrl}" />
+                <apex:inputCheckbox label="{!$Label.Is_Public}" value="{!isPubliclyVisible}" />
+                <apex:inputCheckbox label="{!$Label.Is_External}" value="{!isExternalUrl}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:component>

@@ -1,0 +1,426 @@
+<apex:page standardController="Release_Deliverable__c" extensions="ODP_Extension_Deliverable">
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM_SelectMenu,'jquery-ui-selectmenu/jquery.ui.selectmenu.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM_SelectMenu,'jquery-ui-selectmenu/jquery.ui.selectmenu.css')}"/>
+
+<style>
+
+ .modalDialog {
+        display:none;
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.6); /*background: rgba(0,0,0,0.8);*/
+        z-index: 99999;
+        opacity:0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        pointer-events: none;
+    }
+
+    .modalDialog:target {
+        display:block;
+        opacity:1;
+        pointer-events: auto;
+    }
+
+    .modalDialog > div {
+        width: 400px;
+        position: relative;
+        margin: 10% auto;
+        padding: 5px 20px 13px 20px;
+        border-radius: 10px;
+        background: #fff;
+        background: -moz-linear-gradient(#fff, #bbb);
+        background: -webkit-linear-gradient(#fff, #bbb);
+        background: -o-linear-gradient(#fff, #bbb);
+    }
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+    .close:hover { background: #00d9ff; text-decoration: none; }
+
+
+
+   .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 300 !important;
+        border-radius: 0px  !important;
+        border-bottom-left-radius:6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    body .bPageBlock .pbBody .pbSubheader img {
+        height: 15px;
+        width: 15px;
+    }
+   .apexp .bPageBlock .apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:16px !important; /* this controls the blue bar font-sizes */
+    }
+
+    .myButtons{
+        background: none  !important;
+        border: 0px  !important;
+        background-color: #007DBA  !important;
+        color: #fff !important;
+        font-size: 13px  !important;
+        border-radius: 0px  !important;
+        padding: 6px 6px 6px 6px  !important;
+        border-bottom-left-radius: 6px  !important;
+        border-top-right-radius: 6px  !important;
+      }
+   .myButtons:hover{
+       background-color: #D7410B !important;
+     }
+   .myDisabledButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: gray !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+   .parentDisable{
+      
+       overflow:hidden;
+       clear: both;
+   }
+   #chatterDisplay{
+        position:relative;
+        top:7px;
+        width: 38%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+   }
+   #chatterWrapper{
+       height:300px;
+       overflow-y: auto;
+       border: 1px solid #ccc;
+       padding:10px !important;
+   }
+    
+    .FromFlightPlan{
+        //color:red;
+        //disabled: true;
+    }
+    .NotFromFlightPlan{
+        //color:blue;
+        //disabled: true;
+    }
+    #Divtext{
+        width: 30%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 0px;
+    }
+    #DivDelLink{
+        width: 68%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+        margin-right: 0px;
+    }
+   
+   /* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:HPSimplified, Helvetica, Arial, sans-serif; !important;
+            border-top:0px;
+        }
+    .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+        border-top: 0px solid #3044b5;
+     }
+     
+    .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+    .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+        padding: 2px 8px;
+        color: #333;
+        border-bottom: 1px solid #e3deb8;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:13px !important;
+     }
+    /* table row highlight */     
+    body .pbBody table.list tr.dataRow.highlight td{
+    background-color:#ecf4f8;
+    }
+    body .pbBody table.list tr.headerRow th{
+        background:#fff !important;
+        color:#007DBA !important;
+        border:1px solid #ccc;
+    }
+    /* for Header */
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 300 !important;
+    }
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:14px !important; /* this controls the blue bar font-sizes */
+    }
+    /* done header */
+    .bPageBlock .detailList .data2Col{
+    padding-left:0px;
+    }
+    body .pbBody table.list tr.headerRow th{
+        padding: 4px 8px;
+    }
+    
+    /* Detail Table Style */
+    
+    .detailList td{
+        line-height:20px;
+    }
+    body .bPageBlock .pbBody .labelCol {
+        color: #4a4a56;
+        line-height: 20px;
+    }
+    .Custom64Tab .secondaryPalette, .individualPalette .Custom64Block .secondaryPalette{
+    border:0px;
+    }
+    
+    /* Textboxes, Textareas sytle */
+    
+    input,textarea{
+        border: 2px solid #CCCCCC;
+        background:#f2f2f2;
+    }
+   
+   /* Other review / Contribute */
+   
+   #otherReview{
+       width:49%;
+       float:left;
+       margin-left:10px;
+   }
+   #contrib{
+       width:49%;
+       float:left;
+   }
+   
+   /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 14px;
+        border-radius: 0px;
+        padding: 8px 8px 8px 8px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    
+    .linkBtn {
+        background: none !important;
+        border: 0px !important;
+        background-color: #007DBA !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        border-radius: 0px !important;
+        padding: 8px 8px 8px 8px !important;
+        border-bottom-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .clear{clear:both}
+    #positionToggle{position:absolute; top:9px; left:9px; }
+    #showHideList{display:none; position:absolute; top:10px; left:10px; border-radius: 5px; border:1px solid #cccccc; background-color:#eeeeee; }
+    #ListInner{padding:10px 10px 10px 10px; }
+    
+    .clearfix {
+    *zoom: 1;
+}
+
+    .clearfix:before, .clearfix:after {
+        display: table;
+        line-height: 0;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    /*label,select,.ui-select-menu { float: left; margin-right: 10px; }
+    .wrap ul.ui-selectmenu-menu-popup li a { font-weight: bold; }*/
+    .ui-selectmenu{
+        height: 1.5em;
+    }
+    .ui-selectmenu-status {
+        line-height: 1.0em;
+    }
+    
+    .bPageBlock .detailList tr td.dataCol, 
+    .bPageBlock .detailList tr td.labelCol
+    {
+        //border-bottom:1px solid #1797c0;
+    }
+</style>
+<script>
+    $j = $.noConflict();
+    $j(function(){
+         $j("#input_addnotebtn").click(function(){
+                var url = window.location.toString();
+                var pos = url.split('#')[1];
+                if(pos == undefined)
+                {
+                    document.location = url + '#AddNoteView';
+                }
+                else
+                {
+                    document.location = url.split('#')[0] + '#AddNoteView';
+                }
+                
+            });
+    });
+    function OpenNoteWin()
+    {
+        $j("html,body").animate({scrollTop:$("#AddNoteView").offset().top},1000);
+    }
+</script>
+
+    
+<div class="parentDisable">
+<apex:form >
+<apex:pageBlock title="{!myEditStates} Deliverable">
+    <apex:pagemessages />
+    <apex:pageBlockSection title="Information" columns="2" collapsible="false">
+        <apex:outputField value="{!DeliberableObj.Name}" rendered="{!myEditStates == 'Update'}"/>
+        <apex:inputtext required="true" value="{!DeliberableObj.Release_Deliverable_Name__c}" disabled="{!IsFromFlightPlan}" styleClass="{!IF(IsFromFlightPlan,'FromFlightPlan','NotFromFlightPlan')}" />
+        <apex:inputField value="{!DeliberableObj.Offering_Release__c}"/>
+        <apex:inputField value="{!DeliberableObj.Deliverable_ID__c}" rendered="{!IsFromFlightPlan}" styleClass="{!IF(!IsFromFlightPlan,'FromFlightPlan','NotFromFlightPlan')}"/>
+        <apex:inputCheckbox value="{!DeliberableObj.Stage_Material__c}" disabled="{!IsFromFlightPlan}"/>
+        <apex:inputField value="{!DeliberableObj.Include__c}"/>
+
+        <apex:outputField value="{!DeliberableObj.Deliverable_ID__r.Description__c}" rendered="{!IsFromFlightPlan}" label="Process Deliverable Description"/>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection columns="1" collapsible="false">
+        <apex:inputCheckbox value="{!DeliberableObj.Conditional__c}" rendered="{!IsFromFlightPlan}" styleClass="{!IF(!IsFromFlightPlan,'FromFlightPlan','NotFromFlightPlan')}" disabled="{!IsFromFlightPlan}"/>
+        <apex:inputTextarea value="{!DeliberableObj.Conditional_Text__c}" rendered="{!IsFromFlightPlan}" style="width:550px;height:100px;" styleClass="{!IF(!IsFromFlightPlan,'FromFlightPlan','NotFromFlightPlan')}" disabled="{!IsFromFlightPlan}"/> 
+    </apex:pageBlockSection>
+    <apex:pageBlockSection columns="1" collapsible="false">
+        <apex:inputTextarea richText="true" style="width:98%;height: 65px;" value="{!DeliberableObj.Review_Criteria__c}" styleClass="{!IF(!IsFromFlightPlan,'FromFlightPlan','NotFromFlightPlan')}" disabled="{!IsFromFlightPlan}"/>
+        <apex:inputField value="{!DeliberableObj.Tailoring_Justification__c}" style="width:550px;height:100px;"/>
+    </apex:pageBlockSection>
+
+    <apex:pageBlockButtons location="Bottom">
+        <apex:commandButton value="Save" action="{!Save}" styleclass="myButtons" onclick="javascript:{!IF(myEditStates=='Create','','return window.confirm(\"confirm to continue?\")')}"/>
+        <apex:commandButton value="Cancel" action="{!cancel}" styleclass="myButtons" />
+    </apex:pageBlockButtons>
+  </apex:pageBlock>
+</apex:form>  
+</div>
+<!--
+<div id="chatterDisplay" style="{!IF(myEditStates=='Update','','display:none;')}">
+    <apex:pageBlock >
+        <div class="pbSubheader brandTertiaryBgr first tertiaryPalette"><h3 style="float:left;">Collaborate</h3>
+            <div id="followme" style="text-align:right; padding-bottom:0px;float:right;font-size:12px;"><chatter:follow entityID="{!DeliberableObj.Id}"/></div>
+         </div>    
+            
+        <div >
+            <div id="chatterWrapper" style="display:block; min-height:350px; overflow:auto; margin:0px; padding:0px;">
+                <chatter:feed entityId="{!DeliberableObj.Id}"></chatter:feed>
+            </div>
+        </div>
+    </apex:pageBlock>
+</div>
+-->
+<div id="NoteAttach"  style="{!IF(IsFromFlightPlan ,'' , 'display:none;' )}">
+    <apex:pageBlock >
+        <div class="pbSubheader brandTertiaryBgr first tertiaryPalette">
+            <h3 style="float:left;">Notes &amp; Attachments</h3>
+        </div>    
+        <div>
+            <apex:form >
+                <apex:pageBlockTable id="notesandattachments" value="{! notesAndAttachments}" var="na">
+                     <apex:column headerValue="Action">
+                        <apex:commandLink action="{! delNoteAttach}" value="Delete" onclick="javascript:return window.confirm('Confirm to delete this {! na.fileType}?')">
+                            <apex:param name="deleteDocId" value="{!na.docId}" assignTo="{!addtaLinkId}"/>
+                            <apex:param name="type" value="{! na.fileType}" assignTo="{!addtaLinkType}"/>  
+                        </apex:commandLink>
+                        &nbsp;
+                         <apex:commandLink ><a href=" {!IF(na.fileType == 'Attachment','/servlet/servlet.FileDownload?file=' + na.docId,'/'+na.docId)}" target="_blank">Open</a></apex:commandLink>
+                     </apex:column>
+                     <apex:column headervalue="type" value="{! na.fileType}"/>
+                     <apex:column headerValue="Name" value="{! na.name}"/>
+                     <apex:column headervalue="Added By" value="{! na.addBY}"/>
+                     <apex:column headerValue="Last Modified" value="{! na.modifyDate}"/>
+                </apex:pageBlockTable>
+                <apex:pageBlock >
+                    <apex:pageblockButtons location="top">
+                        <!--<apex:commandbutton action="{!null}" value="Notes" styleclass="{! if(false,'myDisabledButtons','myButtons')}"/>-->
+                         <input id="input_addnotebtn" type="button" value="Notes" class="{!IF(false,'myDisabledButtons','myButtons')}"  />
+                        <apex:commandButton action="{! FileUploadSave}"  value="Attach File" styleclass="{!IF(false,'myDisabledButtons','myButtons')}"  disabled="{!null}" />
+                        <apex:inputFile style="background:none;border:0px;" value="{!attachDoc.body}" filename="{!attachDoc.name}" id="file" disabled="{!null}"/>
+                    </apex:pageblockButtons>
+                </apex:pageBlock>
+                 <div id="AddNoteView" class="modalDialog">
+                    <div>
+                        <a href="#close" title="Close" class="close">X</a>
+                        <p></p>
+                        <apex:outputPanel id="tmm">
+                            <apex:pageBlock >
+                                <apex:pageBlockSection columns="1" collapsible="false" title="Add Note">
+                                <apex:messages />
+                                <apex:inputText value="{!note.Title}" label="Title" size="25"  />
+                                <apex:inputTextArea value="{!note.Body}" label="Body" cols="50" rows="10" />
+                                <apex:commandButton value="Save" styleclass="myButtons" action="{!saveNote}" />
+                                </apex:pageBlockSection>
+                            </apex:pageBlock>
+                        </apex:outputPanel>          
+                        <p></p>
+                    </div>
+                </div>             
+            </apex:form>
+        </div>    
+    </apex:pageBlock>
+</div>   
+</apex:page>

@@ -1,0 +1,300 @@
+<apex:page controller="Sree_ODP_NewContributionsPageController" sidebar="false">
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+<apex:form >
+
+    <style>
+        .pbSubheader {
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+        body .bPageBlock .pbBody .pbSubheader img {
+            height: 15px;
+            width: 15px;
+        }
+        .hotLink{color:blue !important; text-decoration:none;}
+        .hotLink:hover{color:red !important}
+        .nowrap{white-space:nowrap;}
+        
+        body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:'Voces', sans-serif; !important;
+            border-top:0px;
+        }
+        .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+            border-top: 0px solid #3044b5;
+         }
+
+        .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+        .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+            padding: 2px 8px;
+            color: #333;
+            border-bottom: 1px solid #e3deb8;
+            font-family: 'Voces', sans-serif; !important;
+            font-size:13px !important;
+         }
+        /* table row highlight */     
+        body .pbBody table.list tr.dataRow.highlight td{
+        background-color:#ecf4f8;
+        }
+        body .pbBody table.list tr.headerRow th{
+            background:#0093d2 !important;
+            color:#fff !important;
+        }
+        /* for Header */
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 15px 8px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 20px;
+            font-weight: 300 !important;
+        }
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+            font-weight: 300;
+        }
+        /* done header */
+        .bPageBlock .detailList .data2Col{
+        padding-left:0px;
+        }
+        body .pbBody table.list tr.headerRow th{
+            padding: 8px 8px;
+        }
+        #buttons{position:absolute; top:34px; left:200px;}
+        #searchFilterDiv{position:absolute; top:34px; right:30px;}
+        .CurBtn {
+            color: #D7410B !important;
+            background-image: none !important;
+            border: none !important;
+
+            font-size: 13px !important;
+            background-color: #fff !important;
+            -moz-border-radius: 0 4px 0 4px !important;
+            -webkit-border-radius: 0 4px 0 4px !important;
+            border-radius: 0 4px 0 4px !important;
+        }
+        .CurBtn:hover {
+            background-color: #0096d6 !important;
+        }
+       
+       .btn-primary {
+            background-image: none !important;
+            border: none !important;
+
+            font-size: 13px !important;
+            background-color: #fff !important;
+            -moz-border-radius: 0 4px 0 4px !important;
+            -webkit-border-radius: 0 4px 0 4px !important;
+            border-radius: 0 4px 0 4px !important;
+        }
+        .btn-primary:hover {
+            background-color: #0096d6 !important;
+        }
+        
+        
+    </style>
+
+<apex:pageBlock >   
+
+    <div id="buttons">
+        <apex:commandButton value="In Progress" action="{!InProgress}" styleClass="{!IF(FilterStatus == 'In Progress','CurBtn','btn-primary')}"/>
+        <apex:commandButton value="Upcoming" action="{!upcoming}" styleClass="{!IF(FilterStatus == 'Upcoming','CurBtn','btn-primary')}"/>
+        <apex:commandButton value="History" action="{!history}" styleClass="{!IF(FilterStatus == 'History','CurBtn','btn-primary')}"/>
+        
+<!--
+        <apex:inputCheckbox >
+          <apex:actionSupport event="onchange" action="{!showCompleted}" rerender="RecordsList"/>
+        </apex:inputCheckbox>Show Done
+-->        
+        <apex:inputCheckbox value="{!showComplete}">
+            <apex:actionSupport event="onchange" action="{!showCompleted}"/>
+        </apex:inputCheckbox>
+        <apex:outputLabel value="Show Done" style="color:white;"></apex:outputLabel>
+        
+    </div>
+    <div id="searchFilterDiv">
+        <apex:outputLabel value="{!searchLabel}" style="color:white;" /> &nbsp;&nbsp;&nbsp;
+        <apex:inputText value="{!searchFilter}"  alt="Search Text"/>
+   
+        <apex:selectList style="border:1px solid #eeeeee !important;" value="{!rating}" size="1"> 
+            <apex:selectOptions value="{!SearchItems}"/>  
+        </apex:selectList>
+                        
+    </div>
+    
+    <apex:pageBlockSection collapsible="false" columns="1" id="RecordsList">
+        <div class="pbSubheader" style="margin-top:-5px;">
+            <h3>Contributions</h3>
+        </div>
+        <apex:pageBlockTable value="{!ConList}" var="contributor" id="conTable">
+            <apex:column headerValue="Action"> 
+                <a href="/apex/ODP_ContributorPage?id={!contributor.Id}&mode={!IF(!flag,'Open','View')} " target="_blank" title="{!contributor.name}" class="hotLink">
+                    <apex:outputText value="Open" rendered="{!!flag}" />
+                    <apex:outputText value="View" rendered="{!flag}" />
+                </a>
+            </apex:column>
+            <apex:column headerValue="I'm Done">
+                 <!-- <apex:outputText rendered="{!if((contributor.Stage_Work_Element__r.CreatedByid=$User.Id),true,false)}">Owner</apex:outputText> -->
+                 <!-- <apex:outputField rendered="{!!if((contributor.Stage_Work_Element__r.CreatedByid=$User.Id && (contributor.Team_Members__r.User__r.Id!=$User.Id)),true,false)}" value="{!contributor.Completed__c}"></apex:outputField> -->
+                 <apex:outputField value="{!contributor.Completed__c}"></apex:outputField>
+            </apex:column>                                      
+            <!--
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!contributionInProgressInfo}" value="Contributor {!IF(sortDirection='ASC','▼','▲')}" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Team_Member_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+               <apex:outputField label="Contributor" value="{!contributor.Team_Member_Name__c}"/>
+            </apex:column>
+            -->
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!contributionInProgressInfo}" value="Work Element Name{!IF(sortDirection='ASC','▼','▲')}" id="wSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Work_Element_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+               
+
+               <!-- <apex:outputText >{!contributor.Stage_Work_Element__r.Work_Element_Name__c}</apex:outputText> -->
+                <span  title="{!contributor.Stage_Work_Element__r.Description_Text_Area__c}">{!contributor.Stage_Work_Element__r.Work_Element_Name__c}</span>
+            </apex:column>           
+             <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!contributionInProgressInfo}" value="Due Date {!IF(sortDirection='ASC','▼','▲')}" id="dateSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Contribute_Due_Date__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+               <apex:outputField label="Due Date" value="{!contributor.Stage_Work_Element__r.Contribute_Due_Date__c}"/>
+            </apex:column>
+            <apex:column headerValue="Work Element Status" value="{!contributor.Stage_Work_Element__r.Status__c}"></apex:column>            
+            <apex:column >
+                  <apex:facet name="header"> 
+                      <apex:commandLink action="{!contributionInProgressInfo}" value="Deliverable {!IF(sortDirection='ASC','▼','▲')}" id="dSort" rerender="conTable" style="color:white;">
+                            <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                            <apex:param value="Stage_Work_Element__r.Deliverable_Name__c" assignTo="{!sortField}"></apex:param>
+                            <div>
+                                <apex:selectList style="border:1px solid #eeeeee !important;" value="{!rating}" size="1"> 
+                                    <apex:selectOptions value="{!Deliverable}"/>  
+                                </apex:selectList>                 
+                            </div>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputText >{!contributor.Stage_Work_Element__r.Deliverable_Name__c}</apex:outputText>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!contributionInProgressInfo}"  value="Accountable Role {!IF(sortDirection='ASC','▼','▲')}"  id="accountRoleSort" rerender="conTable" style="color:white;">
+                            <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                            <apex:param value="Stage_Work_Element__r.Accountable_Process_Role_Name__c" assignTo="{!sortField}"></apex:param>
+                            <apex:selectList style="border:1px solid #eeeeee !important;" value="{!rating}" size="1"> 
+                                <apex:selectOptions value="{!AccountableRole}"/>  
+                            </apex:selectList>                            
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText > {!contributor.Stage_Work_Element__r.Accountable_Process_Role_Name__c}</apex:outputText>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!contributionInProgressInfo}"  value="My Role {!IF(sortDirection='ASC','▼','▲')}"  id="cmdSort" rerender="conTable" style="color:white;">
+                            <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                            <apex:param value="Role_Name__c" assignTo="{!sortField}"></apex:param>
+                            <apex:selectList style="border:1px solid #eeeeee !important;" value="{!rating}" size="1"> 
+                                <apex:selectOptions value="{!MyRole}"/>  
+                            </apex:selectList>
+                    </apex:commandLink>
+                </apex:facet>
+                <!-- <apex:outputText rendered="{!if((contributor.Stage_Work_Element__r.CreatedByid=$User.Id && (contributor.Team_Members__r.User__r.Id==$User.Id)),true,false)}" >Owner</apex:outputText>
+                <apex:outputText rendered="{!!if((contributor.Stage_Work_Element__r.CreatedByid=$User.Id && (contributor.Team_Members__r.User__r.Id==$User.Id)),true,false)}">{!contributor.Role_Name__c}</apex:outputText> -->
+                <apex:outputText rendered="{!if((contributor.Stage_Work_Element__r.Accountable_Team_Member__r.User__r.Id=contributor.Team_Members__r.User__r.Id),true,false)}" >Owner | </apex:outputText>
+                <apex:outputText > {!contributor.Role_Name__c}</apex:outputText>
+            </apex:column>
+           
+            <apex:column >
+              <apex:facet name="header"> 
+                  <apex:commandLink action="{!contributionInProgressInfo}" value="Project {!IF(sortDirection='ASC','▼','▲')}" id="orSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Release_Stage_ID__r.Release_Name__c" assignTo="{!sortField}"></apex:param>
+                  <apex:selectList style="border:1px solid #eeeeee !important;" value="{!rating}" size="1"> 
+                    <apex:selectOptions value="{!ProjName}"/>  
+                  </apex:selectList>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!contributor.Stage_Work_Element__r.Release_Stage_ID__r.Release_Name__c}</apex:outputText>
+            </apex:column>
+
+           <apex:column >
+              <apex:facet name="header"> 
+                  <apex:commandLink action="{!contributionInProgressInfo}" value="Stage {!IF(sortDirection='ASC','▼','▲')}" id="stSort" rerender="stTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Stage_Name__c" assignTo="{!sortField}"></apex:param>
+                        <apex:selectList style="border:1px solid #eeeeee !important;" value="{!rating}" size="1"> 
+                    <apex:selectOptions value="{!Stage}"/>  
+                  </apex:selectList>
+                    </apex:commandLink>                    
+                </apex:facet>
+                <apex:outputText >{!contributor.Stage_Work_Element__r.Stage_Name__c}</apex:outputText>
+            </apex:column>
+            
+            <!-- Sree Added for Project status-->
+                <apex:column >
+              <apex:facet name="header"> 
+                  <apex:commandLink action="{!contributionInProgressInfo}" value="Project Status{!IF(sortDirection='ASC','▼','▲')}" id="proSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Release_Deliverable_ID__r.Offering_Release__r.Status__c" assignTo="{!sortField}"></apex:param>
+                        <apex:selectList style="border:1px solid #eeeeee !important;" value="{!rating}" size="1"> 
+                    <apex:selectOptions value="{!ProjStatus}"/>  
+                  </apex:selectList>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!contributor.Stage_Work_Element__r.Release_Deliverable_ID__r.Offering_Release__r.Status__c}</apex:outputText>
+            </apex:column>
+            <!--End -->
+            
+            <!--<apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!contributionInProgressInfo}" value="Status {!IF(sortDirection='ASC','▼','▲')}" id="staSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Status__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!contributor.Stage_Work_Element__r.Status__c}</apex:outputText>
+            </apex:column>-->
+
+            
+        </apex:pageBlockTable>
+
+    </apex:pageBlockSection>
+    
+    <apex:panelGrid id="nextLink" rendered="{!ConList.size>0}" columns="4">
+                        <apex:commandButton action="{!firstConPage}" disabled="{!!hasConPrevious}" reRender="RecordsList,nextLink" value="|<" title="{!$Label.First_Page}"/>
+                        <apex:commandButton action="{!previousConPage}" disabled="{!!hasConPrevious}" reRender="RecordsList,nextLink" value="<" title="{!$Label.Previous_Page}"/>
+                        <apex:commandButton action="{!nextConPage}" disabled="{!!hasConNext}" reRender="RecordsList,nextLink" value=">" title="{!$Label.Next_Page}"/>
+                        <apex:commandButton action="{!lastConPage}" disabled="{!!hasConNext}" reRender="RecordsList,nextLink" value=">|" title="{!$Label.Last_Page}"/>
+                        
+                    </apex:panelGrid>
+  </apex:pageBlock>          
+</apex:form>
+
+</apex:page>

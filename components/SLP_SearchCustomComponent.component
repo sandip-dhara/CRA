@@ -1,0 +1,262 @@
+<apex:component controller="SLP_SearchCustomComponentController" allowDML="true">
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Jquery_Migrate)}"/>
+    <apex:attribute name="InputString" description="Received varaible of data type string"  assignTo="{!ReceivedString}" type="String" required="true"/>
+<apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/bootstrap-multiselect.js')}"/>
+<apex:form id="SearchForm" html-method="Get">
+          <div class="nav notify-row"> 
+                <span class="add-on topSearchIcon">
+                  <select id="multiSearch" > 
+                    <option value="All">All</option>       
+                    <option value="Boards">Boards</option>
+                    <option value="Topics">Content</option>  
+                    <option value="Community">Community</option>       
+                    <!-- <option value="Expert">Expert Finder</option> -->
+                    <option value="People">People</option>
+                  </select>
+                </span>
+                <span class="pull-left">
+                <!--<input type="text" name="accounts" size="20" class="notifyInput" placeholder="Please Enter Search Text" />-->
+                <apex:inputhidden id="strSelectedOptions" value="{!strSelectedOptions}"/>
+                <apex:inputText id="searchText" value="{!strSearchValue}" size="20" styleClass="notifyInput" html-Placeholder="Please Enter Search Text" onkeydown="return SubmitSearchForm(event);"/>
+                <apex:inputhidden id="hdnOperatingSystem" value="{!OperatingSystem}"/>
+                <apex:inputhidden id="hdnBrowser" value="{!Browser}"/>
+                <apex:actionFunction name="DosearchButton" action="{!RedirectToSLP_GlobalSearch}" />
+                </span>
+                <div class="clearfix pull-left" style="margin-top:3px">
+                    <apex:commandLink id="searchLink" onclick="return ValidateData();" action="{!RedirectToSLP_GlobalSearch}" styleClass="btnAthena btn-primary topSearchBtn" title="Click here to search"><span class="icon-search"></span>&nbsp;</apex:commandLink>
+                   <!-- <apex:commandButton id="searchButton" action="{!RedirectToSLP_GlobalSearch}" style="display:none;"/> -->
+                   
+                </div> 
+            </div>
+         </apex:form>
+         
+         <script>
+          function GetBrowserName()
+      {
+                 
+      var nVer = navigator.appVersion;
+      var nAgt = navigator.userAgent;
+      var browserName  = navigator.appName;
+      var fullVersion  = ''+parseFloat(navigator.appVersion); 
+      var majorVersion = parseInt(navigator.appVersion,10);
+      var nameOffset,verOffset,ix;
+                                    if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+         browserName = "Opera";
+         fullVersion = nAgt.substring(verOffset+6);
+         if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                      fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In MSIE, the true version is after "MSIE" in userAgent
+      else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+         browserName = "Microsoft Internet Explorer";
+         fullVersion = nAgt.substring(verOffset+5);
+      }
+      // In Chrome, the true version is after "Chrome" 
+      else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+         browserName = "Chrome";
+         fullVersion = nAgt.substring(verOffset+7);
+      }
+      // In Safari, the true version is after "Safari" or after "Version" 
+      else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+         browserName = "Safari";
+         fullVersion = nAgt.substring(verOffset+7);
+         if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                      fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In Firefox, the true version is after "Firefox" 
+      else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+                     browserName = "Firefox";
+                     fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In most other browsers, "name/version" is at the end of userAgent 
+      else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+                     browserName = nAgt.substring(nameOffset,verOffset);
+                     fullVersion = nAgt.substring(verOffset+1);
+                     if (browserName.toLowerCase()==browserName.toUpperCase()) {
+                        browserName = navigator.appName;
+                     }
+      }
+       
+      return browserName;
+      
+     }
+
+         $(document).ready(function(){
+         var operatingSystem=navigator.appVersion;
+         operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+         $('[id$=hdnOperatingSystem]').val(operatingSystem);
+         $('[id$=hdnBrowser]').val(GetBrowserName()+' '+$.browser.version);
+         });
+             function SubmitSearchForm(event) {
+                 $('#multiSearch').multiselect({});
+                 var preSelected = $('#multiSearch').val();
+                 if (event.keyCode == 13) {
+
+                     var txtSearch = document.getElementById('{!$Component.SearchForm.searchText}');
+
+                     if (txtSearch.value.trim().length == 0) {
+                         document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                         document.getElementById('err_msg').style.display = 'block';
+                         event.preventDefault();
+                         event.stopPropagation();
+                         return false;
+                     }
+                     else if (preSelected == null) {
+                         document.getElementById('err_msg').innerHTML = "Please select a filter";
+                         document.getElementById('err_msg').style.display = 'block';
+                         event.preventDefault();
+                         event.stopPropagation();
+                         return false;
+                     }
+                     else if (txtSearch.value.trim().length < 3) {
+                         document.getElementById('err_msg').innerHTML = "Minimum 3 characters should be entered";
+                         document.getElementById('err_msg').style.display = 'block';
+                         event.preventDefault();
+                         event.stopPropagation();
+                         return false;
+                     }
+                     else {
+                         //SetValue(document.getElementById("{!$Component.SearchForm.searchText}").value);
+                         GetSearchOptions();
+                         DosearchButton();
+                         //$('[id$=searchButton]').click();
+                         // document.getElementById("{!$Component.SearchForm.searchButton}").click();  
+                         //document.getElementById('{!$Component.SearchForm.strSelectedOptions}').value=selected;                               
+                         //button.click();
+                         //searchForm.submit(); 
+                         return false;
+                     }
+
+                 }
+             }
+         </script>
+         <script>
+             var values = [];
+             var count = 0;
+             var selected = '';
+             var preSelected = $('#multiSearch').val();
+             $(document).ready(function () {
+                 $('#multiSearch').multiselect({
+                     includeSelectAllOption: true,
+                     onChange: function (option, checked) {
+                         option.each(function () {
+                             var preSelected = $('#multiSearch').val();
+                             //var selected += $(this).text() + ', ';
+                             selected = '';
+                             if (preSelected != undefined)
+                                 selected = preSelected;
+                             if (selected.indexOf($.trim($(this).text())) == -1) {
+                                 if (checked == true) {
+                                     selected = selected + $.trim($(this).text()) + ',';
+                                 }
+                             }
+                             else {
+                                 if (checked == false) {
+                                     selected = selected.replace($.trim($(this).text()) + ',', '');
+                                 }
+                             }
+                             if (selected == 'All') {
+                                 selected = 'multiselect-all,Boards,Topics,Community,People';
+                             }
+                             else {
+                                 selected = selected;
+                             }
+                             document.getElementById('{!$Component.SearchForm.strSelectedOptions}').value = selected;
+                         });
+                     },
+                 });
+
+                 var urlString = getUrlVars()["SearchOptions"];
+                 if (urlString != undefined) {
+                     if (urlString.indexOf('multiselect-all') > -1 || urlString.indexOf('multiselect-all') == 0) {
+                         $('input[name=multiselect][value=All]').attr('checked', true);
+                     }
+                     else {
+                         $('input[name=multiselect][value="' + urlString + '"]').attr('checked', true);
+                     }
+                 }
+             });
+
+             function ValidateData() {
+                 $('#multiSearch').multiselect();
+                 var preSelected = $('#multiSearch').val();
+                 var txtSearch = document.getElementById('{!$Component.SearchForm.searchText}');
+
+                 if (txtSearch.value.trim().length == 0) {
+                     document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                     document.getElementById('err_msg').style.display = 'block';
+                     event.preventDefault();
+                     event.stopPropagation();
+                     return false;
+                 }
+                 else if (preSelected == null) {
+                     document.getElementById('err_msg').innerHTML = "Please select a filter";
+                     document.getElementById('err_msg').style.display = 'block';
+                     event.preventDefault();
+                     event.stopPropagation();
+                     return false;
+                 }
+                 else if (txtSearch.value.trim().length < 3) {
+                     document.getElementById('err_msg').innerHTML = "Minimum 3 characters should be entered";
+                     document.getElementById('err_msg').style.display = 'block';
+                     event.preventDefault();
+                     event.stopPropagation();
+                     return false;
+                 }
+                 else {
+                     GetSearchOptions();
+                     $('[id$=searchButton]').click();
+                     //var button= document.getElementById("{!$Component.SearchForm.searchButton}");  
+                     //document.getElementById('{!$Component.SearchForm.strSelectedOptions}').value=selected;                               
+                     //button.click();                 
+                     return true;
+                 }
+             }
+
+             function GetSearchOptions() {
+                 
+                 $('#multiSearch').multiselect({});
+                 var preSelected = $('#multiSearch').val();
+
+                 var selected = '';
+                 //var preSelected = $('input[name=searchOptions]:checked').val();
+
+                 if (preSelected == 'All') {
+                     selected = 'multiselect-all,Boards,Topics,Community,People';
+                 }
+                 else {
+                     selected = preSelected;
+                 }
+
+                 //if (preSelected != undefined) {
+                 //    for (var index = 0; index < preSelected.length; index++) {
+                 //        if (selected.indexOf(preSelected[index]) == -1) {
+                 //            selected = selected + preSelected[index] + ',';
+                 //        }
+                 //    }
+                 //}
+
+                 if (selected == '')
+                     selected = preSelected;
+
+                 document.getElementById('{!$Component.SearchForm.strSelectedOptions}').value = selected;
+             }
+
+             function getUrlVars() {
+                 var vars = [], hash;
+                 var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                 for (var i = 0; i < hashes.length; i++) {
+                     hash = hashes[i].split('=');
+                     vars.push(hash[0]);
+                     vars[hash[0]] = hash[1];
+                 }
+                 return vars;
+             }
+
+</script>
+    
+         </apex:component>

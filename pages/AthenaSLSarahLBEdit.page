@@ -1,0 +1,1039 @@
+<apex:page showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Edit</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-fileupload.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/tagit.ui-zendesk.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/jquery.tagit.css')}" />
+
+    <!-- check box, radio button -->
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/css/uniform.default.css')}" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+    <!-- BEGIN HEADER -->
+    <header>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="HpLogo">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/>
+                    </a>
+                    <div class="nav mtop10">
+                        <h1>Social Learning Platform</h1>
+                        <h3>Learning on your terms!</h3>
+                    </div>
+                    <div class="nav notify-row">
+                        <input type="text" class="span3 mtop16" />
+                        <button class="btn btn-primary" type="button">Search</button>
+                    </div>
+                    <div class="top-nav">
+                        <ul class="nav pull-right top-menu mtop16">
+                            <!-- BEGIN USER LOGIN DROPDOWN -->
+                            <li class="dropdown open">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="username">anto fernando</span>
+                                    <i class="icon-user"></i>
+                                    <!--<b class="caret"></b>-->
+                                </a>
+                                <ul class="dropdown-menu extended logout">
+                                    <li><a href="#">Log Out</a></li>
+                                </ul>
+                            </li>
+                            <!-- END USER LOGIN DROPDOWN -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid menunavBar">
+                    <a href="#">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Home.png')}" alt="Icon_Home"/>
+                        </a>
+                    <div class="btn-group">
+                        <a href="#" data-toggle="dropdown">
+                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Menu.png')}" alt="Icon_Menu"/>
+                            </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#1">Salesforce Home</a></li>
+                            <li><a href="#2">Help &amp; Support</a></li>
+                            <hr />
+                            <li><a href="#3">Account Management Portal(AMP)</a></li>
+                            <li><a href="#4">Portfolio Accrediation</a></li>
+                            <li><a href="#5">What We Sell</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+    <!-- BEGIN CONTAINER -->
+    <div id="container" class="row-fluid">
+        <!-- BEGIN PAGE -->
+        <div id="main-content">
+            <!-- BEGIN PAGE CONTAINER-->
+            <div class="container-fluid">
+                <!-- BEGIN PAGE HEADER-->
+                <div class="row-fluid">
+                    <div class="span12">
+                        <!-- BEGIN PAGE TITLE -->
+                        <div class="breadcrumb">
+                            <input type="text" class="span6" value="Andriod solutions for your clients needs" />
+                            <!--<button class="btn  disabled" type="button">Edit Board</button>-->
+                            <span class="pull-right colorWhite mtop5">
+                                <a class="colorWhite">
+                                    <span>5</span>
+                                    <span>
+                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_likeIcon.png')}" alt="hpit_athena_likeIcon"/>
+                                    </span>
+                                </a>
+                            </span>
+                        </div>
+                        <!-- END PAGE TITLE & BREADCRUMB-->
+                    </div>
+                </div>
+                <!-- END PAGE HEADER-->
+                <!-- BEGIN PAGE CONTENT-->
+                <div class="row-fluid">
+                    <div class="span12">
+                        <!-- BEGIN BLOG PORTLET-->
+                        <div class="row-fluid">
+                            <div class="span8">
+                                <div class="row-fluid bgGray">
+                                    <div class="span5">
+                                        <div class="m5 imageBackground">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/antena_defaultImgLearning.png')}" alt="antena_defaultImgLearning"/>
+                                            <button class="demo btn btn-primary btn-lg" data-toggle="modal" href="#EditImage">Edit Image</button>
+
+
+                                            <div id="EditImage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                                                <div class="modal-header">
+                                                    <h3>Board header image</h3>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="control-group">
+                                                        <label class="control-label">Choose image</label>
+                                                        <div class="controls">
+                                                            <label class="radio">
+                                                                <div class="radio">
+                                                                    <span>
+                                                                        <input type="radio" id="ShowuploadImage" name="optionsRadios1" value="option2" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                Upload from Computer
+                                                            </label>
+                                                            <label class="radio">
+                                                                <div class="radio">
+                                                                    <span class="checked">
+                                                                        <input id="ShowDefaultImage" type="radio" name="optionsRadios1" value="option1" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                Default Image
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="check ShowuploadImage" style="display:none">
+                                                    <p>This image appears at the top of each learning board Recommended size is 320px * 215px</p>
+                                                    <div class="controls">
+                                                        <div data-provides="fileupload" class="fileupload fileupload-new">
+                                                            <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail">
+                                                                <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" style="width: auto; border: 0 none;"/>
+                                                            </div>
+                                                            <div style="max-width: 200px; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                                                            <div>
+                                                                <span class="btn btn-file"><span class="fileupload-new">Select image</span>
+                                                                    <span class="fileupload-exists">Change</span>
+                                                                    <input type="file" class="default" /></span>
+                                                            </div>
+                                                        </div>
+                                                        <span class="label label-important">NOTE!</span>
+                                                        <span>Attached image thumbnail is
+                                         supported in Latest Firefox, Chrome, Opera,
+                                         Safari and Internet Explorer 10 only
+                                                        </span>
+                                                    </div>
+                                                    </div>
+                                                    <div class="check ShowDefaultImage" style="display:none">
+                                                    <div class="control-group">
+                                                        <label class="control-label">Select Default Image </label>
+                                                        <div class="controls">
+                                                            <select class="input-large m-wrap" tabindex="1">
+                                                                <option value="Category 1">Image 1</option>
+                                                                <option value="Category 2">Image 2</option>
+                                                                <option value="Category 3">Image 3</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                        </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                                                    <button class="btn btn-primary">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="span7">
+                                        <div class="m5">
+                                            <textarea style="height: 214px; width: 97%;">Dummy text is text that is used in the publishing industry or by web designers to occupy the space which will later be filled with 'real' content. This is required when, for example, the final text is not yet available. Dummy text is also known as 'fill text'. It is said that song composers of the past used dummy texts as lyrics when writing melodies in order to have a 'ready-made' text to sing with the melody. Dummy texts have been in use by typesetters since the 16th century.
+                                        </textarea>
+
+                                            <!-- tag cloud -->
+                                            <div class="control-group">
+                                                <label class="control-label">Add Tags</label>
+                                                <div class="controls">
+                                                    <input name="tags" id="learningTags" value="Social, Learning" class="hide" />
+                                                    <!-- Tag Hidden Value -->
+                                                    <ul id="learningTagsTop"></ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="control-group">
+                                                <div class="controls">
+                                                    <label class="checkbox">
+                                                        <div class="checker">
+                                                            <span class="">
+                                                                <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                        </div>
+                                                        Active
+                                                    </label>
+                                                    <label class="checkbox">
+                                                        <div class="checker">
+                                                            <span>
+                                                                <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                        </div>
+                                                        Featured
+                                                    </label>
+                                                </div>
+
+                                            </div>
+                                            <div class="control-group">
+                                                <div class="controls">
+                                                    <button type="button" class="btn pull-right mlb5">Cancel Changes</button>
+                                                    <button type="submit" class="btn btn-success pull-right mlb5">Save Changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row-fluid bgGray mtop10">
+                                    <button href="#" data-toggle="modal" style="margin:5px" class="demo btn btn-primary btn-lg pull-right">Change Order</button>
+                                    <div class="widget blue clearB">
+                                        <div class="widget-title">
+                                            <h4>ECS-Virtual Private Cloud Sales Presentation</h4>
+                                            <div class="actions phoneLearningActionfull colorWhite mtop5">
+                                                <a class="colorWhite">
+                                    <span>5</span>
+                                    <span>
+                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_likeIcon.png')}" alt="hpit_athena_likeIcon"/>
+                                    </span>
+                                </a>
+                                            </div>
+                                            <div class="actions phoneLearningActionfull">
+                                                <a href="#" class="btn btn-success"><i class="icon-pencil"></i>&nbsp; Edit</a>
+                                                <a href="#" class="btn"><i class="icon-remove"></i>&nbsp; Remove</a>
+                                            </div>
+                                        </div>
+                                        <div class="widget-body clearfix ">
+                                            <div class="actions phoneLearningAction">
+                                                <a href="#" class="btn btn-success"><i class="icon-pencil"></i>&nbsp; Edit</a>
+                                                <a href="#" class="btn"><i class="icon-remove"></i>&nbsp; Remove</a>
+                                            </div>
+                                            <p class="span12 BoardImgList ml0 clearB">
+                                                <span>
+                                                    <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/antena_defaultPostImg.png')}" alt="antena_defaultPostImg"/>
+                                                </span>
+                                                <span>SAP HANA: Management services have been added for client provided devices and client provided licenses. This release is another expansion of our industry-leading capabilities for SAP services through HP's Virtual Private Cloud. We've also made several portal enhancements, including the addition of SAP billable attributes to enable procurement via the portal. 
+                                                </span>
+                                                <span class="detailDoc">
+                                                    <a href="#" target="_blank">
+                                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/fileURLUpload.png')}" alt="fileURLUpload" height="25" width="25"/>
+                                                    </a>
+                                                </span>
+                                            </p>
+                                            <!-- tag cloud -->
+                                            <div class="tagDisplay clearB clearfix">
+                                                <ul class="tags">
+                                                  <li><a href="#" class="tag">HTML</a></li>
+                                                  <li><a href="#" class="tag">CSS</a></li>
+                                                  <li><a href="#" class="tag">JavaScript</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="widget blue clearB">
+                                        <div class="widget-title">
+                                            <h4>ECS-Virtual Private Cloud Sales Presentation</h4>
+                                            <div class="actions phoneLearningActionfull colorWhite mtop5">
+                                                <a class="colorWhite">
+                                    <span>5</span>
+                                    <span>
+                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_likeIcon.png')}" alt="hpit_athena_likeIcon"/>
+                                    </span>
+                                </a>
+                                            </div>
+                                            <div class="actions phoneLearningActionfull">
+                                                <a href="#" class="btn btn-success"><i class="icon-pencil"></i>&nbsp; Edit</a>
+                                                <a href="#" class="btn"><i class="icon-remove"></i>&nbsp; Remove</a>
+                                            </div>
+                                        </div>
+                                        <div class="widget-body clearfix ">
+                                            <div class="actions phoneLearningAction">
+                                                <a href="#" class="btn btn-success"><i class="icon-pencil"></i>&nbsp; Edit</a>
+                                                <a href="#" class="btn"><i class="icon-remove"></i>&nbsp; Remove</a>
+                                            </div>
+                                            <p class="span12 BoardImgList ml0 clearB">
+                                                <span>
+                                                    <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/antena_defaultPostImg.png')}" alt="antena_defaultPostImg"/></span>
+                                                    
+                                                <span>SAP HANA: Management services have been added for client provided devices and client provided licenses. This release is another expansion of our industry-leading capabilities for SAP services through HP's Virtual Private Cloud. We've also made several portal enhancements, including the addition of SAP billable attributes to enable procurement via the portal. 
+                                                </span>
+                                                <span class="detailDoc">
+                                                    <a href="#" target="_blank">
+                                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/fileUpload.png')}" alt="fileUpload" height="25" width="25"/>
+                                                    </a>
+                                                </span>
+                                            </p>
+                                            <!-- tag cloud -->
+                                            <div class="tagDisplay clearB clearfix">
+                                                <ul class="tags">
+                                                  <li><a href="#" class="tag">HTML</a></li>
+                                                  <li><a href="#" class="tag">CSS</a></li>
+                                                  <li><a href="#" class="tag">JavaScript</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- ADD NEW LEARNING STARTS -->
+                                    <div class="widget blue clearfix clearB">
+                                        <div class="span12 ml0 addLearn">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/add.png')}" alt="add"/>
+                                            <span>
+
+                                                <button href="#stack1" data-toggle="modal" class="demo btn btn-primary btn-lg">Add Learning</button>
+
+                                                <!-- modal 1st starts -->
+                                                <div id="stack1" class="modal hide fade" tabindex="-1" data-focus-on="input:first" data-backdrop="static">
+                                                    <div class="modal-header">
+
+                                                        <h3>Add Learning</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div style="width: 150px; margin: 0 auto">
+                                                            <div class="span6">
+                                                                <button href="#stack2" data-toggle="modal" class="demo btn btn-primary btn-lg"><i class="icon-search" style="font-size: 34px"></i></button>
+                                                                <p>Search Existing</p>
+                                                            </div>
+                                                            <div class="span6">
+                                                                <button href="#stack3" data-toggle="modal" class="demo btn btn-primary btn-lg"><i class="icon-file-text-alt" style="font-size: 34px"></i></button>
+                                                                <p>Create New</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- modal 2nd starts -->
+                                                <div id="stack2" class="modal hide fade" tabindex="-1" data-focus-on="input:first" data-backdrop="static" style="width: 55%; left: 44%;">
+                                                    <div class="modal-header">
+
+                                                        <h3>Search learning</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="span5">
+                                                            <span>
+                                                                <input type="text" class="span11" value="Enter title or description of learning" /></span>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <button class="btn btn-primary">Search</button>
+                                                        </div>
+                                                        <div class="span5 ml0 mtop20 clearB">
+                                                            <label>Available Learning :</label>
+                                                        </div>
+                                                        <div class="span7 mtop20">
+                                                            <label class="checkbox line">
+                                                                <div class="checker">
+                                                                    <span>
+                                                                        <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                "The cloud is a simple" (Text, - - - )
+                                                            </label>
+                                                            <label class="checkbox line">
+                                                                <div class="checker">
+                                                                    <span>
+                                                                        <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                "Mahesh Shah presents ESIT FY15 priorities" (Video, - - - )
+                                                            </label>
+                                                            <label class="checkbox line">
+                                                                <div class="checker">
+                                                                    <span>
+                                                                        <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                "ES IT presents the New Style of IT" (Document, - - - )
+                                                            </label>
+
+
+                                                            <label class="checkbox line">
+                                                                <div class="checker">
+                                                                    <span>
+                                                                        <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                "Introduction to Phoenix" by owner
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" data-dismiss="modal" class="btn">Close</button>
+                                                        <button type="button" class="btn btn-primary">Ok</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- modal 3rd starts -->
+                                                <div id="stack3" class="modal hide fade" tabindex="-1" data-focus-on="input:first" data-backdrop="static">
+                                                    <div class="modal-header">
+                                                        <h3>Create new learning</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Whate type of learning would you like to create?</p>
+                                                        <div class="span4">
+                                                            <button href="#stack4" data-toggle="modal" class="demo btn btn-primary btn-lg"><i class="icon-text-height" style="font-size: 34px"></i></button>
+                                                            <p>Text/Image</p>
+                                                        </div>
+                                                        <div class="span4">
+                                                            <button href="#stack5" data-toggle="modal" class="demo btn btn-primary btn-lg"><i class="icon-youtube-play" style="font-size: 34px"></i></button>
+                                                            <p>Video</p>
+                                                        </div>
+                                                        <div class="span3">
+                                                            <button href="#stack6" data-toggle="modal" class="demo btn btn-primary btn-lg"><i class="icon-link" style="font-size: 34px"></i></button>
+                                                            <p>Link/Document</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- modal 4th starts Image edit-->
+                                                <div id="stack4" class="modal hide fade" tabindex="-1" data-focus-on="input:first" data-backdrop="static" style="width: 55%; left: 44%">
+                                                    <div class="modal-header">
+                                                        <h3>Create new text-board learning</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="span5">
+                                                            <label>Title :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <input type="text" class="span10 " /></span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Description :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <textarea class="span10 "></textarea></span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Add Tags :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <!-- text Add Tag -->
+                                                                <div class="controls">
+                                                                    <input name="tags" id="learningTagsText" value="Social, Learning" class="hide" />
+                                                                    <!-- Tag Hidden Value -->
+                                                                    <ul id="learningTagsTextTop"></ul>
+                                                                </div>
+                                                            </span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Learning Image :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <!-- text image upload -->
+                                                                <div class="controls">
+                                                                    <div data-provides="fileupload" class="fileupload fileupload-new">
+                                                                        <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail">
+                                                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" style="width: auto; border: 0 none;"/>
+                                                                        </div>
+                                                                        <div style="width: auto; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                                                                        <div>
+                                                                            <span class="btn btn-file"><span class="fileupload-new">Select image</span>
+                                                                                <span class="fileupload-exists">Change</span>
+                                                                                <input type="file" class="default" /></span>
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <span class="label label-important">NOTE!</span>
+                                                                    <span>Attached image thumbnail is
+                                         supported in Latest Firefox, Chrome, Opera,
+                                         Safari and Internet Explorer 10 only
+                                                                    </span>
+                                                                </div>
+                                                            </span>
+                                                            <span><b>Or Select Default</b></span>
+                                                            <span>
+                                                                <select class="span6 " data-placeholder="Choose a image" tabindex="1">
+                                                                    <option value="">Select...</option>
+                                                                    <option value="Category 1">Image 1</option>
+                                                                    <option value="Category 2">Image 2</option>
+                                                                </select>
+                                                            </span>
+                                                        </div>
+                                                        <div class="span7 mtop20 clearB show-right">
+                                                            <label class="checkbox line">
+                                                                <div class="checker">
+                                                                    <span>
+                                                                        <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                Add to current learning board
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+                                                        <button type="button" class="btn btn-primary">Save</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- modal 5th starts Video edit-->
+                                                <div id="stack5" class="modal hide fade" tabindex="-1" data-focus-on="input:first" data-backdrop="static" style="width: 55%; left: 44%">
+                                                    <div class="modal-header">
+                                                        <h3>Create new video-based learning</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="span5">
+                                                            <label>Title :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <input type="text" class="span10 " /></span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Description :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <textarea class="span10 "></textarea></span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Add Tags :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <!-- text Add Tag -->
+                                                                <div class="controls">
+                                                                    <input name="tags" id="learningVideoLink" value="Social, Learning" class="hide" />
+                                                                    <!-- Tag Hidden Value -->
+                                                                    <ul id="learningTagsVideoTop"></ul>
+                                                                </div>
+                                                            </span>
+                                                        </div>
+                                                        <div class="span5 ml0 mtop10">
+                                                            <label>URL :</label>
+                                                        </div>
+                                                        <div class="span7 mtop10">
+                                                            <span>
+                                                                <input type="text" class="span10 " />
+                                                                <button type="button" class="btn btn-primary mtop-10">Test</button>
+                                                                <span class="colorBlue">Vedio Preview</span><br />
+                                                                <span>
+                                                                    <div class="span10">
+                                                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_video.png')}" alt="no_video" styleClass="span12"/>
+                                                                    </div>
+                                                                </span>
+                                                                <br />
+                                                                <div class="clearB"><a>View instructions for uploading Brainshark videos</a></div>
+                                                                <br />
+                                                                <span>YouTube video must be in below format</span><br />
+                                                                <span>http ://www.youtube.com/watch?v=TSNLsBiep31 </span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="span7 mtop20 clearB show-right">
+                                                            <label class="checkbox line">
+                                                                <div class="checker">
+                                                                    <span>
+                                                                        <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                Add to current learning board
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+                                                        <button type="button" class="btn btn-primary">Save</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- modal 6th starts Doc/Link edit-->
+                                                <div id="stack6" class="modal hide fade" tabindex="-1" data-focus-on="input:first" data-backdrop="static" style="width: 55%; left: 44%">
+                                                    <div class="modal-header">
+                                                        <h3>Create new link/document learning</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="span5">
+                                                            <label>Title :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <input type="text" class="span10 " /></span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Description :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <textarea class="span10 "></textarea></span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Add Tags :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <!-- text Add Tag -->
+                                                                <div class="controls">
+                                                                    <input name="tags" id="learningTagsLink" value="Social, Learning" class="hide" />
+                                                                    <!-- Tag Hidden Value -->
+                                                                    <ul id="learningTagsLinkTop"></ul>
+                                                                </div>
+                                                            </span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Learning Image :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <!-- text image upload -->
+                                                                <div class="controls">
+                                                                    <div data-provides="fileupload" class="fileupload fileupload-new">
+                                                                        <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail">
+                                                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" style="width: auto; border: 0 none;"/>
+                                                                        </div>
+                                                                        <div style="width: auto; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                                                                        <div>
+                                                                            <span class="btn btn-file"><span class="fileupload-new">Select image</span>
+                                                                                <span class="fileupload-exists">Change</span>
+                                                                                <input type="file" class="default" /></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span class="label label-important">NOTE!</span>
+                                                                    <span>Attached image thumbnail is
+                                         supported in Latest Firefox, Chrome, Opera,
+                                         Safari and Internet Explorer 10 only
+                                                                    </span>
+                                                                </div>
+                                                            </span>
+                                                            <span><b>Or Select Default</b></span>
+                                                            <span>
+                                                                <select class="span6 " data-placeholder="Choose a image" tabindex="1">
+                                                                    <option value="">Select...</option>
+                                                                    <option value="Category 1">Image 1</option>
+                                                                    <option value="Category 2">Image 2</option>
+                                                                </select>
+                                                            </span>
+                                                        </div>
+                                                        <div class="span5 ml0 mtop10">
+                                                            <label>URL :</label>
+                                                        </div>
+                                                        <div class="span7 mtop10">
+                                                            <span>
+                                                                <input type="text" class="span10 " />
+                                                                <button type="button" class="btn btn-primary mtop-10">Test</button>
+                                                                <span class="colorBlue">upload new documents to this directory</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="span7 mtop20 clearB show-right">
+                                                            <label class="checkbox line">
+                                                                <div class="checker">
+                                                                    <span>
+                                                                        <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                </div>
+                                                                Add to current learning board
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+                                                        <button type="button" class="btn btn-primary">Save</button>
+                                                    </div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- right column starts -->
+                            <div class="span4">
+                                <div class="blog-side-bar">
+                                    <div class="hpit_athena_rightDiv">
+                                        <h3>Followers</h3>
+                                        <hr />
+                                        <div>
+                                            <p>
+                                                <span>
+                                                    <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Tadd_pic.png')}" alt="profile_pic" width="35" height="35"/>
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="blog-side-bar">
+                                    <div class="hpit_athena_rightDiv">
+                                        <div>
+                                            <p>
+                                                <span>
+                                                    <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Tadd_pic.png')}" alt="profile_pic" width="35" height="35"/>
+                                                </span><a class="hpit_athena_ca_itemLink"> Tad Kozel </a>
+                                            </p>
+                                            <p class="mtop5">
+                                                <button href="#ChangeOwner" data-toggle="modal" class="demo btn btn-primary btn-lg">Change Owner</button>
+                                                <div id="ChangeOwner" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                                                    <div class="modal-header">
+
+                                                        <h3>Change Owner</h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="span5">
+                                                            <label>Curent Owner :</label>
+                                                        </div>
+                                                        <div class="span5">
+                                                            <span>fernando, anto</span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>New Owner :</label>
+                                                        </div>
+                                                        <div class="span5">
+                                                            <span>
+                                                                <input type="text" class="span10 " /></span>
+                                                            <a><i class="icon-search"></i></a>
+                                                            <!-- search owner -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                                                        <button class="btn btn-primary">Save</button>
+                                                    </div>
+                                                </div>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="blog-side-bar">
+                                    <div class="hpit_athena_rightDiv">
+                                        <div class="menu_container">
+                                            <p class="menu_head">
+                                                <span class="plusminus">- </span>&nbsp; Comment <span class="hpit_athena_ComIcon">
+                                                    <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIconBlack.png')}" alt="hpit_athena_chatIconBlack" width="14" height="14"/>
+                                                    </span>
+                                                <span class="hpit_athena_ComIconCount"> 6 </span>
+                                            </p>
+                                            <div class="menu_body">
+                                                <div class="menu_bodyDiv">test </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="blog-side-bar">
+                                    <div class="hpit_athena_rightDiv">
+                                        <h3>Related boards</h3>
+                                        <hr />
+                                        <div>
+                                            <p>
+                                                <span>
+                                                    <button href="#addRelatedB" data-toggle="modal" class="demo btn btn-primary btn-lg">Add Related boards</button>
+                                                    <button href="#" data-toggle="modal" class="demo btn btn-primary btn-lg">Change Order</button>
+                                                    <div id="addRelatedB" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" data-backdrop="static" aria-hidden="true" style="width: 55%; left: 44%;">
+                                                        <div class="modal-header">
+
+                                                            <h3>Add Related boards</h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="span5">
+                                                                <span>
+                                                                    <input type="text" class="span11" value="Enter title of learning board" /></span>
+                                                            </div>
+                                                            <div class="span7">
+                                                                <button class="btn btn-primary">Search</button>
+                                                            </div>
+                                                            <div class="span5 ml0 mtop20 clearB">
+                                                                <label>Available boards :</label>
+                                                            </div>
+                                                            <div class="span7 mtop20">
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "Learning board title" by owner
+                                                                </label>
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "What is The New Style of IT?" by owner
+                                                                </label>
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "Introduction to Phoenix" by owner
+                                                                </label>
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "Learning board title" by owner
+                                                                </label>
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "What is The New Style of IT?" by owner
+                                                                </label>
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "Introduction to Phoenix" by owner
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                                                            <button class="btn btn-primary">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                    </div>
+
+                  <div class="blog-side-bar"> 
+                                    <div class="hpit_athena_rightDiv">
+                                        <h3>Related Offerings</h3>
+                                        <hr />
+
+<table class="table table-condensed">
+ <thead>
+  <tr>
+   <th >Offering Name</th>
+   <th>Description</th>
+   <th>Service Line</th>
+   </tr>
+   </thead>
+ <tbody>
+  <tr>
+   <td style="vertical-align:top"><a href="#">Offering 1</a></td>
+   <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </td>
+   <td style="vertical-align:top"><a href="#">Backup &amp; Restore</a></td>
+   </tr>
+  <tr>
+   <td style="vertical-align:top"><a href="#">Offering 2</a></td>
+   <td> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+   <td style="vertical-align:top"><a href="#">Security Services</a></td>
+   </tr>
+   </tbody>
+</table>
+                                        <div>
+                                            <p>
+                                                <span>
+                                                    <button href="#addRelatedOR" data-toggle="modal" class="demo btn btn-primary btn-lg">Add Related Offering</button>
+                                                    <button href="#" data-toggle="modal" class="demo btn btn-primary btn-lg">Change Order</button>
+                                                    <div id="addRelatedOR" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" data-backdrop="static" aria-hidden="true" style="width: 55%; left: 44%;">
+                                                        <div class="modal-header">
+
+                                                            <h3>Add Related Offerings</h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="span5">
+                                                                <span>
+                                                                    <input type="text" class="span11" value="Enter title of Offering" /></span>
+                                                            </div>
+                                                            <div class="span7">
+                                                                <button class="btn btn-primary">Search</button>
+                                                            </div>
+                                                            <div class="span5 ml0 mtop20 clearB">
+                                                                <label>Available Offerings :</label>
+                                                            </div>
+                                                            <div class="span7 mtop20">
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "Offering 1" by owner
+                                                                </label>
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "Offering 2" by owner
+                                                                </label>
+                                                                <label class="checkbox line">
+                                                                    <div class="checker">
+                                                                        <span>
+                                                                            <input type="checkbox" value="" style="opacity: 0;" /></span>
+                                                                    </div>
+                                                                    "Offering 3" by owner
+                                                                </label>
+                                                               
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                                                            <button class="btn btn-primary">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                  </div>
+
+                                
+                            </div>
+                        </div>
+                        <!-- END BLOG PORTLET-->
+                    </div>
+                </div>
+                <!-- END PAGE CONTENT-->
+                <!-- END PAGE CONTENT-->
+            </div>
+            <!-- END PAGE CONTAINER-->
+        </div>
+        <!-- END PAGE -->
+    </div>
+    <!-- END CONTAINER -->
+
+    <!-- BEGIN FOOTER -->
+    <div id="footer">
+        © Hewlett-Packard Development Company, L.P.     |     HP Restricted
+    </div>
+    <!-- END FOOTER -->
+
+    <!-- BEGIN JAVASCRIPTS -->
+    <!-- Load javascripts at bottom, this will reduce page load time
+         -->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-fileupload.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/jquery.uniform.min.js')}"/>
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+
+    <!-- END JAVASCRIPTS -->
+    <script>
+        $(function () {
+            var sampleTags = ['cloud', 'athena', 'sample', 'board', 'UI', 'css', 'jQuery', 'salesforce', 'html5', 'responcive', ];
+
+
+
+            //-------------------------------
+            // Single TAG field
+            //-------------------------------
+            $('#learningTagsTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTags')
+            });
+
+            $('#learningTagsTextTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTagsText')
+            });
+
+            $('#learningTagsLinkTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTagsLink')
+            });
+
+            $('#learningTagsVideoTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningVideoLink')
+            });
+
+            $(" input[type=radio], input[type=checkbox]").uniform();
+
+            //show hide imageUpload in popup
+            $("input[type=radio]").change(function () {
+                var divId = $(this).attr("id");
+                $("div.check").hide();
+                $("." + divId).show();
+                $("input[type=checkbox]").change();
+            });
+
+            //toggle the componenet with class menu_body
+            $(".menu_body").show();
+            $(".menu_head").click(function () {
+                $(this).next(".menu_body").slideToggle(600);
+                var plusmin;
+                plusmin = $(this).children(".plusminus").text();
+
+                if (plusmin == '+')
+                    $(this).children(".plusminus").text('-');
+                else
+                    $(this).children(".plusminus").text('+');
+            });
+
+
+        });
+    </script>
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

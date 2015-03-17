@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>ODP_PotentialRisk</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>ODP_PotentialRisk</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Description</label>
+        <length>10000</length>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>15</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Potential_Risk_Owner__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Potential Risk Owner</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Potential_Risks</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Project_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>Project ID</label>
+        <referenceTo>Offering_Release__c</referenceTo>
+        <relationshipLabel>Potential Risks</relationshipLabel>
+        <relationshipName>Potential_Risks</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <label>Potential Risk</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>Project_ID__c</columns>
+        <columns>Potential_Risk_Owner__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+        <language>en_US</language>
+    </listViews>
+    <nameField>
+        <displayFormat>PR-{0000000000}</displayFormat>
+        <label>Potential Risk ID</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Potential Risks</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Potential_Risk_Owner__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Description__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>UPDATEDBY_USER</customTabListAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Description_mandatory</fullName>
+        <active>true</active>
+        <errorConditionFormula>OR(
+Description__c =&apos;&apos;,
+Description__c =null
+)</errorConditionFormula>
+        <errorDisplayField>Description__c</errorDisplayField>
+        <errorMessage>Description is mandatory</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Potential_Risk_Owner_Shouldnt_be_Null</fullName>
+        <active>true</active>
+        <errorConditionFormula>OR(
+   Potential_Risk_Owner__c  = &apos;&apos;,
+   Potential_Risk_Owner__c  = null
+)</errorConditionFormula>
+        <errorDisplayField>Potential_Risk_Owner__c</errorDisplayField>
+        <errorMessage>Please select the Owner</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>New_Potential_Risk</fullName>
+        <availability>online</availability>
+        <description>add  Potential risk</description>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>New Potential Risk</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>{!REQUIRESCRIPT(&apos;/soap/ajax/30/connection.js&apos;)} 
+{!REQUIRESCRIPT(&quot;/soap/ajax/30/apex.js&quot;)} 
+
+
+var offrelStatus = &quot;{!Offering_Release__c.Status__c}&quot;;  
+if(offrelStatus != &apos;Not Started&apos;){  
+navigateToUrl(&apos;/apex/ODP_PotentialRisk?OFID={!Offering_Release__c.Id}&apos;);  
+//navigateToUrl(&apos;/apex/Pavithra_PotentialRisks?OFID={!Offering_Release__c.Id}&apos;);  
+
+} 
+else 
+{ 
+alert(&apos;Project is &quot;Not Started&quot;. Cannot associate risks.&apos;); 
+}</url>
+    </webLinks>
+</CustomObject>

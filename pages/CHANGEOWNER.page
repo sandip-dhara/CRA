@@ -1,0 +1,26 @@
+<apex:page standardController="Promotion__c" extensions="ExtendedOffering">
+
+<apex:includeScript value="{!URLFOR($Resource.jQuery)}"/>
+<script>
+$j = jQuery.noConflict();
+$j(document).ready(function() {
+
+$j("select[id$=inputUser_mlktp]").hide();
+});
+</script>
+
+  <apex:form >
+<apex:pageBlock >
+   <apex:pageBlockSection columns="1" collapsible="false">
+  <!-- <apex:inputField value="{!Promotion__c.Name}" required="true"/>-->
+   <apex:outputField value="{!Promotion__c.ownerid}" label="CurrentOwner "/>    
+  <apex:inputField value="{!Promotion__c.ownerid}" id="inputUser" onmousemove="document.getElementById('{!$Component.inputUser}').value = ''; return false;" label="NewOwner" /> 
+ </apex:pageBlockSection>    
+<apex:pageBlockButtons location="bottom">
+<apex:commandButton action="{!save}" value="save" />
+<apex:commandButton action="{!cancel}" value="Cancel" />
+        </apex:pageBlockButtons>
+</apex:pageBlock>
+</apex:form>
+</apex:page>
+      <!--  <apex:inputfield value="{!Learning_Board__c.OwnerID}"/>-->

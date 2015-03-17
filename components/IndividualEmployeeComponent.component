@@ -1,0 +1,36 @@
+<apex:component Controller="SupReqIndividualEmployeeCompController" access="global">
+    <apex:attribute name="SupportRequestId" assignTo="{!SupportReqId}" type="String" description="S"/>
+        <apex:dataTable border="2" value="{!Employee}" var="SPL">
+                <!--<apex:facet name="caption">Individual Employee Details</apex:facet>-->
+                <apex:column >
+                     <apex:facet name="header">Home Region</apex:facet>
+                        {!SPL.Home_Region__c}
+                </apex:column>
+                <apex:column >
+                     <apex:facet name="header">Organisation</apex:facet>
+                        {!SPL.Organisation__c}
+                </apex:column>
+                <apex:column >
+                     <apex:facet name="header">Employee Name</apex:facet>
+                        {!SPL.Employee_Name__c}
+                </apex:column>
+                <apex:column value="{!SPL.Employee_ID__c}" >
+                     <apex:facet name="header">Employee ID</apex:facet>
+                        
+                </apex:column>
+                <apex:column >
+                     <apex:facet name="header">Time Tracking Tool</apex:facet>
+                        {!SPL.Time_Tracking_Tool__c}
+                </apex:column>
+                
+   
+                
+                <!--<apex:column value="{!SPL.Quantity}"/>
+                <apex:column value="{!SPL.HasSchedule}"/>
+                <apex:column value="{!SPL.Subtotal}"/>
+                <apex:column value="{!SPL.ServiceDate}"/> -->
+        </apex:dataTable>
+        <apex:outputLabel rendered="{!isIndividualEmployeeListEmpty}">
+                {!$Label.No_records_to_display}
+        </apex:outputLabel>
+</apex:component>

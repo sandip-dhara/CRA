@@ -1,0 +1,58 @@
+<!-- 
+/**********************************************************
+* Page Name: PartnerHomeOpptyListView
+* Author: Accenture
+* Date: 04-JULY-2012 
+* Requirement # Request Id :
+* Description: Display list of opportunities assigned to partner on the partner portal home page
+***********************************************************/
+-->
+
+<apex:page controller="PartnerOpptyHomePageListController" sidebar="false" showHeader="false">
+    <style>
+        
+        .headerRow {
+            font-size: 94%;
+        }
+        .pbTitle .mainTitle {
+            font-size: 91%;
+        }
+        .dataCell {
+            font-size: 90%;
+        }
+    </style>    
+    <apex:form >
+        <apex:pageBlock title="{!$Label.Acknowledge_Opportunities}">
+            <apex:pageMessages />
+                <apex:pageBlockTable value="{!Opportunities}" var="oppty" id="opptiesBlock">
+                    <apex:column headerValue="{!$Label.Action}" styleClass="fontStyle">
+                        <apex:commandLink action="{!ackOppty}" value="{!$Label.Acknowledge}" id="theCommandLink" oncomplete="refreshPage();">
+                            <apex:param name="id" value="{!oppty.Id}" assignTo="{!selectedOppty}"/>
+                        </apex:commandLink>
+                    </apex:column>
+                    <apex:column value="{!oppty.Name}"/>
+                    <apex:column value="{!oppty.Account.Name}"/>
+                    <apex:column value="{!oppty.Amount}"/>
+                    <apex:column value="{!oppty.CloseDate }"/>
+                    <apex:column value="{!oppty.StageName}"/>
+                    <apex:column value="{!oppty.Assigned_to_partner_date__c}"/>
+                    <apex:column value="{!oppty.Last_Modified_Full_Name__c}"/>                                    
+                </apex:pageBlockTable>
+        </apex:pageBlock>
+            <div style="width:100%;" align="center">
+                <apex:panelGrid columns="4" columnClasses="alignCenter" style="align: center;">
+                    <apex:commandLink action="{!first}" value="{!$Label.First}"/>
+                    <apex:commandLink action="{!previous}" value="{!$Label.Previous}" rendered="{!hasPrevious}"/>
+                    <apex:commandLink action="{!next}" value="{!$Label.Next}" rendered="{!hasNext}"/>
+                    <apex:commandLink action="{!last}" value="{!$Label.Last}"/>
+                </apex:panelGrid>
+            </div>
+            <script type="text/javascript">
+              
+                // redirect the top level window 
+                function refreshPage() {
+                    window.parent.location.href = '/home/home.jsp';
+                }
+            </script>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,139 @@
+<apex:page id="page" standardController="Account_Plan__c" extensions="AcctPlan360ViewController">
+<style type="text/css">
+body .apexp .pbBody table.list tr.dataRow td table{
+    border: 0px solid #E0E3E5;
+}
+
+body .apexp .pbBody table.list tr.dataRow td .rich-table-thead{
+    display: none;
+}
+</style>
+
+<apex:form id="frm">
+<apex:tabPanel switchType="client">
+    <apex:tab label="Opportunities">
+        <apex:pageBlock title="Account Family Opportunities">
+            <apex:pageblockButtons location="top" >
+                <apex:outputText value=""/>
+                <apex:commandLink value="" />
+            </apex:pageblockButtons>
+            <apex:pageblockTable value="{!optyList}" var="c">
+                <!--<apex:repeat value="{!$ObjectType.Opportunity.FieldSets.AcctPlan360ViewOptyFieldSet}" var="f">
+                    <apex:column value="{!o[f]}"/>
+                </apex:repeat>-->
+                 <apex:column value="{!c.AccountId}" headerValue="Account Name"/>
+                 
+                 <apex:column headerValue="Opportunity Name">
+                 <apex:outputLink value="Javascript:void();" onclick="window.open('/{!c.id}');">{!c.Name}</apex:outputLink>
+                 </apex:column>
+                 <apex:column value="{!c.OwnerId}" headerValue="Opportunity Owner"/>
+                 <apex:column value="{!c.CloseDate}" headerValue="Close Date"/>
+                 <apex:column value="{!c.StageName}" headerValue="Stage"/>
+                 <apex:column value="{!c.Amount}" headerValue="Amount"/>
+            </apex:pageblockTable>
+        </apex:pageBlock>
+    </apex:tab>
+    <apex:tab label="Cases">
+        <apex:pageBlock title="Account Family Cases">
+        <apex:pageblockButtons location="top" >
+                <apex:outputText value=""/>
+                <apex:commandLink value="" />
+            </apex:pageblockButtons>
+             <apex:pageBlockTable value="{!caseList}" var="c">
+                <!--<apex:repeat value="{!$ObjectType.Case.FieldSets.AcctPlan360ViewCasesFieldSet}" var="f">
+                    <apex:column value="{!c[f]}"/>                    
+                </apex:repeat>-->
+                 <apex:column value="{!c.AccountId}" headerValue="Account Name"/>
+                 <apex:column value="{!c.Subject}" headerValue="Subject"/>
+                 <apex:column value="{!c.ContactId}" headerValue="Contact Name"/>
+                 <apex:column value="{!c.Status}" headerValue="Status"/>
+             </apex:pageBlockTable>  
+        </apex:pageBlock>
+    </apex:tab>
+    <apex:tab label="Tasks">
+        <apex:pageBlock title="Account Family Tasks">
+            <apex:pageblockButtons location="top" >
+                <apex:outputText value=""/>
+                <apex:commandLink value="" />
+            </apex:pageblockButtons>
+            <apex:pageBlockTable value="{!taskList}" var="c">
+             <apex:column value="{!c.OwnerId}" headerValue="Assigned To"/>
+             <apex:column value="{!c.AccountId}" headerValue="Account Name"/>
+             <apex:column value="{!c.Subject}" headerValue="Subject"/>
+             <apex:column value="{!c.Status}" headerValue="Status"/>
+             <apex:column value="{!c.Priority}" headerValue="Priority" />
+             <apex:column value="{!c.ActivityDate}" headerValue="Due Date" />
+                            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:tab>
+ <!--   <apex:tab label="Events">
+        <apex:pageBlock title="Account Family Events">
+            <apex:pageblockButtons location="top" >
+                <apex:outputText value=""/>
+                <apex:commandLink value="" />
+            </apex:pageblockButtons>
+            <apex:pageBlockTable value="{!eventList}" var="c">
+             <apex:column value="{!c.OwnerId}" headerValue="Assigned To"/>
+             <apex:column value="{!c.AccountId}" headerValue="Account Name" />
+             <apex:column value="{!c.Subject}" headerValue="Subject"/>             
+             <apex:column value="{!c.StartDateTime}" headerValue="Start Date"/>
+             <apex:column value="{!c.EndDateTime}" headerValue="End Date"/>                         
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:tab>  -->
+    
+    <!-- Release 4 requirement to display contracts tab-->
+    
+    <apex:tab label="Contracts">
+        <apex:pageBlock title="SAP Contract Data" id="pageblock">
+            <apex:pageblockButtons location="top" >
+                <apex:outputText value=""/>
+                <apex:commandLink value="" />
+            </apex:pageblockButtons>
+            <apex:pageBlockTable value="{!contractList}" var="c" id="contractList"> 
+            <apex:column headerValue="Business Group" id="BusinessGoupColumn"> 
+             <apex:pageBlockTable value="{!c.Opportunity_Product__r}" var="d" id="pgtable">
+             <apex:column >{!d.Business_Group__c}</apex:column>                   
+             </apex:pageBlockTable> 
+             </apex:column>  
+             <apex:column headerValue="GBU" id="GBUColumn"> 
+             <apex:pageBlockTable value="{!c.Opportunity_Product__r}" var="d" id="pagetable">
+             <apex:column >{!d.GBU__c}</apex:column>        
+             </apex:pageBlockTable> 
+             </apex:column>
+             <apex:column headerValue="Product Line" id="ProductLine"> 
+             <apex:pageBlockTable value="{!c.Opportunity_Product__r}" var="d">
+             <apex:column >{!d.Product_Line__c}</apex:column>        
+             </apex:pageBlockTable> 
+             </apex:column>
+             <apex:column headerValue="SalesDoc Number">   
+             <apex:outputLink value="Javascript:void();" onclick="window.open('/{!c.Id}');">{!c.Name}</apex:outputLink>
+             </apex:column>
+             <apex:column value="{!c.Contract_Start_Date__c}" headerValue="Date Contract was Signed"/>
+     <apex:column value="{!c.Total_Contract_Value__c}" headerValue="Value of the Contract" />
+             <apex:column value="{!c.Contract_Length_in_Months__c}" headerValue="Length of the Contract (Months)"/>  
+             <apex:column value="{!c.Renewal_Month_Year__c}" headerValue="Renewal Month Year"/>
+                                              
+            </apex:pageBlockTable>           
+            
+            </apex:pageBlock>
+    </apex:tab>
+    
+        </apex:tabPanel>
+</apex:form>
+
+ <Script>
+ 
+var hide= true;
+function hideRows(tableId){
+var t = document.getElementById(tableId);
+var len = t.rows.length;
+var rowStyle = (hide)? "none":"";
+for(i=1 ; i< len; i++){
+t.rows[0].style.display = rowStyle;
+}
+}
+hideRows('page:frm:pageblock:pgtable'); // Pass complete id of the pageblocktable
+ 
+ </script>
+</apex:page>

@@ -1,0 +1,69 @@
+<apex:page standardController="Opportunity" extensions="CPQPartnerHPQuoteController" sidebar="false" id="pg" showHeader="false">
+    <style type="text/css">
+        .custPopup
+        {
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            width: 500px;
+            margin-left: -250px;
+            top:12px;
+        }
+        .popupBackground
+        {
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+    </style>
+    <script>
+        function showWaitPopupBlock(){
+            /*var selfService = '{!objUser.Partner_Self_Service_Enabled__c }';
+            alert(selfService);
+            var MDCPLookup = '{!Opportunity.Account.MDCP_Organization_ID__c}';
+            alert(MDCPLookup);*/
+            if(('{!objUser.Partner_Self_Service_Enabled__c }' != 'false') && ('{!Opportunity.Account.MDCP_Organization_ID__c}' != '')){
+                showWaitPopup();
+            }
+                
+        }
+    </script>
+    <apex:form id="formId">
+        
+        <apex:outputField value="{!Opportunity.Account.World_Region1__r.Name}" rendered="false" />
+        <apex:inputHidden value="{!Opportunity.Deal_Id__c}"/>
+        <apex:inputHidden value="{!Opportunity.Opportunity_ID__c}"/>
+        <apex:outputField value="{!Opportunity.Account.MDCP_Organization_ID__c}" rendered="false"/>
+        <apex:outputField value="{!Opportunity.Account.Source_System_Account_ID__c}" rendered="false"/>
+        <apex:inputhidden value="{!Opportunity.CurrencyIsoCode}"/>
+        <apex:outputField value="{!Opportunity.Account.Mdcp_SiteId__c}" rendered="false"/>
+        <apex:outputField value="{!Opportunity.Account.MDCP_Site_Instance_Id__c}" rendered="false"/>
+        <apex:actionFunction name="showWaitPopup" rerender="panel" action="{!Wait}" />
+        <!--<apex:actionPoller action="{!hideWaitPopup}" reRender="panel" interval="5"/>-->
+        <apex:pageblock title="{!$Label.CPQSQHPQuoteHeader}">
+             <apex:pageBlockButtons location="top">
+                 <apex:commandButton rendered="{!hideButtons}" value="{!$Label.CPQSQCreateQuote}" onclick="showWaitPopupBlock();" rerender="panel" action="{!createQuote}" oncomplete="if('{!SuccessMessage}' == 'Success')window.open('{!SQRedirectURL}'); else alert('{!SuccessMessage}')" />
+                 <apex:commandButton rendered="{!hideButtons}" value="{!$Label.CPQSQEditQuote}" rerender="panel" action="{!editQuote}" oncomplete="if('{!SuccessMessage}' == '' && '{!SQRedirectURL}' !='')window.open('{!SQRedirectURL}'); else alert('{!SuccessMessage}')"/>
+             </apex:pageBlockButtons>
+        </apex:pageblock>
+        <apex:outputPanel id="panel">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displaywait}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displaywait}">
+                    <img src="{!$Resource.AjaxAnimation}" />
+                    &nbsp;&nbsp;
+                    <FONT COLOR="black" SIZE="2"><b><i>{!$Label.CPQSQWaitPopUp}</i></b></FONT>
+                    <br/><br/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

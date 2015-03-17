@@ -1,0 +1,22 @@
+<apex:page standardController="Related_Learning_Board__c" extensions="RLBSave"  id="page">
+    <apex:form >
+        
+        <apex:pageBlock title="Ordering Available Learning Boards ">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" value="Save"/>                
+                <!--<apex:commandButton action="{!saveandnew}" value="Save & New"/>-->
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1">
+                <apex:OutputField value="{!Related_Learning_Board__c.Learning_Board_ID__c}" />
+                <apex:Outputfield value="{!Related_Learning_Board__c.Learning_Board_ID__r.Name__c}"  label="Learning Board Name" />
+                
+              <c:ListUpandDown rightLabel="Related Learning Board Ordering"
+                rightOptions1="{!NonRelatedLearningBoard}"
+                size="10"
+                width="250px"
+                />    
+            </apex:pageBlockSection>
+        </apex:pageBlock>       
+    </apex:form>    
+</apex:page>

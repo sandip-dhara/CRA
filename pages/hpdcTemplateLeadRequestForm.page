@@ -1,0 +1,575 @@
+<apex:page id="Pgid" controller="HPLeadRequestFormComponentController" showHeader="false" sidebar="false" standardStylesheets="false" >
+
+<html>
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<style type="text/css">
+.inputfont
+{
+font-family: HPSimplified;
+}
+
+
+</style>
+<script type="text/javascript">
+    
+ var j$ = jQuery.noConflict();
+ j$(document).ready(function() {
+ 
+    var mode = '{!$Site.Name}';
+    ChangeURLOnChangeInSiteOrSFUser(j$,mode);   
+    onKeyLoad();
+       
+   dropDownDisable();
+   dropDownSelect();
+   
+    
+ });
+  
+ function dropDownSelect()
+ {
+     j$('[Id$=idIsspecust]').change(function(){
+       var selectValue = j$(this[this.selectedIndex]).text();
+    
+        if(selectValue.toLowerCase() == '--none--' || selectValue.toLowerCase() == 'no')
+        {
+           j$('[Id$=div_customerName]').text('');
+           j$('[Id$=div_amid]').text('');
+          j$('[Id$=idtxtcustname]').val('');
+          j$('[Id$=idtxtcustid]').val('');
+          j$('[Id$=idtxtcustname]').attr("disabled","disabled");
+          j$('[Id$=idtxtcustid]').attr("disabled","disabled");
+        }else
+        {         
+           j$('[Id$=div_customerName]').text('*');
+           j$('[Id$=div_amid]').text('*');
+           j$('[Id$=idtxtcustname]').removeAttr("disabled");
+           j$('[Id$=idtxtcustid]').removeAttr("disabled");
+        }           
+    });
+    
+    j$('[Id$=idoppreg]').change(function(){
+       var selectValue = j$(this[this.selectedIndex]).text();
+    
+        if(selectValue.toLowerCase() == '--none--' || selectValue.toLowerCase() == 'no')
+        {
+          j$('[Id$=div_opportunity]').text('');
+          j$('[Id$=idconvertedopp]').val('');
+          j$('[Id$=idconvertedopp]').attr("disabled","disabled");
+          j$('.lookupIcon').hide();
+        }else
+        {              
+           j$('[Id$=div_opportunity]').text('*');
+           j$('[Id$=idconvertedopp]').removeAttr("disabled");
+           j$('.lookupIcon').show();
+        }           
+    });
+ }
+ function dropDownDisable(){
+     if(j$('.lookupIcon').length > 0)
+         j$("a").removeClass("inpt_log");
+ 
+     if(j$('[Id$=idIsspecust]').length> 0){
+        j$('[Id$=idIsspecust]')[0].selectedIndex = 0;
+        //j$('[Id$=span_head]').attr("style","margin-left: 16px;");
+        j$('[Id$=idtxtcustname]').val('');
+        j$('[Id$=idtxtcustid]').val('');
+        j$('[Id$=idtxtcustname]').attr("disabled","disabled");
+        j$('[Id$=idtxtcustid]').attr("disabled","disabled");
+     }
+     if(j$('[Id$=idoppreg]').length > 0){
+        j$('[Id$=idoppreg]')[0].selectedIndex = 0;
+        j$('[Id$=idconvertedopp]').val('');
+        j$('[Id$=idconvertedopp]').attr("disabled","disabled");
+        j$('.lookupIcon').hide();
+     }
+ }
+ 
+    function checkBlankField(txt) {
+         // debugger;
+            var mint_txt=txt.length; //Takes the total length of the value entered
+            var mstr_txt=txt;
+            var mint_count=0;
+            
+            //checking with each character for space
+            for(var iloop=0;iloop<mint_txt;iloop++)
+            {
+                if(mstr_txt.charAt(iloop)==" ")
+                {
+                    mint_count=mint_count+1;
+                }
+            }
+          
+            if (txt != "")
+            {
+                txt = txt.replace(/\r/g, "");
+                txt = txt.replace(/\n/g, "");
+                txt = txt.replace(/\s/g, "");
+                txt = txt.replace(/temporary/g, "");
+            }
+            //if nothing entered in the field
+            if (txt=="")
+            {
+                return false;
+            }
+            
+            //if only spaces are entered
+            else if (mint_count==mint_txt)
+            {
+                return false;
+            }
+        }
+   function onKeyLoad()
+    {
+      
+       //j$('[Id$=description]').attr('name','description').attr('placeholder','Eg: 250000').attr('autocomplete','off');
+          
+    }       
+    
+    function handleLead(){
+   
+       if(checkBlankField(j$('[Id$=Estimated_Unit_Volume__c]').val()) != true)
+       {           
+           j$('[id$=Estimated_Unit_Volume__c_hid]').val(j$('[Id$=Estimated_Unit_Volume__c]').val());  
+       }
+      
+     
+     
+    }         
+   
+
+            
+            
+            
+
+
+
+
+   
+ //});
+
+
+
+
+function ChangeURLOnChangeInSiteOrSFUser(jqueryInstance,mode){
+    var j$ = jqueryInstance ;
+    j$.each(j$('a'),function(index,value){
+           var customLink =  j$(this).attr('href') ;
+           if(customLink !=undefined){
+                var links = customLink.split('||');
+                //alert(links);
+                if(links !=undefined && links.length>1 ){
+                    //alert(mode);  
+                    if(mode !=null && mode !='')
+                    {
+                        j$(this).attr('target','_self');
+                        j$(this).attr('href',links[1]);
+                        
+                    }
+                    else{
+                        j$(this).attr('target','itarget');
+                        j$(this).attr('href',links[0]);
+                    }
+                }
+                
+                else{
+                    //alert('TestElse-----');
+                    if(mode !=null && mode !='')
+                    {
+                        j$(this).attr('target','_self');
+                    }
+                }
+              }  
+        });
+}
+
+
+function showPopUp()
+{
+   //alert('first');
+   if(document.getElementById('Pgid:idform:inptHdn').value == 'true')
+    {
+           // alert('Data saved successfully');
+            
+            redirectPage();
+            SetFooterPosition();
+    } 
+      
+}
+
+function showNoteFields()
+{
+  //alert('enter7');
+  
+  document.getElementById('j_id0:j_id5:pg:j_id7:com:idform:idNotes').style.display = 'block';  
+  document.getElementById('j_id0:j_id5:pg:j_id1:com:idform:idCustReq').style.display = 'none'; 
+}
+
+function onselectother()
+{
+  //if(document.getElementById('{!$Component.com:idform:inptHdn}').value == 'true')
+  //j_id0:j_id5:
+  alert('other11');
+ // alert(document.getElementById('{!$Component.pg:j_id7:com:idform:idCustReq_unselected}').selected); 
+ 
+ //alert(document.getElementById('j_id0:j_id5:pg:j_id7:com:idform:idCustReq_unselected').html);
+ // alert('other');
+ 
+  j$('.multiSelectPicklistRow').find('td:last').find('option').each(function()
+                        {
+                         alert('hii');
+                         alert(j$(this).val()+'=='+j$(this).text());
+                        if(j$(this).text()== 'Other')
+                         {
+                            showNoteFields();
+                         }
+                         
+                        });
+                        
+   }
+   
+   
+   
+    
+    
+
+
+</script>
+
+<script type="text/javascript">
+
+function showPopUp()
+{
+      // alert('second'); 
+    //alert(document.getElementById('{!$Component.com:idform:inptHdn}').value);  
+    //if(document.getElementById('{!$Component.com:idform:inptHdn}').value == 'true')
+    // if(document.getElementById('Pgid:idform:inptHdn').value == 'true')
+    
+   // alert(document.getElementById('pageid:pagetemplateid:Pgid:idform:inptHdn').value);
+    if(document.getElementById('pageid:pagetemplateid:Pgid:idform:inptHdn').value == 'true')
+    {
+            //alert('Data saved successfully');
+            
+            redirectPage();
+            SetFooterPosition();
+    } 
+      
+}
+
+
+
+
+ function onlyNumbers(event) {
+        
+        //alert(event);
+       // alert(document.getElementById('{!$Component.com:idform:idtxtPhone}').value );
+        
+        var KeyBoardCode = (event.which) ? event.which : event.keyCode;
+        //alert(KeyBoardCode);
+        //if (KeyBoardCode > 31 && (KeyBoardCode < 48 || KeyBoardCode > 57)) {
+        //if (KeyBoardCode < 65 || KeyBoardCode  > 97 ) {
+        if ((KeyBoardCode > 31 && (KeyBoardCode < 48 || KeyBoardCode > 57)) ) {
+               // alert('IF');
+               
+               if (KeyBoardCode == 45 || KeyBoardCode == 41 || KeyBoardCode == 40 || KeyBoardCode == 43)
+                return true;
+                else
+                return false;
+            }
+            
+         
+            else
+            return true;
+    //}
+    } 
+    
+    
+</script>
+
+ <title>HP Device Customization</title>
+</head>
+<body>
+
+    <div id="everything" class="everything" >
+        <div id="top_buyhp" class="top_buyhp"> </div>
+        <div id="content">    
+<!--        <c:hpdctopnavigationbar />-->
+            <c:hpdcSecuretopnavigationbar ></c:hpdcSecuretopnavigationbar>
+            <div id="body" class="body">
+                <div class="title-service" > 
+                    <h1>
+                        Lead Request Form <br/>
+                        <span id="span_head">Initiate a device customization request to engage our services team today.</span>
+                    </h1>
+                   
+                    <apex:form id="idform">
+                    <div class="form">
+                  <apex:outputPanel id="pnlContainer">
+                  <script type="text/javascript">
+                     onKeyLoad();
+                     dropDownDisable();
+                     dropDownSelect();
+                  </script>
+                              <apex:actionFunction name="redirectPage" action="{!goToRedirect}"/>
+                             <apex:inputHidden id="inptHdn" value="{!isInserted}"/>                            
+                  </apex:outputPanel> 
+                        <div>
+                            <!--<ul class="errorloginMsg" id="pageid:pagetemplateid:j_id3:j_id24:j_id25:j_id27:errorloginMsg"><li>Please enter all required fields</li></ul>-->
+                          <ul class="errorloginMsg"><li><apex:messages id="successMsg" styleClass="{!msgClass}"/></li></ul>
+                        </div>
+                         
+                         <apex:outputPanel id="pnlUser" rendered="{!renderPnlUser}">
+                        <div class="grid" style="padding-top: 20px;"  id="div_user">
+                            <div class="input_wrapper">
+                                <label>First Name <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtFirstName" value="{!Objlead.FirstName}" styleClass="inpt_log"/>
+                            </div>
+                            <div class="input_wrapper">
+                                <label>Last Name <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtLastName" value="{!Objlead.LastName}" styleClass="inpt_log {!strLastNameErrorCssClass}"/>
+                            </div>
+                            <div class="input_wrapper">
+                                <label>Email Address <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtEmail" value="{!Objlead.Email}" styleClass="inpt_log {!strCompanyErrorCssClass}"/>
+                            </div>
+                            <div class="input_wrapper">
+                                <label>Phone Number <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtPhone" value="{!Objlead.Phone}"  onkeypress="return onlyNumbers(event)"  styleClass="inpt_log {!strEmailErrorCssClass}" />
+                            </div>
+                            <div class="input_wrapper">
+                                <label>Customer Name <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtComp" value="{!Objlead.Company}" styleClass="inpt_log validatePhone"/>
+                            </div>
+                          <!--  <div class="input_wrapper">
+                                <label>Role</label>
+                                
+                                <apex:inputText id="idtxtRole" value="{!Objlead.Job_Role__c}" styleClass="inpt_log {!strEmailErrorCssClass}" />
+                            </div> -->
+                          <!--  <div class="input_wrapper">
+                                <label>HP Contact</label>
+                               
+                                <apex:inputField id="idtxtHpContact" value="{!objlead.HP_Contact__c}" styleClass="inpt_log {!strEmailErrorCssClass}" />
+                            </div> -->
+                          <!--  <div class="input_wrapper">
+                                <label>HP Contact Email</label>
+                               
+                                <apex:inputText id="idtxtConEmail" value="{!objlead.HP_Contact_e_mail__c}" styleClass="inpt_log {!strEmailErrorCssClass}" />
+                            </div> -->
+                          <!--  <div class="input_wrapper">
+                                <label>Interested in</label>
+                                <div class="dropdown_wrapper">
+                                    <input type="hidden" />                                 
+                                        <apex:inputField value="{!Objlead.Interested_in__c}" id="idIntrest" styleClass="inpt_log {!strCompanyErrorCssClass}"/>
+                                </div>
+                            </div> -->
+                            
+                                 
+                                    
+                                       <div class="input_wrapper">
+                                <label>Interested in</label>
+                                <div class="dropdown_wrapper">
+                                    
+                                   
+                                        
+                                       <apex:selectList size="1" multiselect="false" styleClass="inpt_log {!strCompanyErrorCssClass} inputfont"  value="{!strSelectedInterest}">
+                    <apex:selectOptions value="{!lstSelectOption}" ></apex:selectOptions>
+                </apex:selectList>
+                                    
+                                </div>
+                             </div>
+                             
+                             
+                        </div>
+                        </apex:outputPanel>
+                        
+                        
+                        <apex:outputPanel id="pnlSalesForce" rendered="{!renderPnlSalesForce}">
+                        <div class="grid" style="padding-top: 20px;" id="div_salesForce">
+                            <div class="input_wrapper">
+                                <label>First Name <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtFirstNameSales" value="{!Objlead.FirstName}" styleClass="inpt_log"/>
+                            </div>
+                            <div class="input_wrapper">
+                                <label>Last Name <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtLastNameSales" value="{!Objlead.LastName}" styleClass="inpt_log {!strLastNameErrorCssClass}"/>
+                            </div>
+                            <div class="input_wrapper">
+                            
+                                <label>Email Address <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtEmailSales" value="{!Objlead.Email}" styleClass="inpt_log {!strCompanyErrorCssClass}"/>
+                            </div>
+                            <div class="input_wrapper">
+                            
+                                <label>Phone Number <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtPhoneSales" value="{!Objlead.Phone}"  onkeypress="return onlyNumbers(event)"  styleClass="inpt_log {!strEmailErrorCssClass}" />
+                            </div>
+                            
+                            <div class="input_wrapper">
+                                <label>Company Name <span class="mand">*</span></label>
+                                <!-- <input class="inpt_log" type="text" /> -->
+                                <apex:inputText id="idtxtCompSales" value="{!Objlead.Company}" styleClass="inpt_log validatePhone"/>
+                            </div>
+                         <!--   <div class="input_wrapper">
+                                <label>Sales Region</label>
+                               
+                                <apex:inputText id="idtxtsalesregion" value="{!Objlead.Sales_Region__c}" styleClass="inpt_log {!strEmailErrorCssClass}" />
+                            </div> -->
+                            
+                          <!--  <div class="input_wrapper">
+                                <label>Interested in</label>
+                                <div class="dropdown_wrapper">
+                                    <input type="hidden" />                                  
+                                        <apex:inputField value="{!Objlead.Interested_in__c}" id="idIntrestSales" styleClass="inpt_log {!strCompanyErrorCssClass}"/>
+                                </div>
+                            </div> -->
+                            
+                           
+                            <div class="input_wrapper">
+                                <label>Interested in</label>
+                                <div class="dropdown_wrapper">
+                                    
+                                   <apex:selectList size="1" multiselect="false" styleClass="inpt_log {!strCompanyErrorCssClass} inputfont" value="{!strSelectedInterest}">
+                    <apex:selectOptions value="{!lstSelectOption}"></apex:selectOptions>
+                </apex:selectList>
+                                    
+                                </div>
+                             </div>
+                             
+                             
+                            
+                         <!--   <div class="input_wrapper">
+                                <label>Are you working with a specific customer?</label>
+                                <div class="dropdown_wrapper">
+                                    <input type="hidden" />
+                                   
+                                        <apex:inputField value="{!Objlead.working_with_a_specific_customer__c}" id="idIsspecust" styleClass="inpt_log {!strCompanyErrorCssClass} inputfont"/>
+                               
+                                </div>
+                            </div> -->
+                          
+                            
+                            
+                          <!-- <div class="input_wrapper">
+                                <label>Customer Name <span class="mand" id="div_customerName"></span></label>
+                               
+                                <apex:inputField id="idtxtcustname" value="{!objlead.Customer_Name__c}" styleClass="inpt_log {!strEmailErrorCssClass}" />
+                            </div> -->
+                        <!--    <div class="input_wrapper">
+                                <label>Customer AMID ID <span class="mand" id="div_amid"></span></label>
+                              
+                                <apex:inputText id="idtxtcustid" value="{!objlead.Customer_AMID_ID__c}" styleClass="inpt_log {!strEmailErrorCssClass}" />
+                            </div> -->
+                            
+                           <!-- <div class="input_wrapper">
+                                <label>Is this opportunity registered in salesforce.com?</label>
+                                <div class="dropdown_wrapper">
+                                    <input type="hidden" />
+                                   
+                                        <apex:inputField value="{!Objlead.opportunity_registered_in_salesforce__c}" id="idoppreg" styleClass="inpt_log {!strCompanyErrorCssClass}"/>
+                               
+                                </div>
+                            </div> -->
+                            
+                         <!--   <div class="input_wrapper">
+                                <label>Opportunity <span class="mand" id="div_opportunity"></span></label>
+                                
+                                <apex:inputfield id="idconvertedopp" value="{!objlead.Opportunities_Id__c}" styleClass="inpt_log {!strEmailErrorCssClass}" style="display: inherit;"/>
+                            </div> -->
+                            
+                        </div>
+                        </apex:outputPanel>  
+                        <div class="grid part">                            
+                            <h2 style="padding-bottom: 1px;">Customization Request Details</h2>
+                            <div style="width:100%; color:#0099d8; padding-bottom:20px; font-size:12px;">(Enter N/A if not known)</div>
+                           <!-- <div class="input_wrapper" >
+                                <label>Estimated Unit Quantity <span class="mand">*</span></label>
+                                
+                                <apex:inputHidden id="Estimated_Unit_Volume__c_hid" value="{!Objlead.Estimated_Unit_Volume__c}"/>
+                                <apex:inputText id="Estimated_Unit_Volume__c" value="{!Estimated_Unit_Volume}" 
+                                 styleClass="inpt_log {!strCompanyErrorCssClass}"  onkeypress="return onlyNumbers(event)"/>
+                            </div> -->
+                            
+                            <div class="input_wrapper" >
+                                <label>Estimated Unit Quantity <span class="mand">*</span></label>
+                                
+                               
+                                <apex:inputText id="Estimated_Unit_Volume__c" value="{!objlead.description}" styleClass="inpt_log {!strCompanyErrorCssClass}"  onkeypress="return onlyNumbers(event)"/>
+                            </div>
+                            
+                            
+                           <!-- <div class="input_wrapper" style="width:35%">
+                                <label>Timing <span class="mand">*</span></label>
+                              
+                                <span>
+                                Month: &nbsp;&nbsp;<apex:inputField style="border: 2px solid #CCCCCC;height: 27px;margin-bottom: 16px;margin-top: 7px;width: 25%;outline: 0;font-size: 14px;" value="{!Objlead.Month__c}" /> &nbsp;&nbsp;
+                                Year: &nbsp;&nbsp;<apex:inputField style="border: 2px solid #CCCCCC;height: 27px;margin-bottom: 16px;margin-top: 7px;width: 25%;outline: 0;font-size: 14px;" value="{!Objlead.Year__c}" />
+                                </span>
+                               
+                            </div> -->
+                       
+                            
+                            <div class="input_wrapper">
+                                <label>Timing </label>
+                                <div class="dropdown_wrapper">
+                                    <input type="hidden" />
+                                   
+                                        <apex:inputField value="{!Objlead.Timeframe_to_Buy_1__c}" id="idtiming" styleClass="inpt_log {!strCompanyErrorCssClass} inputfont"/>
+                               
+                                </div>
+                            </div>
+                            
+                            
+                            
+                           <!-- <div class="input_wrapper">
+                                <label>Estimated total revenue on deal <span class="mand">*</span></label>
+                                <apex:inputHidden id="Budgets__c_hid" value="{!Objlead.Budgets__c}"/>
+                                <apex:inputText id="Budgets__c" value="{!Budgets}"  onkeypress="return onlyNumbers(event)" styleClass="inpt_log {!strCompanyErrorCssClass}"/>
+                            </div> -->
+                          <!--  <div class="input_wrapper">
+                                <label>Estimated total revenue on deal <span class="mand">*</span></label>
+                               
+                                <apex:inputText id="description" value="{!Objlead.description}"  onkeypress="return onlyNumbers(event)" styleClass="inpt_log {!strCompanyErrorCssClass}"/>
+                            </div> -->
+                            
+                         <!--   <div class="input_wrapper">
+                                <label>HP Product Requested <span class="mand">*</span></label>
+                                <apex:inputHidden id="Product_details__c_hid" value="{!Objlead.Product_details__c}"/>
+                                <apex:inputText id="Product_details__c" value="{!Product_details}" styleClass="inpt_log {!strCompanyErrorCssClass}"/>
+                            </div> -->
+                            
+                            
+                            
+                        </div>
+                        <div class="grid part last">
+                            <!--By Clicking Submit you agree with the HP <br/>
+                            <a href="#">Terms &amp; conditions</a> and <a href="#">Review guidelines</a>-->
+                            <div class="buttons">
+
+                                <apex:commandLink value="Cancel" styleClass="secondary-button gray" action="{!Cancel}" reRender="idform"/>
+                                <!-- <a href="http://www.google.com" class="secondary-button gray" tabindex="10">Cancel</a> -->
+                                <!-- <a href="http://www.google.com" class="secondary-button orange" tabindex="10">Submit</a> -->
+                                <apex:commandLink value="Submit"  action="{!Submit}" status="contentLoadingStatus" styleClass="secondary-button orange"  oncomplete="showPopUp();" rerender="idform,pnlContainer"/>
+                            </div>
+                        </div>
+                      </div>
+                        </apex:form> 
+                  
+                </div>  
+            </div>            
+         <c:hpdctopfooter ></c:hpdctopfooter>
+        </div>  
+        <c:hpdcbottomfooter ></c:hpdcbottomfooter>
+    </div> 
+      
+</body>
+</html>
+</apex:page>

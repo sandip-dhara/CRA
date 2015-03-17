@@ -1,0 +1,142 @@
+<!-- 
+/**********************************************************
+* Page Name: Product_Specialty_Loc_Multiselect_Lookup
+* Author: HP: Sunder
+* Date: 09-Sep-2013 
+* Requirement # Request Id :CR-1242
+* Description: 
+***********************************************************/
+-->
+<apex:page controller="SpecialtyMatchesforPartnerAccounts" showHeader="false" sideBar="false" tabStyle="Account" action="{!searchLoc}" cache="true" id="page">
+<script src="/resource/jQuery" type="text/javascript"></script>
+<script>
+    function Globalvars(func) {
+        var oldonload = window.onload;
+        if (typeof window.onload != 'function') {
+            window.onload = func;
+        } else {
+            window.onload = function() {
+                if (oldonload) {
+                    oldonload();
+                }func();
+            }
+        }
+    }
+    Globalvars(function() {
+        
+    })
+</script>
+<script>
+    var j$ = jQuery.noConflict();
+    var requestnames=[];
+    var requestids = [];
+    var setCheckBox = 0;
+</script>
+<apex:outputPanel id="javascriptSection">
+    <script type="text/javascript">
+      function selectCheckboxes(inpt,receivedInptID)
+       {
+         requestids = [];
+         requestnames = [];
+         setCheckBox =1;
+         var inputCheckBox = document.getElementsByTagName("input"); 
+         for(var i=0; i<inputCheckBox.length; i++)
+          { 
+           if(inputCheckBox[i].id.indexOf(receivedInptID)!=-1){ 
+              inputCheckBox[i].checked = inpt.checked;
+           }
+         }
+         if(document.getElementById("page:frm:searchResults:tblResults:selectALL").checked==true){       
+            <apex:repeat value="{!locResults}" var="locObj">
+                 populateArray('{!JSENCODE(locObj.locrec.Location_Name__c)}','{!locObj.locrec.Id}');
+            </apex:repeat>
+        }         
+         setCheckBox =0;
+       }
+   </script>
+</apex:outputPanel>
+<!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+<body class="lookupTab  LookupSearchFrame, marginCls">
+    <apex:form id="frm">
+        <apex:sectionHeader title="{!$Label.Location_Search}" />
+            <apex:actionRegion >  
+                <!-- Output Panel for showing search options -->
+                <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">                    
+                    <!--<apex:outputLabel value="{!$ObjectType.Location__c.fields.Location_Name__c.label}" styleClass="searchLabelCls" for="txtSearch"/>-->
+                    <br/>
+                    <apex:selectRadio label="{!$Label.Search_Options}" id="searchByKeyWord" value="{!searchByKeyWord}" layout="pageDirection">
+                        <apex:selectOption itemValue="LocatorID" itemLabel="{!$ObjectType.Location__c.fields.Name.label}"/>
+                        <apex:selectOption itemValue="Name" itemLabel="Partner Name"/>
+                    </apex:selectRadio>
+                    <apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>
+                    <apex:inputText id="txtSearch" value="{!searchString}" onkeypress="return searchLocationOnEnter(event,this);"/>
+                        <span Class="searchspanCls"><apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!searchLoc}" rerender="searchResults,javascriptSection"></apex:commandButton></span>
+                </apex:outputPanel>
+                <p>{!$Label.Wildcard_Usage}</p>
+                
+                <!-- Page block for showing search result -->
+                <apex:pageBlock id="searchResults">                
+                    <apex:commandButton id="selectedvalues" value="Get Selected" onclick="closeRefreshpage()"/>
+                    <apex:commandButton id="cancelop" value="Cancel" onclick="window.close();"/>
+                    <apex:outputpanel styleClass="resultPanelCls" layout="block">
+                        <apex:pageBlockTable value="{!locResults}" var="locObj" id="tblResults">
+                            <apex:column >
+                             <apex:facet name="header">
+                               <apex:inputCheckbox onclick="selectCheckboxes(this,'input')" id="selectALL"/>
+                             </apex:facet>
+                             <apex:inputCheckbox value="{!locObj.checkedVal}" onclick="populateArray('{!JSENCODE(locObj.locrec.Location_Name__c)}','{!locObj.locrec.Id}')" id="input"/>
+                            </apex:column>                     
+                            <apex:column headerValue="{!$Label.Partner_Name}" value="{!locObj.locrec.account__r.Name}" />
+                            <apex:column headerValue="{!$ObjectType.Location__c.fields.Business_Relationship__c.label}" value="{!locObj.locrec.Business_Relationship__c}" />                        
+                            <apex:column headerValue="{!$ObjectType.Location__c.fields.Name.label}" value="{!locObj.locrec.Name}" />
+                            <apex:column headerValue="{!$ObjectType.Location__c.fields.City__c.label}" value="{!locObj.locrec.City__c}" />
+                            <apex:column headerValue="{!$ObjectType.Location__c.fields.Country__c.label}" value="{!locObj.locrec.Country__c}" />
+                            <apex:column headerValue="{!$ObjectType.Location__c.fields.State__c.label}" value="{!locObj.locrec.State__c}" />                        
+                        </apex:pageBlockTable>                    
+                    <apex:outputLabel rendered="{!isResultEmpty}">
+                            <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+                    </apex:outputLabel>
+                   </apex:outputpanel>
+                </apex:pageBlock>
+            </apex:actionRegion>
+        <!-- defining action function for searching accounts -->
+        <apex:actionFunction action="{!searchLoc}" name="searchLocationOnEnterKey" rerender="searchResults">
+           <apex:param name="firstParam" assignTo="{!searchString}" value="" />
+        </apex:actionFunction>
+    </apex:form>
+</body>
+  <script>
+    function populateArray(nameVal,idVal){
+        var nameindex = j$.inArray(nameVal,requestnames);
+        var idindex = j$.inArray(idVal,requestids);
+        if(idindex > -1){
+            requestids.splice(idindex,1); 
+            requestnames.splice(nameindex,1)  
+        }else{
+            requestids.push(idVal);
+            requestnames.push(nameVal)
+        } 
+        if(setCheckBox==0 && document.getElementById("page:frm:searchResults:tblResults:selectALL").checked==true){       
+             document.getElementById("page:frm:searchResults:tblResults:selectALL").checked=false;
+        }    
+    }
+    function searchLocationOnEnter(ev,searchTextObj)  {
+        var searchTextValue=searchTextObj.value;
+        if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+            searchLocationOnEnterKey(searchTextValue);  
+            return false;           
+         } 
+     }
+     function closeRefreshpage(){
+         var pipeSeparatedIds = '';
+         var pipeSeparatedNames = '';
+         for(var i=0; i< requestids.length;i++){
+             pipeSeparatedIds = pipeSeparatedIds + requestids[i] + ',';
+         }
+         pipeSeparatedNames = requestnames.join("\n");
+         window.parent.opener.ValueFromLocChildWindow(pipeSeparatedIds,pipeSeparatedNames);
+         window.close();
+     }
+  </script>
+</apex:page>

@@ -1,0 +1,370 @@
+<apex:page standardcontroller="Learning_Board__c" extensions="AthenaLearningBoardDtlsOld" showheader="false" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+  <html>
+  <head>
+  <title>Social Learning Platform</title>
+  
+  <!-- Athena Style Starts -->
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/style.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.jscrollpane.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/jquery-ui.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/theme.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.dropdown.css')}"/>
+  <!-- Example of an application-specific style -->
+  <style type="text/css">
+      body {
+          width: 99%;
+          margin: 0 auto;
+          margin-top: 1%;
+      }
+
+      .hpit_athena_inTopBarR1 .zen {
+          width: 100px;
+          float: right;
+          padding-top: 11px;
+      }
+
+      .hpit_athena_inTopBarR1 .zen-mediaBody a {
+          padding: 0;
+      }
+
+      .hpit_athena_inTopBarR1 .zen-media a {
+          padding: 0;
+      }
+
+      .hpit_athena_inTopBarR1 input {
+          background-color: #ccc;
+      }
+
+      .hpit_athena_LikeBtn1 {
+          padding: 0 !important;
+          margin: 0 !important;
+          border: 0 none !important;
+          background: none !important;
+      }
+
+      .hpit_athena_UnLikeBtn1 {
+          padding: 0 !important;
+          margin: 0 !important;
+          border: 0 none !important;
+          background: none !important;
+      }
+  </style>
+  <script type="text/javascript">
+
+
+      function validate() {
+          if (document.getElementById('{!$Component.LBDform.searchText}').value != '') {
+              return true;
+          }
+          else {
+              document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+              return false;
+          }
+          //return true;
+      }
+</script>
+  <!-- Athena Style Ends -->
+  </head>
+  
+  <body class="hpit_body" onLoad="window.scrollTo(0,0)">
+  <!-- begin themed header -->
+  <header>
+    <div id="hpit_top" class="">
+      <div id="hpit_topTitle">
+        <h1>Social Learning Platform</h1>
+        <h3>Learning on your terms!</h3>
+      </div>
+      <div id="hpit_topLogo"></div>
+      <apex:form id="LBDform">
+        <div id="hpit_topSearch"> 
+          <!--<input id="hpit_topSearchBox" type="text" value="Search" />--> 
+          <!--        <button id="" class="SearchBtn"><span>Search</span></button>-->
+          <apex:inputText id="searchText" styleClass="TopSearchInput" value="{!strSearchValue}" title="Enter value to search Learning Board"/>
+          <apex:commandButton action="{!dosearch}" onclick="return validate()" value="Search" styleClass="SearchBtn"  id="searchButton" title="Click to Search for Learning Board"/>
+        </div>
+      </apex:form>
+      
+      <!-- Begin Themed User Greeting and Menu -->
+      <div id="hpit_topUser"> <span>Welcome {!LoggedinUserDtls.Name}</span>
+        <ul id="hpit_topUserMenu">
+          <li><a href="https://{!getSfInstance}/secur/logout.jsp">Logout</a></li>
+        </ul>
+      </div>
+      <!-- End Themed User Greeting and Menu --> 
+      
+    </div>
+    <div style="background-color: #393939;height: 40px; min-width:1000px; margin:0 auto"> <a href="https://{!getSfInstance}/apex/AthenaSocialLearningOld">
+      <apex:image url="{!URLFOR($Resource.athena_images, 'images/Icon_Home.png')}" style="margin: 8px;"/>
+      </a> <a href="#" data-dropdown="#dropdown-1">
+      <apex:image url="{!URLFOR($Resource.athena_images, 'images/Icon_Menu.png')}" style="margin: 2px;"/>
+      </a>
+      <div id="dropdown-1" class="dropdown dropdown-tip">
+        <ul class="dropdown-menu">
+              <li><a href="https://{!getSfInstance}">Salesforce Home</a></li>
+              <li><a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank">Help &amp; Support</a></li>
+              <br/>
+              <li><a href="http://amp.corp.hp.com/" target="_blank">Account Management Portal(AMP)</a></li>
+              <li><a href="http://ent241.sharepoint.hp.com/teams/GSCDC/es/ITO.aspx" target="_blank">Portfolio Accrediation</a></li>
+              <li><a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html" target="_blank">What We Sell</a></li>
+
+        </ul>
+      </div>
+    </div>
+  </header>
+  <!-- end themed header --> 
+  
+  <!-- Athena Body Content Starts -->
+  <div style="width:1000px; margin:0 auto"></div>
+  <span class="err_msg hpit_error" id="err_msg"></span>
+  <div class="hpit_Athena_innerContainer cf"> 
+    
+    <!-- topBar -->
+    <div class="hpit_athena_inTopBar cf">
+      <div class="hpit_athena_inTopBarHeader">
+        <h2>{!Learning_Board__c.Name__c}</h2>
+        
+
+      </div>
+      <div class="hpit_athena_inTopBarR1">
+          
+          <div class="hpit_athena_Fright">
+        <apex:form id="LBLikeform"> <a class="hpit_athena_fontBold"> <span >{!LBLikeCount}</span>
+          <apex:outputPanel rendered="{!!LikedOrNotLB}">
+            <apex:commandButton disabled="{!LikedOrNotLB}" styleClass="hpit_athena_LikeBtn1"  action="{!LearningBoardLike}" id="LBlike" value="" image="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIcon.png')}" rerender="LBLikeform"/>
+          </apex:outputPanel>
+          <apex:outputPanel rendered="{!LikedOrNotLB}">
+            <apex:commandButton styleClass="hpit_athena_UnLikeBtn1"  action="{!LearningBoardUnLike}" id="LBUnlike" value="" image="{!URLFOR($Resource.athena_images, 'images/hpit_athena_UnlikeIcon.png')}" rerender="LBLikeform" />
+          </apex:outputPanel>
+          </a> </apex:form>
+              </div>
+          <div class="hpit_athena_Fright">
+
+        <chatter:follow entityId="{!Learning_Board__c.id}"/>
+              </div>
+          <div style="width:140px; float:right; margin-top:1%">
+            <apex:outputPanel rendered="{!LBEditPermission}">
+             <button class="SearchBtn" type="button" onclick="window.location.href='/apex/AthenaEditLearningBoardDtlsOld?id={!Learning_Board__c.id}';" >Edit Learning Board</button>        
+            </apex:outputPanel>
+          </div>
+      </div>
+    </div>
+    
+    <!-- Detail Veiw container starts -->
+    <div class="hpit_athena_detailViewLeft">
+      <div class="hpit_athena_leftCont">
+        <p class="hpit_athena_conText" style="min-height:187px"> <span class="hpit_athena_BoardImg">
+          <apex:outputPanel rendered="{!!LearningBoardDtls.StaticImage}"> 
+            <!-- <img src="data:{!LearningBoardDtls.AttContentType};base64,{!LearningBoardDtls.Attbody}" width="321" height="214"/> -->
+            <apex:image url="{!URLFOR($Action.Attachment.Download, LearningBoardDtls.AttachmentId)}" style="max-width:321px; max-height:214px" />
+          </apex:outputPanel>
+          <apex:outputPanel rendered="{!LearningBoardDtls.StaticImage}">
+                              <img src='{!LearningBoardDtls.DefaultImageName}' width="321" height="214"/>
+           <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}" width="321" height="214"/>-->
+          </apex:outputPanel>
+          <!--      <apex:image url="{!URLFOR($Resource.athena_images, 'images/Android1.png')}" width="321" height="214"/> --> 
+          </span> <strong> </strong><br />
+          {!Learning_Board__c.Description__c} </p>
+        <p> <strong></strong><br />
+        </p>
+        <p>Tags: {!LBAssociatedTags} </p>
+      </div>
+      <apex:form id="lrngLikeForm">
+        <apex:actionfunction name="refresh_like" action="{!LearningLike}" status="ajaxStatusDiv" rerender="oPnlLikeUnlike">
+          <apex:param name="LearningId"  value="" assignTo="{!Learningid}"/>
+        </apex:actionfunction>
+        <apex:actionfunction name="refresh_unlike" status="ajaxStatusDiv" action="{!LearningUnLike}" rerender="oPnlLikeUnlike">
+          <apex:param name="LearningId"  value="" assignTo="{!Learningid}"/>
+        </apex:actionfunction>
+        <apex:repeat value="{!LearningDtls}" var="lrng" >
+          <div class="hpit_athena_contBot cf">
+            <div class="hpit_athena_contBotDiv">
+              <h2>{!lrng.LName}</h2>
+              <span class="hpit_athena_Fright hpit_athena_colorWhite">
+              <apex:outputPanel id="oPnlLikeUnlike" layout="block"> {!lrng.LikeCount} 
+                <!-- hpit_athena_LikeBtnBlack hpit_athena_UnLikeBtnBlack -->
+                <apex:outputPanel rendered="{!!lrng.LikedOrNot}"> <a href="javascript:void(0)" class="hpit_athena_LikeBtn" onClick="refresh_like('{!lrng.LID}')" /> </apex:outputPanel>
+                <apex:outputPanel rendered="{!lrng.LikedOrNot}" id="block1"> <a href="javascript:void(0)" class="hpit_athena_UnLikeBtn" onClick="refresh_unlike('{!lrng.LID}')" /> </apex:outputPanel>
+              </apex:outputPanel>
+              
+              <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIconBlack.png')}" width="14" height="14"/>--> 
+              
+              </span> </div>
+            <p class="hpit_athena_conText"> 
+             <span class="hpit_athena_detailPostImg">             
+              
+               <apex:outputPanel rendered="{!IF(or(CONTAINS(lrng.LType,'Link or Document'),CONTAINS(lrng.LType,'Text')),(IF(lrng.StaticImage,true,false)),false)}">
+                <a src="{!lrng.LURL}"  target="_blank">
+                    <img src='{!lrng.DefaultImageName}'/>
+                </a>
+              </apex:outputPanel>
+                             
+              <apex:outputPanel rendered="{!IF(or(CONTAINS(lrng.LType,'Link or Document'),CONTAINS(lrng.LType,'Text')),(IF(!lrng.StaticImage,true,false)),false)}">                
+                <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Action.Attachment.Download, lrng.AttachmentId)}" style="max-width:500px; max-height:200px" />
+                </a>               
+              </apex:outputPanel>      
+              
+              
+              
+              
+              
+              
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Other'),(IF(!lrng.StaticImage,(IF(!lrng.DocLnkXst,true,false)),false)),false)}">                
+                <apex:image url="{!URLFOR($Action.Attachment.Download, lrng.AttachmentId)}" style="max-width:500px; max-height:200px" />            
+              </apex:outputPanel>
+              
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Video'),(IF(CONTAINS(lrng.LURL,'www.brainshark.com'),(IF(CONTAINS(lrng.LURL,'vu?pi='),true,false)),false)),false)}">
+                <iframe src="{!lrng.LURL}&dm=5&pause=1&nrs=1" class="hpit_athena_detailPostIfram" frameborder="0"   scrolling="no" style="border:1px solid #999999"></iframe>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Video'),(IF(CONTAINS(lrng.LURL,'www.brainshark.com'),(!IF(CONTAINS(lrng.LURL,'vu?pi='),true,false)),false)),false)}">
+                <iframe src="{!lrng.LURL}?&dm=5&pause=1&nrs=1" class="hpit_athena_detailPostIfram" frameborder="0"   scrolling="no" style="border:1px solid #999999"></iframe>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Video'),(IF(CONTAINS(lrng.LURL,'youtube.com'),true,false)),false)}">
+                <iframe class="hpit_athena_detailPostIfram"  src="{!lrng.LURL}" frameborder="0"></iframe>
+              </apex:outputPanel>
+              </span>
+              {!lrng.LDescription} </p>
+              <p>Tags: {!lrng.AssociatedTags} </p>
+            <span class="hpit_athena_detailDocDown">
+            <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Link or Document'),(IF(CONTAINS(lrng.DocType,'PDF'),true,false)),false)}">
+              <div> <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/filePDFUpload.png')}" width="25" height="25"/>
+                </a> </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Link or Document'),(IF(CONTAINS(lrng.DocType,'PPT'),true,false)),false)}">
+              <div> <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/filePPTUpload.png')}" width="25" height="25"/>
+                </a> </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Link or Document'),(IF(CONTAINS(lrng.DocType,'DOC'),true,false)),false)}">
+              <div> <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileWordUpload.png')}" width="25" height="25"/>
+                </a> </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Link or Document'),(IF(CONTAINS(lrng.DocType,'OTHER'),true,false)),false)}">
+              <div> <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileURLUpload.png')}" width="25" height="25"/>
+                </a> </div>
+            </apex:outputPanel>
+            </span> 
+            </div>
+            
+        </apex:repeat>
+      </apex:form>
+    </div>
+    <div class="hpit_athena_detailViewRight">
+      <div class="hpit_athena_rightDiv">
+        <div class="hpit_athena_detailRgtDivTopCont">
+          <div class="hpit_athena_detailFolws">
+            <div class="hpit_athena_followersImg">
+              <chatter:followers entityid="{!Learning_Board__c.Id}"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hpit_athena_rightDiv">
+        <div class="hpit_athena_detailRgtDivTopL"> <span>
+          <apex:image Url="{!LearningBoardOwnerDtls.FullPhotoUrl}" width="35" height="35" />
+          </span> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfileOld?id={!LearningBoardOwnerDtls.id}"> {!Learning_Board__c.Owner.Name} </a> </div>
+        <div class="hpit_athena_detailRgtDivTopR"> <span>{!LBOwnerLikeCount}</span>
+          <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIconBlack.png')}" width="14" height="14"/>
+          <span style="margin-left:5px">{!LBOwnerCommentCount}</span>
+          <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIconBlack.png')}" width="14" height="14"/>
+        </div>
+        <div class="hpit_athena_detailRgtDivTopCont">
+          <p> {!LearningBoardOwnerDtls.AboutMe} </p>
+          <div class="hpit_athena_detailFolws"> <a><span></span></a> 
+            <!-- <div class="hpit_athena_followersImg">                      
+             <chatter:followers entityid="{!LearningBoardOwnerDtls.Id}"/>
+            </div> --> 
+            
+          </div>
+        </div>
+      </div>
+      
+      <!-- Comments  -->
+      <div class="hpit_athena_rightDiv">
+        <div class="hpit_athena_comments">
+          <div class="menu_container">
+            <p class="menu_head"><span class="plusminus">+</span> Comments <span class="hpit_athena_ComIcon">
+              <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIconBlack.png')}" width="14" height="14"/>
+              </span><span class="hpit_athena_ComIconCount">
+              <apex:outputPanel id="comments"> {!LBCommentCount} </apex:outputPanel>
+              </span></p>
+            <div class="menu_body">
+              <div  style="overflow-x:hidden;height:360px;" class="menu_bodyDiv">
+                <apex:form id="LBComment">
+                  <apex:actionFunction name="comment_count" action="{!getLBComCount}" reRender="comments">
+                    <apex:param name="lid" value="{!Learning_Board__c.Id}"  id="lid" assignTo="{!Learning_Board__c.Id}"/>
+                  </apex:actionFunction>
+                </apex:form>
+                <chatter:feed entityid="{!Learning_Board__c.Id}" showPublisher="true"  />
+                <script>
+                    document.getElementById('publishersharebutton').onclick = function () { chatter.getPublisher().submit(); setTimeout(function () { comment_count('{!Learning_Board__c.Id}') }, 4000); };
+                </script> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hpit_athena_rightDiv">
+        <h3>Related boards</h3>
+        <hr>
+        </hr>
+        <div>
+          <apex:repeat value="{!RelatedLearningBoards}" var="rlb" > <a class="hpit_athena_ca_itemLink" href="/apex/AthenaLearningBoardDtlsOld?id={!rlb.Lbid}">
+            <p class="hpit_athena_rightHeading" style="margin:0"> <span style="font-size:15px" >{!rlb.LBName}</span> </p>
+            </a>
+            <p style="margin:0"><span style="color:#7A7878"> {!rlb.LBOwnerName}</span></p>
+            <a class="hpit_athena_ca_itemLink" href="/apex/AthenaLearningBoardDtlsOld?id={!rlb.Lbid}">
+            <p>
+              <apex:outputPanel rendered="{!!rlb.StaticImage}"> 
+                <!-- <img src="data:{!rlb.AttContentType};base64,{!rlb.Attbody}"  width="220" height="162"/> -->
+                <apex:image url="{!URLFOR($Action.Attachment.Download, rlb.AttachmentId)}"  width="220" height="162" />
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!rlb.StaticImage}">
+                                            <img src='{!rlb.DefaultImageName}' width="220" height="162"/>
+               <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}" width="220" height="162"/>-->
+              </apex:outputPanel>
+            </p>
+            </a>
+            <hr>
+            </hr>
+          </apex:repeat>
+          <!--  <p> Sales goals to the next level</p> --> 
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <footer>
+      <div id="hpit_btm">
+        <div id="hpit_btmCopyright">&copy; <span class="hpit_year"></span> Hewlett-Packard Development Company, L.P. &nbsp; &nbsp; | &nbsp; &nbsp; HP Restricted</div>
+      </div>
+    </footer>
+  </div>
+  <!-- ETR JavaScript -->
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery-ui.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/hp-esm_theme.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/theme.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_js, '/athena_js/jquery.dropdown.js')}"/>
+  <script type="text/javascript">
+      //toggle the componenet with class menu_body
+      $(".menu_body").show();
+      $(".menu_head").click(function () {
+          $(this).next(".menu_body").slideToggle(600);
+          var plusmin;
+          plusmin = $(this).children(".plusminus").text();
+
+          if (plusmin == '+')
+              $(this).children(".plusminus").text('-');
+          else
+              $(this).children(".plusminus").text('+');
+      });
+
+
+    </script>
+  </body>
+  </html>
+</apex:page>

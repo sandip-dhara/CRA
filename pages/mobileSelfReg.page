@@ -1,0 +1,1054 @@
+<apex:page controller="SLP_Activity" extensions="mobileUserData" cache="false" docType="html-5.0"
+           sidebar="false" showheader="false" standardStylesheets="false">
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.slideshow, 'responsiveslides.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mslp_res, 'fonts/icomoon/style.css')}" />
+        <apex:includeScript value="{!URLFOR($Resource.slideshow, 'responsiveslides.js')}" />
+        
+        <script>  
+        
+var K = function () {
+    var a = navigator.userAgent;
+    return {
+        ie: a.match(/MSIE\s([^;]*)/)
+    }
+}();
+      
+      
+      function parseTwitterDate(a) {
+      var b = new Date();
+    var c = new Date(a);
+    if (K.ie) {
+        c = Date.parse(a.replace(/( \+)/, ' UTC$1'))
+    }
+    var d = b - c;
+    var e = 1000,
+        minute = e * 60,
+        hour = minute * 60,
+        day = hour * 24,
+        week = day * 7;
+    if (isNaN(d) || d < 0) {
+        return ""
+    }
+    if (d < e * 7) {
+        return "right now"
+    }
+    if (d < minute) {
+        return Math.floor(d / e) + " seconds ago"
+    }
+    if (d < minute * 2) {
+        return "about 1 minute ago"
+    }
+    if (d < hour) {
+        return Math.floor(d / minute) + " minutes ago"
+    }
+    if (d < hour * 2) {
+        return "about 1 hour ago"
+    }
+    if (d < day) {
+        return Math.floor(d / hour) + " hours ago"
+    }
+    if (d > day && d < day * 2) {
+        return "Yesterday"
+    }
+    if (d < day * 365) {
+        return Math.floor(d / day) + " days ago"
+    } else {
+        return "over a year ago"
+    }
+    /*var system_date = new Date(Date.parse(tdate));
+    var user_date = new Date();
+    if (K.ie) {
+        system_date = Date.parse(tdate.replace(/( \+)/, ' UTC$1'))
+    }
+    var diff = Math.floor((user_date - system_date) / 1000);
+    if (diff <= 1) {return "just now";}
+    if (diff < 20) {return diff + " seconds ago";}
+    if (diff < 40) {return "30 seconds ago";}
+    if (diff < 60) {return "less than a minute ago";}
+    if (diff <= 90) {return "1 minute ago";}
+    if (diff <= 3540) {return Math.round(diff / 60) + " minutes ago";}
+    if (diff <= 5400) {return "1 hour ago";}
+    if (diff <= 86400) {return Math.round(diff / 3600) + " hours ago";}
+    if (diff <= 129600) {return "1 day ago";}
+    if (diff < 604800) {return Math.round(diff / 86400) + " days ago";}
+    if (diff <= 777600) {return "1 week ago";}
+    return "on " + system_date;*/
+}
+
+</script>
+        
+        <style type="text/css" rel="stylesheet">
+            @font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            body{
+                font-family:"HP Simplified",sans-serif;
+                color:#fff;
+            }
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .pageBack{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .ui-content{
+                
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif; 
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                    .infoFld .menu_button{
+                    position:absolute;
+                    top:14px;
+                    right:6px;
+                    width:24px;
+                    height:24px;
+                    z-index:3;
+                }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:20px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:29px;
+            }
+            
+            .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+             .ui-header .ui-title, .ui-footer .ui-title {
+                font-size: 1em;
+                min-height: 1.1em;
+                text-align: center;
+                display: block;
+                margin: 0 30%;
+                padding: .7em 0;
+                text-overflow: initial;
+                overflow: initial;
+                white-space: nowrap;
+                outline: 0!important;
+            }
+
+        </style>
+    
+    <body>
+<!--
+****************************** STEP 1 ******************************
+-->    
+        <div data-role="page" id="startpage">
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">                
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mSLPLanding0"  class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+                
+          <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+        <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -27px;">
+                <h3 style="margin-top:-27px;">Complete your profile</h3>
+            </div>
+    </div>
+
+        <div data-role="content" class="ui-content" style="margin-top:23px;">  
+            <h1 style="color:white; text-shadow:none; margin:0;" align="center">Welcome to HP Insight</h1>
+            <hr/>
+            <h3 style="color:white; text-shadow:none; margin:0;" align="center">Help us understand you better</h3> 
+            
+            <style>
+            [class*=ui-block-]>button.ui-btn {
+                background-color:#0892D2;
+                color:white;
+                text-shadow:none;
+                border:none;
+                text-align:left;
+            }
+            
+            .ui-btn fancybtn {
+                background-color:#0892D2;
+                color:white;
+                text-shadow:none;
+                border:none;
+                text-align:left;
+            }
+            </style>
+            
+            <div class="ui-grid-a" style="padding-left: 5%;">
+                <div class="ui-block-a" style="width:25%; padding-right: 5%;"><button style="background-color:#F15A25;">1</button></div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>2</a> </div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>3</a> </div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>4</a> </div>
+            </div>
+            
+            
+            <form>
+                <!--<div class="ui-field-contain">
+                    <legend for="select-native-2" style="color:white; text-shadow:none;">Role</legend>
+                    <select name="select-native-2" id="select-native-2" data-mini="true">
+                        <option value="1">{!GetUserRoleName}</option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                    </select>
+                </div>-->
+                <label for="text-role" style="color:white; text-shadow:none;">Role</label>
+                <input type="text" name="text-basic" id="text-role" value="{!GetUserRoleName}"/>
+                
+                <label for="text-title" style="color:white; text-shadow:none;">Title</label>
+                <input type="text" name="text-basic" id="text-title" value="{!GetTitle}"/>
+                
+                <label for="text-org" style="color:white; text-shadow:none;">Organization</label>
+                <input type="text" name="text-basic" id="text-org" value="{!GetDepartment}"/>
+                
+                <label for="text-focus" style="color:white; text-shadow:none;">Areas of focus</label>
+                <input type="text" name="text-basic" id="text-focus" value="{!AssociatedSkills}"/>
+                
+                <label for="textarea" style="color:white; text-shadow:none;">Description</label>
+                <textarea cols="40" rows="8" name="textarea" id="textarea" placeholder="Describe something about yourself">{!GetAboutMe}</textarea>
+            </form>    
+            
+            <a href="#page2"><button data-inline="true" style="float:right; margin-right: 0; width:40%; background-color:#0892D2; color:white; text-shadow:none; border:none;">Next</button></a>        
+                        
+        </div> <!--content-->
+      </div><!-- page-->
+      
+      
+<!--
+****************************** STEP 2 ******************************
+-->
+
+
+      <div data-role="page" id="page2" class="pageBack">
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">                
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mSLPLanding0"  class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+                
+          <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+        <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -27px;">
+                <h3 style="margin-top:-27px;">Complete your profile</h3>
+            </div>
+    </div>
+
+        <div data-role="content" class="ui-content" style="margin-top:23px;">  
+            <h1 style="color:white; text-shadow:none; margin:0;" align="center">Welcome to HP Insight</h1>
+            <hr/>
+            <h3 style="color:white; text-shadow:none; margin:0;" align="center">Help us understand you better</h3> 
+            
+            <style>
+            [class*=ui-block-]>button.ui-btn {
+                background-color:#0892D2;
+                color:white;
+                text-shadow:none;
+                border:none;
+                text-align:left;
+            }
+            
+            .myBtn {
+                background-color:#0892D2;
+                color:white;
+                text-shadow:none;
+                border:none;
+                text-align:left;
+            }
+            
+            .ui-btn-icon-left:after, .ui-btn-icon-right:after, .ui-btn-icon-top:after, .ui-btn-icon-bottom:after, .ui-btn-icon-notext:after {
+                background-color:white;
+            }
+            </style>
+            
+            <div class="ui-grid-a" style="padding-left: 5%;">
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>1</a> </div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><button style="background-color:#F15A25;">2</button></div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>3</a> </div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>4</a> </div>
+            </div>
+            
+            <form>
+                <fieldset data-role="controlgroup" id="fCommunity">
+                    <legend style="color:white; text-shadow:none;">Featured communities</legend>
+                </fieldset>
+            </form>
+            
+            <script>
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SLP_Activity.GetFeaturedCommunity}',
+                    PopulateFeatureResult
+                );            
+                
+                function PopulateFeatureResult(result,event) {  
+                    console.log(result);
+                    var arr = [];
+                    window.privateArr = [];
+                    for (var v in result) {
+                    
+                        if (result[v].Name !== 'undefined') {
+                           if (result[v].isPublic) {
+                                    $( '#fCommunity' ).append('<input type="checkbox" style="display:none;" name="' + result[v].Id + '" id="' + result[v].Id + '"/><label for="'+ result[v].Id +'" id="l_'+ result[v].Id +'" style="background-color:transparent; border-color:transparent; text-shadow:none; color:white; display:none;" >' + result[v].Name + '</label>');    
+                                    arr.push(result[v].Id);
+                                }
+                                else {
+                                    $( '#fCommunity' ).append('<input type="checkbox" style="display:none;" name="' + result[v].Id + '" id="' + result[v].Id + '"/><label for="'+ result[v].Id +'" id="l_'+ result[v].Id +'" style="background-color:transparent; border-color:transparent; text-shadow:none; color:white; display:none;" >' + result[v].Name + ' (Private)</label>');    
+                                    arr.push(result[v].Id);
+                                    window.privateArr.push(result[v].Id);
+                                }
+                            }
+                        }
+                        
+                    
+                        $(' #fCommunity ').controlgroup().controlgroup('refresh');
+                        window.myArr = arr;
+                        showMore();
+                }
+                
+                function showMore() {
+                    var x = 0;
+                    while(x < 5) {
+                        //$( '#checkbox-v-2' + window.myArr[x] ).css('display','block');
+                        $( '#l_' + window.myArr[x] ).css('display','block');                        
+                        x++;    
+                    }
+                    window.myArr.splice(0,5);
+                    if (window.myArr.length == 0) {
+                        $( '#moreBtn' ).css('display','none');
+                    }
+                }
+            </script>
+             
+            <button id="moreBtn" style="background-color:#F9A006; color:white; text-shadow:none; border:none;" onclick="showMore();">Show more</button>  
+                                   
+            <a href="#startpage"><button data-inline="true" style="float:left; margin-right: 0; width:40%; background-color:#B3B3B3; color:white; text-shadow:none; border:none;">Back</button></a>                        
+            <a href="#page3"><button data-inline="true" style="float:right; margin-right: 0; width:40%; background-color:#0892D2; color:white; text-shadow:none; border:none;">Next</button></a>        
+                        
+        </div> <!--content-->
+   
+      </div><!-- page-->
+
+<!--
+****************************** STEP 3 ******************************
+-->
+
+
+      <div data-role="page" id="page3" class="pageBack">
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">                
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mSLPLanding0"  class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+                
+          <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+        <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -27px;">
+                <h3 style="margin-top:-27px;">Complete your profile</h3>
+            </div>
+    </div>
+
+        <div data-role="content" class="ui-content" style="margin-top:23px;">  
+            <h1 style="color:white; text-shadow:none; margin:0;" align="center">Welcome to HP Insight</h1>
+            <hr/>
+            <h3 style="color:white; text-shadow:none; margin:0;" align="center">Help us understand you better</h3> 
+            
+            <style>
+            [class*=ui-block-]>button.ui-btn {
+                background-color:#0892D2;
+                color:white;
+                text-shadow:none;
+                border:none;
+                text-align:left;
+            }
+  
+            .ui-btn-icon-left:after, .ui-btn-icon-right:after, .ui-btn-icon-top:after, .ui-btn-icon-bottom:after, .ui-btn-icon-notext:after {
+                background-color:white;
+            }
+
+            </style>
+            
+            <div class="ui-grid-a" style="padding-left: 5%;">
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>1</a> </div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>2</a> </div>
+                <div class="ui-block-c" style="width:25%; padding-right: 5%;"><button style="background-color:#F15A25;">3</button></div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>4</a> </div>
+            </div>
+            
+            <h3 align="center" style="color:white; text-shadow:none;">"We found some people we think you may be interested in connecting with. Start building your network by checking the box next to their picture.</h3>
+            <hr/>
+            
+            <form>
+                <fieldset data-role="controlgroup" id="peopleList">
+                </fieldset>
+            </form>
+            
+            <script>
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SLP_Activity.GetUserToFollow}',
+                    PopulateUserResult
+                );
+                
+                function PopulateUserResult(result,event) {  
+                    var arr = [];
+                    console.log(result);
+                    for (var v in result) {
+                        $( '#peopleList' ).append('<input type="checkbox" style="display:none;" name="' + result[v].userID + '" id="'+ result[v].userID +'"/><label for="'+ result[v].userID + '" id="l_' + result[v].userID + '" style="background-color:transparent; border-color:transparent; text-shadow:none; color:white; display:none;" ><img src="' + result[v].ImageURL + '" class="circulars" alt="no_username" style="float: left; margin: 0px 15px 15px 0px; min-width:64px; min-height:64px; border-radius:32px;" /><h4 style="margin:0; color:#0894D2">' + result[v].Name + '</h4><p style="margin:0; font-weight:100;">' + result[v].Role + '</p></label>');    
+                        arr.push(result[v].userID);
+                    }      
+                    $(' #peopleList ').controlgroup().controlgroup('refresh');
+                    window.myPeopleArr = arr;
+                    showMorePeople();
+                }
+                
+                function showMorePeople() {
+                    var x = 0;
+                    while(x < 5) {
+                        //$( '#checkbox-p-2' + window.myPeopleArr[x] ).css('display','block');
+                        $( '#l_' + window.myPeopleArr[x] ).css('display','block');                        
+                        x++;    
+                    }
+                    window.myPeopleArr.splice(0,5);
+                    if (window.myPeopleArr.length == 0) {
+                        $( '#morePeopleBtn' ).css('display','none');
+                    }
+                }
+
+                
+            </script>
+            
+            <button id="morePeopleBtn" style="background-color:#F9A006; color:white; text-shadow:none; border:none;" onclick="showMorePeople();">Show more</button>  
+            
+            <a href="#page2"><button data-inline="true" style="float:left; margin-right: 0; width:40%; background-color:#B3B3B3; color:white; text-shadow:none; border:none;">Back</button></a>                                                      
+            <a href="#page4" onclick="SaveProfileInformation();"><button data-inline="true" style="float:right; margin-right: 0; width:40%; background-color:#0892D2; color:white; text-shadow:none; border:none;">Get Started!</button></a>        
+                        
+        </div> <!--content-->
+   
+      </div><!-- page-->
+      
+      <!--
+****************************** STEP 4 ******************************
+-->
+
+
+      <div data-role="page" id="page4" class="pageBack">
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">                
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mSLPLanding0"  class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+                
+          <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+        <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -27px;">
+                <h3 style="margin-top:-27px;">Complete your profile</h3>
+            </div>
+    </div>
+
+        <div data-role="content" class="ui-content" style="margin-top:23px;">  
+            <h1 style="color:white; text-shadow:none; margin:0;" align="center">Welcome to HP Insight</h1>
+            <hr/>
+            <h3 style="color:white; text-shadow:none; margin:0;" align="center">Help us understand you better</h3> 
+            
+            <style>
+            [class*=ui-block-]>button.ui-btn {
+                background-color:#0892D2;
+                color:white;
+                text-shadow:none;
+                border:none;
+                text-align:left;
+            }
+            </style>
+            
+            <div class="ui-grid-a" style="padding-left: 5%;">
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>1</a> </div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>2</a> </div>
+                <div class="ui-block-b" style="width:25%; padding-right: 5%;"><a class="ui-btn" style="background-color:#0892D2; color:white; text-shadow:none; border:none;
+                text-align:left; border-radius: .3125em;"  href='#'>3</a> </div>
+                <div class="ui-block-d" style="width:25%; padding-right: 5%;"><button style="background-color:#F15A25;">4</button></div> 
+            </div>
+            
+            <h1 align="center" style="color:white; text-shadow:none;">Thank You! <br/>Lets Get Started!</h1>
+            <p align="center" style="color:white; text-shadow:none; padding-left: 15%; padding-right: 15%;">Congratulations! Your profile is complete. You can now start viewing boards and communities created by your network.</p>
+
+                                                
+            <a href="/apex/mSLPLanding0"><button data-inline="true" style="width:100%; background-color:#0892D2; color:white; text-shadow:none; border:none;">Done</button></a>        
+                        
+        </div> <!--content-->
+   
+      </div><!-- page-->
+
+<input type="hidden" id="hdnIsInsertDefaultBoard" value="{!DefaultBoardExist}"  name="InsertDefault" />
+<input type="hidden" id="hdnDefaultBoardID" value="{!SLPDefaultBoardId}"  name="DefaultBoardID" />
+<input type="hidden" id="hdnSfInstance" value="{!getSfInstance}"  name="SfInstance" />
+
+    </body>
+    
+    <style>
+        .ui-panel-inner{padding: 0}
+    </style>
+    <script type="text/javascript">
+    
+    $('#activtyStream  > li').slice(0,20).css('display', 'block');
+    
+    // *****************************************************************************************************************************************
+    
+    function SaveProfileInformation() {  
+          //return;
+          var role=$( '#text-role' ).val();
+          var title=$( '#text-title' ).val();
+          var areaOfFocus=$( '#text-focus' ).val();
+          var aboutMe=$( '#textarea' ).val();
+          var department=$( '#text-org' ).val();
+          
+          console.log("Role: " + role);
+          console.log("Title: " + title);
+          console.log("Focus: " + areaOfFocus);
+          console.log("Description: " + aboutMe);
+          console.log("Org: " + department);
+
+          var communityIds=[];
+          var privateCommunityIds=[];
+          $('#fCommunity input[type=checkbox]').each(function() {
+              if ($(this).attr('checked')) {
+                  var mId = $(this).attr('id');
+                  if (window.privateArr.indexOf(mId) == -1) {
+                      communityIds.push(mId);
+                  }
+                  else {
+                      privateCommunityIds.push(mId);
+                  }
+              }
+          });
+          
+          var userProfileIDs=[];
+          $('#peopleList input[type=checkbox]').each(function() {
+              if ($(this).attr('checked')) {
+                  userProfileIDs.push($(this).attr('id'));
+              }
+          });
+
+          
+          var lstAreaOfFocus = areaOfFocus.split(",");
+          
+          var DefaultBoardExist=$('[id$=hdnIsInsertDefaultBoard]').val();
+          var DefaultBoardId=$('[id$=hdnDefaultBoardID]').val();
+          var SfInstance=$('[id$=hdnSfInstance]').val();
+
+                                          
+                                       
+          updateProfle={                       
+              Role:role,
+              Title:title,
+              Department:department,
+              AreaofFocus:lstAreaOfFocus,
+              AboutMe:aboutMe,
+              communityIDs:communityIds,
+              PrivateCommunityIDs:privateCommunityIds,
+              userProfileIDs:userProfileIDs,
+              DefaultBoardExist:DefaultBoardExist,
+              DefaultBoardId:DefaultBoardId,
+              SfInstance:SfInstance
+          };  
+
+          
+          Visualforce.remoting.Manager.invokeAction(
+           '{!$RemoteAction.SLP_Activity.SaveProfileData}',
+           updateProfle,
+           doNothing
+         );
+      
+          Visualforce.remoting.Manager.invokeAction(
+           '{!$RemoteAction.SLP_Activity.SaveCommunityData}',
+            updateProfle,
+            doNothing
+           );
+         
+        
+          Visualforce.remoting.Manager.invokeAction(
+           '{!$RemoteAction.SLP_Activity.SaveBuildNetworkData}',
+            updateProfle,
+            doNothing
+           );
+          
+          objUpdateProfle=updateProfle;
+      }
+      function doNothing() {
+          return;
+      }
+
+    
+    $(document).ready(function(){
+        
+                  var aStream = {!getUserCommunityPostAndCommentsJSON};
+                     for (var obj in aStream) {
+                     if(aStream[obj].ListFeedPost==undefined||aStream[obj].ListFeedPost[0].PostName==null){
+                         //do nothing
+                     }
+                     else{
+                         $("#time_"+aStream[obj].SequenceNo).append('<span class="icon-time"></span>'+parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate)+'');
+                     if(aStream[obj].ListFeedPost[0].LinkUrl==null){
+                        //do nothing            
+                      }else{
+                         if(aStream[obj].ListFeedPost[0].LinkUrl.indexOf("SLP_ViewCommunity") > -1){
+                             if(aStream[obj].ListFeedPost[0].LinkUrl.indexOf("servlet.shepherd")>-1){
+                                 var link = aStream[obj].ListFeedPost[0].LinkUrl;
+                             }else{
+                                 var index = aStream[obj].ListFeedPost[0].LinkUrl.indexOf("?id=");
+                                 var preLink= aStream[obj].ListFeedPost[0].LinkUrl.substring(index+4);
+                                 var link = "/apex/mobileCommunityMockup?id="+preLink;
+                             }
+                              $("#"+aStream[obj].SequenceNo).append('<span class="icon-link"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>')
+                         }
+                         else{
+                             if(aStream[obj].ListFeedPost[0].LinkUrl.indexOf("servlet.shepherd")>-1){
+                                 var link = aStream[obj].ListFeedPost[0].LinkUrl;
+                             }else{
+                                 var index = aStream[obj].ListFeedPost[0].LinkUrl.indexOf("?id=");
+                                 var preLink= aStream[obj].ListFeedPost[0].LinkUrl.substring(index+4);
+                                 var link = "/apex/mobileLearningBoardMockup?id="+preLink;
+                             }
+                              $("#"+aStream[obj].SequenceNo).append('<span class="icon-link"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>')
+                         }
+                         
+                         }//Else from do nothing I
+                         }//Else from do nothing II
+                          
+                     }//For
+                     
+         $( "#contacts" ).on( "filterablefilter", function( event, ui ) {
+            var lastVal = $(".ui-filterable input").attr('data-lastval');
+            console.log(lastVal);
+            
+            if (lastVal == '') {
+                changePage(1);
+                $("input[name*=radio-choice-h-6]:checked").each(function() {
+                    $(this).attr("checked",false).checkboxradio("refresh");
+                });
+                $('#1').attr("checked",true).checkboxradio("refresh");
+//                console.log('itemssss: ' + ui.items.length);
+                for (var i=0; i<ui.items.length; i++) {
+                    $( ui.items[i] ).removeClass('sResult');
+                }
+                
+                var numOfTabs = Math.ceil( ui.items.length / 5 );
+                createPagination(numOfTabs);
+                
+                $('#pages').css('display','');
+                return;
+            }
+            checkRange(ui);
+            
+            function checkRange(items) {
+                var dStr = '';
+                var visible = 0;
+                for (var i=0; i<items.items.length; i++) {
+                    if (!($(items.items[i]).hasClass('ui-screen-hidden'))) {
+                        if (visible < 1000) {
+                            $(items.items[i]).css('display','');
+                            visible++;
+                            $(items.items[i]).addClass('sResult');
+                            dStr += $(items.items[i]).text() + '\n';
+                        }
+                        else {
+                            $(items.items[i]).css('display','none');
+                            $(items.items[i]).removeClass('sResult');
+                            $('#pages').css('display','');
+                        }                        
+                    }
+                }
+                
+                            
+                $("#contacts")
+                .enhanceWithin()
+                .controlgroup("refresh");
+                
+                createPagination(Math.ceil( visible / 5 ));
+            }            
+        } );
+    
+    });
+        
+        $('#search-basic').live("keypress", function(e) {
+            
+            /* ENTER PRESSED*/
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                var searchTerm= $('#search-basic').val();
+                
+                if (searchTerm.length <=2) {
+                    alert('A minimum of 3 characters should be entered');
+                    return;
+                }
+                if (searchTerm.length >=3998) {
+                        alert('A maximum of 3997 characters should be entered');
+                        return;
+                    }
+                
+                window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+encodeURIComponent(searchTerm);
+                $.mobile.loading( "show", {
+                      text: "Loading...",
+                      textVisible: true,
+                      textOnly: false
+                } ); // Displays load spinner while loading
+            }
+        })
+        
+         function highlightRow(elem){
+            $(elem).css({background: '#FF8800'});
+            setTimeout(function(){
+                 $(elem).css({background: 'transparent'});
+            }, 800);
+        }  
+        
+        $('#listviewmenu').on('click tap mousedown', 'li', function() {
+            highlightRow($(this));
+        });
+        
+        $('#menuImage').on('click tap mousedown touchstart', '', function() {
+            $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });
+        
+        $('#menuImageList').on('click tap mousedown touchstart', '', function() {
+            $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });    
+        
+        $('#searchImage').on('click tap mousedown touchstart', '', function() {
+            $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+            setTimeout(function(){
+                 $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+            }, 300);
+        }); 
+        
+        $('#more').click(function() {
+        $('#activtyStream > li:hidden').slice(0,20).fadeIn();
+        if (!($('#activtyStream > li:hidden').length >= 1)) {
+        $(this).remove();
+        }
+        });    
+        
+        function showMemberPopup(data){
+        
+        var CreateUsrId = $(data).attr('data-CreatedId');
+            $("#peoplePanelContent #memberFrame").remove();
+            var viewportHeight = $(window).height() - 50;
+            //if(viewportHeight > 400)
+           //     viewportHeight = 400;
+            $("#peoplePanelContent").append( '<iframe src="/apex/mobileProfileNew?id=' + CreateUsrId + '" height="' + viewportHeight + '" width="100%;" style="border:0px;" id="memberFrame"></iframe>' );
+            $( "#peoplePanel" ).panel( "open" , "");
+        
+        }                   
+       
+    </script>
+    <style type="text/css">
+    .actvitylist{
+            background-color:transparent !important;
+            border-top:none !important;
+            border-left:none !important;
+            border-right:none !important;
+            border-bottom:solid 1px black !important;
+            margin-left:10px !important;
+            margin-right:10px !important;
+            text-shadow:none !important;
+        }
+    
+        .starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+        .circular-image-container {
+            width:50px;
+            height:50px;
+            margin-top: 15px;
+            margin-left:5px;
+            padding: 3px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #ffffff;
+        }
+        ul#activtyStream li {
+            display: none;
+        }
+        
+        .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li-has-thumb{padding-left:75px !important}
+        
+        .ui-listview>.ui-li-static, .ui-listview>.ui-li-divider, .ui-listview>li>a.ui-btn { white-space:normal !important }
+        
+        .hpFont{
+                font-family:"HP Simplified",sans-serif;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+            }
+            
+        
+        
+    </style>
+
+</apex:page>

@@ -1,0 +1,278 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<apex:page tabStyle="Web_Form__c" standardController="Web_Form__c" extensions="WebFormEditorController" id="page">
+
+	<style type="text/css">
+       
+       .message {
+        	color: red;
+        }
+        
+        #formfieldheader tr th {
+			border-bottom:2px solid #CCCCCC;
+			white-space:nowrap;
+			padding:1px 0px 4px 1px;
+		}
+		.fftd {
+			border-bottom:1px solid #E3DEB8;
+			color:#333333;
+			padding:1px 0px 4px 1px;
+		}
+		
+	
+	</style>
+
+	<script type="text/javascript" src="{!URLFOR($Resource.CMSForce, '/ColorPicker/jscolor.js')}"/>
+	<!-- <script type="text/javascript" src="{!$Resource.JQuery126}"/> -->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"/>
+	
+	
+	<!-- <script type="text/javascript" src="{!URLFOR($Resource.JQueryUI, '/jquery-ui-personalized-1.5.3.js')}"/> -->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.5.3/jquery-ui.min.js"/>
+	
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// Initialise the form fields table for sorting	
+    		fieldsSortable();
+		});
+		
+		function fieldsSortable() {
+			$("#sortable").sortable({
+				axis: "y",
+				cursor: "move",
+				opacity: 0.5,
+				update: reorder
+			});
+		}
+		//when the table has been reordered, recalculate the positions (thank you JQuery)
+		function reorder(){
+		    var counter = 1;
+		    //the hidden fields that are bound to the form field order
+		    $('#sortable input[@type="hidden"][@id$=order]').each(function(i, o){
+				o.value = i+1;
+			});
+			//make sure the output matches
+			$('#sortable span[@id$=orderoutput]').each(function(i, o){
+				//alert('index: ' + i + ' order : ' + o.value + ' object id: ' + o.id);
+				o.innerHTML = i+1;
+			});
+		}
+		
+	</script>
+	
+	<apex:pageMessages />
+    
+	<apex:form id="pageForm">
+
+	<apex:sectionHeader title="Web Form" subtitle="editor"/>
+						
+	<apex:PageBlock title="Web Form Editor" id="pageBlock">
+	
+		
+		
+		<!-- Button Section -->
+		<apex:pageBlockButtons >
+			<apex:commandButton value="Next" action="{!step2}" rendered="{!step == '1'}"/>
+			<apex:commandButton value="Previous" action="{!step1}" rendered="{!step == '2'}"/>
+			<apex:commandButton value="Save" action="{!save}" status="status" rendered="{!step == '2'}"/>	
+			<apex:commandButton value="Cancel" action="{!cancel}" status="status"/>
+			<apex:commandLink action="{!preview}" target="_blank" status="status"><apex:commandButton value="Save & Preview" status="status" rendered="{!webform.Id != null}"/></apex:commandLink>			
+		</apex:pageBlockButtons>
+		
+		<apex:outputPanel id="step1" rendered="{!step == '1'}">
+		<apex:PageBlockSection id="pbselectobject" title="Form Properties">
+			<apex:pageBlockSectionItem >
+				Name : <apex:inputText value="{!webform.Name}" style="width:250px;"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+				<apex:outputPanel >
+				<b>{!$ObjectType.Web_Form__c.fields.Folder__c.label} :</b> &nbsp;<apex:inputField value="{!webform.Folder__c}" style="width:250px;"/>
+				</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			<!-- Selector for the object on which the form will be based -->
+			<apex:pageBlockSectionItem >
+								
+				<apex:outputLabel value="Select Object : " for="selectobjectlist"/>
+				<apex:selectList value="{!selectedObject}" size="1" id="selectobjectlist" style="width:250px;">
+					<apex:actionSupport event="onchange" action="{!selectObject}" status="status1"/>
+					<apex:selectOptions value="{!objectSelectOptions}"/>			
+				</apex:selectList>			
+				<!-- <apex:commandButton action="{!selectobject}" value="Select Object" rerender="objectSelector, objectfieldsPanel, formfieldsPanel" status="status"/>-->				
+			</apex:pageBlockSectionItem>			
+			<apex:pageBlockSectionItem >
+				<!-- Action Status -->
+				<apex:actionStatus stopText="" id="status1">	
+					<apex:facet name="start">				
+						<apex:image url="{!URLFOR($Resource.CMSForce, '/Icons/Colored/PNG/time.png')}" title="Wait..."/>									
+					</apex:facet>
+				</apex:actionStatus>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >		
+				{!$ObjectType.Web_Form__c.fields.Description__c.label} : <apex:inputField value="{!webform.Description__c}" style="width:250px;"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem id="pbsireturl">
+				<apex:outputPanel >		
+				<b>{!$ObjectType.Web_Form__c.fields.Return_URL__c.label} :</b>&nbsp; <apex:inputField id="returl" value="{!webform.Return_URL__c}" style="width:250px;"/>
+				<input type="button" value="Select Return Page" class="btn" onclick="window.open('/apex/PageBrowser?webformeditor=1','pagebrowserwindow','widht=750, height=550')"/>
+				</apex:outputPanel>
+			</apex:pageBlockSectionItem>	
+			<apex:pageBlockSectionItem rendered="{!NOT(ISNULL(webform.ID))}">	
+				Web Form ID : <apex:inputField value="{!webform.ID}" style="width:250px;"/>
+			</apex:pageBlockSectionItem>	
+		</apex:PageBlockSection>
+		
+		<apex:PageBlockSection title="Layout options">
+			<apex:pageBlockSectionItem >
+				{!$ObjectType.Web_Form__c.fields.Title__c.label} : <apex:inputField value="{!webform.Title__c}" style="width:250px;"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+				{!$ObjectType.Web_Form__c.fields.Background_Color__c.label} : <apex:inputField value="{!webform.Background_Color__c}" styleClass="color"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+				{!$ObjectType.Web_Form__c.fields.Save_Button_Text__c.label} : <apex:inputField value="{!webform.Save_Button_Text__c}" style="width:250px;"/>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+				{!$ObjectType.Web_Form__c.fields.Text_Color__c.label} : <apex:inputField value="{!webform.Text_Color__c}" styleClass="color"/>
+			</apex:pageBlockSectionItem>	
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value=""/>
+				
+			</apex:pageBlockSectionItem>		
+		</apex:PageBlockSection>
+		</apex:outputPanel>
+
+		
+		<apex:outputPanel id="step2" rendered="{!step == '2'}">
+        
+		<!-- Object Field List -->
+		<apex:PageBlockSection title="Add {!IF(NOT(ISNULL(selectedObjectLabel)), 'for '+selectedObjectLabel, '')} fields to your form" columns="3" id="fieldSection">
+		
+			<!-- <apex:panelGrid columns="3" id="fieldsGrid"> -->
+
+	   	 	<!--  Object Fields -->
+			<apex:outputPanel id="objectfieldsPanel">
+			<B><U>Select Fields to add :</U></B><BR/>
+	   	 	<apex:pageBlockTable value="{!objectFields}" var="f" id="objectfieldsTable">
+	            <apex:column value="{!f.Label__c}">
+	                <apex:facet name="header">Label</apex:facet>
+	            </apex:column>
+	            <!-- <apex:column value="{!f.Name}">
+	                <apex:facet name="header">Name</apex:facet>
+	            </apex:column> -->
+	            <apex:column value="{!f.Type__c}">
+	                <apex:facet name="header">Type</apex:facet>
+	            </apex:column>
+	            <apex:column value="{!f.Required__c}">
+	                <apex:facet name="header">Req.</apex:facet>
+	            </apex:column>
+	            <apex:column >
+                     <apex:commandLink action="{!addField}" rerender="formfieldsPanel, objectfieldsPanel" status="status" oncomplete="fieldsSortable();">                     	
+                        <apex:param name="fieldname" value="{!f.Name}"></apex:param>
+                        <apex:image url="{!URLFOR($Resource.CMSForce, '/Icons/Colored/PNG/action_add.png')}" title="Add"/>
+                     </apex:commandLink>
+                </apex:column>
+            </apex:pageBlockTable>
+            
+            
+            <!--  Allow users to add a custom text line or blank spacer -->
+            <br/>
+            <table>
+            	<tr>
+            		<td>
+			            <apex:OutputLabel value=" Add custom text or blank line " rendered="{!formFieldsSize >0}"/>&nbsp;&nbsp;
+            		</td>
+            		<td>
+            			<apex:commandLink action="{!addCustomField}" rerender="formfieldsPanel, objectfieldsPanel" status="status"  rendered="{!formFieldsSize >0}" oncomplete="fieldsSortable();">                     	                        
+                        	<apex:image url="{!URLFOR($Resource.CMSForce, '/Icons/Colored/PNG/action_add.png')}" title="Add"/>
+                     	</apex:commandLink>
+                     </td>
+                </tr>
+            </table>
+            </apex:outputPanel>
+            
+            
+            
+            <!-- Form Fields -->
+            <apex:outputPanel id="formfieldsPanel">
+            <div style="background-color:#FFFFFF; border-style:solid; border-width:2px; border-color:#5E82A3;">
+            <B><U>Your form fields :</U></B><BR/>
+            <table id="formfieldheader">
+            	<thead class="headerRow">
+            	<tr>
+            	<th style="width:150px;">Label</th>
+            	<th style="width:80px;">Type</th>
+            	<th style="width:25px;">Req</th>
+            	<th style="width:25px;">Hid</th>
+            	<th style="width:35px;">Width</th>
+            	<th style="width:200px;">Value</th>
+            	<th style="width: 200;">Order</th>
+            	</tr>
+            	</thead>
+            </table>
+            <div id="sortable">
+		   		<apex:repeat value="{!formFields}" var="f" id="formfieldsRepeat">
+		   			<table id="{!f.Name}" class="formfieldrow" style="width: 650px; cursor:pointer;"><tr>
+		   				<td style="width:150px;border-bottom:1px solid #E3DEB8;"><apex:inputField value="{!f.Label__c}"/></td>
+		   				<td style="width:80px;border-bottom:1px solid #E3DEB8;"><apex:outputText value="{!f.Type__c}"/></td>	            
+	                	<td style="width:25px;border-bottom:1px solid #E3DEB8;">
+	                		<apex:inputField value="{!f.Required__c}" rendered="{!NOT(f.APIRequired__c)}"/>
+		                	<apex:outputField value="{!f.APIRequired__c}" rendered="{!f.APIRequired__c}"/>
+		                </td>
+		                <td style="width:25px;border-bottom:1px solid #E3DEB8;">	                		                
+			   				<apex:inputField value="{!f.Hidden__c}" rendered="{!NOT(CONTAINS(f.Type__c, 'DATE'))}">
+			                	<apex:actionSupport event="onclick" action="{!hiddenField}" oncomplete="fieldsSortable();" rerender="formfieldsPanel" status="status">
+			                		<apex:param name="fieldname" value="{!f.Name}"></apex:param>
+			                	</apex:actionSupport>
+			                </apex:inputField>
+		                </td>
+		   				<td style="width:35px;border-bottom:1px solid #E3DEB8;"><apex:inputField value="{!f.Width__c}" style="width: 30px;"/></td>
+		   				<td style="width:200px;border-bottom:1px solid #E3DEB8;"><c:inputFormFieldEditor field="{!f}" rendered="{!f.Hidden__c}"/>&nbsp;</td>
+		   				
+		   				<td style="width: 200;border-bottom:1px solid #E3DEB8;">
+		   				<apex:outputText value="{!f.Order__c}" id="orderoutput"/>
+		   				<apex:inputHidden value="{!f.Order__c}" id="order"/>
+		   				<apex:commandLink action="{!removeField}" rerender="formfieldsPanel, objectfieldsPanel" status="status" oncomplete="fieldsSortable();">
+	                        <apex:param name="fieldname" value="{!f.Name}"></apex:param>
+	                        <apex:image url="{!URLFOR($Resource.CMSForce, '/Icons/Colored/PNG/action_delete.png')}" title="Remove"/>
+	                     </apex:commandLink>
+	                     </td>       
+		   			</tr></table>		   			
+		   		</apex:repeat>
+		   	</div>
+           	</div>
+           	</apex:outputPanel>
+			
+		
+
+            <!-- Action Status -->
+			<apex:actionStatus stopText="" id="status">	
+				<apex:facet name="start">				
+					<apex:image url="{!URLFOR($Resource.CMSForce, '/Icons/Colored/PNG/time.png')}" title="Wait..."/>									
+				</apex:facet>
+			</apex:actionStatus>
+		   	
+   		</apex:PageBlockSection>
+   		</apex:outputPanel>
+   		
+   	</apex:PageBlock>
+
+	</apex:form>
+
+</apex:page>

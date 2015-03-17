@@ -1,0 +1,314 @@
+<!--
+/****************************************
+Author: Abrar
+Created Date: 26-APR-2013
+Release: R5
+Capability: Deal Governance
+Description: Approval Matrix Item record creation, 
+Dynamic picklist population of Field Name field based on Object selected 
+and updating Field API Name,Field Data Type fields of Approval Matrix Item objects
+****************************************/
+-->
+<apex:page standardController="Approval_Matrix__c" extensions="DGApprovalMatrixCreationController" id="ApMatrix">
+<apex:form id="ApMatrixForm">
+  <apex:pageBlock title="Approval Matrix detail" id="ApMatrixBlock">
+      <apex:pageBlockButtons location="Top" >
+        <apex:commandButton action="{!Save}" value="Save"/>
+          <apex:commandButton action="{!Cancel}" value="Cancel"/>
+      </apex:pageBlockButtons>
+      <apex:pagemessages ></apex:pagemessages>
+      <apex:pageBlockSection columns="2" id="ApMatrixSection">
+            <apex:inputField value="{!am.Owner_BG__c}"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Account Region  " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Account_Region__c}"/>
+            </apex:outputPanel>
+            <apex:inputField value="{!am.Weight__c}"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Active " style="width:160px;font-weight:bold"/>
+            <apex:inputField value="{!am.Active__c}"/>
+            </apex:outputPanel>
+            <apex:inputField value="{!am.Approval_Flow_Type__c}"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approval Type " style="width:160px;font-weight:bold"/>
+            <apex:inputField value="{!am.Approval_Type__c}"/>
+            </apex:outputPanel>
+             <apex:inputField value="{!am.Approval_Matrix_Name__c}"/>
+      </apex:pageBlockSection>
+       <apex:pageBlockSection title="Level 1" columns="2" id="ApMatrixSectionlev1">
+            <apex:inputField value="{!am.Approver_Level_Type_1__c}" id="approvertype1"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 1 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_1__c}" id="Approver1"/>
+                 <a href="#" id="link1" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev1:approvertype1','Approver1')" >
+                    <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_2__c}" id="approvertype2" />
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 2 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_2__c}" id="Approver2"/>
+                 <a href="#" id="link2" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev1:approvertype2','Approver2')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>    
+            </apex:outputPanel>
+            <apex:inputField value="{!am.Approver_Level_Type_3__c}" id="approvertype3"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 3 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_3__c}" id="Approver3"/>
+                 <a href="#" id="link3" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev1:approvertype3','Approver3')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_4__c}" id="approvertype4"/>
+           <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 4 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_4__c}" id="Approver4"/>
+                <a href="#" id="link4" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev1:approvertype4','Approver4')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="Level 2" columns="2" id="ApMatrixSectionlev2">
+            
+            
+            <apex:inputField value="{!am.Approver_Level_Type_5__c}" id="approvertype5"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 5 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_5__c}" id="Approver5"/>
+                 <a href="#" id="link5" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev2:approvertype5','Approver5')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_6__c}" id="approvertype6"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 6 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_6__c}" id="Approver6"/>
+                 <a href="#" id="link6" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev2:approvertype6','Approver6')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_7__c}" id="approvertype7"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 7 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_7__c}" id="Approver7"/>
+                 <a href="#" id="link7" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev2:approvertype7','Approver7')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_8__c}" id="approvertype8"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 8 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_8__c}" id="Approver8"/>
+                 <a href="#" id="link8" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev2:approvertype8','Approver8')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+        </apex:pageBlockSection> 
+
+        
+        <apex:pageBlockSection title="Level 3" columns="2" id="ApMatrixSectionlev3">
+            
+            
+            <apex:inputField value="{!am.Approver_Level_Type_9__c}" id="approvertype9"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 9 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_9__c}" id="Approver9"/>
+                 <a href="#" id="link9" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev3:approvertype9','Approver9')" >
+                    <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_10__c}" id="approvertype10" />
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 10 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_10__c}" id="Approver10"/>
+                 <a href="#" id="link10" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev3:approvertype10','Approver10')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>    
+            </apex:outputPanel>
+            <apex:inputField value="{!am.Approver_Level_Type_11__c}" id="approvertype11"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 11 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_11__c}" id="Approver11"/>
+                 <a href="#" id="link11" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev3:approvertype11','Approver11')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_12__c}" id="approvertype12"/>
+           <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 12 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_12__c}" id="Approver12"/>
+                <a href="#" id="link12" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev3:approvertype12','Approver12')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+        </apex:pageBlockSection> 
+        
+        
+        <apex:pageBlockSection title="Level 4" columns="2" id="ApMatrixSectionlev4">
+            <apex:inputField value="{!am.Approver_Level_Type_13__c}" id="approvertype13"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 13 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_13__c}" id="Approver13"/>
+                 <a href="#" id="link13" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev4:approvertype13','Approver13')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+             <apex:inputField value="{!am.Approver_Level_Type_14__c}" id="approvertype14"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 14 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_14__c}" id="Approver14"/>
+                 <a href="#" id="link14" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev4:approvertype14','Approver14')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            <apex:inputField value="{!am.Approver_Level_Type_15__c}" id="approvertype15"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 15 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_15__c}" id="Approver15"/>
+                 <a href="#" id="link15" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev4:approvertype15','Approver15')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_16__c}" id="approvertype16"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 16 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_16__c}" id="Approver16"/>
+                 <a href="#" id="link16" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev4:approvertype16','Approver16')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+        </apex:pageBlockSection> 
+        
+        
+        <apex:pageBlockSection title="Level 5" columns="2" id="ApMatrixSectionlev5"> 
+        
+         <apex:inputField value="{!am.Approver_Level_Type_17__c}" id="approvertype17"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 17 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_17__c}" id="Approver17"/>
+                 <a href="#" id="link17" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev5:approvertype17','Approver17')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+             <apex:inputField value="{!am.Approver_Level_Type_18__c}" id="approvertype18"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 18 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_18__c}" id="Approver18"/>
+                 <a href="#" id="link18" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev5:approvertype18','Approver18')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            <apex:inputField value="{!am.Approver_Level_Type_19__c}" id="approvertype19"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 19 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_19__c}" id="Approver19"/>
+                 <a href="#" id="link19" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev5:approvertype19','Approver19')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+            
+            <apex:inputField value="{!am.Approver_Level_Type_20__c}" id="approvertype20"/>
+            <apex:outputPanel >
+                <apex:OutputLabel value="Approver Level 20 " style="width:160px;font-weight:bold"/>
+                <apex:inputField value="{!am.Approver_Level_20__c}" id="Approver20"/>
+                 <a href="#" id="link20" title="lookup" tabindex="6"  onclick="OpenQueueLookup('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev5:approvertype20','Approver20')">
+                <img class="lookupIcon" title="Queue" alt="Queue" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+            </apex:outputPanel>
+        
+           
+      </apex:pageBlockSection>
+     
+  </apex:pageBlock>
+ </apex:form>
+ <Script>
+
+var newWin = null;
+function OpenQueueLookup(TypeId, AppFieldId)
+{
+    var x = document.getElementById(TypeId).value;
+    //alert(x);
+    newWin = window.open('apex/DGApproverMatrixUserQueueLookup?&ApproverType=' + document.getElementById(TypeId).value + '&ApproverFieldId=' + AppFieldId, 'Popup','height=500,width=1600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+}
+
+function backPopulate(ApproverName,FieldId)
+{
+    newWin.close();
+    
+    if(FieldId =='Approver1'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev1:'+FieldId).value = ApproverName;
+    
+    }
+    else if(FieldId =='Approver2'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev1:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver3'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev1:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver4'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev1:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver5'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev2:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver6'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev2:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver7'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev2:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver8'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev2:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver9'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev3:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver10'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev3:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver11'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev3:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver12'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev3:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver13'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev4:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver14'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev4:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver15'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev4:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver16'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev4:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver17'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev5:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver18'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev5:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver19'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev5:'+FieldId).value = ApproverName;
+    }
+    else if(FieldId =='Approver20'){
+    document.getElementById('ApMatrix:ApMatrixForm:ApMatrixBlock:ApMatrixSectionlev5:'+FieldId).value = ApproverName;
+    }
+}   
+</Script>
+</apex:page>

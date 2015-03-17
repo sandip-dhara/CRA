@@ -1,0 +1,151 @@
+<apex:page showHeader="false" sidebar="false" cache="false" controller="SLP_RssNewsReader">
+<style type="text/css">
+    body {
+    font: 13px/1.231 arial,helvetica,clean,sans-serif;
+    }
+
+    #results .yschttl, #yschiy .yschttl {
+    font-size: 123.1%;
+    }
+
+    #web h3 {
+    font-weight: normal;
+    }
+
+    #results .res {
+    margin-bottom: 17px;
+    }
+
+    .res {
+    position: relative;
+    }
+
+    #web ol li a.yschttl:link, #web li .active a:link {
+    color: #0000DE;
+    }
+
+    li {
+    list-style: none;
+    }
+
+    #web .res .url {
+    color: #A0A0A0;
+    }
+
+    #web .url, .yschurl {
+    color: green;
+    font-weight: bold;
+    }
+
+    h1 {
+        border-bottom: 2px solid threedlightshadow;
+        font-size: 160%;
+        margin: 0 0 0.2em;
+    }
+
+
+    #feedSubtitleText {
+        color: threeddarkshadow;
+        font-size: 110%;
+        font-weight: normal;
+        margin: 0 0 0.6em;
+    }
+
+    .msg {
+    background: #FEFBDD;
+    margin-left: 128px;
+    margin-right: 5px;
+    padding: 9px;
+    word-wrap: break-word;
+    font-size: 16px;
+    margin-bottom: 16px;
+    padding-left: 11px;
+    }
+    #left-panel ul{list-syle:none}
+    #left-panel ul li{padding:2px; margin:0;list-style:none;display:block;clear:left}
+    #logo {
+    height: 37px;
+    left: -2px;
+    margin-top: 0px;
+    position: absolute;
+    top: 1px;
+    width: 168px;
+    background-image: url(http://l.yimg.com/pv/i/all/vertical/news/us_srp_metro_news_201301281307.png);
+    background-size: 80%;
+    background-repeat: no-repeat;
+    }
+    .listHeading{
+    color: #949FA6;
+        font-size: 13px;
+        font-weight: 400;
+        margin: 0 0 3px 8px;
+        text-transform: uppercase;
+    }
+    .listItems{
+        margin: 0;
+        padding: 5px 0;    
+    }
+    .listItems a{
+        color: #1A4B8E;
+        text-decoration: none;
+        white-space: nowrap;    
+    }
+
+    #anyTime{
+        color:{!IF($CurrentPage.parameters.age == '','black !important','#1A4B8E')};
+    }
+    #d1{
+        color:{!IF($CurrentPage.parameters.age == '1d','black !important','#1A4B8E')};
+    }
+    #h1{
+        color:{!IF($CurrentPage.parameters.age == '1h','black !important','#1A4B8E')};
+    }
+    #h1{
+        color:{!IF($CurrentPage.parameters.age == '1w','black !important','#1A4B8E')};
+    }
+</style>
+<apex:form id="theFormId">
+<div>
+
+    <div id="results" style="width:90%; float:left; ">
+        
+        <div id="web" style="border-left:solid 1px #ccc;">
+            <ol start="0">
+                <apex:repeat value="{!RSSFeed.items}" var="n">
+                    <li>
+                        <div class="res">
+                            <div>
+                                <h3>
+                                    <a class="yschttl spt" href="{!n.link}">                                 
+                                        <apex:outputText value="{!n.title}" escape="false"/> 
+                                    </a>
+                                </h3>
+                            </div>
+                    
+                            <div class="abstr">
+                                <apex:outputText id="theDesc"  value="{!n.Description}" escape="false"/>
+                            </div>
+                    
+                            <span class="url">
+                                <apex:outputText value="{!n.source} {!n.pubDate}" escape="false"/>
+                            </span>
+                        </div>
+                    </li>
+                </apex:repeat>
+            </ol>    
+        </div>
+    </div>
+</div>
+
+</apex:form>
+
+<apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <script type="text/javascript">
+    $j = jQuery.noConflict();
+    $j('[id$=theDesc]').each(function(){
+        var thistxt = $j(this).text();
+        $j(this).html(thistxt);
+        }
+    );
+    </script>
+</apex:page>

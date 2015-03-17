@@ -1,0 +1,65 @@
+<apex:page controller="MDCPViewHierarchyController" title="Account Hierarchy">
+
+<apex:sectionHeader id="TitleSection" title="Account Hierarchy" />
+<b>{!AccountName}</b><br/>
+The hierarchy is created by associating accounts with parent accounts.
+<apex:outputPanel rendered="{!listTruncated}">
+<div class="message warningM4" id="">
+<table  class="messageTable" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td><img src="/s.gif" alt="Warning"  class="msgIcon" title="Warning"/></td>
+<td class="messageCell"><div class="messageText">The hierarchy displays the first 150 accounts per level. Additional accounts are not displayed.
+</div>
+</td>
+</tr>
+</table>
+</div>
+</apex:outputPanel>
+<apex:form >
+  <apex:inputHidden id="indentation" value="{!indentation_Rows}"/>
+<apex:pageBlock >
+        <apex:pageBlockTable value="{!finalHierarchyList}" var="item" >
+
+            <apex:column headerValue="Name" style="{!IF(IF(item.Id==AccountId , true, false), 'font-weight:bold', '')}">
+            <apex:outputLink value="/{!item.Id}" rendered="{!NOT(item.Name=='........')}">
+            <apex:outputText value="{!item.Name}" style="font-size:11px;"/>
+            </apex:outputLink>
+            <apex:outputText rendered="{!(item.Name=='........')}">.......</apex:outputText>
+            </apex:column>
+            
+            <apex:column headerValue="Physical City" style="{!IF(IF(item.Id==AccountId , true, false), 'font-weight:bold', 'font-size:11px')}">{!item.ShippingCity}</apex:column>
+            <apex:column headerValue="Physical State/Province" style="{!IF(IF(item.Id==AccountId , true, false), 'font-weight:bold', 'font-size:11px')}">{!item.ShippingState}</apex:column> 
+            <apex:column headerValue="Physical Country" style="{!IF(IF(item.Id==AccountId , true, false), 'font-weight:bold', 'font-size:11px')}">{!item.ShippingCountry}</apex:column> 
+            <apex:column headerValue="Site Duns" style="{!IF(IF(item.Id==AccountId , true, false), 'font-weight:bold', 'font-size:11px')}">{!item.DUNS__c}</apex:column> 
+            <apex:column headerValue="Domestic Ultimate Duns" style="{!IF(IF(item.Id==AccountId , true, false), 'font-weight:bold', 'font-size:11px')}">{!item.Domestic_Ultimate_Duns__c}</apex:column> 
+            <apex:column headerValue="Global Ultimate Duns" style="{!IF(IF(item.Id==AccountId , true, false), 'font-weight:bold', 'font-size:11px')}">{!item.Global_Ultimate_DUNS_Number__c}</apex:column>             
+        </apex:pageBlockTable> 
+</apex:pageBlock>
+ </apex:form>
+<script>
+ var previousOnload = window.onload;        
+    window.onload = function() { 
+        if (previousOnload) { 
+            previousOnload();
+        }
+        var table = document.getElementById('j_id0:j_id4:j_id5:j_id6');
+        document.getElementById('j_id0:j_id4:j_id5:j_id6').width="12px";
+        var indenval=1;
+        for (var r = 0, n = table.rows.length; r < n; r++) {
+            for (var c = 0, m = table.rows[r].cells.length; c < m; c++) {
+                if(c==0&&r>1){
+                  var indentlist=document.getElementById('j_id0:j_id4:indentation').value;
+                    for(var s=0;s<indentlist[indenval];s++){                    
+                    table.rows[r].cells[c].innerHTML="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+table.rows[r].cells[c].innerHTML;
+                    }
+                }
+            }
+            if(r>0){
+             indenval=indenval+3;
+             }
+        }
+
+    }
+
+</script>
+</apex:page>

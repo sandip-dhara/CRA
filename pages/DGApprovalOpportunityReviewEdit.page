@@ -1,0 +1,129 @@
+<!-- *****************************************************
+Author: Mousumi Panda
+Created Date: 26-APR-2013
+Release: R5
+Capability: Deal Governance
+Description: Edit page for Opportunity Review 
+***********************************************************-->
+
+<apex:page standardController="Approval__c" extensions="DGApprovalOpptyReviewControllerDtlEdit">
+ 
+<style>
+.bordernone
+{
+border:none;
+border-color:#f3f3f3;
+div.hideCurrDate span.dateInput span.dateFormat{
+    display:none;
+    }
+{
+
+
+</style>
+   <apex:form >
+    <apex:sectionHeader title="Approval" subtitle="{!Approval__c.Approval_Long_Name__c}"/>
+     <apex:pageBlock title="Approval Request Form: Opportunity Review">
+   
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!customSave}" value="Save" immediate="false"/>
+            <apex:commandButton action="{!customCancel}" value="Cancel"/>
+       </apex:pageBlockButtons>
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlockSection columns="2" title="Opportunity Information" id="pbsec"> 
+            <apex:outputField value="{!Approval__c.Opportunity_Id__c}"/>
+            <apex:outputField value="{!Approval__c.Opportunity_Type__c}"/>
+            <apex:pageBlockSectionItem >
+            <apex:OutputLabel value="Opportunity Name"/>
+                <apex:OutputLink value="/{!Approval__c.Opportunity_system_id__c}" > {!Approval__c.Opportunity_Name__c} </apex:OutputLink>
+            </apex:pageBlockSectionItem>
+            <apex:outputField value="{!Approval__c.Close_Date__c}"/>
+            <apex:pageBlockSectionItem >
+           <apex:OutputLabel value="Account Name"/>
+                <apex:OutputLink value="/{!Approval__c.Account_id__c}" > {!Approval__c.Account_Name__c} </apex:OutputLink>
+            </apex:pageBlockSectionItem>
+            <apex:outputField value="{!Approval__c.Sales_Stage__c}"/>
+            <apex:outputField label="Opportunity Owner" value="{!Approval__c.Opportunity_Owner__c}"/>
+            <apex:outputField label="Opportunity's Owner BG" value="{!Approval__c.Owners_BG__c}"/>
+            <apex:outputField label="Region (Account Region)" value="{!Approval__c.Region_Account_Region__c}"/>
+            <!--<apex:outputField value="{!Approval__c.Total_Opportunity_Value__c}"/>-->
+            <apex:pageblockSectionItem >
+            <apex:outputlabel Value="{!$Label.Total_Opportunity_Value}"/>
+            <apex:panelgrid columns="2">
+            <apex:panelgroup id="amountid">
+                <apex:outputtext value="{!Approval__c.Opportunity__r.CurrencyISOCode}" />
+                <apex:outputText value="{0, number, ###,###,###.00}" style="text-align:Left;">
+                <apex:param value="{!Approval__c.Opportunity__r.Amount}" />
+                </apex:outputText>
+                <apex:outputText value=".00" rendered="{!ISBLANK(Approval__c.Opportunity__r.Amount)}" >
+                <apex:param value="{!Approval__c.Opportunity__r.Amount}" />
+                </apex:outputText> 
+        </apex:panelgroup>
+          <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != oppty.CurrencyIsoCode)}">
+                            (
+                            <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                            
+                            <apex:outputText value="{0, number, ###,###,###.00}" >
+                            <apex:param value="{!oppty.Amount}" />
+                            </apex:outputText>
+                            <apex:outputText value=".00"  rendered="{!ISBLANK(oppty.Amount)}">
+                            <apex:param value="{!oppty.Amount}" />
+                            </apex:outputText>
+                            )
+           </apex:panelgroup>
+           </apex:panelgrid>
+           </apex:pageblockSectionItem>
+           <apex:OutputField value="{!Approval__c.Proposal_Due_Date__c}"/>
+          <!--</apex:outputtext>-->
+            
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="2" title="Opportunity Review Details">
+             <apex:inputField value="{!Approval__c.Meeting_Review_Request_Date__c}"/> 
+             <apex:inputField value="{!Approval__c.Pursuit_Budget_USD__c}" required="True"/>
+             <apex:inputField value="{!Approval__c.Approval_Description__c}"  Style="Width:80%"/>
+             <apex:inputField value="{!Approval__c.Requestor_Comments__c}"  Style="Width:80%"/>
+        </apex:pageBlockSection>
+
+    <apex:pageBlockSection title="Opportunity Pursuit Resource Requirements" columns="1">
+  
+    <apex:pageBlockTable value="{!PersuitResourceWrapper}" var="p" id="cp_table2" width="100%">
+        <apex:column >
+            <apex:facet name="header">Action</apex:facet> 
+                <apex:commandlink value="Delete" action="{!removeOffRow}" reRender="cp_table2" id="deleterow" immediate="True">
+                <apex:param name="delrowindex" value="{!p.index}"/>
+            </apex:commandlink>
+        </apex:column>
+        <apex:column >
+        <apex:facet name="header">Pursuit Team Name/Role</apex:facet>
+        <apex:inputField required="True" value="{!p.opursuitresourcesObj.Pursuit_Team_Name_Role__c}"/>
+        </apex:column>
+        <apex:column >
+        <apex:facet name="header">Region/Sub-Region/Country</apex:facet>
+        <apex:inputField value="{!p.opursuitresourcesObj.Region_subregion_Country__c}"/>
+        </apex:column>
+        <apex:column >
+        <apex:facet name="header">Estimated Start Date</apex:facet>
+         <c:noDateLink >
+        <apex:inputField value="{!p.opursuitresourcesObj.Estimated_Start_Date__c}"/>
+         </c:noDateLink>
+        </apex:column>
+        <apex:column >
+        <apex:facet name="header">Estimated End Date</apex:facet>
+        <c:noDateLink >
+        <apex:inputField value="{!p.opursuitresourcesObj.Estimated_End_Date__c}"/>
+        </c:noDateLink>
+        </apex:column>
+        <apex:column >
+        <apex:facet name="header">Requested Hours</apex:facet>
+        <apex:inputField value="{!p.opursuitresourcesObj.Requested_Hours__c}"/>
+        </apex:column>
+
+
+    </apex:pageBlockTable>
+        <center>
+            <apex:commandbutton value="Add Resource" action="{!addRow}" reRender="cp_table2" immediate="True"/>
+        </center>
+    </apex:pageBlockSection>
+   </apex:pageBlock>
+    </apex:form>  
+ </apex:page>

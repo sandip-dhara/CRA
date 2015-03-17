@@ -1,0 +1,263 @@
+<apex:page standardcontroller="Community__c" extensions="SLP_ViewCommunity" cache="false"
+           docType="html-5.0" sidebar="false" showheader="false" standardStylesheets="false">
+    <apex:includeScript value="{!$Resource.jquery172}"/>
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+    
+    <head>
+        <!-- Scale the content for mobile.-->
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+    
+    <script type="text/javascript">
+         var contributorsList= new Array();
+         var membersList = new Array();
+    </script>
+    
+    <div data-role="page" id="startpage" style="background:#ffffff;">
+        <div data-role="header" style="padding:5px 0px 0px 0px; background:#ffffff;" data-position="fixed" data-tap-toggle="false">
+            <img src="/resource/1396857212000/img_athena/img_athena/HP_Blue_Logo.png" class="circular ui-btn-left" alt="HP Logo"/>
+            <h1 style="text-align:left; margin-left:55px;padding:0px;">Social Learning Platform</h1>
+            <h1 style="text-align:left; margin-left:55px;padding:0px;color:#888888;">Learning on your terms</h1>
+            <apex:image url="{!LoggedInUserDetails.FullPhotoUrl}" styleClass="circular ui-btn-right" alt="no_username"/>
+            <div data-role="header" style="padding:2px 0px 2px 0px;background:#0099CC;">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left"> 
+            <a href="/apex/mLandingPage" data-role="none" data-ajax="false" id="buttonHome"><img src="{!URLFOR($Resource.mobileassests, 'images/home.png')}" id="headerImage" class="navIcons"/></a>
+            </div>
+            <h1></h1>
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.mobileassests, 'images/search.png')}" id="searchImage" class="navIcons"/></a> 
+              <a href="/apex/mLandingPage" data-role="none" data-ajax="false"><img src="{!URLFOR($Resource.mobileassests, 'images/questionmark.png')}" id="headerImage" class="navIcons"/></a>
+            </div>
+             <div data-role="content" class="ui-content" id="seach-container"> 
+           <input type="search" name="search" id="search-basic" data-mini="true" value=""  />
+           </div>
+     </div>    
+     </div>
+     <div data-role="content" data-scroll="true">
+                <div>
+                    <div style="display:table-cell; padding-left: 5px; float:right;" align="center">
+                        <div>
+                            <!-- <apex:image styleClass="communityOwnerImg" url="{!CommunityOwnerDetails.FullPhotoUrl}" />  -->
+                            <img src="{!CommunityOwnerDetails.FullPhotoUrl}" class="communityOwnerImg"/>
+                        </div>
+                        <div>
+                            <p style="padding:0px;font-weight:bold;margin:0px">{!CommunityOwnerDetails.Name}</p>
+                            <p style="padding:0px;margin:0px;">{!CommunityOwnerDetails.Title}</p>
+                        </div>
+                    </div>
+                    <div style="display:table-cell;">
+                        <apex:outputPanel rendered="{!!CommunityStaticImage}"> 
+                            <img src="{!URLFOR($Action.Attachment.Download, AttachmentId)}" style="float:left; max-width: 100%; height:auto; max-height:150px; border-top-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px; background: #888888;" />
+                            <!--
+                            <apex:image url="{!URLFOR($Action.Attachment.Download, AttachmentId)}" styleClass="communityImage" />
+                            -->
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!CommunityStaticImage}">
+                            <img src="{!CommunityDefaultImageName}" style="float:left; max-width: 100%; height:auto; max-height:150px; border-top-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px; background: #888888;" />
+                            <!--
+                            <apex:image url="{!CommunityDefaultImageName}" styleClass="communityImage" />
+                            -->
+                        </apex:outputPanel>
+                    </div>
+                    <div style="clear:both;">
+                    </div>
+                </div>
+    <div id="spacer" style="height:20px;"></div>
+    <!-- Load the data for each community contributor into the jquery mobile thumbnail list view-->
+     <ul id="contributorsList" data-role="listview" data-inset="false">
+     <li data-role="list-divider" role="heading" style="margin:10px;">Contributors</li>
+        <apex:repeat value="{!Contributors}" var="cont" >
+           <li id="contributor_{!cont.Id}" style="margin:10px;">
+           <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window">
+               <img src='{!cont.SmallPhotoUrl}' class="circular-image-container"/>
+               <h2 class="blue-font">{!cont.Name}</h2>
+               <script>contributorsList.push({'id':'{!cont.Id}'});</script>
+               </a>
+            </li>
+        </apex:repeat>
+    </ul> 
+    <div id="spacer" style="height:30px;"></div>
+    <!-- Load the data for each community member into the jquery mobile thumbnail list view. -->
+    <div id="Members" class="tab-pane fade">
+    <ul id="membersList" data-role="listview" data-inset="false">
+        <li data-role="list-divider" role="heading" style="margin:10px;">Members</li>
+            <apex:repeat value="{!CommunityMembers}" var="peopleRslt">
+               <li id="member_{!peopleRslt.Id}">
+               <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window">
+                   <img src='{!peopleRslt.SmallPhotoUrl}' class="circular-image-container"/>
+                   <h2 class="blue-font">{!peopleRslt.Name}</h2>
+                   <p><b>{!peopleRslt.Title}</b></p>
+                   <script>membersList.push({'id':'{!peopleRslt.Id}'});</script>
+                   </a>
+                </li>
+            </apex:repeat>
+     </ul> 
+     </div>
+     </div>
+     
+    
+        <div data-role="footer" data-position="fixed" class="communityFooter" data-tap-toggle="false">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="/apex/mobileCommunityCollaterals?id={!CommunityId}" data-role="tab" data-ajax="false">Topic</a></li>
+                    <li><a href="/apex/mobileCommunityActivity?id={!CommunityId}" data-role="tab" data-ajax="false">Chat</a></li>
+                    <li><a href="/apex/mobileCommunityMembers?id={!CommunityId}" class="ui-btn-active" data-ajax="false">Members</a></li>
+                    <li><a href="/apex/mobileCommunityBoards?id={!CommunityId}" data-role="tab" data-ajax="false">More</a></li>
+                </ul>
+            </div> 
+        </div> 
+        
+        <div data-role="popup" id="popupBasic" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        </div>
+        
+     </div>
+    
+    <script type="text/javascript">
+        // Javascript Main function        
+        $(document).ready(function () {
+
+        // Replaces all contributor line items with the corresponding member line item entry (==> avoid duplication)
+        $("[id*=contributor_]").each(function(index){
+            // $(this) is the contributor line item
+            var id = $(this).attr('id');
+            var i = id.indexOf("contributor_");
+
+            if (i>=0) {
+                var member_id = id.substr(i+12); // Get actual contributor id
+                var member = $("#member_"+member_id); // Find corresponding member line item
+                if (member) {
+                    $(this).replaceWith(member); // Replace contributor line item with corresponding member line item
+                }
+            }
+        });
+ 
+            console.log("document.ready");
+            //var communityId = "a8AZ00000008OWgMAM"; // Hard coded id - need to refactor this at some point.
+            //Get community id from query string and use it to load community data
+            var communityId = getParameterByName('id'); 
+            LoadCommunity(communityId);
+            FilterContributors();
+            //$('#liMembers').hide();
+            
+            if($('#contributorsList li').size()==1){
+            
+                $('#contributorsList').hide();
+                
+            }
+            
+             if($('#membersList li').size()==1){
+            
+                $('#membersList').hide();
+                
+            }
+            
+            $('#seach-container').hide();
+            $("#startpage").trigger("create");
+             
+        });
+        
+        $('#membersList').delegate('li', 'tap', function () {
+        var index = $(this).index();
+        $("#popupBasic #memberFrame").remove();
+        $("#popupBasic").append( '<iframe src="/apex/mobileProfilePage?id=' + membersList[index].id + '" height="400px" width="100%" id="memberFrame"></iframe>' );
+        });
+        
+        $('#contributorsList').delegate('li', 'tap', function () {
+        var index = $(this).index();
+        $("#popupBasic #memberFrame").remove();
+        $("#popupBasic").append( '<iframe src="/apex/mobileProfilePage?id=' + contributorsList[index].id + '" height="400px" width="100%" id="memberFrame"></iframe>' );
+        });
+        
+        $('#buttonHome').on('ontap mousedown', '', function () {
+                $('#buttonHome img').css('background','#33B5E5');
+                setTimeout(function(){ $('#buttonHome img').css('background','transparent');},500)
+            });
+            
+             $('#buttonSearch').on('ontap mousedown', '', function () {
+               
+               if (!$('#seach-container').is(':visible')) {
+                  $('#seach-container').slideDown("fast",function(){
+                    $("#startpage").trigger("create");
+                    // JS to remove the left arrow
+                    $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+                        $(this).removeClass('ui-btn-icon-left');
+                    });
+                });
+               }
+               else{
+                  $('#seach-container').slideUp("fast",function(){
+                     
+                    $("#startpage").trigger("create");
+                    // JS to remove the left arrow
+                    $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+                        $(this).removeClass('ui-btn-icon-left');
+                    });
+                });
+               }
+               
+                
+                $('#buttonSearch img').css('background','#33B5E5');
+                setTimeout(function(){ $('#buttonSearch img').css('background','transparent');},200);
+
+            });
+            
+            $('#search-basic').live("keypress", function(e) {
+            /* ENTER PRESSED*/
+            if (e.keyCode == 13) {
+                var searchTerm= $('#search-basic').val();
+                window.location = "/apex/mobileGlobalSearch?SearchOptions=Select+all&multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+searchTerm;
+                $.mobile.loading( "show", {
+                      text: "Loading...",
+                      textVisible: true,
+                      textOnly: false
+                } ); // Displays load spinner while loading
+            }
+        });
+        
+        // *** Javascript Other Functions ***
+        // Read parameter from query string
+            function getParameterByName(name) {
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search);
+                return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+        
+        function LoadCommunity(communityId) {
+            console.log("LoadCommunity() - entry");
+            Visualforce.remoting.Manager.invokeAction('SLP_ViewCommunity.getCommunityWithCat', communityId, DisplayTopicsWithCategory);
+        }
+        
+        function DisplayTopicsWithCategory() {
+            console.log("DisplayTopicsWithCategory() - entry");
+        }
+        
+        function FilterContributors() {
+            console.log("FilterContributors() - entry");
+            $('#contributorsList').toArray();
+            $('#membersList').toArray();        
+        }
+
+    </script>
+    
+    <style type="text/css">
+        .circular-image-container {
+            margin: 1px;
+            padding: 1px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #000000;
+        }
+        
+        .blue-font {
+            color: #0096D6; /* HP blue font */
+        }
+    </style>
+    
+</apex:page>

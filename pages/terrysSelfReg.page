@@ -1,0 +1,1021 @@
+<apex:page controller="SLP_GlobalSearch" extensions="mobileUserData,DonalTestCanvas" action="{!getInsertIt}" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    
+         
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+        <script>
+          $(function() {
+            $( "#tabs" ).tabs();
+          });
+        </script> 
+    </head>
+    
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery-ui-1.11.1/jquery-ui.min.css')}" />     
+    <apex:stylesheet value="{!URLFOR($Resource.mslp_res, 'fonts/icomoon/style.css')}" />
+    
+    <apex:includeScript value="{!$Resource.jquery172}"/>    
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery-ui-1.11.1/jquery-ui.min.js')}" />    
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>  
+     
+    <script type="text/javascript">
+         var memberList = new Array();
+         var expertList = new Array();
+         //Array for Topic Ids
+         var listTopic = new Array();
+     </script>
+
+<body>  
+    <div data-role="page" id="searchPage">
+        <!-- Header -->        
+            
+        <div data-role="header" style="background:#404040; vertical-align: middle;height: 79px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+                <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>                
+                <span data-icon="&#xf12a;" class="redExclam"></span> 
+            </div>
+            <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+                  <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+            </div>
+            <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -22px;">
+                <h3 style="margin-top:-25px;">Complete your profile</h3>
+            </div>
+        </div>
+        <!-- /Header -->
+
+        <div id="fuck" style="width: 96%; margin-left: auto; margin-right: auto; display: block; padding-top:12px">
+            <h1 style="text-decoration: underline; font-size: 1.6em; text-align: center;">Welcome to HP Insight!</h1>
+            <p style="text-decoration: none !important; text-align: center;">Help us understand you better..</p>
+            
+        </div>
+        
+
+       
+ <div id="tabs">
+   <ul>
+     <li><a href="#tabs-1">1</a></li>
+     <li><a href="#tabs-2">2</a></li>
+     <li><a href="#tabs-3">3</a></li>
+     <li><a href="#tabs-4">4</a></li>
+     
+   </ul>               
+            
+     <div id="tabs-1">            
+       
+     </div>
+      
+     <div id="tabs-2">
+      
+     </div>
+       
+     <div id="tabs-3">
+        
+     </div> 
+       
+     <div id="tabs-4"> 
+     
+     <h1>Thank you!</h1> <br/> <h1>Let's get started!</h1>
+        
+     </div>       
+       
+  </div>   
+     
+<!-- START PEOPLE PANEL -->
+
+    <div data-role="panel" id="peoplePanel" data-position="right" data-display="overlay" style="background:#f3f3f3;">
+        <div id="peoplePanelContent">
+         <a href="#peoplePanel" style="text-decoration:none;text-shadow:none;"><span id="icoCloseButton"  class="icon-caret-right" style="font-size:32pt;text-align:center;color:rgb(135, 136, 138);margin-left:10px;"></span></a>
+        </div>
+
+    </div><!-- /panel -->
+
+<!-- END PEOPLE PANEL --> 
+      
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+            <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <span data-icon="&#xf12a;" class="redExclamMenu"></span>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.SmallPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/terrysSelfReg" class="hpFont textColorMenu">Complete your profile</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mSLPLanding0" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+      
+       <div data-role="popup" id="popupDownloadErr" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <p style="margin:20px;">Downloading of documents is only supported on Chrome for Android at this time.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.android.chrome" class="ui-btn" style="margin:15px;background:#F9A006;color:#ffffff;">Get Chrome</a>
+        </div>
+        
+        <div data-role="popup" id="popupDownloadMissing" data-overlay-theme="a" data-dismissible="false">
+        <p style="margin:20px;">The document you were searching for cannot be found, please try again later.</p>
+        <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+      
+     
+        
+    </div>  
+</body>    
+<style>
+
+    /**** css for tabs ****/
+    
+  /*
+    .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #767676;
+    background: #767676 !important;
+    font-weight: bold;
+    color: #EDEDED;
+    }
+    
+    .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+    color: #EDEDED;
+    text-decoration: none;
+    }
+    
+    .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+    color: #EDEDED;
+    text-decoration: none;
+    }    
+        
+    .ui-tabs .ui-tabs-nav li {    
+    width: 18%;
+    top:-6px;
+    margin: 1px .1em 0 0;
+    left: -3px;
+    border-radius:0 !important;
+    outline-color: transparent;
+    }
+    
+    .ui-tabs .ui-tabs-nav .ui-tabs-anchor {    
+    width: 100%;
+    text-align: center;
+    outline-color: transparent;
+    text-shadow: none;
+    font-weight: bold;
+    }
+    
+    @media only screen and (max-width: 767px) {
+
+       .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+        width: 100%;
+        text-align: center;
+        font-size: .8em;
+        padding: 10px 8px;
+        }
+    
+    }
+    
+     @media only screen and (max-width: 480px) {
+
+       .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+        width: 100%;
+        text-align: center;
+        font-size: .61em;
+        padding: 12px 6px;
+        }
+    
+    }
+    
+    .ui-tabs {
+    position: relative;
+    padding: 0;
+    }
+    
+    .ui-tabs .ui-tabs-nav {
+    margin: 0;
+    padding: .2em .2em 0 0;
+    height: 31px;
+    position: relative;
+    top: -12px;  
+    width:140%;  
+    }
+    
+    .ui-tabs .ui-tabs-panel {
+    display: block;
+    border-width: 0;
+    padding: .4em 0em;
+    background: none;
+    }
+    
+    .ui-widget {
+    font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
+    font-size: 100%;
+    }
+    
+        
+    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #525254;
+    background: #525254;
+    font-weight: bold;
+    color: #fff;
+    }   
+    
+  
+ */
+ 
+     .ui-widget-header {
+        border: transparent;
+        background: none;
+        color: #fff;
+        font-weight: bold;
+      }
+     
+    .ui-widget-content {
+    border: none;
+    background: transparent;
+    color: #fff;
+    }
+    
+    /**** end for tabs ****/    
+    
+    .ui-overlay-a, .ui-page-theme-a, .ui-page-theme-a .ui-panel-wrapper {
+    background-color: #f9f9f9;
+    border-color: #bbb;
+    color: #333;
+    text-shadow: none;
+    color: #fff;
+    text-decoration: none;
+    }
+     
+    .ui-btn, label.ui-btn {
+    font-weight: 700 !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-top-style: hidden !important;
+    border-left-style: hidden !important;
+    border-right-style: hidden !important;
+    }
+    
+    .ui-btnList-element{
+        background-color: #767676 !important;
+        color: #ffffff !important;
+        text-shadow: none !important;        
+    }
+    
+    .ui-body-b, .ui-page-theme-b .ui-body-inherit, html .ui-bar-b .ui-body-inherit, html .ui-body-b .ui-body-inherit, html body .ui-group-theme-b .ui-body-inherit, html .ui-panel-page-container-b {
+    background-color: #58595B;
+    border-color: #58595B;
+    color: #9E9E9E;
+    text-shadow: 0 1px 0 #111;
+    }
+    
+    .ui-input-text input, .ui-input-search input, textarea.ui-input-text {        
+        width: 77%;        
+    }
+    #outter {
+        padding-top:10px;
+        height:50vh;
+        min-width:160px;
+    }
+
+  
+
+    .circular-image-container {
+        margin-left: 8px !important;
+        margin-top: 12px !important;
+        padding: 1px;
+        border-radius: 50px;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        background-color: #000000;
+    }
+    
+        .circular-image-inset{
+        padding: 1px;
+        width:35px;
+        height:35px;
+        border-radius: 30px;
+        -webkit-border-radius: 30px;
+        -moz-border-radius: 30px;
+        border-top-left-radius: 30px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        border-bottom-left-radius: 30px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        background-color: #ffffff;
+    }
+
+    #popupDialog-popup {
+        width: 80%;
+        left: 10%;
+        right: 10%
+    }
+
+    #searchHeader {
+        height: 25px;
+        width: 100%;
+        background-color: #f9a006;
+        position: fixed;
+        z-index:1;
+    }
+    #searchHeader h3 {
+        padding: 0px 0px 0px 0px;
+        margin: 0px 0px 0px 0px;
+        border: none;
+        width: 100%;
+        background-color: #f9a006;
+        color: #ffffff;
+        text-shadow: none;
+        text-align: center;
+    }
+
+    #listHeader {
+        height:40px;
+        width: 100%;
+        /*background-color: green;*/
+        overflow: hidden;
+    }
+
+    #searchPage {
+        background: #939498;
+        /*
+        background: -webkit-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: -o-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: -moz-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        */
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    
+    .communityOwnerImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border: 2px solid white;
+}
+
+/**** red exclamation css *****/
+
+
+.redExclam:before {
+   /* display:none;*/
+    content: '\f12a';
+    font-family: 'icomoon';
+    speak: none;
+    color: #ff0000;
+    font-size: 26px;
+    position: relative;
+    top: -7px;
+}  
+
+.redExclamMenu:before {
+     /* display:none;*/
+    content: '\f12a';
+    font-family: 'icomoon';
+    speak: none;
+    color: #ff0000;
+    font-size: 26px;
+    position: relative;
+    right: -252px;    
+    top: 2px;
+}  
+
+/**** end of red exclamation css *****/
+
+@font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            body{
+                font-family:"HP Simplified",sans-serif;
+                color:#fff;
+            }
+            
+            .textColorMenu{
+                color: #0096d6 !important;
+            }
+            
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .ui-content{
+                padding-top: 30px;
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif;
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                    .infoFld .menu_button{
+                    position:absolute;
+                    top:14px;
+                    right:22px;
+                    width:24px;
+                    height:24px;
+                    z-index:3;
+                }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:30px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:39px;
+            }
+         .ui-panel-inner{padding: 0}
+         .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+         starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+        
+    .ui-controlgroup-horizontal .ui-controlgroup-controls{
+        display: block;   
+        height: 20px; 
+    }    
+         
+    .column1{
+        float:left;
+        line-height:55px;
+        margin-top:5px;
+    }
+    
+    .column2{
+        float:left;
+        margin-top:5px;
+        margin-left:5px;
+    }
+    
+    .column3{
+        float:right;
+        line-height:55px;
+        margin-right:15px;
+        margin-top:5px;
+    }
+    
+    .circular-image-container {
+            width:65px;
+            height:65px;
+            margin: 1px;
+            padding: 1px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #000000;
+        }
+    
+    .blue-font {
+        color: #0096D6; /* HP blue font */
+        font-size:1.2em;
+        background:transparent !important;
+    }
+    
+    
+
+</style>
+<script type="text/javascript" src="https://hp--esit.cs11.my.salesforce.com/canvas/sdk/js/30.0/controller.js"  />
+<script>
+
+function ShowDOCTest(docType, docURL, docTitle, isDoc, dId) {
+    // Find doc
+    //window.location = '';
+        
+    $.ajax({
+        url: "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&matchreference=https://ensv.hp.com/sales/sam/docs/sam-1-2944/en/c03905835.docx",
+        dataType: "xml",
+        success: function (data) {
+        console.log(data)
+        alert(data);
+        }
+    });
+    
+    
+}
+
+                
+
+
+function sendMyRequest(url, isIdolSearch, bId, type, title, titleEile, docType) {
+    //console.log("URL: " + url + ", isIdol: " + isIdolSearch + ", bId: " + bId + ", type: " + type + ", title: " + title + ", titleEile: " + titleEile);
+    //console.log(" type = " + type);
+    
+    var sTitle = "";
+    if(title != ""){
+        sTitle = title;
+    }
+    else{
+        sTitle = titleEile;
+    }
+    
+    var sDocType = docType;
+    if (url == '' && isIdolSearch == 'false') {
+        //console.log("this isn't a doc");
+        if (type !== '') {
+            //window.location = type;
+            if (type.search("SLP_ViewCommunity") !== -1) {
+                //console.log("1 " + type + ", " + type.search("SLP_ViewCommunity"));
+                window.location = '/apex/mobileCommunityMockup?id=' + bId;
+            }
+            else if (type.search("AthenaLearningBoardDtls") !== -1) {
+                //console.log("2 " + type);
+                window.location = '/apex/mobileLearningBoardMockup?id=' + bId;
+            }
+        }
+        return;
+    } 
+
+    if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+        if(url.indexOf('http') != 0)
+        {
+            window.location = "http://" + url;
+        }
+        else{
+            window.location = url;
+        }
+        return;
+    }
+    
+    var start = url.lastIndexOf("/");
+    var finish =  nth_occurrence (url, ":", 2);
+    
+    var parentDoc = url.substring(start+1, finish);
+        
+    var sDomain = getDomainName(url);
+    var endpoint = '';
+    if (sDomain == window.domainWWS) {
+        if(nth_occurrence (url, ":", 2) > -1){
+
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+        }
+        else{
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+        }
+    }
+    else if (sDomain == window.domainSP) {
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+        renderMyDoc(url, sTitle);
+        return;
+    }
+    else if(sDomain == window.domainSP2013){
+ 
+        if(nth_occurrence (url, ":", 2) > -1){
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+        }
+        else{
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+        }
+    }
+    else if(sDomain == window.domainEXO){
+        endpoint = url;
+        renderMyDoc(endpoint , sTitle);
+        return;
+    }
+    else {
+        // handle unknown case
+        $('#popupDownloadMissing').popup('open');
+        $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+        return;
+    }
+
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+        console.log($(xml).text());
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    if ($(this).find("numhits").text() == '0') {
+                      $('#popupDownloadMissing').popup('open');
+                      $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                     return;
+                     }
+
+                    var links = [];
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            links.push(link);
+                            renderMyDoc(links, sTitle);
+                        });
+                    });
+                });
+            });
+        },
+        error: function (thrownError) {
+            var er = jQuery.parseJSON(thrownError);
+            alert('Error: Your security session has expired. Please sign out and sign in again');
+        }
+    });
+}
+
+function sendMyRequestDownload(url, doctype, docTitle) {
+
+     var sDocType = doctype;
+
+    if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+         if(url.indexOf('http') != 0)
+        {
+            window.location = "http://" + url;
+        }
+        else{
+            window.location = url;
+        }
+        return;
+    }
+
+
+    var start = url.lastIndexOf("/");
+    var finish =  nth_occurrence (url, ":", 2);
+    
+    var parentDoc = url.substring(start+1, finish);
+    
+    var sDomain = getDomainName(url);
+    
+    var endpoint = '';
+    if (sDomain == window.domainWWS) {
+        if(nth_occurrence (url, ":", 2) > -1){
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=query&text=*&databasematch=slp&totalresults=true&fieldtext=STRING%7B" + parentDoc + "%7D:drereference&printfields=drefilename";
+        }
+        else{
+            endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&IgnoreCache=true&IgnoreCache=true&matchreference=" + url;
+        }
+    }
+    else if (sDomain == window.domainSP) {
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+        //renderMyDoc(url, docTitle);
+        window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + url;
+        return;
+    }
+    else if(sDomain == window.domainSP2013){
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + url;
+        return;
+    }
+    else if(sDomain == window.domainEXO){
+        window.location = url;
+        return;
+    }
+    else {
+        // handle unknown case
+        $('#popupDownloadMissing').popup('open');
+        $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+        return;
+    }
+    
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    if ($(this).find("numhits").text() == '0'||$(this).find("numhits").text() == '') {
+                      $('#popupDownloadMissing').popup('open');
+                      $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                     return;
+                     }
+                     
+                     var links = [];
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            links.push(link);
+                        });
+                    });
+                    
+                   for (i = 0; i < links .length; i++) { 
+                       var downloadDoc= links[i];  
+                       doSetTimeout(i, downloadDoc)
+                   }
+       
+               //}
+                   
+                });
+            });
+        },
+        error: function (xhr, status) {
+            //var er = jQuery.parseJSON(thrownError);
+            if(isThisAndroid()&&xhr.status==0){
+                $('#popupDownloadErr').popup('open');
+                $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+            }
+            else{
+                alert('Error: Your security session has expired. Please sign out and sign in again');
+            }  
+        }
+    });
+    
+}
+
+   function doSetTimeout(i, documentTitle) {
+         setTimeout(function() {  
+             window.location= "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&IgnoreCache=true&reference=" + documentTitle; 
+         }, i*1000);
+    }
+
+
+function getDomainName(url) {
+    var r = /:\/\/(.[^/]+)/;
+    return url.match(r)[1];
+}
+
+function renderMyDoc(url, docTitle) {
+    //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+    window.location.href="/apex/mobileDocViewer?docURL=" + url + "&&docTitle=" + docTitle;
+}
+
+// Returns HTML content with star images rendering a given rating
+        function renderRating(avgRating) {
+            // Used to display rating stars
+            var myStarOff = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-UnRated.png')}";
+            var myStarOn = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Rated.png')}";
+            var myStarHalf = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Half.png')}";
+
+            var ratingStarImgs = "";
+            for (var i=1; i<=5; i++) {
+                if (i <= avgRating) {
+                    ratingStarImgs += '<img src="'+myStarOn+'">';
+                } else if ((i - avgRating) <= 0.5){
+                    ratingStarImgs += '<img src="'+myStarHalf+'">';
+                } else {
+                    ratingStarImgs += '<img src="'+myStarOff+'">';
+                }
+            }
+            
+            return ratingStarImgs;
+        }
+        
+            function selectDocIcon(docType){
+            //console.log("Calling doc icon - " + docType);
+                var iconSet;
+                if (docType == 'PDF') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Acrobat.png')}", 'PDF');
+                } else if (docType  == 'PPT') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Powerpoint.png')}", 'PowerPoint');
+                } else if (docType  == 'DOC') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Word.png')}", 'Word');
+                } else if (docType  == 'XLS') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Excel.png')}", 'Excel');
+                } else if (docType  == 'TXT') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_TXT.png')}", 'Text');
+                } else if (docType == 'OTHER') {
+                    iconSet = renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Web.png')}", 'Link');
+                };
+                
+                return iconSet;
+            }
+
+        function renderIcon(iconURL, description) {
+            return '<img style="display: inline-block; margin-left:5px; margin-right:5px; float:left" id="docType1" src="'+iconURL+'"></img>'
+            //return '<span class="detailDoc"><img src="' + iconURL + '" '+(description?'title="'+description+'" ':' ')+'class="pull-right mrl"/></span>'
+        };
+
+
+      function LogMetrics(boardId,boardName,link,tabSection)
+      {
+          //var url=$('{!getSfInstance}').val()+link;
+          Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.SLP_GlobalSearch.LogMetrics}',
+                          boardId,
+                          boardName, 
+                          link, 
+                          tabSection, 
+                          GetOSName(),
+                          GetBrowserName(), 
+                          'Mobile',               
+                          DoNothingWithResult
+                      );
+      }
+      
+      function DoNothingWithResult(result, event)
+      {
+          //console.log('result> ' + result);
+          //debugger
+          //window.location.href = link;
+          //$('[id$=hdnRedirectUrl]').val(result);
+          //$('[id$=btnRedirectUrl]').click();
+      }
+      
+      function GetOSName()
+      {
+  
+          var ua = navigator.userAgent;
+          var uaindex;
+        
+          // determine OS
+          if ( ua.match(/iPad/i) || ua.match(/iPhone/i) )
+          {
+            mobileOS = 'iOS';
+            uaindex  = ua.indexOf( 'OS ' );
+          }
+          else if ( ua.match(/Android/i) )
+          {
+            mobileOS = 'Android';
+            uaindex  = ua.indexOf( 'Android ' );
+          }
+          else
+          {
+            mobileOS = ua;//'unknown-mobileOS';
+          }
+          return mobileOS;
+      }
+      
+      function GetBrowserName()
+      {
+                 
+      var nVer = navigator.appVersion;
+      var nAgt = navigator.userAgent;
+      var browserName  = navigator.appName;
+      var fullVersion  = ''+parseFloat(navigator.appVersion); 
+      var majorVersion = parseInt(navigator.appVersion,10);
+      var nameOffset,verOffset,ix;
+                                    if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+         browserName = "Opera";
+         fullVersion = nAgt.substring(verOffset+6);
+         if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                      fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In MSIE, the true version is after "MSIE" in userAgent
+      else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+         browserName = "Microsoft Internet Explorer";
+         fullVersion = nAgt.substring(verOffset+5);
+      }
+      // In Chrome, the true version is after "Chrome" 
+      else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+         browserName = "Chrome";
+         fullVersion = nAgt.substring(verOffset+7);
+      }
+      // In Safari, the true version is after "Safari" or after "Version" 
+      else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+         browserName = "Safari";
+         fullVersion = nAgt.substring(verOffset+7);
+         if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                      fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In Firefox, the true version is after "Firefox" 
+      else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+                     browserName = "Firefox";
+                     fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In most other browsers, "name/version" is at the end of userAgent 
+      else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+                     browserName = nAgt.substring(nameOffset,verOffset);
+                     fullVersion = nAgt.substring(verOffset+1);
+                     if (browserName.toLowerCase()==browserName.toUpperCase()) {
+                        browserName = navigator.appName;
+                     }
+      }
+      var fVer = fullVersion.substring(0, fullVersion.indexOf(' '));
+      return browserName + ' ' + fVer;
+      
+     }
+
+
+</script>
+
+</apex:page>

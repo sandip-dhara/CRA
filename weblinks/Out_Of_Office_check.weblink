@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomPageWebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <availability>online</availability>
+    <displayType>link</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Not Available</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/13.0/connection.js&quot;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/13.0/apex.js&quot;)}
+
+var queryRecords = sforce.connection.query(&quot;Select id,Available__c from UserData__c where User__c = &apos;{!$User.Id}&apos;&quot;);
+var syncRecords = queryRecords.getArray(&quot;records&quot;);
+var recordstoupdate = [];
+
+if(syncRecords[0] == null){
+alert(&quot;Sorry! You are not a part of Customer Ops Support team&quot;);
+}else{
+for(var a = 0; a&lt;syncRecords.length; a++){
+var temp_object = new sforce.SObject(&quot;UserData__c&quot;);
+temp_object.id = syncRecords[a].Id;
+temp_object.Available__c = false;
+recordstoupdate.push(temp_object);
+}
+result = sforce.connection.update(recordstoupdate);
+alert(&quot;Thank You! Your Availability status has been updated. You will no longer be assigned cases.&quot;);
+}</url>
+</CustomPageWebLink>

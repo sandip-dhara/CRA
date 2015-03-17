@@ -1,0 +1,64 @@
+<apex:page controller="TestKomalaController" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+<script type="text/javascript">
+$(document).ready(function()
+{
+$('#btnSubmit').click(function(){
+debugger;
+if($('#txtEncodeText').val()!='')
+{
+$('#hdnValue').val($('#txtEncodeText').val());
+Visualforce.remoting.Manager.invokeAction(
+       '{!$RemoteAction.TestKomalaController.EncodeText}',
+       $('#txtEncodeText').val(),
+       EncodeResult
+   );
+}
+if($('#txtDecodeText').val()!='')
+{
+$('#hdnValue').val($('#txtDecodeText').val());
+Visualforce.remoting.Manager.invokeAction(
+       '{!$RemoteAction.TestKomalaController.DecodeText}',
+       $('#txtDecodeText').val(),
+       DecodeResult
+   );
+}
+});
+
+$('#btnClear').click(function()
+{
+$('#txtEncodeText').val('');
+$('#txtDecodeText').val('');
+$('#dvResult').html('');
+});
+
+});
+
+function EncodeResult(result, event)
+{
+debugger;
+var data=$('#hdnValue').val();
+$('#dvResult').html('Input: '+data+'<br/>Output: '+result);
+$('#txtEncodeText').val('');
+}
+
+function DecodeResult(result, event)
+{
+var data=$('#hdnValue').val();
+$('#dvResult').html('Input: '+data+'<br/>Output: '+result);
+$('txtDecodeText').val('');
+}
+
+</script>
+<form >
+<b><label>Encode Text:</label></b>
+<input type="text" id="txtEncodeText"/>
+<b><label>Decode Text:</label></b>
+<input type="text" id="txtDecodeText"/>
+<input type="button" id="btnSubmit" title="Submit" value="Submit"/>
+</form>
+<input type="button" id="btnClear" title="Clear" value="Clear"/>
+<input type="hidden" id="hdnValue"/>
+<div id="dvResult">
+</div>
+</apex:page>

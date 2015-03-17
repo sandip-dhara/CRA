@@ -1,0 +1,721 @@
+<apex:page controller="SLPM_ExpertSearchController" extensions="mobileUserData,DonalTestCanvas" action="{!getInsertIt}" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+    <apex:includeScript value="{!$Resource.jquery172}"/>
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>    
+    <script type="text/javascript">
+         var memberList = new Array();
+    </script>
+
+<body>  
+    <div data-role="page" id="searchPage">
+    <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+            <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!cUser.SmallPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!cUser.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic-menu"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">
+                <li data-icon="false"><a data-ajax="false" href="/apex/mSLPLanding0" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+    
+    
+        <!-- Header -->        
+        <div data-role="header" style="background:#404040; vertical-align: middle;height: 79px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+                <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+            </div>
+            <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+                  <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+            </div>
+            <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -22px;">
+                <h3 style="margin-top:-25px;">Expert Finder</h3>
+            </div>
+        </div>
+        <!-- /Header -->
+
+        <div id="cont" style="width: 96%; margin-left: auto; margin-right: auto; display: block;">
+        <form data-ajax="false">
+            <input type="search" name="search" id="search-basic" value="{!searchText}" data-theme="b"/>
+            </form>
+        </div>
+        <br/>
+              
+        <ul data-role="listview" data-icon="false" id="peopleList">
+            <apex:repeat value="{!GetAllExpertsTest}" var="brdRslt">
+                <li id="{!brdRslt.user.Id}">                    
+                    <!--<a href="#popupBasic" data-rel="popup" style="background-color: rgba(0,0,0, 0.4); color: #ffffff; text-shadow: none; border-color: rgba(0,0,0,0.5);">
+                    -->
+                    <a href="#detailPage" onclick="LogMetrics('{!brdRslt.user.id}','{!brdRslt.user.name}','/apex/mobileExpertSearchNew?id={!brdRslt.user.id}','Expert Finder Tab');" style="background-color: rgba(0,0,0, 0.4); color: #ffffff; text-shadow: none; border-color: rgba(0,0,0,0.5);">
+                        <img class="imgC" src='{!brdRslt.user.SmallPhotoUrl}' style="margin-right:auto; margin-left:auto; display:block;"/>
+                        <h3 id="username_{!brdRslt.user.Id}" style="background-color:rgba(0, 0, 0, 0.0);">{!brdRslt.user.name}</h3>
+                        <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt;">{!brdRslt.roleName}</p>
+                        <p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt;">{!brdRslt.expertField}</p>
+                        <script>memberList.push({'id':'{!brdRslt.user.Id}'});</script>
+                    </a> 
+                </li>
+            </apex:repeat>
+        </ul>        
+        <div data-role="popup" id="popupBasic" data-overlay-theme="b" data-dismissible="false" data-transition="pop" data-position-to="window">
+          <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        </div>
+        
+        
+        <div id="outter"><div id="emptyResultMsg"><h3 style="color:white; text-shadow:none;">No results found</h3></div></div>
+        <div id="outterInfo"><div id="emptyResultMsgInfo"><h3 style="color:white; text-shadow:none;">Please enter the name, business role or expertise area of an expert you want to search for.</h3></div></div>
+        
+    </div>  
+    <div data-role="page" id="detailPage">
+        <!-- Header -->        
+        <div data-role="header" style="background:#404040; vertical-align: middle;height: 79px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;margin-top:10px;"> 
+                <a href="#" data-role="none" data-rel="back" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/back_icon.png')}" id="menuImage" style="max-width:30px;"/></a>
+            </div>
+            <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+            <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -22px;">
+                <h3 style="margin-top:-25px;">Expert Finder</h3>
+            </div>
+        </div>
+        <!-- /Header -->
+        <!-- Main content -->
+        <div class="column1" style="min-width:100%; overflow:hidden; padding: 10px 10px 10px 10px">
+            
+            <img id="memberImg" src="" style="margin-top:3px;width: 80px;height: 80px;border-radius: 40px;-webkit-border-radius: 50px;-moz-border-radius: 40px;border: 5px solid white; float:left;"/>
+            <h1 id="memberName" style="margin-left:100px;"></h1>
+        </div>
+        
+        <ul data-role="listview" data-icon="false" id="peopleList2">
+                <li style="font-weight:bold;">Authored Boards<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Authored.png')}"/></span><span style="color: #000000; background:transparent;border:none;float:right;margin-right:10px;" id="authBoards"></span></li>
+                <li style="font-weight:bold;">Contributed Boards<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Communities.png')}"/></span><span style="color: #000000; background:transparent;border:none;float:right;margin-right:10px;" id="contBoards"></span></li>
+                <li style="font-weight:bold;">Followers<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Followers.png')}"/></span><span id="followValue" style="color: #000000; background:transparent;border:none;float:right;margin-right:10px;"></span></li>
+                <li style="font-weight:bold;">Following<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Following.png')}"/></span><span style="color: #000000; background:transparent;border:none;float:right;margin-right:10px;" id="followingCount"></span></li>
+        </ul>        
+        <ul data-role="listview" id="expertList">
+        </ul>            
+        
+        <!-- /Main content -->
+    </div>
+
+</body>    
+<style>
+    .ui-li-has-thumb a {
+        //padding-left:1em !important;
+    }
+    .communityOwnerImg {
+        margin-top:3px;
+        width: 80px;
+        height: 80px;
+        border-radius: 40px;
+        -webkit-border-radius: 40px;
+        -moz-border-radius: 40px;
+        border: 1px solid white;
+    }
+
+    #outter {
+        padding-top:10px;
+        height:50vh;
+        min-width:160px;
+    }
+
+    #emptyResultMsg {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -65px;
+        width: 160px;
+        height: 100px;
+    }
+
+    /*#emptyResultMsg{
+        position: relative;
+        /*top: 50%;*/
+        left: 50%;
+        margin-top: 30%;
+        margin-left: -70px;
+        width: 160px;
+        height: 100px;
+    }​*/
+    
+    .ui-li-aside {
+        margin-top: 70px !important;
+        text-shadow:none;
+        right: 2em !important;
+    }
+
+    .ui-li-desc { font-size: 12px; font-weight: normal; display: block; margin: -.5em 0 .6em; text-overflow: ellipsis; overflow: hidden; white-space: normal; }
+    
+    ui-link-inherit {
+        position: relative !important;    
+    
+    }
+    .imgC {
+        position: absolute !important;
+        top: 50% !important;
+        left: 5px !imortant;
+        margin-top: -38px !important;
+        margin: 4px;
+        padding: 5px;
+        border-radius: 80px;
+        -webkit-border-radius: 80px;
+        -moz-border-radius: 80px;
+        border-top-left-radius: 80px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        border-bottom-left-radius: 80px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        background-color: #ffffff;
+        min-height: 70px;
+        margin-left: 8px !important;
+    }
+
+    #popupDialog-popup {
+        width: 80%;
+        left: 10%;
+        right: 10%
+    }
+
+    #searchHeader {
+        height: 25px;
+        width: 100%;
+        background-color: #f9a006;
+        position: fixed;
+        z-index:1;
+    }
+    #searchHeader h3 {
+        padding: 0px 0px 0px 0px;
+        margin: 0px 0px 0px 0px;
+        border: none;
+        width: 100%;
+        background-color: #f9a006;
+        color: #ffffff;
+        text-shadow: none;
+        text-align: center;
+    }
+
+    #listHeader {
+        height:40px;
+        width: 100%;
+        /*background-color: green;*/
+        overflow: hidden;
+    }
+
+    #searchPage {
+        background: rgba(118,118,118,1.0);
+        background: -webkit-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: -o-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: -moz-linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background: linear-gradient(to top, rgba(90,90,90,1.0) 10%,rgba(118,118,118,0.7) 90%), url('{!URLFOR($Resource.iconassets, 'icons/tmp/search_background.jpg')}') no-repeat;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+}
+
+@font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            body{
+                font-family:"HP Simplified",sans-serif;
+                color:#fff;
+            }
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .ui-content{
+                padding-top: 30px;
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif;
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                    .infoFld .menu_button{
+                    position:absolute;
+                    top:14px;
+                    right:6px;
+                    width:24px;
+                    height:24px;
+                    z-index:3;
+                }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:30px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:39px;
+            }
+         .ui-panel-inner{padding: 0}
+         .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+         starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+        #outterInfo {
+        padding-top:10px;
+        height:50vh;
+        min-width:160px;
+    }
+
+    #emptyResultMsgInfo {
+        position: relative;
+        left: 2%;
+        margin-right:8px;
+    }
+
+</style>
+
+<script>
+
+  /*  $(document).on('pagebeforeshow', '#detailPage', function() {
+        console.log(memberList[0].id);
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.mobileUserData.getListExpertiseJSON2}',
+            memberList[0].id, 
+            function(result, event){
+                console.log(result);
+                $( '#expertList' ).append('<li data-role="list-divider">Expertise</li>');
+                for (var x=0; x < result.length; x++) {
+                    $( '#expertList' ).append(
+                        '<li><a href="#">' + result[x] + '</a></li>'
+                        );
+                }
+                $('#expertList').listview('refresh');
+            }
+        );
+    });
+     */   
+        
+     function clearDetails() {
+        $( '#expertList' ).html('');
+        $( '#memberName' ).html('');
+        $( '#memberImg' ).attr('src','');
+        $("#authBoards").text('');
+        $("#contBoards").text('');
+        $("#followValue").text('');
+        $("#followingCount").text('');
+     }
+        
+     $('#peopleList li').click(function (event) {
+             clearDetails();
+             
+             Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.mobileUserData.getUserInfo}',
+            $(this).attr('id'), 
+            function(result, event){
+                var jar = JSON.parse(result);
+                console.log(JSON.stringify(jar));
+                $("#memberImg").attr("src", jar.img);
+                $("#memberName").text(jar.name);
+                $("#authBoards").text(jar.authoredBoards);
+                $("#contBoards").text(jar.contributedBoards);
+                $("#followValue").text(jar.followers);
+                $("#followingCount").text(jar.following);
+                
+                $( '#expertList' ).append('<li data-role="list-divider">Expertise</li>');
+                for (var v=0; v < jar.expertise.length; v++) {
+                    if (jar.expertise[v].Is_Expert__c) {
+                        $( '#expertList' ).append(
+                        //'<li style="max-height:43px !important; padding-left:0px !important;"><a href="#"><p>' + jar.expertise[v].SLP_Secondary_Industry_ID__r.Secondary_Industry_Name__c + '</p> <img style="position:relative !important" src="{!URLFOR($Resource.iconassets, 'icons/Expert_Icon.png')}"/></a></li>'
+                        '<li style="" data-icon="false"><a href="#" style=""><h3 style="float:left;">' + jar.expertise[v].SLP_Secondary_Industry_ID__r.Secondary_Industry_Name__c + '</h3><div style="display:inline-block; margin-top:-6px;"><img style="float:right;" src="{!URLFOR($Resource.iconassets, 'icons/Expert_Icon.png')}"/></div></a></li>'
+                        
+                        );
+                    }
+                    else {
+                        $( '#expertList' ).append(
+                        '<li data-icon="false"><a href="#">' + jar.expertise[v].SLP_Secondary_Industry_ID__r.Secondary_Industry_Name__c + '</a></li>'
+                        );
+                    }                    
+                }
+                $('#expertList').listview('refresh');
+
+                console.log(jar.expertise[v].SLP_Secondary_Industry_ID__r.Secondary_Industry_Name__c);
+                                
+            },
+            {escape: false} 
+        );
+     });
+
+    $(document).ready(function(){
+       
+    $('#buttonSearch').on('ontap click', function(e){
+            setTimeout(function(){
+                $('#search-basic-menu').focus();
+            }, 200);
+        });
+        initTriggers();       
+
+        if($('#peopleList li').size() === 0 &&  $('#search-basic').val() !== ''){
+            $('#outter').show();
+            $('#emptyResultMsg').show();
+            $('#emptyResultMsgInfo').hide();
+            $('#outterInfo').hide();
+        }
+        else if($('#peopleList li').size() === 0 &&  $('#search-basic').val() == ''){
+            $('#emptyResultMsg').hide();
+            $('#outter').hide();
+            $('#emptyResultMsgInfo').show();
+            $('#outterInfo').show();
+        }
+        else {
+            $('#emptyResultMsg').hide();
+            $('#outter').hide();
+            $('#emptyResultMsgInfo').hide();
+            $('#outterInfo').hide();
+        }
+
+    });
+    
+    function doFilter() {   
+        var list = ["#all_box","#community_box","#boards_box","#topics_box","#people_box"];
+        
+        var map = [{"box":"#all_box", "list":""},
+                   {"box":"#community_box", "list":"#commList"},
+                   {"box":"#boards_box", "list":"#boardList"},
+                   {"box":"#topics_box", "list":"#topicsList"},
+                   {"box":"#people_box", "list":"#peopleList"}];
+        
+        if ($(map[0].box).attr("checked")) {
+            $('#resultLabel').text("Results - All");
+        }
+        else {
+            $('#resultLabel').text("Results - filtered");
+        }
+        
+        for (var x=1; x < map.length; x++) {
+            if ($( map[x].box ).attr("checked")) {
+                $( map[x].list ).listview().show();
+            }
+            else {
+                $( map[x].list ).listview().hide();
+            }
+        }
+    }
+    
+    function initTriggers() {
+        var list = ["#community_box","#boards_box","#topics_box","#people_box"];
+        for (var l in list) {
+            $( list[l] ).change(function () {
+                if ($(this).attr("checked")) {
+                    return;
+                }
+                else {
+                    $( "#all_box" ).prop( "checked", false ).checkboxradio( "refresh" );
+                }
+            });        
+        }
+    }
+    
+    function updateCheckboxes() {
+        if ($("#all_box").attr("checked")) {
+            checkAllBoxes();
+        }
+    }
+    
+    function checkAllBoxes() {
+        var list = ["#all_box","#community_box","#boards_box","#topics_box","#people_box"];
+        for (var l in list) {
+            $( list[l] ).prop( "checked", true ).checkboxradio( "refresh" );
+        }
+    }
+    
+    $('#search-basic').live("keypress", function(e) {
+        /* ENTER PRESSED*/
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            var searchTerm= $('#search-basic').val();
+            if (searchTerm.length <=2) {
+                alert('A minimum of 3 characters should be entered');
+                return;
+            }
+            if (searchTerm.length >=3998) {
+                        alert('A maximum of 3997 characters should be entered');
+                        return;
+                    }
+            window.location = "/apex/mobileExpertSearchNew?searchVal=" + encodeURIComponent(searchTerm);
+            $.mobile.loading( "show", {
+                  text: "Loading...",
+                  textVisible: true,
+                  textOnly: false
+            } ); // Displays load spinner while loading
+        }
+    });
+    
+    
+    $( document ).on( "pagecreate", "#searchPage", function() {
+         $( "#autocomplete" ).on( "filterablebeforefilter", function ( e, data ) {
+             var $ul = $( this ),
+             $input = $( data.input ),
+             value = $input.val(),
+             html = "";
+             $ul.html( "" );
+             $('#peopleList').html('');
+
+             
+             if ( value && value.length >= 3 ) {
+             console.log("ajax");
+                 //Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.SLPM_ExpertSearchController.GetTest}',value,handleAutoComplete);
+                 Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.SLPM_ExpertSearchController.GetMyList}',value,handleAutoComplete);
+             }
+         });
+    });
+    
+    
+    function handleAutoComplete(inResult,inEvent) {
+        console.log(JSON.stringify(inResult));
+        $('#peopleList').html('');
+        for (var i = 0; i < inResult.length; i++) {
+            $( '#peopleList' ).append(
+            '<li><a href="' + 'link'+ '" data-ajax="false" style="background-color: rgba(0,0,0, 0.4); color: #ffffff; text-shadow: none; border-color: rgba(0,0,0,0.5);>' +
+            '<img src="' + inResult[i].user.SmallPhotoUrl + '" class="ui-li-thumb" style="margin-right:auto; margin-left:auto; display:block;"/>' +
+            '<h2 style="background-color:rgba(0, 0, 0, 0.0);">' + inResult[i].user.Name+ '</h2>' +
+            '<p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt;">' + inResult[i].roleName+ '</p>' +
+            '<p style="background-color:rgba(0, 0, 0, 0.0); color:#9e9e9d; font-size:12pt;">' + inResult[i].expertField+ '</p>' +
+            '</a></li>');
+                 
+            $( '#peopleList' ).listview('refresh');
+            $( '#peopleList' ).trigger( "updatelayout");
+
+        }
+    }         
+        
+    $('#search-basic-menu').live("keypress", function(e) {
+            
+                /* ENTER PRESSED*/
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    var searchTerm= $('#search-basic-menu').val();
+                    if (searchTerm.length <=2) {
+                        alert('A minimum of 3 characters should be entered');
+                        return;
+                    }
+                    if (searchTerm.length >=3998) {
+                        alert('A maximum of 3997 characters should be entered');
+                        return;
+                    }
+                    window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+encodeURIComponent(searchTerm);
+                    $.mobile.loading( "show", {
+                          text: "Loading...",
+                          textVisible: true,
+                          textOnly: false
+                    } ); // Displays load spinner while loading
+                }
+            });  
+            
+             function highlightRow(elem){
+            $(elem).css({background: '#FF8800'});
+            setTimeout(function(){
+                 $(elem).css({background: 'transparent'});
+            }, 800);
+        }  
+        
+        $('#listviewmenu').on('click tap mousedown', 'li', function() {
+            highlightRow($(this));
+        });   
+        
+        $('#menuImage').on('click tap mousedown touchstart', '', function() {
+            $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });  
+        
+       $('#menuImageList').on('click tap mousedown touchstart', '', function() {
+            $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });    $('#searchImage').on('click tap mousedown touchstart', '', function() {
+            $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+            setTimeout(function(){
+                 $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+            }, 300);
+        });                        
+        
+      function LogMetrics(boardId,boardName,link,tabSection)
+      {
+          Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.SLPM_ExpertSearchController.LogMetrics}',
+                          boardId,
+                          boardName, 
+                          link, 
+                          tabSection, 
+                          GetOSName(),
+                          navigator.appName+' '+$.browser.version,                
+                          DoNothingWithResult
+                      );
+      }
+      
+      function DoNothingWithResult(result, event)
+      {
+          //window.location.href = link;
+          //$('[id$=hdnRedirectUrl]').val(result);
+          //$('[id$=btnRedirectUrl]').click();
+      }
+      
+      function GetOSName()
+      {
+  
+          var ua = navigator.userAgent;
+          var uaindex;
+        
+          // determine OS
+          if ( ua.match(/iPad/i) || ua.match(/iPhone/i) )
+          {
+            mobileOS = 'iOS';
+            uaindex  = ua.indexOf( 'OS ' );
+          }
+          else if ( ua.match(/Android/i) )
+          {
+            mobileOS = 'Android';
+            uaindex  = ua.indexOf( 'Android ' );
+          }
+          else
+          {
+            mobileOS = ua;//'unknown-mobileOS';
+          }
+          return mobileOS;
+      }
+
+  
+</script>
+
+</apex:page>

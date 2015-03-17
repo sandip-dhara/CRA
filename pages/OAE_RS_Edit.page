@@ -1,0 +1,76 @@
+<apex:page standardController="RuleScenario__c" extensions="OAE_RS_EditExt">   
+<apex:sectionheader title="RuleScenario" subTitle="{!RuleScenario__c.name}"/>
+<apex:form >
+	<apex:pageblock mode="maindetail">
+		<apex:pageblocksection title="Definition" columns="2">
+			<apex:inputField value="{!RuleScenario__c.name}"/>
+			<apex:inputField value="{!RuleScenario__c.RuleObject__c}"/>
+		</apex:pageblocksection>
+
+		<apex:pageblocksection title="Parameters" columns="1">
+			<apex:pageBlockSectionItem >
+				<apex:outputPanel id="parameterGrid">
+					<table><tr><td>
+						<apex:dataTable value="{!rsGrid}" var="param" id="tblInUse" cellpadding="2">
+							<apex:column width="150">
+								<apex:facet name="header">Field</apex:facet>
+								<apex:outputText value="{!param.sOne}"/>
+							</apex:column>
+							<apex:column width="350">
+								<apex:facet name="header">Current Values</apex:facet>
+								<apex:outputText value="{!IF(param.sTwo='','Ignored',param.sTwo)}" style="color:{!param.sFour}"/>
+							</apex:column>
+							<apex:column width="100">
+								<apex:facet name="header"></apex:facet>
+								<apex:outputPanel id="mod" onclick="showSelectSection('{!param.sThree}')" styleClass="btn">Modify</apex:outputPanel>
+							</apex:column>
+						</apex:dataTable>
+					</td>
+					<td>
+						<apex:outputPanel id="selectbox">
+							<apex:selectList rendered="{!showSelect}" value="{!pickSelected}" multiselect="true" size="{!selectSize}" style="width:200px">
+								<apex:selectOptions value="{!pickItems}"/>
+							</apex:selectList>
+							<br/>
+							<apex:commandButton value="Apply" action="{!modifyPick}" rendered="{!showSelect}" rerender="selectbox,parameterGrid,hiddenfields" />
+							<apex:commandButton value="Cancel" action="{!cancelOut}" rendered="{!showSelect}" rerender="selectbox,parameterGrid,hiddenfields"/>
+						</apex:outputPanel>
+						<apex:outputPanel id="booleanbox">
+							<apex:selectRadio rendered="{!showCheck}" value="{!checkSelected}">
+								<apex:selectOptions value="{!checks}"/>
+							</apex:selectRadio>
+							<br/>
+							<apex:commandButton value="Apply" action="{!modifyCheck}" rendered="{!showCheck}" rerender="booleanbox,parameterGrid,false" />
+							<apex:commandButton value="Cancel" action="{!cancelOut}" rendered="{!showCheck}" rerender="booleanbox,parameterGrid,false"/>
+						</apex:outputPanel>
+					</td></tr></table>
+				</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			<apex:actionFunction action="{!openSelectBox}" name="showSelectSection" rerender="selectbox,booleanbox">
+				<apex:param name="firstParam" assignTo="{!numberShown}" value="" />
+			</apex:actionFunction>
+		</apex:pageblocksection>
+		<apex:pageblocksection title="Actions" columns="2">
+			<apex:inputField value="{!RuleScenario__c.AssignDirect__c}"/>
+			<apex:inputField value="{!RuleScenario__c.Order__c}"/>
+		</apex:pageblocksection>
+		<apex:pageblocksection id="hiddenfields" title="Hidden" columns="2" rendered="false">
+			<apex:inputField value="{!RuleScenario__c.X1__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X2__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X3__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X4__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X5__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X6__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X7__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X8__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X9__c}"/>
+			<apex:inputField value="{!RuleScenario__c.X10__c}"/>
+		</apex:pageblocksection>
+		<apex:pageBlockButtons location="bottom" >
+			<apex:commandButton action="{!save}" value="Save"/>
+			<apex:commandButton action="{!cancel}" value="Cancel"/>
+		</apex:pageBlockButtons>
+	</apex:pageBlock>
+<apex:inputHidden value="{!RuleScenario__c.RuleObjectInternal__c}" rendered="false"/>
+</apex:form>
+</apex:page>

@@ -1,0 +1,815 @@
+<!-- 
+/**********************************************************
+* Page Name: SUPPORTRequest_PPS_Form
+* Author: HP - Mohit
+* Date: 08-May-2013 
+* Requirement # Request Id :
+* Description: UI to raise support request for CPQ PPS
+***********************************************************/
+-->
+
+<apex:page standardController="Support_Request__c"
+    extensions="SUPPORTRequest_PPS_Form_Controller" id="pg">
+    <script src="/soap/ajax/25.0/connection.js" type="text/javascript"></script>
+    <script src="/soap/ajax/25.0/apex.js" type="text/javascript"></script>
+    <script>
+    /*function validateRouteToMarket(func) {
+            var oldonload = window.onload;
+            if (typeof window.onload != 'function') {
+                window.onload = func;
+            } else {
+                window.onload = function() {
+                    if (oldonload) {
+                        oldonload();
+                    }func();
+                }
+            }
+        }
+        validateRouteToMarket(function() {
+            var routeToMarket = '{!Support_Request__c.Route__c}';
+            var showAlert = '{!restrictIndirectAlert}';
+            if(routeToMarket == 'Indirect' && showAlert == 'true'){
+                var errorMsg = '{!$Label.CPQIndirectRotuingError}';
+                if (!confirm(errorMsg)){
+                    var __sfdcSessionId = '{!GETSESSIONID()}';
+                    sforce.connection.sessionId = '{!GETSESSIONID()}';
+                    var result =sforce.apex.execute("CPQCloneRequest","CPQDeleteSupportRequest", {requestId:"{!Support_Request__c.Id}"});
+                    if(result == 'Deleted'){
+                        window.parent.location.href='/{!Support_Request__c.Opportunity__c}';
+                    }
+                }
+            }
+        })*/
+    function OpenMDCP(sectionName)
+    {
+        var mdcpId = '{!objOppty.Account.MDCP_Organization_ID__c}';
+        window.open('/apex/CPQMDCPSearchPage?entity=Customer&MDCPID='+mdcpId+'&secName='+sectionName,'popUpWindow','height=500,width=800,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,status=No');
+        //window.open('/apex/CPQMDCPSync?id={!objOppty.Account.Id}');
+    }
+    function addressPopulate(secName,address,city,postal_code,country,state){
+            //alert('SectionName:'+secName);
+            if(secName == 'SoldTo'){
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteAddress1SctionItem:quoteAddress1').value = address;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteCitySctionItem:quoteCity').value = city;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQoutePostalSctionItem:quotePostal').value = postal_code;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteCountrySctionItem:quoteCountry').value = country;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteStateSctionItem:quoteState').value = state;
+            }
+            else if(secName == 'ShipTo'){
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipAddress1SctionItem:shipAddress1').value = address;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipCitySctionItem:shipCity').value = city;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipPostalSctionItem:shipPostal').value = postal_code;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipCountrySctionItem:shipCountry').value = country;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipStateSctionItem:shipState').value = state;
+            }
+            else if(secName == 'BillTo'){
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress1SctionItem:invoiceAddress1').value = address;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCitySctionItem:invoiceCity').value = city;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoicePostalSctionItem:invoicePostal').value = postal_code;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCountrySctionItem:invoiceCountry').value = country;
+                document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceStateSctionItem:invoiceState').value = state;
+            }
+     }
+        
+    function checkSpecialPricingType(){
+        visibilityOfSpecialRevisionFields();
+    }
+    function checkRequestRegion(){
+            visibilityOfServiceFields();
+        }
+    function checkQuoteType(){
+        visibilityOfFields();
+    }
+    function otherTermAndCondition(){
+        visibilityOfOtherTermsAndConditionFields();
+    }
+    function renderEndUserInformation(){
+        visibilityOfEndUserInformationFields();
+    }
+    function renderGEOSection(){
+        visibilityOfGEOSection();
+    }
+    
+    function routingInfo() {
+            routingInfo();
+           
+        }
+    
+    function attachFleOpen(){
+        //window.open('/apex/CPQAttachementForm?id={!Support_Request__c.Id}','Attached File','width=700,height=600');
+        var requestStatus = '{!Support_Request__c.isRequestSubmitted__c}';
+        var erroMsg ="{!$Label.CPQ_Request_already_Submitted}";
+        if(requestStatus != 'true'){
+            openLookup('/apex/CPQAttachementForm?id={!Support_Request__c.Id}',700,700);
+        }
+        else
+        alert(erroMsg);
+        
+        return false;
+    }
+    function deleteConfirmation(){
+        var requestStatus = '{!Support_Request__c.isRequestSubmitted__c}';
+        var erroMsg ="{!$Label.CPQ_Request_already_Submitted}";
+        if(requestStatus == 'true'){
+            alert(erroMsg);
+        }
+        else{
+            if(confirm('Are you sure?')){
+                return true;
+            }
+        }
+        return false;
+    }
+    function deleteSupportRequestConfirmation(){
+        var requestStatus = '{!Support_Request__c.isRequestSubmitted__c}';
+        var erroMsg ="{!$Label.CPQ_Request_already_Submitted}";
+        if(requestStatus == 'true'){
+            alert(erroMsg);
+        }
+        else{
+            if(confirm('Are you sure you want to delete Support Request?')){
+                return true;
+            }
+        }
+        return false;
+    }
+    function copyQuoteAddressToShipAddress(checkboxId){
+        if(checkboxId.checked){
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipAddress1SctionItem:shipAddress1').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteAddress1SctionItem:quoteAddress1').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipAddress2SctionItem:shipAddress2').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteAddress2SctionItem:quoteAddress2').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipAddress3SctionItem:shipAddress3').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteAddress3SctionItem:quoteAddress3').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipCitySctionItem:shipCity').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteCitySctionItem:quoteCity').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipStateSctionItem:shipState').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteStateSctionItem:quoteState').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipPostalSctionItem:shipPostal').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQoutePostalSctionItem:quotePostal').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipCountrySctionItem:shipCountry').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteCountrySctionItem:quoteCountry').value;
+        }
+        else{
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipAddress1SctionItem:shipAddress1').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipAddress2SctionItem:shipAddress2').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipAddress3SctionItem:shipAddress3').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipCitySctionItem:shipCity').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipStateSctionItem:shipState').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipPostalSctionItem:shipPostal').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountShipSction:pgShipCountrySctionItem:shipCountry').value = '';
+        }
+    }
+    function copyShipAddressToInvoiceAddress(checkboxId){
+        if(checkboxId.checked){
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress1SctionItem:invoiceAddress1').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteAddress1SctionItem:quoteAddress1').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress2SctionItem:invoiceAddress2').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteAddress2SctionItem:quoteAddress2').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress3SctionItem:invoiceAddress3').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteAddress3SctionItem:quoteAddress3').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCitySctionItem:invoiceCity').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteCitySctionItem:quoteCity').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceStateSctionItem:invoiceState').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteStateSctionItem:quoteState').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoicePostalSctionItem:invoicePostal').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQoutePostalSctionItem:quotePostal').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCountrySctionItem:invoiceCountry').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteCountrySctionItem:quoteCountry').value;
+
+        document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress1SctionItem:invoiceAddress11').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteAddress1SctionItem:quoteAddress1').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCitySctionItem:invoiceCity1').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteCitySctionItem:quoteCity').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceStateSctionItem:invoiceState1').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteStateSctionItem:quoteState').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoicePostalSctionItem:invoicePostal1').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQoutePostalSctionItem:quotePostal').value;
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCountrySctionItem:invoiceCountry1').value = document.getElementById('pg:formId:pb:pbAccountSection:pbAccountQuoteSction:pgQouteCountrySctionItem:quoteCountry').value;
+        }
+        else{
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress1SctionItem:invoiceAddress1').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress2SctionItem:invoiceAddress2').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress3SctionItem:invoiceAddress3').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCitySctionItem:invoiceCity').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceStateSctionItem:invoiceState').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoicePostalSctionItem:invoicePostal').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCountrySctionItem:invoiceCountry').value = '';
+
+        document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceAddress1SctionItem:invoiceAddress11').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCitySctionItem:invoiceCity1').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceStateSctionItem:invoiceState1').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoicePostalSctionItem:invoicePostal1').value = '';
+            document.getElementById('pg:formId:pb:pbAccountSection:pbAccountInvoiceSction:pgInvoiceCountrySctionItem:invoiceCountry1').value = '';
+        }
+    }
+    function validateEmail(emailField){
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        var eMIds = emailField.value;
+        var eMails = eMIds.split(';');
+        for ( var i=0; i<eMails.length; i++)
+        {
+            if (reg.test(eMails[i]) == false && emailField.value != ''){
+                alert('Invalid Email Address');
+                emailField.value = '';
+            }
+        }
+     }
+     function noenter(ev){
+            var srcElement = ev.srcElement ? ev.srcElement : ev.target;
+            if(srcElement.tagName != 'TEXTAREA'){
+                if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                    return false;
+                }
+            }
+        }
+        
+      function sortGlobalDeal(globalDealField){
+            var allDeals = globalDealField.value;
+            var dealsArray = allDeals.split('\n');
+            dealsArray.sort();
+            var sortedDeals = "";
+            for(var i=0; i<dealsArray.length; i++) {
+              sortedDeals += dealsArray[i] + "\n";
+            }
+            globalDealField.value = sortedDeals;
+        }
+  
+    </script>
+    <apex:form id="formId" onkeypress="return noenter(event);">
+        <apex:actionFunction name="visibilityOfSpecialRevisionFields" status="specialLoading" action="{!visibilityOfSpecialRevisionFields}" rerender="pbSectionSpecial" />
+        <apex:actionFunction name="visibilityOfServiceFields" status="loading" rerender="pb" />
+        <apex:actionFunction name="visibilityOfGEOSection" status="loading" rerender="pb" />
+        <apex:actionFunction name="visibilityOfOtherTermsAndConditionFields" status="loading" rerender="pbSectionQuoteDetail" />
+        <apex:actionFunction name="visibilityOfEndUserInformationFields" status="specialLoading" rerender="pbSectionSpecial" />
+        <apex:actionFunction name="routingInfo" action="{!routingCriteria}" status="loading" rerender="pb"/>
+        
+        <apex:actionFunction name="visibilityOfFields" action="{!visibilityOfFields}" status="loading" rerender="pb" />
+        <apex:pageBlock id="pb">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" title="Save" action="{!saveRequest}" rendered="{!!Support_Request__c.isRequestSubmitted__c}"/>
+                <apex:commandButton value="Submit Request" title="Submit Request" action="{!submitRequest}" rendered="{!!Support_Request__c.isRequestSubmitted__c}"/>
+                <apex:commandButton value="Delete" title="Delete" action="{!cancelRequest}" onClick="return deleteSupportRequestConfirmation();" rendered="{!!Support_Request__c.isRequestSubmitted__c}" immediate="true" />
+            </apex:pageBlockButtons>
+            <apex:pageMessage strength="3" rendered="{!If(!isNull(Support_Request__c.CPQ_Notification_Status__c) && Support_Request__c.CPQ_Notification_Status__c != 'SUCCESS',true,false)}" severity="Error">{!Support_Request__c.CPQ_Notification_Status__c}</apex:pageMessage>            
+            <apex:pageMessage strength="1" rendered="{!If(isNull(Support_Request__c.Route_To_Market_RTM__c),true,false)}" severity="warning"><B>Go to Market Route : </B> {!$Label.CPQRTMWarning}</apex:pageMessage>
+            <apex:pagemessages />
+            <apex:actionStatus id="loading">
+                <apex:facet name="start">
+                    <img src="{!$Resource.AjaxAnimation}" />
+                    &nbsp;&nbsp;
+                    <FONT COLOR="black" SIZE="2"><b><i>Loading
+                                Fields....</i>
+                    </b>
+                    </FONT>
+                    <br />
+                    <br />
+                </apex:facet>
+            </apex:actionStatus>
+
+            <apex:pageBlockSection title="Quote Request Details" id="pbSectionQuoteDetail" >
+                <!--Salesforce VF Rendering Bug-->
+                <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Rendering_Salesforce_Issue}" var="objRequest">
+                    <apex:inputfield value="{!Support_Request__c[objRequest]}" rendered="false" />
+                </apex:repeat>
+                
+                <apex:outputField value="{!Support_Request__c.Name}" />
+                <apex:pageBlockSectionItem helptext="{!$Label.Request_Quote_Dsecription_Help_Text}">
+                        <apex:outputLabel >Request Description</apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="{!IF(!CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),'requiredBlock','')}"/>
+                            <apex:inputField value="{!Support_Request__c.Request_Description__c}" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel >Request Type</apex:outputLabel>
+                    <apex:outputLabel value="{!Support_Request__c.Type_of_Request__c}" />
+                </apex:pageblockSectionItem>
+                <apex:inputField value="{!Support_Request__c.Due_Date2__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Region</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" />
+                        <apex:outputField value="{!Support_Request__c.Routing_Region__c}" />
+                    </apex:outputPanel>
+                    <!--<apex:inputField value="{!Support_Request__c.Routing_Region__c}" onchange="checkRequestRegion();"></apex:inputField>-->
+                </apex:pageBlockSectionItem>
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:pageBlockSectionItem rendered="{!If(!isNull(Support_Request__c.Routing_Region__c),true,false)}">
+                    <apex:outputLabel >Request For</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock" />
+                        <apex:inputField value="{!Support_Request__c.CPQ_Request_Type__c}" onchange="checkQuoteType();" rendered="{!!showPricingEscalationReadOnly }"/>
+                        <apex:outputField value="{!Support_Request__c.CPQ_Request_Type__c}" rendered="{!showPricingEscalationReadOnly }"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputLabel rendered="{!If(!isNull(Support_Request__c.Routing_Region__c),true,false)}"></apex:outputLabel>
+                <apex:pageBlockSectionItem helpText="{!$Label.Request_Country_Help_Text}" rendered="{!If(!isNull(Support_Request__c.CPQ_Request_Type__c),true,false)}">
+                    <apex:outputLabel >Country</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                        <apex:outputPanel layout="block" styleClass="requiredBlock" />                        
+                        <apex:selectList size="1" value="{!Support_Request__c.CPQ_Routing_Country__c}" onchange="routingInfo()">
+                            <apex:selectOptions value="{!countryList}"></apex:selectOptions>
+                         </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputLabel rendered="{!If(!isNull(Support_Request__c.CPQ_Request_Type__c),true,false)}"></apex:outputLabel>
+                <apex:pageBlockSectionItem rendered="{!If(!isNull(Support_Request__c.CPQ_Request_Type__c),true,false)}">
+                    <apex:outputLabel >Business Unit</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.Business_Unit__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:outputLabel rendered="{!If(!isNull(Support_Request__c.CPQ_Routing_Country__c) && !isNull(Support_Request__c.CPQ_Request_Type__c),true,false)}"></apex:outputLabel>
+                <apex:pageblockSectionItem rendered="{!If((!isNull(Support_Request__c.CPQ_Routing_Country__c)) && (!isNull(Support_Request__c.CPQ_Request_Type__c)) && (Support_Request__c.CPQ_Routing_Country__c != '') && (CONTAINS(Support_Request__c.Routing_Region__c,'Americas') || CONTAINS(Support_Request__c.Routing_Region__c,'Asia Pacific')),true,false)}">
+                    <apex:outputLabel >Territory</apex:outputLabel>
+                    <!--<apex:inputField value="{!Support_Request__c.CPQ_Routing_Territory__c}" />-->
+                    <apex:selectList size="1" value="{!Support_Request__c.CPQ_Routing_Territory__c}" onchange="visibilityOfServiceFields()">
+                        <apex:selectOptions value="{!territory}"/>
+                    </apex:selectList>
+                </apex:pageblockSectionItem>
+                <apex:outputLabel rendered="{!If((!isNull(Support_Request__c.CPQ_Routing_Country__c)) && (Support_Request__c.CPQ_Routing_Country__c != ''),true,false)}"></apex:outputLabel>
+                <apex:pageBlockSectionItem rendered="{!If((!isNull(Support_Request__c.CPQ_Routing_Territory__c) || (otherCriteria.size > 1 && territory.size <= 1)) && (CONTAINS(Support_Request__c.Routing_Region__c,'Americas') || CONTAINS(Support_Request__c.Routing_Region__c,'Asia Pacific')) ,true,false)}">
+                    <apex:outputLabel >Other Routing Criteria</apex:outputLabel>
+                    <!--<apex:inputField value="{!Support_Request__c.CPQ_Other_Routing_Criteria__c}" />-->
+                    <apex:selectList size="1" value="{!Support_Request__c.CPQ_Other_Routing_Criteria__c}" onchange="visibilityOfServiceFields()">
+                        <apex:selectOptions value="{!otherCriteria}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                
+                <!--<apex:outputLabel rendered="{!IF(CONTAINS(Support_Request__c.Routing_Region__c,'Asia Pacific'),False,True)}"></apex:outputLabel>
+                <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.Routing_Region__c,'Americas'),True,False)}">
+                    <apex:outputLabel ></apex:outputLabel>
+                    <a target="_Blank" href="{!$Label.CPQ_Routing_Help_Link_AMS}">AMS
+                        Routing Rules Information</a>
+                </apex:pageBlockSectionItem>-->
+                <!--<apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.Routing_Region__c,'EMEA'),True,False)}">
+                    <apex:outputLabel ></apex:outputLabel>
+                    <a target="_Blank" href="{!$Label.CPQ_Routing_Help_Link_EMEA}">Routing Rules Information</a>
+                </apex:pageBlockSectionItem>-->
+                <!--<apex:pageBlockSectionItem helpText="{!$Label.Visible_in_b2b_portal}" rendered="{!OR(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering'),(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)')))}">
+                    <apex:outputLabel >Visible in B2B Portal?</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.Visible_in_B2B_Portal__c}" />
+                </apex:pageBlockSectionItem>    
+                
+                
+                <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False)}">
+                    <apex:outputLabel >Global Deal(Lead Region)?</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.Global_Deal__c}" onchange="renderGEOSection();"/>
+                </apex:pageBlockSectionItem>
+                
+
+                <apex:pageBlockSectionItem rendered="{!OR(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering'),(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)')))}">
+                    <apex:outputLabel >Global/Regional Deal? (Countries of Delivery)</apex:outputLabel>                   
+                    <apex:outputPanel >
+                        <apex:inputField value="{!Support_Request__c.Global_Regional_Deal__c}" onblur="sortGlobalDeal(this);"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False)}">
+                    <apex:outputLabel >Deal Type</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                         <apex:outputPanel layout="block" styleClass="requiredBlock" />
+                    <apex:outputPanel >
+                        <apex:inputField value="{!Support_Request__c.Deal_Type__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>-->
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['Request']}" var="formName">
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" onblur="{!IF(Contains(formName.Field_API_Name__c,'Global_Regional_Deal__c'),'sortGlobalDeal(this);','')}" onchange="{!IF(Contains(formName.Field_API_Name__c,'Terms_and_Conditions__c'),'otherTermAndCondition();',IF(Contains(formName.Field_API_Name__c,'Global_Deal__c'),'renderGEOSection();',''))}"  />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+                <apex:outputLabel rendered="{!IF(Contains(Support_Request__c.Terms_and_Conditions__c,'Non Standard HP Terms and Conditions, please specify'),true,false)}"></apex:outputLabel>
+                <apex:pageBlockSectionItem id="otherTermsAndCondition" rendered="{!IF(Contains(Support_Request__c.Terms_and_Conditions__c,'Non Standard HP Terms and Conditions, please specify'),true,false)}">
+                    <apex:outputLabel >Non-standard Terms and Conditions</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.Terms_and_Conditions_Others__c}" />
+                </apex:pageBlockSectionItem>
+                <!--<apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields['BMI_ID__c'].inlineHelptext}" rendered="{!If(!isNull(Support_Request__c.BMI_ID__c),true,false)}">
+                    <apex:outputLabel >{!$ObjectType.Support_Request__c.Fields['BMI_ID__c'].Label}</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.BMI_ID__c}"/>
+                </apex:pageBlockSectionItem>-->
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.HP_Quote__r.Name}" rendered="{!IF(ISNULL(Support_Request__c.HP_Quote__r.Name),'false','true')}"/>
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields['BMI_Quote_URL__c'].inlineHelptext}" rendered="{!If(!isNull(Support_Request__c.BMI_Quote_URL__c),true,false)}">
+                    <apex:outputLabel >{!$ObjectType.Support_Request__c.Fields['BMI_Quote_URL__c'].Label}</apex:outputLabel>
+                    <apex:outputLink >{!Support_Request__c.BMI_Quote_URL__c}</apex:outputLink>
+                    <!--<apex:outputField value="{!Support_Request__c.BMI_Quote_URL__c}"/>-->
+                </apex:pageBlockSectionItem>
+                <apex:outputLabel style="display:none;">
+                    <apex:InputField value="{!Support_Request__c.Routing_Region__c}" />
+                </apex:outputLabel>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Geo Split  (AMS Only - All fields must total 100%)"  rendered="{!IF(((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)')) ||(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation')))  && (!isNull(Support_Request__c.Global_Deal__c)),True,False)}">
+                <apex:inputField value="{!Support_Request__c.Geo_Split_AP__c}" />
+                <apex:inputField value="{!Support_Request__c.Geo_Split_LA__c}" />
+                <apex:inputField value="{!Support_Request__c.Geo_Split_EU__c}" />
+                <apex:inputField value="{!Support_Request__c.Geo_Split_JP__c}" />
+                <apex:inputField value="{!Support_Request__c.Geo_Split_NA__c}" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Opportunity Information"
+                >
+                <apex:outputField value="{!Support_Request__c.Opportunity__c}" />
+                <apex:outputField value="{!Support_Request__c.Opportunity_ID_Formula__c}" />
+                <apex:outputField value="{!Support_Request__c.Sales_Stage_For_Request_Form__c}" />
+                <apex:outputField value="{!Support_Request__c.Forecast_Category__c}" />
+                <apex:outputField value="{!Support_Request__c.Opportunity_Owner_Name__c}" />
+                <apex:outputField value="{!Support_Request__c.Opportunity_Owner_Email__c}" />
+                <apex:outputField value="{!Support_Request__c.Requestor_Name__c}" />
+                <apex:outputField value="{!Support_Request__c.Requestor_email__c}" />
+                <apex:outputField value="{!Support_Request__c.Owner_s_BG__c}" />
+                <apex:outputField value="{!Support_Request__c.Managed_By__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Go To Market Route</apex:outputLabel>
+                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                         <apex:outputPanel layout="block" styleClass="requiredBlock" />
+                         <apex:outputField value="{!Support_Request__c.Route_To_Market_RTM__c}"/>
+                     </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!Support_Request__c.Fulfillment__c}" />
+
+
+                <!--<apex:pageBlockSectionItem >
+                    <apex:outputLabel >Customer Engagement</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.Customer_Engagement__c}" />
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False)}">
+                    <apex:outputLabel >Customer Segment</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.Customer_Segment__c}" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False)}">
+                    <apex:outputLabel >Competitor Information</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.PPS_Competitor_Information__c}" />
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False)}">
+                    <apex:outputLabel >CISYS ID (APJ Only)</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.CISYS_ID__c}" />
+                </apex:pageBlockSectionItem>-->
+
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['Opportunity']}" var="formName">
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+
+            </apex:pageBlockSection>
+
+
+
+
+
+            <apex:pageBlockSection title="Account Information"
+                 columns="3" id="pbAccountSection">
+                <apex:outputField value="{!Support_Request__c.Opportunity__r.AccountId}" />
+                <apex:outputField value="{!Support_Request__c.Industry_Vertical__c}" />
+                <apex:selectList value="{!Support_Request__c.Lead_Country__c}"
+                    size="1">
+                    <apex:selectOptions value="{!countryWithISO}"></apex:selectOptions>
+                </apex:selectList>
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Industry_Segment__c}" />
+                <apex:outputLabel ></apex:outputLabel>
+
+                <apex:pageblockSection title="Sold To Address" columns="1"  id="pbAccountQuoteSction" rendered="{!showQuoteAddress}">
+                    <apex:inputCheckbox style="display:none;">
+                        <apex:outputLabel style="display:none;" value="Same">Same</apex:outputLabel>
+                    </apex:inputCheckbox>
+                    <apex:pageblockSectionItem labelStyle="width: 26%; max-width: 30%;" id="pgQouteAddress1SctionItem">
+                        <apex:outputLabel value="Address Line 1"></apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="requiredBlock" />
+                            <apex:inputField value="{!Support_Request__c.Address_1__c}" id="quoteAddress1" />
+                            <apex:image onclick="return OpenMDCP('SoldTo');" url="/s.gif" styleClass="lookupIcon" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';"/>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgQouteAddress2SctionItem">
+                        <apex:outputLabel >Address Line 2</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Address_2__c}" id="quoteAddress2" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgQouteAddress3SctionItem">
+                        <apex:outputLabel >Address Line 3</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Address_3__c}" id="quoteAddress3" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgQouteCitySctionItem">
+                        <apex:outputLabel >City</apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="requiredBlock" />
+                            <apex:inputField value="{!Support_Request__c.City__c }" id="quoteCity" />
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgQouteStateSctionItem">
+                        <apex:outputLabel >State/Province</apex:outputLabel>
+                        <!--  <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="requiredBlock" />-->
+                        <apex:outputPanel >
+                            <apex:inputField value="{!Support_Request__c.State_Province__c }" id="quoteState" />
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgQoutePostalSctionItem">
+                        <apex:outputLabel >Postal Code</apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="requiredBlock" />
+                            <apex:inputField value="{!Support_Request__c.Address_Postal__c}" id="quotePostal" />
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgQouteCountrySctionItem">
+                        <apex:outputLabel >Country</apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="requiredBlock" />
+                            <apex:selectList value="{!Support_Request__c.Country__c}" size="1" id="quoteCountry">
+                                <apex:selectOptions value="{!countryWithISO}"></apex:selectOptions>
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                </apex:pageblockSection>
+
+                <apex:pageblockSection title="Ship To Address" columns="1"  rendered="{!showShipToAddress}" id="pbAccountShipSction">
+                    <apex:inputCheckbox onchange="copyQuoteAddressToShipAddress(this)" rendered="{!showShipToAddress}">Same as Sold to Address</apex:inputCheckbox>
+                    <apex:pageblockSectionItem labelStyle="width: 26%; max-width: 30%;" id="pgShipAddress1SctionItem">
+                        <apex:outputLabel >Address Line 1</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Ship_To_Address_1__c}" id="shipAddress1" >
+                        <apex:image onclick="return OpenMDCP('ShipTo');" url="/s.gif" styleClass="lookupIcon" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';"/>
+                        </apex:inputField>
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgShipAddress2SctionItem">
+                        <apex:outputLabel >Address Line 2</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Ship_To_Address_2__c}" id="shipAddress2" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgShipAddress3SctionItem">
+                        <apex:outputLabel >Address Line 3</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Ship_To_Address_3__c}" id="shipAddress3" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgShipCitySctionItem">
+                        <apex:outputLabel >City</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Ship_To_City__c }" id="shipCity" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgShipStateSctionItem">
+                        <apex:outputLabel >State/Province</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Ship_To_State_Province__c }" id="shipState" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgShipPostalSctionItem">
+                        <apex:outputLabel >Postal Code</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Ship_To_Postal_Code__c}" id="shipPostal" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgShipCountrySctionItem">
+                        <apex:outputLabel >Country</apex:outputLabel>
+                        <apex:selectList value="{!Support_Request__c.Ship_To_Country__c}" size="1" id="shipCountry">
+                            <apex:selectOptions value="{!countryWithISO}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:pageblockSectionItem>
+                </apex:pageblockSection>
+
+                <apex:pageblockSection title="Bill To Address" columns="1" rendered="{!showInvoiceToAddress}" id="pbAccountInvoiceSction">
+                    <apex:inputCheckbox onchange="copyShipAddressToInvoiceAddress(this)" rendered="{!showInvoiceToAddress}">Same as Sold to Address</apex:inputCheckbox>
+                    <apex:pageblockSectionItem labelStyle="width: 50%;" id="pgInvoiceAddress1SctionItem">
+                        <apex:outputLabel >Address Line 1</apex:outputLabel>
+                        <apex:outputpanel >
+                            <apex:inputField value="{!Support_Request__c.Invoice_To_Address_1__c}" id="invoiceAddress1" />
+                            <apex:image onclick="return OpenMDCP('BillTo');" url="/s.gif" styleClass="lookupIcon" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';"/>
+                        </apex:outputpanel>
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgInvoiceAddress2SctionItem">
+                        <apex:outputLabel >Address Line 2</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Invoice_To_Address_2__c}" id="invoiceAddress2" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgInvoiceAddress3SctionItem">
+                        <apex:outputLabel >Address Line 3</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Invoice_To_Address_3__c}" id="invoiceAddress3" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgInvoiceCitySctionItem">
+                        <apex:outputLabel >City</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Invoice_To_City__c }" id="invoiceCity" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgInvoiceStateSctionItem">
+                        <apex:outputLabel >State/Province</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Invoice_To_State_Province__c }" id="invoiceState" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgInvoicePostalSctionItem">
+                        <apex:outputLabel >Postal Code</apex:outputLabel>
+                        <apex:inputField value="{!Support_Request__c.Invoice_Postal_Code__c}" id="invoicePostal" />
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="pgInvoiceCountrySctionItem">
+                        <apex:outputLabel >Country</apex:outputLabel>
+                        <apex:selectList value="{!Support_Request__c.Invoice_To_Country__c}" size="1" id="invoiceCountry">
+                            <apex:selectOptions value="{!countryWithISO}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:pageblockSectionItem>
+                </apex:pageblockSection>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Technical Requirements/Product Information" columns="1">
+                <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields.Config_ID_Products_Customer_SKU__c.inlineHelptext}">
+                        <apex:outputLabel >Config ID / Products/<BR></BR>Customer SKU/<BR></BR>Configuration Details/<BR></BR>Quantities / Pricing</apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') || CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering')) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation'))  ,'requiredBlock','')}"/>
+                            <apex:inputField value="{!Support_Request__c.Config_ID_Products_Customer_SKU__c}" style="width:800px;height:400px;" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['Technical']}" var="formName">
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+
+
+
+            <apex:pageblockSection title="Pricing" >
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['Pricing']}" var="formName">
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>                
+                <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering'),False,True)}">
+                <apex:outputLabel >Currency</apex:outputLabel>
+                <apex:inputField value="{!Support_Request__c.CurrencyIsoCode}" />
+              </apex:pageBlockSectionItem>
+            </apex:pageblockSection>
+
+            <apex:pageBlockSection title="Special Pricing"  rendered="{!showSpecialPricing}" id="pbSectionSpecial">
+                <apex:pageBlockSection columns="1">
+                    <apex:actionStatus id="specialLoading">
+                        <apex:facet name="start">
+                            <img src="{!$Resource.AjaxAnimation}" />
+                            &nbsp;&nbsp;
+                            <FONT COLOR="black" SIZE="2"><b><i>Loading
+                                        Fields....</i>
+                            </b>
+                            </FONT>
+                            <br />
+                            <br />
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <!--<apex:inputField value="{!Support_Request__c.Special_Pricing__c}" onchange="checkSpecialPricingType();" />
+                    <apex:inputField value="{!Support_Request__c.Special_Pricing_Revision__c}" rendered="{!IF(CONTAINS(Support_Request__c.Special_Pricing__c,'Revision') || CONTAINS(Support_Request__c.Special_Pricing__c,'Special Pricing Exists'),true,false)}"/>-->
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields.Special_Pricing__c.inlineHelptext}" >
+                        <apex:outputLabel >{!$ObjectType.Support_Request__c.Fields.Special_Pricing__c.Label}</apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)')) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)')) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering')) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation')),'requiredBlock','')}"/>
+                            <apex:inputField value="{!Support_Request__c.Special_Pricing__c}" onchange="checkSpecialPricingType();"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields.Special_Pricing_Revision__c.inlineHelptext}" rendered="{!IF((Contains(Support_Request__c.Special_Pricing__c,'Revision') || Contains(Support_Request__c.Special_Pricing__c,'Special Pricing Exists')) ,true,false)}">
+                        <apex:outputLabel >{!$ObjectType.Support_Request__c.Fields.Special_Pricing_Revision__c.Label}</apex:outputLabel>
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)')) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering')) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation'))  ,'requiredBlock','')}"/>
+                            <apex:inputField value="{!Support_Request__c.Special_Pricing_Revision__c}" rendered="{!IF((Contains(Support_Request__c.Special_Pricing__c,'Revision') || Contains(Support_Request__c.Special_Pricing__c,'Special Pricing Exists')) ,true,false)}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!Support_Request__c.Pricing_Justification_and_Summary__c}" rendered="false" />
+                    <apex:repeat value="{!mapPPSFormWithFieldAPI['Special_Left']}" var="formName">
+                        <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:repeat value="{!mapPPSFormWithFieldAPI['Special_Right']}" var="formName">
+                        <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" onchange="{!IF(Contains(formName.Field_API_Name__c,'Is_this_a_run_rate_or_unique_strategic__c'),'renderEndUserInformation();','')}" style="{!iF(formName.Field_API_Name__c == 'Pricing_Justification_and_Summary__c','height: 120px;width: 234px;','')}"/>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                    <apex:inputField value="{!Support_Request__c.End_User_Customer_information__c}" rendered="{!IF(CONTAINS(Support_Request__c.Is_this_a_run_rate_or_unique_strategic__c,'Unique Strategic'),true,false)}" style="height: 120px;width: 234px;"/>
+                </apex:pageBlockSection>
+            </apex:pageBlockSection>
+
+            <!-- R5.0 Pricing Escalation Form Changes-->
+            <apex:pageBlockSection title="Pricing Escalation"  columns="2" rendered="{!showPricingEscalationSection}">
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['pricing_escalation']}" var="formName">
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" style="{!iF(formName.Field_API_Name__c == 'Account_History__c' || formName.Field_API_Name__c == 'Deal_Description__c'||formName.Field_API_Name__c == 'Competitive_Situation__c'||formName.Field_API_Name__c == 'BDM_Recommendation__c','height: 120px;width: 234px;','')}"/>
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:outputLabel >
+                    <li><B>EUV Certification</B> : If yes, please add certification in the Attach section below.  EUV mandatory before deal can be created.</li>
+                </apex:outputLabel>
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:outputLabel >
+                    <li><B>Margin Recovery Strategy or Get Well Plan</B> : Please attach the Margin Recovery Strategy or Get Well Plan in the Attach section below</li>
+                </apex:outputLabel>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Additional Quote Output"  columns="2" rendered="{!showOutputSection}">
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['Output']}" var="formName">
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Customer Contact Information"  columns="2" rendered="{!OR(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)'),(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)')))}">
+                
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['Customer']}" var="formName">
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c}</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)') && formName.Special_Pricing_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') && formName.Manual_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering') && formName.Update_Offering_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') && formName.B2B_Portal_Quote_Required__c) || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation') && formName.Pricing_Escalation_Required__c) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c[formName.Field_API_Name__c]}" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="DEMO Informaiton (AMS Only)"  columns="2" rendered="false">
+                <apex:inputField value="{!Support_Request__c.Quote_for_Demo__c}" />
+                <apex:inputField value="{!Support_Request__c.Text_Information__c}" />
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel >New Demo or Extension?</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.Demo_Extension__c}" />
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel >Request Arrival Date</apex:outputLabel>
+                    <apex:inputField value="{!Support_Request__c.Resource_request_start_date__c}" />
+                </apex:pageblockSectionItem>
+                <apex:inputField value="{!Support_Request__c.Product_Type__c}" />
+                <apex:inputField value="{!Support_Request__c.Placement_Term__c}" />
+                <apex:inputField value="{!Support_Request__c.Purchase_Probability__c}" />
+                <apex:inputField value="{!Support_Request__c.Sales_Rep__c}" />
+                <apex:inputField value="{!Support_Request__c.Watson_Quote_s__c}" />
+                <apex:inputField value="{!Support_Request__c.Cost_Center__c}" />
+                <apex:inputField value="{!Support_Request__c.Program_Region__c}" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Other"  columns="1">
+                <apex:pageBlock >
+                    <apex:pageBlockButtons location="top">
+                        <apex:commandButton title="{!$Label.CPQAttachmentHelpText}"
+                            value="Attach File" rendered="{!!Support_Request__c.isRequestSubmitted__c}" onclick="return attachFleOpen();" />
+                    </apex:pageBlockButtons>
+                    <apex:pageBlockSection columns="1">
+                        <apex:inputField value="{!Support_Request__c.CC_Email_Address__c}"
+                            onblur="validateEmail(this);" />
+                        <!--<apex:inputField value="{!Support_Request__c.Additional_Information__c}" style="width: 734px;height: 120px;" />-->
+                        <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields.Additional_Information__c.inlineHelptext}">
+                            <apex:outputLabel >Additional Information</apex:outputLabel>
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputPanel layout="block" styleClass="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)') || CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)') || (CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering')) ,'requiredBlock','')}"/>
+                                <apex:inputField value="{!Support_Request__c.Additional_Information__c}" style="width:400px;height:120px;"/>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlock title="Attachments" id="pgBlockShow">
+                            <apex:pageBlockButtons location="top">
+                                <apex:commandButton reRender="pgBlockShow,totalSize"
+                                    title="Refresh" value="Refresh" status="refreshingAttachement" rendered="{!!Support_Request__c.isRequestSubmitted__c}"/>
+                            </apex:pageBlockButtons>
+                            <apex:actionStatus id="refreshingAttachement">
+                                <apex:facet name="start">
+                                    <img src="{!$Resource.AjaxAnimation}" />
+                                    &nbsp;&nbsp;
+                                    <FONT COLOR="black" SIZE="2"><b><i>Refreshing....</i>
+                                    </b>
+                                    </FONT>
+                                    <br />
+                                    <br />
+                                </apex:facet>
+                            </apex:actionStatus>
+                            <apex:outputLabel value="{!totalAttachmentSize}" id="totalSize" style="{!iF(totalSize > 10485760,'color:red;','color:black;')}"></apex:outputLabel>
+                            <apex:pageBlockTable value="{!showAllAttachment}" var="attachedFile" align="center" rendered="{!OR(ISNULL(showAllAttachment),showAllAttachment.size>0)}" id="pbShowAttachmentTable">
+                                <apex:column >
+                                    <apex:facet name="header">Action</apex:facet>
+                                    <apex:commandLink action="{!deleteAcctachment}" value="Delete" onClick="return deleteConfirmation();" status="deleting">
+                                        <apex:param name="DelId" value="{!attachedFile.Id}" />
+                                    </apex:commandLink>
+                                </apex:column>
+
+                                <apex:column >
+                                    <apex:facet name="header">Title</apex:facet>
+                                    <apex:outputLink target="_top" value="/{!attachedFile.Id}" title="{!attachedFile.Name }">{!attachedFile.Name }</apex:outputLink>
+                                </apex:column>
+                                <apex:column >
+                                    <apex:facet name="header">Last Modified</apex:facet>
+                                    <apex:outputText value="{!attachedFile.LastModifiedDate}" />
+                                </apex:column>
+                                <apex:column >
+                                    <apex:facet name="header">Created By</apex:facet>
+                                    <apex:outputText value="{!attachedFile.CreatedBy.Name}" />
+                                </apex:column>
+                            </apex:pageBlockTable>
+                            <apex:outputPanel rendered="{!OR(showAllAttachment.size==0)}">
+                                <apex:outputText value="No records to display" />
+                            </apex:outputPanel>
+                        </apex:pageBlock>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

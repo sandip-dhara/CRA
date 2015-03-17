@@ -1,0 +1,343 @@
+<apex:page >
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+
+
+    <!-- BEGIN CONTAINER -->
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+  <div id="main-content"> 
+    <!-- BEGIN PAGE CONTAINER-->
+    <div class="container-fluid"> 
+      <!-- Tabs -->
+      <div class="row-fluid">
+        <div class="span12 mtop20"> 
+          <!--BEGIN TABS-->
+          <div class="tabbable custom-tab tabs-left"> 
+            <!-- Only required for left/right tabs -->
+            <ul class="nav nav-tabs tabs-left">
+              <li class="active"><a href="#tab_3_1" data-toggle="tab">Potential Risk</a></li>
+              <li><a href="#tab_3_2" data-toggle="tab">Business Impact</a></li>
+              <li><a href="#tab_3_3" data-toggle="tab">Root Cause</a></li>
+              <li><a href="#tab_3_4" data-toggle="tab">Process Control</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="tab_3_1">
+                <div class="BDheading_OL">
+                  <h2>Potential Risk</h2>
+                </div>
+                <div>
+                  <form class="form-horizontal">
+                    <div class="control-group">
+                      <label class="control-label">Project ID </label>
+                      <div class="controls"> 1234567 </div>
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label">Owner </label>
+                      <div class="controls">
+                        <input type="text" class="input-xxlarge" placeholder="anto.fernando" />
+                        <span class="help-inline"><a class="" data-toggle="modal" href="#model1">modelPopup</a></span>
+                        <div id="model1" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                          <div class="modal-header">
+                            <h3>Select Owner </h3>
+                          </div>
+                          <div class="modal-body">
+                            <p> </p>
+                          </div>
+                          <div class="modal-footer">
+                            <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                            <button class="btnAthena btn-primary">Save</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label">Potential Risk </label>
+                      <div class="controls">
+                        <textarea rows="3" class="input-xxlarge" ></textarea>
+                      </div>
+                    </div>
+                    <div class="form-actions">
+                      <button class="btnAthena pull-right" type="button"> Cancel</button>
+                      <button class="btnAthena btn-primary pull-right mr5" type="submit"> Save</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="tab-pane" id="tab_3_2">
+                <div class="BDheading_OL">
+                  <h2>Business Impact </h2>
+                  <button class="btnAthena btn-primary pull-right addNew" type="submit"> Add New</button>
+                </div>
+                <div>
+                  <table class="table table-striped table-bordered" id="SLP_1">
+                    <thead>
+                      <tr>
+                        <th>Description</th>
+                        <th>Severity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><textarea rows="3" class="input-xxlarge width98"></textarea></td>
+                        <td><input type="text" placeholder="anto.fernando" class="input-xxlarge width98" /></td>
+                      </tr>
+                      <tr>
+                        <td><textarea rows="3" class="input-xxlarge width98"></textarea></td>
+                        <td><input type="text" placeholder="anto.fernando" class="input-xxlarge width98" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- // DATATABLE - DTA -->
+                  <button class="btnAthena pull-right" type="button"> Cancel</button>
+                  <button class="btnAthena btn-primary pull-right mr5" type="submit"> Save</button>
+                </div>
+              </div>
+              <div class="tab-pane" id="tab_3_3">
+                <div class="BDheading_OL">
+                  <h2>Root Cause </h2>
+                  <button class="btnAthena btn-primary pull-right addNew" type="submit"> Add New</button>
+                </div>
+                <div>
+                  <table class="table table-striped table-bordered" id="SLP_2">
+                    <thead>
+                      <tr>
+                        <th>Description</th>
+                        <th>Occurance</th>
+                        <th>Business Impact</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><textarea rows="3" class="input-xxlarge width98"></textarea></td>
+                        <td><input type="text" placeholder="anto.fernando" class="input-xxlarge width98" /></td>
+                        <td><li>item1</li> <li>item2</li> <a class="" data-toggle="modal" href="#model2">Add</a>
+                          <div id="model2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                            <div class="modal-header">
+                              <h3>Board header image</h3>
+                            </div>
+                            <div class="modal-body">
+                              <div class="control-group">
+                                <label class="control-label">Select Experties</label>
+                                <div class="controls">
+                                  <table class="hpit_BVP_SealectBox BDbg span6">
+                                    <tbody>
+                                      <tr>
+                                        <td class="hpit_BVP_SealectBox_L">Available
+                                          <input class="SearchBox input-text" id="" onkeyup="SearchListBox()" type="text" />
+                                          <select class="span12" id="Select1" multiple="multiple" style="display:none;">
+                                          </select>
+                                          <select class="span12" id="Select2" multiple="multiple" style="height:250px">
+                                            <option value="" title="">AHMAD SYAFIQ JUAINI ROSTAM</option>
+                                            <option value="" title="">Brad Taylor</option>
+                                            <option value="" title="">Bryan Ray</option>
+                                          </select></td>
+                                        <td class="hpit_BVP_SealectBox_Btn" style="width:40px; padding:10px;">
+                                            <input alt="Move Right" class="btn btnAthena btn-primary btnAthenaPopP" id="Button1" style="width:38px" type="button" value=">" />
+                                          <input alt="Move Left" class="btn btnAthena btn-primary btnAthenaPopP" id="Button2" style="width:38px" type="button" value="<" />
+                                          <input alt="Move Right" class="btn btnAthena btn-primary btnAthenaPopP" id="Button3" style="width:38px" type="button" value=">>" />
+                                          <input alt="Move Left" class="btn btnAthena btn-primary btnAthenaPopP" id="Button4" style="width:38px" type="button" value="<<" /></td>
+                                        <td class="hpit_BVP_SealectBox_R">Selected
+                                          <input class="SearchBox input-text" id="Text1" onkeyup="SearchListBox()" type="text" />
+                                          <select class="span12" id="Select3" multiple="multiple" style="display:none;">
+                                          </select>
+                                          <select class="span12" id="Select4" multiple="multiple" style="height:250px">
+                                            <option value="" title="">Claude Villermain</option>
+                                            <option value="" title="">donal rafferty</option>
+                                            <option value="" title="">Murali krishna Chejerla</option>
+                                          </select></td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                              <button class="btnAthena btn-primary">Save</button>
+                            </div>
+                          </div></td>
+                      </tr>
+                      <tr>
+                        <td><textarea rows="3" class="input-xxlarge width98"></textarea></td>
+                        <td><input type="text" placeholder="anto.fernando" class="input-xxlarge width98" /></td>
+                        <td> <li>item1</li> <li>item2</li> <a class="" data-toggle="modal" href="#model3">Add</a>
+                          <div id="model3" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                            <div class="modal-header">
+                              <h3>Board header image</h3>
+                            </div>
+                            <div class="modal-body">
+                              <div class="control-group">
+                                <label class="control-label">Select Experties</label>
+                                <div class="controls">
+                                  <table class="hpit_BVP_SealectBox BDbg span6">
+                                    <tbody>
+                                      <tr>
+                                        <td class="hpit_BVP_SealectBox_L">Available
+                                          <input class="SearchBox input-text" id="Text2" onkeyup="SearchListBox()" type="text" />
+                                          <select class="span12" id="Select5" multiple="multiple" style="display:none;">
+                                          </select>
+                                          <select class="span12" id="Select6" multiple="multiple" style="height:250px">
+                                            <option value="" title="">AHMAD SYAFIQ JUAINI ROSTAM</option>
+                                            <option value="" title="">Brad Taylor</option>
+                                            <option value="" title="">Bryan Ray</option>
+                                          </select></td>
+                                        <td class="hpit_BVP_SealectBox_Btn" style="width:40px; padding:10px;">
+                                          <input alt="Move Right" class="btn btnAthena btn-primary btnAthenaPopP" id="Button5" style="width:38px" type="button" value=">" />
+                                          <input alt="Move Left" class="btn btnAthena btn-primary btnAthenaPopP" id="Button6" style="width:38px" type="button" value="<" />
+                                          <input alt="Move Right" class="btn btnAthena btn-primary btnAthenaPopP" id="Button7" style="width:38px" type="button" value=">>" />
+                                          <input alt="Move Left" class="btn btnAthena btn-primary btnAthenaPopP" id="Button8" style="width:38px" type="button" value="<<" /></td>
+                                        <td class="hpit_BVP_SealectBox_R">Selected
+                                          <input class="SearchBox input-text" id="Text3" onkeyup="SearchListBox()" type="text" />
+                                          <select class="span12" id="Select7" multiple="multiple" style="display:none;">
+                                          </select>
+                                          <select class="span12" id="Select8" multiple="multiple" style="height:250px">
+                                            <option value="" title="">Claude Villermain</option>
+                                            <option value="" title="">donal rafferty</option>
+                                            <option value="" title="">Murali krishna Chejerla</option>
+                                          </select></td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                              <button class="btnAthena btn-primary">Save</button>
+                            </div>
+                          </div></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- // DATATABLE - DTA -->
+                  <button class="btnAthena pull-right" type="button"> Cancel</button>
+                  <button class="btnAthena btn-primary pull-right mr5" type="submit"> Save</button>
+                </div>
+              </div>
+              <div class="tab-pane" id="tab_3_4">
+                <div class="BDheading_OL">
+                  <h2>Process Control </h2>
+                  <button class="btnAthena btn-primary pull-right addNew" type="submit"> Add New</button>
+                </div>
+                <div>
+                  <table class="table table-striped table-bordered" id="SLP_3">
+                    <thead>
+                      <tr>
+                        <th>Description</th>
+                        <th>Detection</th>
+                        <th>Root Cause</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><textarea rows="3" class="input-xxlarge width98"></textarea></td>
+                        <td><input type="text" placeholder="anto.fernando" class="input-xxlarge width98" /></td>
+                        <td><select tabindex="1" class="input-large m-wrap width98 ">
+                            <option value="Category 1">Category 1</option>
+                            <option value="Category 2">Category 2</option>
+                            <option value="Category 3">Category 5</option>
+                            <option value="Category 4">Category 4</option>
+                          </select></td>
+                      </tr>
+                      <tr>
+                        <td><textarea rows="3" class="input-xxlarge width98"></textarea></td>
+                        <td><input type="text" placeholder="anto.fernando" class="input-xxlarge width98" /></td>
+                        <td><select tabindex="1" class="input-large m-wrap width98 ">
+                            <option value="Category 1">Category 1</option>
+                            <option value="Category 2">Category 2</option>
+                            <option value="Category 3">Category 5</option>
+                            <option value="Category 4">Category 4</option>
+                          </select></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- // DATATABLE - DTA -->
+                  
+                  <button class="btnAthena pull-right" type="button"> Cancel</button>
+                  <button class="btnAthena btn-primary pull-right mr5" type="submit"> Save</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--END TABS--> 
+          
+        </div>
+      </div>
+      
+      <!-- END PAGE CONTENT--> 
+    </div>
+    <!-- END PAGE CONTAINER--> 
+  </div>
+  <!-- END PAGE --> 
+</div>
+<!-- END CONTAINER --> 
+
+
+
+   <!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DataTableColumnFilter.js')}"/>
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+<!-- END JAVASCRIPTS --> 
+<script>
+    $(document).ready(function () {
+
+
+        // DATATABLE SLP_1
+        // -------------------------------------------------------------------------------- * -->
+
+        $('#SLP_1').dataTable({
+            "sDom": "",
+            "bFilter": false,
+            "bPaginate": false,
+            "bLengthChange": false,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }]
+        });
+
+        $('#SLP_2').dataTable({
+            "sDom": "",
+            "bFilter": false,
+            "bPaginate": false,
+            "bLengthChange": false,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }]
+        });
+
+        $('#SLP_3').dataTable({
+            "sDom": "",
+            "bFilter": false,
+            "bPaginate": false,
+            "bLengthChange": false,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }]
+        });
+
+
+    })
+    </script>
+
+</apex:page>

@@ -1,0 +1,380 @@
+<apex:page controller="SLP_AddCommunityMember" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+ <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">    
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+<meta charset="utf-8" />
+<title>Social Learning</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<meta content="" name="description" />
+<meta content="" name="author" />
+
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            debugger
+            var CommunityId = $('[id$=CommunityDrpDwn]').val();
+
+            if (CommunityId != "") {
+                Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.SLP_AddCommunityMember.GetSLPUsersByCommunity}',
+              CommunityId,
+              BindAvailableMembers);
+
+                Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.SLP_AddCommunityMember.GetSLPContributorsByCommunity}',
+                  CommunityId,
+                  BindSelectedMembers);
+            }
+            else {
+                $('#users_Left').empty();
+                $('#users_Right').empty();
+            }
+
+            $("#UsersMoveRight,#UsersMoveLeft").unbind().bind("click", function (event) {
+                debugger
+                var id = $(event.target).attr("id");
+                var selectFrom = id == "UsersMoveRight" ? "#users_Left" : "#users_Right";
+                var moveTo = id == "UsersMoveRight" ? "#users_Right" : "#users_Left";
+                MoveListBox(selectFrom, moveTo);
+                if (selectFrom == "#users_Left") {
+                    $("#searchtext_Usersleft").val("");
+                    $("#searchtext_Usersleft").trigger("keyup");
+                }
+                else {
+                    $("#searchtext_Usersright").val("");
+                    $("#searchtext_Usersright").trigger("keyup");
+                }
+            });
+
+            $("#UsersMoveAllRight,#UsersMoveAllLeft").unbind().bind("click", function (event) {
+                var id = $(event.target).attr("id");
+                var selectFrom = id == "UsersMoveAllRight" ? "#users_Left" : "#users_Right";
+                var moveTo = id == "UsersMoveAllRight" ? "#users_Right" : "#users_Left";
+                MoveAllListBox(selectFrom, moveTo);
+            });
+
+        });
+
+        function LoadUsersByCommunity(data) {
+            debugger
+            var CommunityId = $('[id$=CommunityDrpDwn]').val();
+
+            if (CommunityId != "") {
+
+                Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.SLP_AddCommunityMember.GetSLPUsersByCommunity}',
+                  CommunityId,
+                  BindAvailableMembers
+              );
+
+                Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.SLP_AddCommunityMember.GetSLPContributorsByCommunity}',
+                  CommunityId,
+                  BindSelectedMembers
+              );
+            }
+            else {
+                $('#users_Left').empty();
+                $('#users_Right').empty();
+            }
+        }
+
+        function BindAvailableMembers(result, event) {
+            debugger
+
+            $('#users_Left').empty();
+
+            var output = [];
+            $.each(result, function (key, e) {
+                output.push('<option value="' + e.Id + '" title="' + e.Name + '">' + e.Name + '</option>');
+            });
+            $('#users_Left').append(output.join(""));
+        }
+
+        function BindSelectedMembers(result, event) {
+            debugger
+
+            $('#users_Right').empty();
+
+            var output = [];
+            $.each(result, function (key, e) {
+                debugger
+                output.push('<option value="' + e.Id + '" title="' + e.Name + '">' + e.Name + '</option>');
+            });
+            $('#users_Right').append(output.join(""));
+        }
+
+        function MoveListBox(selectFrom, moveTo) {
+            debugger
+            var selectedItems = $(selectFrom).find("option:selected").clone();
+            if (selectedItems.length > 0) {
+                $('span.error-keyup-2').remove();
+                $(moveTo).append(selectedItems);
+                $(selectFrom).find("option:selected").remove();
+                Sort(moveTo);
+                Sort(selectFrom);
+            }
+            else {
+                $('span.error-keyup-2').remove();
+                $(selectFrom).after("<span class='error error-keyup-2' style='color:red;'>Please Select at least one user</span>");
+            }
+        }
+
+        function MoveAllListBox(selectFrom, moveTo) {
+            $('span.error-keyup-2').remove();
+            var selectedItems = $(selectFrom).find("option");
+            var output = [];
+            $.each(selectedItems, function (key, e) {
+                output.push('<option value="' + e.value + '" title="' + e.text + '">' + e.text + '</option>');
+            });
+            $(moveTo).append(output.join(""));
+            selectedItems.remove();
+            Sort(moveTo);
+        }
+
+        function SearchListBox(TextBox, MainListBox, HdnListBox, SecondListBox) {
+            $("#" + TextBox).css({ "background-image": "url(../Content/img/loader.gif)", "background-position": "right", "background-repeat": "no-repeat", "background-size": "contain" });
+            var textbox = $("#" + TextBox).val();
+            var listbox = $('#' + MainListBox).find("option");
+            var hdnlist = $('#' + HdnListBox).find("option");
+            if (textbox == "") {
+                $("#" + TextBox).css({ "background-image": "none" });
+            }
+            var resultMarkup = "";
+            if (listbox.length != hdnlist.length) {
+
+                $.each(hdnlist, function (indexA, valueA) {
+                    $.each($('#' + SecondListBox).find("option"), function (indexB, valueB) {
+
+                        if (valueA.value == valueB.value) {
+                            valueA.selected = "selected";
+                        }
+                    });
+                });
+                $('#' + HdnListBox).find("option:selected").remove();
+            }
+
+            if (listbox.length > hdnlist.length || (listbox.length < hdnlist.length && $('#' + HdnListBox).find("option").length == 0)) {
+                $('#' + HdnListBox).empty();
+                $.each($('#' + MainListBox).find("option"), function (index, e) {
+                    resultMarkup += '<option value="' + e.value + '">' + e.text + '</option>';
+                });
+                $('#' + HdnListBox).html(resultMarkup);
+            }
+
+            resultMarkup = "";
+            var Items = $('#' + HdnListBox).find("option");
+            for (var childIndex = 0; childIndex < Items.length; childIndex++) {
+
+                if (Items[childIndex].text.toLowerCase().indexOf(textbox.toLowerCase()) == 0 || Items[childIndex].text.toLowerCase().indexOf(textbox.toLowerCase()) > -1) {
+                    resultMarkup += '<option value="' + Items[childIndex].value + '">' + Items[childIndex].text + '</option>';
+                }
+            }
+            $('#' + MainListBox).empty();
+            $('#' + MainListBox).html(resultMarkup);
+            if (resultMarkup == "") {
+                $("#" + TextBox).css({ "background-image": "none" });
+            }
+            setTimeout(function () { $("#" + TextBox).css({ "background-image": "none" }); }, 300);
+        }
+
+        function SaveOrUpdateMembers(data) {
+            debugger
+            var strValue = '';
+            $("#users_Right > option").each(function () {
+                if (strValue == '') {
+                    strValue = $(this).val();
+                }
+                else {
+                    strValue = strValue + ',' + $(this).val();
+                }
+            });
+
+            $('[id$=txtUserMemberIds]').val(strValue);
+        }
+
+        function OpenPoppup() {
+
+            $("#divHtml").load("http://stackoverflow.com/questions/21640449/how-to-open-an-external-html-page-as-a-popup-in-jquery-mobile");
+
+            $('#VideoPopUp').modal('show');
+        }
+    </script>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+<!-- BEGIN HEADER -->
+<header>
+<apex:form id="DataForm">
+<!--<apex:inputhidden id="AvailableExperts" value="{!GetAvailableExperts}"/>
+<apex:inputhidden id="Users" value="{!GetUsers}"/>-->
+</apex:form>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container-fluid"> <a class="HpLogo"> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/></a>
+        <div class="nav mtop10">
+          <h1>Social Learning Platform</h1>
+          <h3>Learning on your terms</h3>
+        </div>
+        <ul class="nav pull-right top-menu mtop16">
+          <!-- BEGIN USER LOGIN DROPDOWN -->
+          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span><apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_username.jpg')}" styleClass="userImage" alt="no_username"/></span> 
+            <!--<b class="caret"></b>--> 
+            </a>
+            <ul class="dropdown-menu extended logout">
+              <li><a href="#">Log Out</a></li>
+            </ul>
+          </li>
+          <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+        <c:SLP_SearchCustomComponent ></c:SLP_SearchCustomComponent>
+      </div>
+    </div>
+  </div>
+  <div class="navbar">
+    <div class="navbar-inner">
+            <div class="container-fluid menunavBar"> <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Home"></a>
+        <apex:OutputPanel rendered="{!IsLearningBoardCreator}"> 
+            <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus"></span></a> 
+            <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/SLP_createcommunity" title="Create Community"><span class="icon-plus NaviconPlus"></span></a>
+        </apex:OutputPanel>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- END HEADER --> 
+  
+<!-- BEGIN CONTAINER -->
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+  <div id="main-content">
+    <div class="BDheading">
+      <h2>Community Contributors</h2>
+    </div>
+    <div class="alert alert-error span4 pull-left mr30" style="display:none" id="err_msg">
+       </div>
+    <!-- BEGIN PAGE CONTAINER-->
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span12 mtop20">
+          <apex:form styleClass="form-horizontal" id="UserProfileForm">
+            
+            <div class="control-group">
+              <label class="control-label">Community</label>
+              <div class="controls">
+                <apex:selectList multiselect="false" size="1" value="{!CommunityId}" id="CommunityDrpDwn" onchange="LoadUsersByCommunity(this)" required="true">
+                   <apex:selectOptions value="{!communityItemsList}" ></apex:selectOptions>
+                </apex:selectList>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Select Users</label>
+              <div class="controls">
+
+                  <div style="display:none">
+                    <apex:inputText id="txtUserMemberIds"  value="{!UserMemberId}"></apex:inputText>
+                  </div>
+
+                <table class="hpit_BVP_SealectBox BDbg span6">
+                <tr>
+                    <td class="hpit_BVP_SealectBox_L">Available
+                        <input type="text" id="searchtext_Usersleft" class="SearchBox input-text" onkeyup='SearchListBox("searchtext_Usersleft", "users_Left", "HdnUsers_Left", "users_Right")' />
+                        <select id="HdnUsers_Left" multiple="multiple" class="span12" style="display:none;">
+                        </select>
+                        <select id="users_Left" multiple="multiple" class="span12" style="height:250px">
+                        </select>
+                    </td>
+                    <td class="hpit_BVP_SealectBox_Btn" style="width:40px; padding:10px;">
+
+                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="UsersMoveRight" value=">" alt="Move Right" />
+                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="UsersMoveLeft" value="<" alt="Move Left" />
+                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px; display:none" id="UsersMoveAllRight" value=">>" alt="Move Right" />
+                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px; display:none" id="UsersMoveAllLeft" value="<<" alt="Move Left" />
+
+                    </td>
+                    <td class="hpit_BVP_SealectBox_R">Selected
+                                                                                    
+                        <input type="text" id="searchtext_Usersright" class="SearchBox input-text" onkeyup='SearchListBox("searchtext_Usersright", "users_Right", "HdnUsers_Right", "users_Left")' />
+                                                                        
+                        <select id="HdnUsers_Right" multiple="multiple" class="span12" style="display:none;"></select>
+                        <select id="users_Right" multiple="multiple" class="span12" style="height:250px"></select>
+
+                    </td>
+                </tr>
+            </table>
+
+              </div>
+            </div>
+            
+            <input type="button" value="Click Me!" onclick="OpenPoppup();"/>
+            
+            <div class="form-actions">
+                <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!SaveOrUpdateMembers}" onclick="SaveOrUpdateMembers(this)" value="Save" id="btnSaveMembers"/>
+                <br /><br />
+               <!-- <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!SendMail}" value="Send Mail In Progress ..." id="btnSendMail"/> -->
+                <a class="btnAthena btn-primary" data-dismiss="modal" aria-hidden="true" id="lnkRedirect" style="display:none;" href="https://{!getSfInstance}/apex/SLP_UserRoleAndExpertiseMapping"></a>
+            </div>
+          </apex:form>
+
+
+            <div id="VideoPopUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+            <div class="modal-header">
+                <h3 id="videoHeading"></h3>
+            </div>
+            <div class="modal-body">
+                <div id="divHtml"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            </div>
+       </div>
+
+
+        </div>
+      </div>
+      <!-- END PAGE CONTENT--> 
+    </div>
+    <!-- END PAGE CONTAINER--> 
+  </div>
+  <!-- END PAGE --> 
+</div>
+<!-- END CONTAINER --> 
+
+<!-- BEGIN FOOTER -->
+<div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+<!-- END FOOTER --> 
+
+<!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>    
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+
+    <!-- END JAVASCRIPTS -->  
+
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

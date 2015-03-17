@@ -1,0 +1,54 @@
+<apex:page standardController="Opportunity" extensions="NotificationtoSalesTeamController">
+<apex:form id="formId">
+<apex:pageblock title="Sales Team Request notifications" id="PBlockId">
+    <apex:pageBlockTable title="Sales Team Request notifications"  value="{!listSalesTeam}" var="ST" id="PBlockTableId">
+        <apex:column width="9%" style="text-align: left;" headerValue="Actions"> 
+                   <!--<apex:commandLink styleClass="actionLink" title="Edit" value="Edit" id="EditId" onclick="EnableFields('{!$Component.EditId}');">
+                   </apex:commandLink>
+                   &nbsp;|&nbsp;-->
+                   <apex:commandLink styleClass="actionLink" title="Accept" action="{!SaveAccept}" value="Accept" id="AcceptId">                                                 
+                   <apex:param name="Record" assignTo="{!STRecordId}" value="{!ST.Id}"/>
+                   </apex:commandLink> 
+                   &nbsp;|&nbsp;     
+                   <apex:commandLink styleClass="actionLink" title="Reject" action="{!SaveReject}" value="Reject" id="RejectId">
+                   <apex:param name="Record" assignTo="{!STRecordId}" value="{!ST.Id}"/>
+                   </apex:commandLink>  
+                </apex:column>
+        <apex:column width="20%">
+            <apex:facet name="header">Opportunity</apex:facet>
+                <apex:outputField value="{!ST.Opportunity__c}" id="OptyId"/>
+        </apex:Column>
+        <!--<apex:column >
+            <apex:facet name="header">Account</apex:facet>
+                <apex:outputField value="{!ST.Account__c}" id="AccId"/>
+        </apex:Column>-->
+        <apex:column >
+        <apex:facet name="header">Requested User</apex:facet> 
+        <apex:outputField value="{!ST.RequestedUser__c}" id="UserId"/>
+        </apex:column>
+        <apex:column width="5" >
+            <apex:facet name="header">Permission</apex:facet>  
+                <apex:inputField value="{!ST.Permission__c}" id="PerId"/>
+        </apex:Column>
+        <apex:column width="5px">
+            <apex:facet name="header">Team Role</apex:facet>  
+                <apex:inputField value="{!ST.Opportunity_Team_role__c}" id="RoleId"/>
+         </apex:Column>
+        <apex:column >
+            <apex:facet name="header">Status</apex:facet>  
+                <apex:outputField value="{!ST.Status__c}"/>
+        </apex:Column>
+          <apex:column >
+            <apex:facet name="header">Comments</apex:facet>  
+                <apex:inputField value="{!ST.Comments__c}" id="comId"/>
+         </apex:Column>    
+    </apex:pageBlockTable>
+</apex:pageblock>
+<script>
+function EnableFields(editlink){
+var eLink = editlink;
+alert('This is edit'+eLink);
+}
+</script>
+</apex:form>
+</apex:page>

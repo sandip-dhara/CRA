@@ -1,0 +1,538 @@
+<!--*****************************************
+Author: Venkatesh S
+Date: 29-03-2013
+Capability: OM Deal Governance
+Description:  Page for coodinator change approvers.
+
+*****************************************-->
+
+<apex:page standardController="Approval__c" id="Approvers" >
+
+<apex:form Id="ApproverForm" onsubmit="return CheckApprovers()">
+
+<style>
+.body
+{
+font-family:sans-serif;
+color:#4a4a56;
+width:160px;
+font-weight:bold;
+font-size: 91%;
+}
+Arial,Helvetica,sans-serif
+</style>
+
+<apex:pageMessages />
+    <apex:pageBlock title="Change Approvers" id="Approverblock" >
+        <apex:inputhidden value="{!Approval__c.Current_Approval_Level__c}" />
+        
+           <apex:pageblockSection title="Level1" columns="2" id="Level1">     
+          
+            <!--Level 1 Approval Fields--> 
+            <apex:OutputField Label="Skip Level 1" value="{!Approval__c.Skip_Approver_Level_1__c}"/>
+             <apex:OutputLabel value="" styleclass="body"/>
+              <apex:OutputField value="{!Approval__c.Approver1__c}" id="Approver1-Read"  />
+             <apex:OutputField label="Queue 1 " value="{!Approval__c.Queue_Level_1__c}"/>
+             <apex:OutputField value="{!Approval__c.Approver2__c}" id="Approver2-Read"  />
+             <apex:OutputField label="Queue 2 " value="{!Approval__c.Queue_Level_2__c}"/>
+             
+              <apex:OutputField value="{!Approval__c.Approver3__c}" id="Approver3-Read"  />
+             <apex:OutputField label="Queue 3 " value="{!Approval__c.Queue_Level_3__c}"/>
+             <apex:OutputField value="{!Approval__c.Approver4__c}" id="Approver4-Read"  />
+             <apex:OutputField label="Queue 4 " value="{!Approval__c.Queue_Level_4__c}"/>
+            
+          </apex:pageblockSection>
+          
+          
+          
+            <!--Level 2 Approval Fields--> 
+            
+          <apex:pageblockSection title="Level2" columns="2" id="Level2">  
+            <apex:inputField Label="Skip Level 2" value="{!Approval__c.Skip_Approver_Level_2__c}" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            <apex:OutputField Label="Skip Level 2" value="{!Approval__c.Skip_Approver_Level_2__c}" rendered="{!Approval__c.Current_Approval_Level__c >= 2}"/>
+            <apex:OutputLabel value="" styleclass="body"/>
+          
+            <apex:inputField label="Approver 1 " value="{!Approval__c.approver5__c}" id="Approver21" onchange="BlankoutQueue('ApproverQueue21','Approver21');" rendered="{!Approval__c.Current_Approval_Level__c < 2 }"/>
+            <apex:outputField label="Approver 1 " value="{!Approval__c.approver5__c}" id="Approver21-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 2 }"/>
+            <apex:outputPanel >
+            <apex:OutputLabel value="Queue 1 " styleclass="body"/>
+            <apex:inputField value="{!Approval__c.Queue_Level_5__c}" Id="ApproverQueue21" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_5__c}" Id="ApproverQueue21-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 2}" />
+            <a href="#" id="link21" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue21','Approver21')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            </a>
+            </apex:outputPanel>
+            
+            <apex:inputField label="Approver 2 " value="{!Approval__c.Approver6__c}" id="Approver22" onchange="BlankoutQueue('ApproverQueue22','Approver22');" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            <apex:outputField label="Approver 2 " value="{!Approval__c.Approver6__c}" id="Approver22-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 2 }"/>
+            <apex:outputPanel >
+            <apex:OutputLabel value="Queue 2  " styleclass="body"/>
+            <apex:inputField value="{!Approval__c.Queue_Level_6__c}" Id="ApproverQueue22" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            <apex:outputField value="{!Approval__c.Queue_Level_6__c}" Id="ApproverQueue22-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 2}"/>
+            <a href="#" id="link22" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue22','Approver22')">
+             <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            </a>
+            </apex:outputPanel>
+            
+            <apex:inputField label="Approver 3 " value="{!Approval__c.Approver7__c}" id="Approver23" onchange="BlankoutQueue('ApproverQueue23','Approver23');" rendered="{!Approval__c.Current_Approval_Level__c < 2 }"/>
+            <apex:outputField label="Approver 3 " value="{!Approval__c.Approver7__c}" id="Approver23-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 2 }"/>
+            <apex:outputPanel >
+            <apex:OutputLabel value="Queue 3 " styleclass="body"/>
+            <apex:inputField value="{!Approval__c.Queue_Level_7__c}" Id="ApproverQueue23" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            <apex:outputField value="{!Approval__c.Queue_Level_7__c}" Id="ApproverQueue23-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 2}"/>
+            <a href="#" id="link23" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue23','Approver23')">
+             <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            </a>
+            </apex:outputPanel>
+            <apex:inputField label="Approver 4 " value="{!Approval__c.Approver8__c}" id="Approver24" onchange="BlankoutQueue('ApproverQueue24','Approver24');" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            <apex:outputField label="Approver 4 " value="{!Approval__c.Approver8__c}" id="Approver24-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 2 }"/>
+            <apex:outputPanel >
+            <apex:OutputLabel value="Queue 4 " styleclass="body"/>
+            <apex:inputField value="{!Approval__c.Queue_Level_8__c}" Id="ApproverQueue24" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            <apex:outputField value="{!Approval__c.Queue_Level_8__c}" Id="ApproverQueue24-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 2}"/>
+            <a href="#" id="link24" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue24','Approver24')">
+             <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 2}"/>
+            </a>
+             </apex:outputPanel>
+             
+          </apex:pageblockSection>  
+          
+           <!--Level 3 Approval Fields-->
+          <apex:pageblockSection title="Level3" columns="2" id="Level3"> 
+           <apex:inputField Label="Skip Level 3" value="{!Approval__c.Skip_Approver_Level_3__c}" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+           <apex:OutputField Label="Skip Level 3" value="{!Approval__c.Skip_Approver_Level_3__c}" rendered="{!Approval__c.Current_Approval_Level__c >= 3}"/>
+           <apex:OutputLabel value="" styleclass="body"/>
+           <apex:inputField label="Approver 1 " value="{!Approval__c.Approver9__c}" id="Approver31" onchange="BlankoutQueue('ApproverQueue31','Approver31');" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+           <apex:outputField label="Approver 1 " value="{!Approval__c.Approver9__c}" id="Approver31-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 3 }"/>
+           <apex:outputpanel >
+            <apex:OutputLabel value="Queue 1  " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_9__c}" Id="ApproverQueue31" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_9__c}" Id="ApproverQueue31-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 3}" />
+             <a href="#" id="link31" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue31','Approver31')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            </a>
+            </apex:outputpanel>
+            
+            <apex:inputField label="Approver 2 " value="{!Approval__c.Approver10__c}" id="Approver32" onchange="BlankoutQueue('ApproverQueue32','Approver32');" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/> 
+            <apex:outputField label="Approver 2 " value="{!Approval__c.Approver10__c}" id="Approver32-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 3}"/>
+            <apex:outputpanel >
+            <apex:OutputLabel value="Queue 2  " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_10__c}" Id="ApproverQueue32" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            <apex:outputField value="{!Approval__c.Queue_Level_10__c}" Id="ApproverQueue32-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 3}"/>
+            <a href="#" id="link32" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue32','Approver32')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            </a>
+            </apex:outputpanel>
+            
+            <apex:inputField label="Approver 3 " value="{!Approval__c.Approver11__c}" id="Approver33" onchange="BlankoutQueue('ApproverQueue33','Approver33');" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            <apex:outputField label="Approver 3 " value="{!Approval__c.Approver11__c}" id="Approver33-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 3}"/>
+            <apex:outputpanel >
+            <apex:OutputLabel value="Queue 3 " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_11__c}" Id="ApproverQueue33" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            <apex:outputField value="{!Approval__c.Queue_Level_11__c}" Id="ApproverQueue33-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 3}"/>
+            <a href="#" id="link33" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue33','Approver33')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            </a>
+            </apex:outputpanel>
+            
+            <apex:inputField label="Approver 4 " value="{!Approval__c.Approver12__c}" id="Approver34" onchange="BlankoutQueue('ApproverQueue34','Approver34');" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            <apex:outputField label="Approver 4 " value="{!Approval__c.Approver12__c}" id="Approver34-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 3}"/>          
+            <apex:outputpanel >
+            <apex:OutputLabel value="Queue 4 " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_12__c}" Id="ApproverQueue34" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            <apex:outputField value="{!Approval__c.Queue_Level_12__c}" Id="ApproverQueue34-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 3}"/>
+            <a href="#" id="link34" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue34','Approver34')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 3}"/>
+            </a>
+            </apex:outputpanel>
+       </apex:pageblockSection>  
+       
+         
+          <!--Level 4 Approval Fields-->
+          <apex:pageblockSection title="Level4" columns="2" id="Level4">           
+          <apex:inputField Label="Skip Level 4" value="{!Approval__c.Skip_Approver_Level_4__c}" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+           <apex:OutputLabel value="" styleclass="body"/>
+            <apex:inputField label="Approver 1 " value="{!Approval__c.Approver13__c}" id="Approver41" onchange="BlankoutQueue('ApproverQueue41','Approver41');" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+             <apex:outputField label="Approver 1 " value="{!Approval__c.Approver13__c}" id="Approver41-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 4}"/>         
+          <apex:outputpanel >
+            <apex:OutputLabel value="Queue 1  " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_13__c}" Id="ApproverQueue41" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_13__c}" Id="ApproverQueue41-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 4}" />
+            <a href="#" id="link41" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue41','Approver41')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            </a>
+            </apex:outputpanel>
+            
+             <apex:inputField label="Approver 2 " value="{!Approval__c.Approver14__c}" id="Approver42" onchange="BlankoutQueue('ApproverQueue42','Approver42');" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+             <apex:outputField label="Approver 2 " value="{!Approval__c.Approver14__c}" id="Approver42-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 4}"/>         
+            <apex:outputpanel >
+            <apex:OutputLabel value="Queue 2  " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_14__c}" Id="ApproverQueue42" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_14__c}" Id="ApproverQueue42-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 4}" />
+            <a href="#" id="link42" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue42','Approver42')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            </a>
+            </apex:outputpanel>
+            
+            <apex:inputField label="Approver 3 " value="{!Approval__c.Approver15__c}" id="Approver43" onchange="BlankoutQueue('ApproverQueue43','Approver43');" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            <apex:outputField label="Approver 3 " value="{!Approval__c.Approver15__c}" id="Approver43-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 4}"/>          
+            <apex:outputpanel >
+            <apex:OutputLabel value="Queue 3  " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_15__c}" Id="ApproverQueue43" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_15__c}" Id="ApproverQueue43-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 4}" />
+            <a href="#" id="link43" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue43','Approver43')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            </a>
+            </apex:outputpanel>
+            
+            <apex:inputField label="Approver 4 " value="{!Approval__c.Approver16__c}" id="Approver44" onchange="BlankoutQueue('ApproverQueue44','Approver44');" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            <apex:outputField label="Approver 4 " value="{!Approval__c.Approver16__c}" id="Approver44-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 4}"/>          
+            <apex:outputpanel >
+            <apex:OutputLabel value="Queue 4  " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_16__c}" Id="ApproverQueue44" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_16__c}" Id="ApproverQueue44-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 4}" />
+            <a href="#" id="link44" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue44','Approver44')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 4}"/>
+            </a>
+            </apex:outputpanel>
+            
+            
+           
+           </apex:pageblockSection>  
+         
+         <!--Level 5 Approval Fields-->
+          <apex:pageblockSection title="Level5" columns="2" id="Level5">  
+            <apex:inputField Label="Skip Level 5" value="{!Approval__c.Skip_Approver_Level_5__c}" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+             <apex:OutputLabel value="" styleclass="body"/>
+            <apex:inputField label="Approver 1 " value="{!Approval__c.Approver17__c}" id="Approver51" onchange="BlankoutQueue('ApproverQueue51','Approver51');" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            <apex:outputField label="Approver 1 " value="{!Approval__c.Approver17__c}" id="Approver51-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 5}"/>          
+            <apex:outputpanel >
+            <apex:OutputLabel value="Queue 1 " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_17__c}" Id="ApproverQueue51" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_17__c}" Id="ApproverQueue51-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 5}" />
+            <a href="#" id="link51" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue51','Approver51')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            </a>
+            </apex:outputpanel>
+            
+             <apex:inputField label="Approver 2 " value="{!Approval__c.Approver18__c}" id="Approver52" onchange="BlankoutQueue('ApproverQueue52','Approver52');" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+             <apex:outputField label="Approver 2 " value="{!Approval__c.Approver18__c}" id="Approver52-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 5}"/>         
+               <apex:outputpanel >
+            <apex:OutputLabel value="Queue 1 " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_18__c}" Id="ApproverQueue52" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_18__c}" Id="ApproverQueue52-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 5}" />
+            <a href="#" id="link52" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue52','Approver52')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            </a>
+            </apex:outputpanel>
+            
+             <apex:inputField label="Approver 3 " value="{!Approval__c.Approver19__c}" id="Approver53" onchange="BlankoutQueue('ApproverQueue53','Approver53');" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+             <apex:outputField label="Approver 3 " value="{!Approval__c.Approver19__c}" id="Approver53-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 5}"/>         
+               <apex:outputpanel >
+            <apex:OutputLabel value="Queue 3 " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_19__c}" Id="ApproverQueue53" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_19__c}" Id="ApproverQueue53-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 5}" />
+            <a href="#" id="link53" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue53','Approver53')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            </a>
+            </apex:outputpanel>
+            
+            <apex:inputField label="Approver 4 " value="{!Approval__c.Approver20__c}" id="Approver54" onchange="BlankoutQueue('ApproverQueue54','Approver54');" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+             <apex:outputField label="Approver 4 " value="{!Approval__c.Approver20__c}" id="Approver54-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 5}"/>         
+               <apex:outputpanel >
+            <apex:OutputLabel value="Queue 4 " styleclass="body"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField value="{!Approval__c.Queue_Level_20__c}" Id="ApproverQueue54" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            <apex:OutputField value="{!Approval__c.Queue_Level_20__c}" Id="ApproverQueue54-Read" rendered="{!Approval__c.Current_Approval_Level__c >= 5}" />
+            <a href="#" id="link53" title="Queue" tabindex="6"  onclick="OpenQueueLookup('ApproverQueue54','Approver54')">
+            <apex:image styleclass="lookupIcon" title="Queue" alt="Queue" url="/s.gif" style="vertical-align:bottom" rendered="{!Approval__c.Current_Approval_Level__c < 5}"/>
+            </a>
+            </apex:outputpanel>
+            
+        </apex:pageblockSection>  
+    
+         <apex:pageBlockButtons >
+          <!--<apex:commandButton value="Unlock Record"  title="unlock" onclick="if ((Modal.confirm && Modal.confirm('Are you sure?')) || (!Modal.confirm && window.confirm('Are you sure?'))) navigateToUrl('/_ui/core/entitylock/LockHandler?id='+{!Approval__c.id}+'&un=1','DETAIL','unlock');"/>-->
+          <apex:commandButton value="Save" action="{!save}" />
+          <apex:commandButton value="Cancel" action="{!Cancel}"/>
+          </apex:pageBlockButtons>
+          </apex:pageBlock>
+         <script>
+          DuplicateApprovers(); 
+          function DuplicateApprovers()
+            {
+               var pl1 = document.getElementById('Approvers:ApproverForm:Approverblock:Level1:Approver1-Read').childNodes;
+                pval1 = pl1 [0].innerHTML;
+                if(pval1 !=''){
+                    HideReadApprovers('Level1',pval1 ,'Approver2-Read','Approver3-Read','Approver4-Read');
+                }
+               if(document.getElementById('Approvers:ApproverForm:Approverblock:Level2:Approver21-Read')!=null)
+               {
+                    var pl2 = document.getElementById('Approvers:ApproverForm:Approverblock:Level2:Approver21-Read').childNodes;
+                    pval2 = pl2 [0].innerHTML;
+                    if(pval2 !=''){
+                        HideReadApprovers('Level2',pval2 ,'Approver22-Read','Approver23-Read','Approver24-Read');
+                    }
+               }
+               if(document.getElementById('Approvers:ApproverForm:Approverblock:Level3:Approver31-Read')!=null)
+               {
+                    var pl3 = document.getElementById('Approvers:ApproverForm:Approverblock:Level3:Approver31-Read').childNodes;
+                    pval3 = pl3 [0].innerHTML;
+                    if(pval3 !=''){
+                        HideReadApprovers('Level3',pval3 ,'Approver32-Read','Approver33-Read','Approver34-Read');
+                    }
+                }
+                if(document.getElementById('Approvers:ApproverForm:Approverblock:Level4:Approver41-Read')!=null)
+               {
+                    var pl4 = document.getElementById('Approvers:ApproverForm:Approverblock:Level4:Approver41-Read').childNodes;
+                    pval4 = pl4 [0].innerHTML;
+                    if(pval4 !=''){
+                        HideReadApprovers('Level4',pval4 ,'Approver42-Read','Approver43-Read','Approver44-Read');
+                    }
+                }
+                if(document.getElementById('Approvers:ApproverForm:Approverblock:Level5:Approver51-Read')!=null)
+               {
+                    var pl5 = document.getElementById('Approvers:ApproverForm:Approverblock:Level5:Approver51-Read').childNodes;
+                    pval5 = pl5 [0].innerHTML;
+                    if(pval5 !=''){
+                        HideReadApprovers('Level5',pval5 ,'Approver52-Read','Approver53-Read','Approver54-Read');
+                    }
+                }
+               if(document.getElementById('Approvers:ApproverForm:Approverblock:Level2:Approver21')!= null)
+                {
+                    HideApprovers('Level2','Approver21','Approver22','Approver23','Approver24');
+                }
+                 if(document.getElementById('Approvers:ApproverForm:Approverblock:Level3:Approver31')!= null)
+                {
+                    HideApprovers('Level3','Approver31','Approver32','Approver33','Approver34');
+                }
+                 if(document.getElementById('Approvers:ApproverForm:Approverblock:Level4:Approver41')!= null)
+                {
+                    HideApprovers('Level4','Approver41','Approver42','Approver43','Approver44');
+                }
+                 if(document.getElementById('Approvers:ApproverForm:Approverblock:Level5:Approver51')!= null)
+                {
+                    HideApprovers('Level5','Approver51','Approver52','Approver53','Approver54');
+                }
+              }
+            
+            function HideApprovers(Level,SelectedApproverId,OtherApprover1,OtherApprover2,OtherApprover3)
+            {
+                
+                if(document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+SelectedApproverId).value != '')
+                {
+                    SelectedValue=  document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+SelectedApproverId).value;
+                     if(document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover1).value == SelectedValue)
+                     {
+                         document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover1).value = '';
+                     }
+                     if(document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover2).value == SelectedValue)
+                     {
+                         document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover2).value = '';
+                     }
+                     if(document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover3).value == SelectedValue)
+                     {
+                         document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover3).value = '';
+                     }
+                }
+            }
+            
+             function HideReadApprovers(Level,SelectedApproverId,OtherApprover1,OtherApprover2,OtherApprover3)
+            {
+                if(SelectedApproverId != '')
+                {
+                    var p2 = document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover1).childNodes;
+                    pval2 = p2[0].innerHTML;
+                    var p3 = document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover2).childNodes;
+                    pval3 = p3[0].innerHTML;
+                    var p4 = document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover3).childNodes;
+                    pval4 = p4[0].innerHTML;
+                    if(pval2==SelectedApproverId )
+                     {
+                        p2[0].innerHTML= '';
+                     }
+                     if(pval3==SelectedApproverId )
+                     {
+                          p3[0].innerHTML= '';
+                     }
+                     if(pval4==SelectedApproverId )
+                     {
+                          p4[0].innerHTML= '';
+                     }
+                }
+            }
+            
+         </script> 
+         
+   
+    </apex:form>
+
+    
+
+<Script>
+
+var newWin=null;
+function backPopulate(QueueId, QueueName, QueId, AppId)
+{
+    //alert('BackPopulate'+QueId);
+    newWin.close();
+    
+    if(AppId=='Approver21')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+AppId).value = 'Assignment01';
+    }
+    else if(AppId=='Approver22')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+AppId).value = 'Assignment02';
+    }
+    else if(AppId=='Approver23')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+AppId).value = 'Assignment03';
+    }
+    else if(AppId=='Approver24')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+AppId).value = 'Assignment04';
+    }
+    else if(AppId=='Approver31')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+AppId).value = 'Assignment01';
+    }
+    else if(AppId=='Approver32')
+    {
+    
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+AppId).value = 'Assignment02';
+    }
+    else if(AppId=='Approver33')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+AppId).value = 'Assignment03';
+    }
+    else if(AppId=='Approver34')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+AppId).value = 'Assignment04';
+    }
+    else if(AppId=='Approver41')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+AppId).value = 'Assignment01';
+    }
+    else if(AppId=='Approver42')
+    {
+    
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+AppId).value = 'Assignment02';
+    }
+    else if(AppId=='Approver43')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+AppId).value = 'Assignment03';
+    }
+    else if(AppId=='Approver44')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+AppId).value = 'Assignment04';
+    }
+    else if(AppId=='Approver51')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+AppId).value = 'Assignment01';
+    }
+    else if(AppId=='Approver52')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+AppId).value = 'Assignment02';
+    }
+    else if(AppId=='Approver53')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+AppId).value = 'Assignment03';
+    }
+     else if(AppId=='Approver54')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+QueId).value = QueueName;
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+AppId).value = 'Assignment04';
+    }
+   
+}
+
+
+function OpenQueueLookup(QueueId, ApproverId)
+{
+    newWin = window.open('apex/CustomQueueLookup?QueueId=' + QueueId + '&ApproverId=' + ApproverId, 'Popup','height=500,width=1600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+}
+
+function BlankoutQueue(QueueId, ApproverId)
+{
+
+   if(ApproverId=='Approver21' || ApproverId=='Approver22' || ApproverId=='Approver23' || ApproverId=='Approver24')
+    {
+    document.getElementById('Approvers:ApproverForm:Approverblock:Level2:'+QueueId).value = '';
+    }
+    else if(ApproverId=='Approver31' || ApproverId=='Approver32' || ApproverId=='Approver33' || ApproverId=='Approver34')
+    {
+   document.getElementById('Approvers:ApproverForm:Approverblock:Level3:'+QueueId).value = '';
+    }
+    else if(ApproverId=='Approver41' || ApproverId=='Approver42' || ApproverId=='Approver43' || ApproverId=='Approver44')
+    {
+   document.getElementById('Approvers:ApproverForm:Approverblock:Level4:'+QueueId).value = '';
+    }
+    else if(ApproverId=='Approver51' || ApproverId=='Approver52' || ApproverId=='Approver53' || ApproverId=='Approver54')
+    {
+   document.getElementById('Approvers:ApproverForm:Approverblock:Level5:'+QueueId).value = '';
+    }
+    
+}
+
+function CheckApprovers()
+{
+    if(document.getElementById('Approvers:ApproverForm:Approverblock:Level2:Approver21')!=null && document.getElementById('Approvers:ApproverForm:Approverblock:Level2:Approver21').value != '')
+    {
+        FillApprovers('Level2','Approver21','Approver22','Approver23','Approver24');
+    }
+     if(document.getElementById('Approvers:ApproverForm:Approverblock:Level3:Approver31')!=null && document.getElementById('Approvers:ApproverForm:Approverblock:Level3:Approver31').value != '')
+    {
+        FillApprovers('Level3','Approver31','Approver32','Approver33','Approver34');
+    }
+     if(document.getElementById('Approvers:ApproverForm:Approverblock:Level4:Approver41')!=null && document.getElementById('Approvers:ApproverForm:Approverblock:Level4:Approver41').value != '')
+    {
+        FillApprovers('Level4','Approver41','Approver42','Approver43','Approver44');
+    }
+     if(document.getElementById('Approvers:ApproverForm:Approverblock:Level5:Approver51')!=null && document.getElementById('Approvers:ApproverForm:Approverblock:Level5:Approver51').value != '')
+    {
+        FillApprovers('Level5','Approver51','Approver52','Approver53','Approver54');
+    }
+    //return false;
+}
+
+function FillApprovers(Level,SelectedApproverId,OtherApprover1,OtherApprover2,OtherApprover3)
+{
+    if(document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+SelectedApproverId).value != '')
+    {
+        SelectedValue=  document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+SelectedApproverId).value;
+         if(document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover1).value == '')
+         {
+             document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover1).value = SelectedValue;
+         }
+         if(document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover2).value == '')
+         {
+             document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover2).value = SelectedValue;
+         }
+         if(document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover3).value == '')
+         {
+             document.getElementById('Approvers:ApproverForm:Approverblock:'+Level+':'+OtherApprover3).value = SelectedValue;
+         }
+    }
+}
+
+
+
+
+
+</Script>
+</apex:page>

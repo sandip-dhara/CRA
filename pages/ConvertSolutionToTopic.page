@@ -1,0 +1,39 @@
+<apex:page standardController="Solution" extensions="ConvertSolutionToTopic">
+
+<apex:sectionHeader subtitle="Convert Salesforce Solution to a Get Satisfaction Topic" description="This page allows a user to convert a Salesforce Solution into a Get Satisfaction Topic at http://community.vertica.com/vertica "/>
+
+<apex:form >
+    <apex:pageMessages />
+    
+    <apex:PageBlock >
+        
+        <apex:pageBlockButtons >
+           <apex:commandButton value="Submit Topic to Get Satisfaction Community" action="{!DoSubmit}"/>
+           <apex:commandButton value="Cancel" action="{!Cancel}"/>
+        </apex:pageBlockButtons>
+        
+        <apex:PageBlockSection columns="1" title="Topic Detail">
+                
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Topic Type"/>
+                <apex:inputField value="{!Topic.GETSAT_TOPIC__Style__c}" required="true"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Topic Subject"/>
+                <apex:outputText value="{!Topic.GETSAT_TOPIC__Subject__c}" escape="false"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Topic Description" />
+                <apex:outputText value="{!Topic.GETSAT_TOPIC__Description__c}" escape="false" />
+            </apex:pageBlockSectionItem>
+         
+        </apex:PageBlockSection>
+         
+    
+    </apex:PageBlock>
+
+</apex:form>
+
+</apex:page>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Approval__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Approval</label>
+        <referenceTo>Approval__c</referenceTo>
+        <relationshipLabel>Opportunity Pursuit Resource Requirement</relationshipLabel>
+        <relationshipName>Opportunity_Pursuit_Resource_Requirement</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Estimated_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Estimated End Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Estimated_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Estimated Start Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Pursuit_Team_Name_Role__c</fullName>
+        <externalId>false</externalId>
+        <label>Pursuit Team Name/Role</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Region_subregion_Country__c</fullName>
+        <externalId>false</externalId>
+        <label>Region/subregion/Country</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Requested_Hours__c</fullName>
+        <externalId>false</externalId>
+        <label>Requested Hours</label>
+        <precision>4</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <label>Opportunity Pursuit Resource Requirement</label>
+    <nameField>
+        <label>Opportunity Pursuit Resource Requirement</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Opportunity Pursuit Resource Requirement</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Requested_Hours_Validation</fullName>
+        <active>true</active>
+        <errorConditionFormula>Requested_Hours__c &lt; 0</errorConditionFormula>
+        <errorMessage>Request hours should not be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>StartDate_EndDate_Validation</fullName>
+        <active>true</active>
+        <errorConditionFormula>(Estimated_End_Date__c  &lt;  Estimated_Start_Date__c) ||  (Estimated_Start_Date__c &lt; TODAY()) ||  (Estimated_End_Date__c  &lt; TODAY())</errorConditionFormula>
+        <errorMessage>Please correct the start and End Date</errorMessage>
+    </validationRules>
+</CustomObject>

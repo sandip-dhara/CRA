@@ -1,0 +1,43 @@
+<apex:page Controller="DGApprovalMatrixUserlookup" showHeader="False" sidebar="False" id="Queuelist">
+    <apex:form >
+    <apex:pageblock title="Queue List"  id="QueueListPB" rendered="{!IF(ApType=='Queue',True,False)}">
+            <apex:pageblocktable value="{!QueueList}" var="List">
+                <apex:column headervalue="Queue Name">
+                <a onclick="selectUser('{!List.Queue.Name}')">{!List.Queue.Name}</a>
+                </apex:column>
+                <apex:column headervalue="Queue Type" value="{!List.SObjectType}"/>
+            </apex:pageblocktable>
+     </apex:pageblock>
+     
+     <apex:pageBlock title="Approver Role List" rendered="{!IF(ApType=='Approver Role',True,False)}">
+             <apex:pageblocktable value="{!UserList}" var="Ulist">
+                 <apex:column headerValue="Approver Role">
+                 <a onclick="selectUser('{!Ulist.Approver_Role__c }')"> {!Ulist.Approver_Role__c } </a>
+                 </apex:column>
+             </apex:pageblocktable>
+     </apex:pageBlock>
+     
+     <apex:pageBlock title="Job Function List" rendered="{!IF(ApType=='Job Function',True,False)}">
+             <apex:pageblocktable value="{!JobFunctionList}" var="Jlist">
+                 <apex:column headerValue="Approver Name">
+                 <a onclick="selectUser('{!Jlist}')"> {!Jlist} </a>
+                 </apex:column>
+             </apex:pageblocktable>
+     </apex:pageBlock>
+     
+    </apex:form>
+    
+    <script>
+function selectUser(ApproverName) 
+{    
+    //var QueId = document.getElementById('Queuelist:QueueListFrom:QueueListPB:QueueId').value
+    //var AppId = document.getElementById('Queuelist:QueueListFrom:QueueListPB:ApproverId').value
+    
+    var FieldId = '{!ApFieldId}';
+    //alert("SelectQueueBefore"+ApproverName + FieldId);
+    window.parent.opener.backPopulate(ApproverName,FieldId);
+    //alert('after calling parent');
+    
+}
+</script>
+</apex:page>

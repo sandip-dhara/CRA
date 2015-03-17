@@ -1,0 +1,530 @@
+<apex:page controller="AthenaCreateLearningBoardOld" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false"
+    applyhtmltag="false">
+  <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Edit</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-fileupload.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/tagit.ui-zendesk.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/jquery.tagit.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/LZen.css')}" />
+
+    <!-- check box, radio button 
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/css/uniform.default.css')}" />
+        -->
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+    <!-- BEGIN HEADER -->
+    <header>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="HpLogo">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/>
+                    </a>
+                    <div class="nav mtop10">
+                        <h1>Social Learning Platform</h1>
+                        <h3>Learning on your terms!</h3>
+                    </div>
+                    <apex:form id="CrtLBGLSrchform">
+                        <div class="nav notify-row">                        
+                            <!--<input type="text" class="span3 mtop16" />
+                            <button class="btnAthena btn-primary" type="button">Search</button>-->
+                             <apex:inputText id="searchText" styleClass="span3 mtop16" value="{!strSearchValue}" title="Enter value to search Learning Board"/>
+                            <apex:commandButton action="{!dosearch}" onclick="return validate()" value="Search" styleClass="btnAthena btn-primary"  id="searchButton" title="Click to Search for Learning Board"/>
+                        </div>
+                    </apex:form>
+                    <div class="top-nav">
+                        <ul class="nav pull-right top-menu mtop16">
+                            <!-- BEGIN USER LOGIN DROPDOWN -->
+                            <li class="dropdown open">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="username">Welcome {!LoggedinUserDtls.Name}</span>
+                                    <i class="icon-user"></i>
+                                    <!--<b class="caret"></b>-->
+                                </a>
+                                <ul class="dropdown-menu extended logout">
+                                    <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+                                </ul>
+                            </li>
+                            <!-- END USER LOGIN DROPDOWN -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid menunavBar">
+                    <a href="https://{!getSfInstance}/apex/AthenaSocialLearningOLd">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Home.png')}" alt="Icon_Home"/>
+                        </a>
+                    <div class="btn-group">
+                        <a href="#" data-toggle="dropdown">
+                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Menu.png')}" alt="Icon_Menu"/>
+                            </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="https://{!getSfInstance}">Salesforce Home</a></li>
+                            <li><a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank">Help &amp; Support</a></li>
+                            <hr />
+                            <li><a href="http://amp.corp.hp.com/" target="_blank">Account Management Portal(AMP)</a></li>
+                            <li><a href="http://ent241.sharepoint.hp.com/teams/GSCDC/es/ITO.aspx" target="_blank">Portfolio Accrediation</a></li>
+                            <li><a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html" target="_blank">What We Sell</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+    <!-- BEGIN CONTAINER -->
+    <div id="container" class="row-fluid">
+      <span class="err_msg hpit_error" id="err_msg"></span>
+            <apex:form id="frmNoPerm" rendered="{!!IsLearningBoardCreator}"> 
+            <div class="container-fluid">
+             <div class="row-fluid">
+                    <div class="span12">
+                <div id="errorMessage" class="alert alert-error" >
+                                You don&#39;t have permission to create Learning Board
+                </div>      
+            </div>      
+            </div>      
+            </div>                      
+            
+            </apex:form>
+        <!-- BEGIN PAGE -->
+        <div id="main-content">
+         <apex:form id="LBDName" rendered="{!IsLearningBoardCreator}">  
+            <!-- BEGIN PAGE CONTAINER-->
+            <div class="container-fluid">
+                <!-- BEGIN PAGE HEADER-->
+                <div class="row-fluid">
+                    <div class="span12">
+                        <!-- BEGIN PAGE TITLE -->
+                        <div id="Div1" class="alert alert-error" style="display:none">
+                                <button data-dismiss="alert" class="close">×</button>
+                        </div>
+                        <div class="breadcrumb">
+                            <!--<input type="text" class="span6" value="{!LBName}" />-->
+                            <h4>Create new Learning Board</h4>
+                            
+                            
+                            <!--<button class="btn  disabled" type="button">Edit Board</button>-->
+                          
+                        </div>
+                        <!-- END PAGE TITLE & BREADCRUMB-->
+                    </div>
+                </div>
+                <!-- END PAGE HEADER-->
+                <!-- BEGIN PAGE CONTENT-->
+               
+                <div class="row-fluid">
+                    <div class="span12">
+                        <!-- BEGIN BLOG PORTLET-->
+                        <div class="row-fluid">
+                            <div class="span8">
+                                <div class="row-fluid bgGray">
+                                    <div class="m5">
+                                                        <div class="span5">
+                                                            <label>Name :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <apex:inputText id="lbName" required="true" styleclass="span12" value="{!LBName}" title="Enter Learning Board Title"/></span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Description :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <apex:inputTextarea required="true" style="height: 214px; width: 100%;" id="LBTextarea" styleclass="span12"  value="{!LBDescription}" title="Enter Learning Board Description"/></span>
+                                                        </div>
+                                                        <div class="span5 ml0">
+                                                            <label>Add Tags :</label>
+                                                        </div>
+                                                        <div class="span7">
+                                                            <span>
+                                                                <!-- text Add Tag -->
+                                                                <!-- tag cloud -->
+                                            <div class="control-group">
+                                                <label class="control-label">Add Tags</label>
+                                                <div class="controls">
+                                                    <input name="tags" id="learningTags" value="" class="hide" />
+                                                    <!-- Tag Hidden Value -->
+                                                    <ul id="learningTagsTop"></ul>
+                                                </div>
+                                            </div>
+                                                            </span>
+                                                        </div>
+
+                                                        <div class="span5 ml0">
+                                                            <label>Learning Board Image :</label>
+                                                        </div>
+                                                        <div id="EditImage" class="span7">
+                                                            <div class="control-group">                                         
+                                                        <div class="controls clearfix">
+                                                            <div class="R_C_btnWidth">
+                                                            <label class="radio">
+                                                                <div class="radio">
+                                                                    
+                                                                        <input type="radio" id="ShowuploadImage" value="optBrowseImage"  name="optionsRadios1"   onchange="changeDefault(this)"/>
+                                                                </div>
+                                                                Upload from Computer
+                                                            </label>
+                                                             </div>
+                                                                <div class="R_C_btnWidth">
+                                                            <label class="radio">
+                                                                <div class="radio">
+                                                                    
+                                                                        <input id="ShowDefaultImage" type="radio" value="optDefaultImage" name="optionsRadios1"  onchange="changeDefault(this)"/>
+                                                                </div>
+                                                                Default Image
+                                                            </label>
+                                                                </div>
+                                                                    
+                                                            <apex:inputHidden value="{!optSelected}" id="theField" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="check ShowuploadImage" style="display:none" id="showLoadImg">
+                                                    <p>This image appears at the top of each learning board Recommended size is 320px * 215px</p>
+                                                    <div class="controls">
+                                                        <div data-provides="fileupload" class="fileupload fileupload-new">
+                                                            <div class="previewImgWidth fileupload-new thumbnail">
+                                                                <apex:image id="imgUpload" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+                                                            </div>
+                                                            <div class="previewNoImg fileupload-preview fileupload-exists thumbnail"></div>
+                                                            <div>
+                                                                <span class="btnAthena btn-file"><span class="fileupload-new">Select image</span>
+                                                                    <span class="fileupload-exists">Change</span>
+                                                                    
+                                                                    <!--<input type="file" class="default" /></span>-->
+                                                                <apex:inputFile styleclass="default" value="{!LBattach.body}" filename="{!LBattach.name}" contentType="{!LBattach.contentType}"/></span>
+                                                            </div>
+                                                        </div>
+                                                        <span class="label label-important">NOTE!</span>
+                                                        <span>Attached image thumbnail is supported in Latest Firefox, Chrome, Opera,Safari and Internet Explorer 10 only
+                                                        </span>
+                                                    </div>
+                                                    </div>
+                                                    <div class="check ShowDefaultImage" style="display:none" id="DefaultDrop">
+                                                        <div class="control-group">
+                                                            <label class="control-label">Select Default Image </label>
+                                                            <div class="controls">
+ 
+                                                           <apex:selectList multiselect="false" size="1" value="{!dropSelectedval}" id="dropDefault" onchange="defaultImgChanged(this, '{!getStaticImagePath}')" >
+                                                                <apex:selectOptions value="{!DefaultImagefilename}" ></apex:selectOptions>
+                                                           </apex:selectList>
+
+                                                            <div class="viewDefaultImage thumbnail">
+                                                                <apex:image id="imgDefault" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+                                                            </div>
+ 
+                                                        </div>
+                                                        </div>
+                                                    </div>                                                       
+                                                            
+                                                    <apex:pageMessages />
+                                                                               
+                                                 </div>
+                                                   
+                                        <div class="span7 clearB mtop10 show-right">
+                                              <div class="control-group">
+                                                <div class="controls">
+                                                    <div class="R_C_btnWidth">
+                                                    <label class="checkbox">
+                                                        <div class="checker">
+                                                            <input type="checkbox" id="chkActive" value="" Checked='' />
+                                                        </div>
+                                                        Active
+                                                    </label>
+                                                    </div>
+                                                    <div class="R_C_btnWidth">
+                                                    <label class="checkbox">
+                                                        <div class="checker">
+                                                            <input type="checkbox"  id="chkFeatured"  value="" Checked='' />
+                                                        </div>
+                                                        Featured
+                                                    </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="control-group">
+                                                <div class="controls">
+                                                    <button type="button" class="btnAthena pull-right mlb5" onclick="funcClearChanges()">Cancel Changes</button>
+                                                   <!-- <button type="submit" class="btnAthena btn-success pull-right mlb5">Save Changes</button>-->
+                                                   
+                                                        <apex:commandButton action="{!CreateLrngBrd}"   value="Save Changes" styleClass="btnAthena btn-success pull-right mlb5"  id="Savebutton" title="Click to Save Learning Board" onclick="funcSaveChanges()">
+                                                        <apex:param id="testparam" name="{!TestCreate}" value="{!TestCreate}" />
+                                                         </apex:commandButton>
+                                                                <apex:inputHidden value="{!hdnTxtName}" id="InputHiddenTxt" />
+                                                        <apex:inputHidden value="{!hdnTxtDesc}" id="InputHiddenTxtArea" />
+                                                        <apex:inputHidden value="{!hdnCheckActive}" id="InputHiddenChkActive" />
+                                                        <apex:inputHidden value="{!hdnCheckFeatured}" id="InputHiddenchkFeatured" />
+                                                        <apex:inputHidden value="{!hdnAddTag}" id="InputHiddenTag" />
+                                                        <apex:image id="imgNoImage" style="display:none" url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image" styleclass="viewDefNoImage"/>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        <!-- END BLOG PORTLET-->
+                    </div>
+                            <!-- right column starts -->
+           
+                </div>
+                
+                
+                
+                
+                
+                
+                <!-- END PAGE CONTENT-->
+                <!-- END PAGE CONTENT-->
+            </div>
+            <!-- END PAGE CONTAINER-->
+        </div>
+                    
+        <!-- END PAGE -->
+           
+    </div>
+             </apex:form>
+    <!-- END CONTAINER -->
+
+    <!-- BEGIN FOOTER -->
+    <div id="footer">
+        © Hewlett-Packard Development Company, L.P.     |     HP Restricted
+    </div>
+    <!-- END FOOTER -->
+
+    <!-- BEGIN JAVASCRIPTS -->
+    <!-- Load javascripts at bottom, this will reduce page load time
+         -->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-fileupload.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+
+
+   <!-- ie8 fixes -->
+   <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+   
+   <!--<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/jquery.uniform.min.js')}"/>-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+
+    <!-- END JAVASCRIPTS -->
+    <script>
+    
+        function validate()
+                   {                  
+                        if(document.getElementById('{!$Component.CrtLBGLSrchform.searchText}').value!=''){                        
+                            return true;
+                        }
+                        else{
+                            document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                            return false;
+                        }
+                       //return true;
+                    }
+    
+        var noImgSrc = $('[id$=imgNoImage]').prop('src');
+        function funcSaveChanges() {
+            var LName = document.getElementById("{!$Component.LBDName.lbName}").value;
+            var LBDescr = document.getElementById("{!$Component.LBDName.LBTextarea}").value;
+            var LBActive = document.getElementById("chkActive").checked;
+            var LBFeatured = document.getElementById("chkFeatured").checked;
+            var addTags = $('#learningTags').val();
+
+            if (LName == '' || LBDescr=='') {
+                $('#errorMessage').show();
+                $('#errorMessage').empty();
+                $('#errorMessage').append('Please Enter Name and Description');
+                return false;
+            }
+
+            /*Below Method is generated by "apex:actionFunction" which will call Apex Method "echoVal" */
+            //echo(LName, LBDescr, LBActive, LBFeatured);
+            $('[id$=InputHiddenTxt]').val(LName);
+            $('[id$=InputHiddenTxtArea]').val(LBDescr);
+            $('[id$=InputHiddenChkActive]').val(LBActive);
+            $('[id$=InputHiddenchkFeatured]').val(LBFeatured);
+            $('[id$=InputHiddenTag]').val(addTags);
+            debugger;
+            $('[id$=testparam]').val(LName);
+        }
+                
+        function funcClearChanges() {
+            document.getElementById("{!$Component.LBDName.lbName}").value='';            
+            document.getElementById("{!$Component.LBDName.LBTextarea}").value='';
+            document.getElementById("chkActive").checked='';
+            document.getElementById("chkFeatured").checked='';
+            $('#learningTagsTop').tagit("removeAll");
+           
+            $('[id$=InputHiddenTxt]').val('');
+            $('[id$=InputHiddenTxtArea]').val('');
+            $('[id$=InputHiddenChkActive]').val('');
+            $('[id$=InputHiddenchkFeatured]').val('');
+            $('[id$=InputHiddenTag]').val('');   
+            
+            //$('[id$=imgDefault]').attr("src", noImgSrc);
+            //$('[id$=imgDefault]').attr("alt", "no image");
+            //$('[id$=imgDefault]').attr("class", "viewDefNoImage");
+            //$('#dropDefault option[selected="selected"]').prop('selected', false);
+            
+            //$('[id$=imgUpload]').attr("src", noImgSrc);
+            //$('[id$=imgUpload]').attr("alt", "no image");
+            //$('[id$=imgUpload]').attr("class", "viewDefNoImage");
+            var obj = $('#ShowuploadImage');
+            changeDefault(obj);             
+        }     
+               
+        function changeDefault(optSelected) {
+            var param = $(optSelected).val();
+            $('[id$=theField]').val(param);
+
+            var transaction = $(optSelected).val();
+            if ($(optSelected).val() == 'optDefaultImage') {
+                $('#DefaultDrop').show();
+                $('#showLoadImg').hide();
+            }
+            else {
+                $('#DefaultDrop').hide();
+                $('#showLoadImg').show();
+            }
+            $(optSelected).prop('checked', true);
+        }
+            
+        function defaultImgChanged(selObj, path) {
+            var selText = selObj.options[selObj.selectedIndex].text;
+            var selVal = selObj.options[selObj.selectedIndex].value;
+            var selPath = path + selVal;
+            if (selVal != '') {
+                $('[id$=imgDefault]').attr("src", selPath);
+                $('[id$=imgDefault]').attr("alt", selText);
+                $('[id$=imgDefault]').attr("class", "");
+            }
+            else {
+                $('[id$=imgDefault]').attr("src", noImgSrc);
+                $('[id$=imgDefault]').attr("alt", "no image");
+                $('[id$=imgDefault]').attr("class", "viewDefNoImage");
+            }           
+        }
+
+        $(function () {
+            var obj;
+            if ($('[id$=theField]').val() == 'optDefaultImage') {
+                obj = $('#ShowDefaultImage');
+            }
+            else {
+                obj = $('#ShowuploadImage');
+            }
+            changeDefault(obj); 
+
+            if ($('[id$=InputHiddenChkActive]').val() == 'true') {
+                $('#chkActive').prop('checked', true);
+            }
+            else {
+                $('#chkActive').prop('checked', false);
+            }
+            if ($('[id$=InputHiddenchkFeatured]').val() == 'true') {
+                $('#chkFeatured').prop('checked', true);
+            }
+            else {
+                $('#chkFeatured').prop('checked', false);
+            }
+
+            $('#learningTags').val($('[id$=InputHiddenTag]').val());
+                        
+            var sampleTags = [{!AvailTags}];          
+
+            $('input:radio[name="optionsRadios1"]').change(function() {
+            });
+              
+
+            //-------------------------------
+            // Single TAG field
+            //-------------------------------
+            $('#learningTagsTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTags')
+            });
+
+            $('#learningTagsTextTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTagsText')
+            });
+
+            $('#learningTagsLinkTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningTagsLink')
+            });
+
+            $('#learningTagsVideoTop').tagit({
+                availableTags: sampleTags,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $('#learningVideoLink')
+            });
+
+
+            //show hide imageUpload in popup
+            $("input[type=radio]").change(function () {
+                var divId = $(this).attr("id");
+                $("div.check").hide();
+                $("." + divId).show();
+                $("input[type=checkbox]").change();
+            });
+
+            //toggle the componenet with class menu_body
+            $(".menu_body").show();
+            $(".menu_head").click(function () {
+                $(this).next(".menu_body").slideToggle(600);
+                var plusmin;
+                plusmin = $(this).children(".plusminus").text();
+
+                if (plusmin == '+')
+                    $(this).children(".plusminus").text('-');
+                else
+                    $(this).children(".plusminus").text('+');
+            });       
+        });
+    </script>
+</div>
+    </div>
+    
+    </body>
+
+
+<!-- END BODY -->
+</html>
+
+</apex:page>

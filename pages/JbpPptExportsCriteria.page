@@ -1,0 +1,357 @@
+<!-- 
+  Page Name: JbpPptExportsCriteria
+  Author: HP Release 5
+  Date: 29-July-2013 
+  Auth:- HP 
+  Requirement # Request Id:
+  Description: This popup page is used to generate the ppt via SFDC->Tibco->HP exstream.
+ -->
+<apex:page controller="JBPExstreamController" sidebar="false" showHeader="false">
+<script src="/soap/ajax/25.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/25.0/apex.js" type="text/javascript"></script>
+<apex:form >
+ <TABLE class="styleMiddle" align="center" border="0" width="100%">
+      <TR>
+        <TD  height="19">
+        <font size="3"  color="black"><b>{!$LABEL.PPT_Executive_Summary_Criteria}</b></font></TD>
+      </TR>
+  </TABLE>
+  <TABLE class="styleMiddle" align="center" border="0" width="100%">
+      <TR>
+        <TD height="20"></TD>
+      </TR>
+  </TABLE>
+  <TABLE class="styleMiddle" align="center" border="0" width="100%">
+   <TBODY>
+        <TR>
+            <TD align="right" width="30%" valign="top">{!$LABEL.PPT_Export_Language}</TD>
+            <TD width="0%"></TD> 
+            <TD width="19%"> 
+              <apex:selectList id="language" value="{!pptLanguage}" multiselect="false" size="1">
+                   <apex:selectOptions value="{!getLanguage}" />
+              </apex:selectList>
+            </TD>   
+            <TD width="51%"></TD>                
+        </TR>
+        <TR>
+            <TD align="right" width="30%" valign="top">{!$LABEL.PPT_Export_Currency}</TD>
+            <TD width="0%"></TD>   
+            <TD width="19%">
+              <apex:selectList id="currency" value="{!currencyCode}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!getCurrency}" />
+               </apex:selectList> 
+            </TD>
+            <TD width="51%"></TD>                          
+        </TR>   
+        <TR>
+            <TD align="right" width="30%" valign="top">{!$LABEL.PPT_Export_Options}</TD>
+            <TD width="0%"></TD> 
+            <TD align="left" width="19%" valign="top">
+                <table class="styleMiddle" align="center" border="0" width="100%">
+                      
+                      <TR>
+                            <TD align="left" width="51%" valign="top" nowrap="nowrap">{!$LABEL.PPT_Competitive_Landscape}</TD>
+                            <TD align="left" width="49%" valign="top" nowrap="nowrap"><apex:inputCheckbox value="{!isCompetitiveLandscapeSelectedForExport}" selected="true" /> </TD>
+                       </TR>
+                      <TR>
+                            <TD align="left" width="51%" valign="top" nowrap="nowrap">{!$LABEL.PPT_Performance_Metrics}</TD>
+                            <TD align="left" width="49%" valign="top" nowrap="nowrap"><apex:inputCheckbox value="{!isMetricsSelectedForExport}" selected="true"/></TD>
+                       </TR>
+                       <TR>
+                            <TD align="left" width="51%" valign="top" nowrap="nowrap">{!$LABEL.PPT_Strategic_Initiatives_Summary}</TD>
+                            <TD align="left" width="49%" valign="top" nowrap="nowrap"><apex:inputCheckbox value="{!isStrategicInitiativesSummarySelectedForExport}" selected="true"/></TD>
+                      </TR>
+                       <TR>
+                            <TD align="left" width="51%" valign="top" nowrap="nowrap">{!$LABEL.PPT_Strategic_Initiatives_Detail}</TD>
+                            <TD align="left" width="49%" valign="top" nowrap="nowrap"><apex:inputCheckbox value="{!isStrategicInitiativesDetailSelectedForExport}" selected="true"/></TD>
+                       </TR>
+                       <TR>
+                            <TD align="left" width="51%" valign="top" nowrap="nowrap">{!$LABEL.PPT_Field_Definitions}</TD>
+                            <TD align="left" width="49%" valign="top" nowrap="nowrap"><apex:inputCheckbox value="{!isFieldDefinitionsExport}" selected="true"/></TD>
+                       </TR>
+                </table>
+            </TD>                                          
+            <TD width="51%"> </TD>             
+        </TR> 
+        <TR>
+            <TD align="right" width="30%" valign="top" height="6"></TD>
+            <TD width="0%"></TD> 
+            <TD align="left" width="19%">
+             </TD>                                          
+            <TD width="51%"></TD>             
+        </TR>
+        <TR>
+            <TD align="right" width="30%"><apex:commandButton value="{!$Label.PPT_Cancel}" onclick="closeTheWindow();" /></TD>
+            <TD width="0%"></TD> 
+            <TD align="left" width="19%">
+              <apex:commandButton value="{!$Label.PPT_Generate_Executive_Summary_Report}" action="{!invokeTibcoWsService}" onclick="return generateThePpt()" rendered="{!(isPartnerEnabled=='False')}" />
+              <apex:commandButton value="{!$Label.PPT_Generate_Email_PPT}" action="{!invokeTibcoWsService}" onclick="return generateThePpt()" rendered="{!(isPartnerEnabled=='True')}" />
+            </TD>                                          
+            <TD width="51%"></TD>             
+        </TR>        
+    </TBODY>
+  </TABLE>
+</apex:form> 
+
+<script type="text/javascript">
+
+// Below function used to close the popup and alert if there is any issue at SFDC or Tibco or HP Exstream service or JMS queue is down
+function closeThePopUp(){
+
+  var successElement ="{!$CurrentPage.parameters.success}";
+  sforce.connection.sessionId = '{!GETSESSIONID()}';
+  var user, result, languageCode, languageCodeWithSubString;
+  user=sforce.connection.getUserInfo();
+  result = sforce.connection.query("select LanguageLocaleKey from user where id='"+user.userId+"'");
+  languageCode= result.getArray("records")[0].LanguageLocaleKey;
+
+ if(successElement=='true') {
+     window.close();
+   }
+// Below if condition will be rendered if you change the label PPT_Debug_Flag to True/False- to see any errors (case sensitive) 
+ else if(successElement=='False') {
+     window.close();
+   }
+ else if(successElement=='True')
+  {
+   if (languageCode == "de")//German
+     { 
+      window.alert("Fehler beim Generieren des Zusammenfassungsberichts.  Senden Sie bitte eine Supportanfrage zu diesem Problem."); 
+     } 
+   else if (languageCode == 'ja') //'Japanese'
+    { 
+     window.alert("エグゼクティブ サマリー レポートの作成中にエラーが発生しました。この問題についてサポート リクエストを提出してください。"); 
+    }
+   else if (languageCode == 'ko') //'Korean' 
+    { 
+     window.alert("운영 요약 보고서를 생성하는 중에 오류가 발생했습니다. 이 문제에 대한 지원 요청을 제출하시기 바랍니다."); 
+    }
+  else if (languageCode == 'zh_CN') //'Chinese (Simplified)'
+    { 
+     window.alert("生成“执行摘要报告”时出错。请就此问题提交支持请求。"); 
+    }  
+  else if (languageCode == 'ru') //'Russian'
+    { 
+     window.alert("При создании итогового отчета произошла ошибка. Отправьте запрос в службу поддержки с описанием проблемы."); 
+    }
+  else if (languageCode == 'pt_BR') //Portuguese (Brazilian)
+    { 
+     window.alert("Houve um erro ao gerar o Relatório de Resumo Executivo.  Envie uma solicitação de suporte para esse problema."); 
+   } 
+  else if (languageCode == 'es_MX') //Spanish (Latin America/Mexico) 
+   { 
+     window.alert("Resumen del informe ejecutivo. Envíe una solicitud de soporte para este problema."); 
+   } 
+  else if (languageCode == 'fr') //French
+   { 
+     window.alert("Une erreur s'est produite lors de la génération du rapport récapitulatif. Pour résoudre ce problème, veuillez soumettre une demande d'assistance."); 
+   }
+  else if (languageCode == 'it') //Italian
+   { 
+     window.alert("Si è verificato un errore durante la generazione del Rapporto di riepilogo esecutivo.  Inoltrare una richiesta di supporto per questo problema."); 
+   }
+  else if (languageCode == 'sv') //Swedish
+   { 
+    window.alert("Ett fel uppstod när den sammanfattande rapporten skulle genereras. Logga ett supportärende för problemet."); 
+   }
+  else if (languageCode == 'zh_TW') //Chinese (Traditional)
+   { 
+     window.alert("產生「執行摘要報告」時發生錯誤。請針對此問題提交支援要求。"); 
+   }
+  else if (languageCode == 'cs') //Czech
+   { 
+     window.alert("Při generování souhrnné zprávy pro vedoucí pracovníky došlo k chybě.  Podejte k tomuto problému žádost o podporu."); 
+   }
+  else if (languageCode == 'fi') //Finnish
+   { 
+     window.alert("Yhteenvetoraportin luonnissa ilmeni virhe.  Ilmoita ongelmasta tukipyynnöllä."); 
+   }
+ else if (languageCode == 'nl_NL') //Dutch
+   { 
+     window.alert("Tijdens het genereren van het samenvattingsrapport is een fout opgetreden.  Dien een ondersteuningsaanvraag in voor dit probleem."); 
+   }
+ else if (languageCode == 'da') //Danish
+   { 
+     window.alert("Der opstod en fejl under oprettelsen af Executive Summary Report.  Indsend en supportanmodning for denne fejl."); 
+   }
+  else if (languageCode == 'bg') //Bulgarian
+   { 
+     window.alert("Възникна грешка при създаване на обобщения отчет на дейността.  Моля, подайте заявка за поддръжка във връзка с този проблем."); 
+   }
+  else if (languageCode == 'ro') //Romanian
+   { 
+     window.alert("A survenit o eroare la generarea Raportului rezumat executiv. Trimiteţi o solicitare de asistenţă pentru această problemă."); 
+   }
+  else if (languageCode == 'es') //Spanish International 
+   { 
+     window.alert("Informe de resumen ejecutivo. Envíe una solicitud de soporte sobre este problema."); 
+   }
+  else if (languageCode == 'pl') //Polish
+   { 
+     window.alert("Wystąpił błąd podczas generowania raportu streszczającego dla kierownictwa. Zgłoś żądanie wsparcia w celu rozwiązania tego problemu."); 
+   }
+  else if (languageCode == 'no') //Norwegian (Bokmal)
+   { 
+     window.alert("Det oppstod en feil under generering av ledelsessammedragsrapporten. Send inn en støtteforespørsel for dette problemet."); 
+   }
+  else if (languageCode == 'hu') //Hungarian
+   { 
+     window.alert("Hiba történt a vezetői összegző jelentés létrehozása során.  Nyújtson be támogatási kérelmet a problémával kapcsolatban."); 
+   }
+  else if (languageCode == 'el') //Greek
+   { 
+     window.alert("Παρουσιάστηκε σφάλμα κατά τη δημιουργία της αναφοράς σύνοψης.  Υποβάλλετε ένα αίτημα υποστήριξης για αυτό το πρόβλημα."); 
+   }
+  else if (languageCode == 'tr') //Turkish
+   { 
+     window.alert("Yönetici Özeti Raporu oluşturulurken bir hata gerçekleşti.  Lütfen bu sorun konusunda bir destek talebi gönderin."); 
+   }
+  else if (languageCode == 'vi') //Vietnamese
+   { 
+     window.alert("Có một lỗi tạo ra Báo cáo Tóm tắt. Vui lòng gửi yêu cầu hỗ trợ về vấn đề này."); 
+   }
+  else if (languageCode == 'th') //Thai
+   { 
+     window.alert("มีข้อผิดพลาดสร้างรายงานสรุปผู้บริหารคือ กรุณายื่นร้องขอการสนับสนุนในเรื่องนี้"); 
+   }
+  else if (languageCode == 'en_GB') // English UK
+   { 
+     window.alert("There was an error generating the Executive Summary Report.  Please submit a support request on this issue."); 
+   }
+  else // Default "English"
+   { 
+    window.alert("There was an error generating the Executive Summary Report.  Please submit a support request on this issue."); 
+   }  
+   window.close();
+ }
+}
+
+//Below function used to close the window, clicking on cancel button
+function closeTheWindow(){
+ window.close();
+}
+
+// Below function used for validation while the generating the PPT
+function generateThePpt(){
+
+  sforce.connection.sessionId = '{!GETSESSIONID()}';
+  var user, result, languageCode, languageCodeWithSubString;
+  user=sforce.connection.getUserInfo();
+  result = sforce.connection.query("select LanguageLocaleKey from user where id='"+user.userId+"'");
+  languageCode= result.getArray("records")[0].LanguageLocaleKey;    
+
+ if (languageCode == "de")//German
+   { 
+     window.alert("Der Zusammenfassungsbericht wird vom System generiert und in Kürze per E-Mail an Sie gesendet.\n Überprüfen Sie Ihren Ordner für Junk-E-Mails, wenn der Bericht nicht bei Ihnen eingehen sollte."); 
+   } 
+ else if (languageCode == 'ja') //'Japanese'
+  { 
+     window.alert("エグゼクティブ サマリー レポートは、現在システムで作成中で、間もなく電子メールで送信されます。\n レポートが届いていないと思われる場合は、迷惑メール フォルダーを確認してください。"); 
+  }
+ else if (languageCode == 'ko') //'Korean'
+  { 
+     window.alert("운영 요약 보고서가 시스템에서 생성되는 중이며 곧 이메일로 전송될 예정입니다."); 
+  }
+ else if (languageCode == 'zh_CN') //'Chinese (Simplified)'
+  { 
+    window.alert("系统正在生成“执行摘要报告”，并将尽快通过电子邮件方式发送给您。\n 如果没收到报告，请查看您的垃圾邮件文件夹"); 
+  }  
+ else if (languageCode == 'ru') //'Russian'
+  { 
+    window.alert("Ваш PowerPoint в настоящее время создается и будет отправлен к вам. \ п Если вы отправите Powerpoint более чем в 3 раза и до сих пор не получили их в вашей электронной почте, вы должны открыть билет на этот вопрос."); 
+  }
+ else if (languageCode == 'pt_BR') //Portuguese (Brazilian)
+  { 
+    window.alert("O Relatório de Resumo Executivo está sendo gerado pelo sistema e será enviado para você em breve. \n Verifique sua pasta de Lixo eletrônico, se parecer que você não está recebendo o relatório"); 
+  } 
+  else if (languageCode == 'es_MX') //Spanish (Latin America/Mexico)
+  { 
+    window.alert("El sistema está generando el resumen del informe ejecutivo, que se le enviará por correo electrónico a la brevedad. \n Si no lo recibe, revise su carpeta de correo no deseado."); 
+  } 
+ else if (languageCode == 'fr') //French
+  { 
+    window.alert("Le rapport récapitulatif est en cours de génération par le système et va vous être envoyé par e-mail. \n Si ce rapport n'apparaît pas dans votre boîte de réception, veuillez consulter le dossier des indésirables."); 
+  }
+ else if (languageCode == 'it') //Italian
+  { 
+    window.alert("Il sistema sta generando il Rapporto di riepilogo esecutivo che verrà inviato tramite e-mail a breve. \n Se l'e-mail non arriva, controllare nella propria cartella delle e-mail indesiderate"); 
+  }
+ else if (languageCode == 'sv') //Swedish
+  { 
+    window.alert("Den sammanfattande rapporten genereras av systemet och kommer snart att skickas till dig via e-post. \n Om det inte ser ut som om du får någon rapport bör du titta efter i skräppostmappen"); 
+  }
+ else if (languageCode == 'zh_TW') //Chinese (Traditional)
+  { 
+    window.alert("系統正在產生「執行摘要報告」，將於短時間內透過電子郵件寄送給您。\n 如果您似乎沒有收到報告，請檢查「垃圾郵件」資料夾"); 
+  }
+ else if (languageCode == 'cs') //Czech
+  { 
+    window.alert("Systém generuje souhrnnou zprávu pro vedoucí pracovníky a brzy ji vám zašle e-mailem.\n Pokud zprávu neobdržíte, zkontrolujte obsah složky s nevyžádanými e-maily."); 
+  }
+ else if (languageCode == 'fi') //Finnish
+  { 
+    window.alert("Yhteenvetoraportti luodaan järjestelmässä ja lähetetään sinulle pian sähköpostitse.\n Jos raporttia ei näy, tarkista roskapostikansiosi"); 
+  }
+ else if (languageCode == 'nl_NL') //Dutch
+  { 
+    window.alert("Het samenvattingsrapport wordt door het systeem gegenereerd en zal binnenkort naar u worden ge-e-maild. \n Controleer de map met ongewenste e-mail als u het rapport niet lijkt te krijgen"); 
+  }
+ else if (languageCode == 'da') //Danish
+  { 
+    window.alert("Executive Summary Report oprettes af systemet og sendes til din mail om et øjeblik.\n Kontrollér din mappe med spam-e-mail, hvis du ikke modtager rapporten"); 
+  }
+ else if (languageCode == 'bg') //Bulgarian
+  { 
+    window.alert("В момента системата създава обобщен отчет на дейността, който след малко ще Ви бъде изпратен по имейл. \n Ако не получите този отчет, моля, проверете папката за нежелана поща."); 
+  }
+ else if (languageCode == 'ro') //Romanian
+  { 
+    window.alert("Raportul rezumat executiv este în curs de generare de către sistem şi vă va fi trimis în scurt timp prin e-mail. \n Verificaţi folderul de mesaje nedorite dacă vedeţi că nu aţi primit raportul"); 
+  }
+ else if (languageCode == 'es') //Spanish International 
+  { 
+    window.alert("El Informe de resumen ejecutivo está siendo generado por el sistema y se le enviará en breve por correo electrónico. \n Compruebe su carpeta de correo no deseado si no recibe el informe"); 
+  }
+ else if (languageCode == 'pl') //Polish
+  { 
+    window.alert("Raport streszczający dla kierownictwa jest generowany przez system i zostanie wkrótce wysłany pocztą e-mail. \n Jeśli nie otrzymasz raportu, sprawdź folder Wiadomości-śmieci"); 
+  }
+ else if (languageCode == 'no') //Norwegian (Bokmal)
+  { 
+    window.alert("Ledelsessammendragsrapporten blir generert av systemet og sendt til deg via e-post om kort tid. \n Se i mappen for søppelpost hvis du ikke mottar rapporten"); 
+  }
+ else if (languageCode == 'hu') //Hungarian
+  { 
+    window.alert("A rendszer létrehozza a vezetői összegző jelentést, és rövidesen elküldi Önnek e-mailben. \n Ha a jelentés nem érkezik meg, ellenőrizze e-mail fiókjának levélszemétmappáját"); 
+  }
+ else if (languageCode == 'el') //Greek
+  { 
+    window.alert("Η αναφορά σύνοψης δημιουργείται από το σύστημα και θα σας σταλεί με email σύντομα.\n Εάν δεν λάβετε την αναφορά, ελέγξτε το φάκελο ανεπιθύμητης αλληλογραφίας"); 
+  }
+ else if (languageCode == 'tr') //Turkish
+  { 
+    window.alert("Yönetici Özeti Raporu sistem tarafından oluşturuluyor ve kısa süre içinde e-posta ile size gönderilecek. \n Raporu almış görünmüyorsanız lütfen Önemsiz E-posta klasörünüzü kontrol edin"); 
+  }
+ else if (languageCode == 'th') //Thai
+  { 
+    window.alert("รายงานสรุปผู้บริหารระบบที่ถูกสร้างขึ้นและจะถูกส่งไปยังคุณในไม่ช้า กรุณาตรวจสอบโฟลเดอร์ของคุณ E-mail ถ้าคุณไม่ปรากฏว่าได้รับรายงาน"); 
+  }
+  else if (languageCode == 'vi') //Vietnamese
+  { 
+    window.alert("Báo cáo Tóm tắt được hệ thống tạo ra và sẽ được gửi đến bạn ngay. \n Vui lòng kiểm tra thư mục E-mail rác của bạn nếu bạn không xuất hiện để nhận báo cáo"); 
+  }
+ else if (languageCode == 'en_GB') // English UK
+   { 
+     window.alert("The Executive Summary Report is being system generated and will be emailed to you shortly. \n Please check your Junk E-mail folder if you don’t appear to receive the report"); 
+   }
+ else // Default "English"
+  { 
+    window.alert("The Executive Summary Report is being system generated and will be emailed to you shortly. \n Please check your Junk E-mail folder if you don’t appear to receive the report"); 
+  }  
+  return true;
+}
+// Function will be called on onload
+  closeThePopUp();
+
+</script>
+</apex:page>

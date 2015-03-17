@@ -1,0 +1,73 @@
+<!-- 
+/**********************************************************
+* Page Name: CPQAttachementForm
+* Author: HP - Mohit
+* Date: 07-Nov-2012 
+* Requirement # Request Id :
+* Description: UI to attach the file for CPQ ESSN/PPS Request
+***********************************************************/
+-->
+<apex:page standardController="Support_Request__c" extensions="CPQAttachementFormController" id="pg" showHeader="false" sidebar="false">
+    <script>
+        function deleteConfirmation(){
+            if(confirm('Are you sure?')){
+                return true;
+            }
+            return false;
+        }
+    </script>
+    <apex:form id="formId">
+        <!--<apex:image url="/s.gif" alt="Custom" styleClass="pageTitleIcon" title="Custom"/>-->
+        
+        <apex:pageBlock tabStyle="Support_Request__c" title="Attach File to Support Request" id="pgBlock">
+            <apex:pagemessages />
+            <apex:pageBlockSection columns="1" id="pbSection">
+                <apex:outputLabel >1. Select the File</apex:outputLabel>
+                <apex:outputLabel >Type the path of the file or click the Browse button to find the file.</apex:outputLabel>
+                <apex:pageBlockSectionItem >
+                    <apex:inputFile value="{!objAttachement.body}" filename="{!objAttachement.name}" contentType="{!objAttachement.ContentType}"></apex:inputFile>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:outputLabel >2. Click the "Attach File" button.</apex:outputLabel>
+                <apex:outputLabel >Repeat steps 1 and 2 to attach multiple files.</apex:outputLabel>
+                <apex:outputLabel >( When the upload is complete the file information will appear below. )</apex:outputLabel>
+                <apex:commandButton action="{!saveAttachment}" status="Attaching" value="Attach File" title="Attach File" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:panelGrid columns="1">
+            <apex:outputLabel >3.    Click the Done button to return to the previous page.</apex:outputLabel>
+            <apex:outputLabel >( This will cancel an in-progress upload. )</apex:outputLabel>
+            <apex:commandButton onclick="top.window.close();" value="Done" title="Done"/>
+        </apex:panelGrid>
+        <apex:pageBlock title="Notes & Attachments" id="pgBlockShow">
+            <apex:pageBlockTable value="{!showAllAttachment}" var="attachedFile" align="center" rendered="{!OR(ISNULL(showAllAttachment),showAllAttachment.size>0)}" id="pbTable">
+                <apex:column >  
+                    <apex:facet name="header">Action</apex:facet>
+                    <apex:commandLink action="{!deleteAcctachment}" value="Delete" onClick="return deleteConfirmation();" status="deleting" >
+                        <apex:param name="DelId" value="{!attachedFile.Id}"/>
+                    </apex:commandLink>
+                    <!--<apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachedFile.Id)}" target="_blank">Delete</apex:outputlink>-->
+                </apex:column> 
+    
+                <apex:column >  
+                    <apex:facet name="header">Title</apex:facet>
+                    <apex:outputLink target="_top" value="/{!attachedFile.Id}"  title="{!attachedFile.Name }">{!attachedFile.Name }</apex:outputLink>
+                </apex:column>
+    
+                <apex:column >  
+                    <apex:facet name="header">Last Modified</apex:facet>
+                    <apex:outputText value="{!attachedFile.LastModifiedDate}" />
+                </apex:column>
+                <apex:column >  
+                    <apex:facet name="header">Created By</apex:facet>
+                    <apex:outputText value="{!attachedFile.CreatedBy.Name}"/> 
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputPanel rendered="{!OR(showAllAttachment.size==0)}">
+                <apex:outputText value="No records to display"/>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

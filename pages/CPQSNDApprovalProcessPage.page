@@ -1,0 +1,102 @@
+<!-- *****************************************************
+Author: ShaijanQuote Information Thomas
+Created Date: 18-07-2013
+Release: R6
+Capability: CPQ
+Description: New/Create form for special pricing approval creation  
+***********************************************************-->
+<apex:page standardController="Approval__c" extensions="CPQSNDApprovalProcessCtrl,DGPopulatingApprovers" tabStyle="Approval__c" id="apppage" >
+    <apex:sectionHeader title="Special Pricing" subtitle="Special Pricing Approval Process"/>
+    <apex:Outputfield value="{!Approval__c.Opportunity__r.Account.RPL_status__c}" rendered="false"/>
+    <apex:form >
+        <apex:messages />
+        <apex:pageBlock Id="pg">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="  Save  " title="Save" action="{!SaveRecord}" rendered="{!isSaved}" style="font-family:arial;font-size:14px;"/>
+                <apex:commandButton value="  Edit  " title="Edit" action="{!EditRecord}" rendered="{!(!isSubmit && !isSaved)}" style="font-family:arial;font-size:14px;"/>
+                <apex:commandButton value="  Submit Approval  " title="Submit Approval" rendered="{!(!isSubmit && !isSaved)}" action="{!populateApprovers}" style="font-family:arial;font-size:14px;"/>
+                <apex:commandButton value="  Cancel  " title="Cancel" action="{!CancelRecord}" rendered="{!isSaved}" style="font-family:arial;font-size:14px;"/>
+              <!--  <apex:commandButton value="  Submit Approval  " title="Submit Approval" rendered="{!(!isSubmit && !isSaved)}" action="{!SubmitRecord}" style="font-family:arial;font-size:14px;"/>-->
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Requestor" id="RE" collapsible="false" >
+                <apex:repeat value="{!CList}" var="opp">
+                    <apex:pageBlockSectionItem rendered="{!IF(opp.Section__c=='RE',True,False)}">
+                        <apex:outputLabel >{!opp.FieldLabel__c}</apex:outputLabel>
+                        <apex:outputLabel >
+                            <apex:InputField value="{!Approval__c[opp.Name]}" rendered="{!(opp.IN_OUT__c && isSaved)}"/>
+                            <apex:outputLabel value="{!Approval__c[opp.Name]}" rendered="{!IF(opp.IN_OUT__c==false,true,!isSaved)}"/>
+                        </apex:outputLabel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="General Information" id="GI" collapsible="false">
+                <apex:repeat value="{!CList}" var="opp">
+                    <apex:pageBlockSectionItem rendered="{!IF(opp.Section__c=='GI',True,False)}">
+                        <apex:outputLabel >{!opp.FieldLabel__c}</apex:outputLabel>
+                        <apex:outputLabel >
+                            <apex:InputField value="{!Approval__c[opp.Name]}" rendered="{!(opp.IN_OUT__c && isSaved)}"/>
+                            <apex:outputLabel value="{!Approval__c[opp.Name]}" rendered="{!IF(opp.IN_OUT__c==false,true,!isSaved)}"/>
+                        </apex:outputLabel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Opportunity Information" id="OI" collapsible="false">
+                <apex:repeat value="{!CList}" var="opp">
+                    <apex:pageBlockSectionItem rendered="{!IF(opp.Section__c=='OI',True,False)}">
+                        <apex:outputLabel >{!opp.FieldLabel__c}</apex:outputLabel>
+                        <apex:outputLink target="_top" value="/{!OPPID}" title="{!Approval__c[opp.Name]}">{!Approval__c[opp.Name]}</apex:outputLink>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+                <apex:repeat value="{!CList}" var="opp">
+                    <apex:pageBlockSectionItem rendered="{!IF(opp.Section__c=='OI1',True,False)}">
+                        <apex:outputLabel >{!opp.FieldLabel__c}</apex:outputLabel>
+                        <apex:outputLabel >
+                            <apex:InputField value="{!Approval__c[opp.Name]}" rendered="{!(opp.IN_OUT__c && isSaved)}"/>
+                            <apex:outputLabel value="{!Approval__c[opp.Name]}" rendered="{!IF(opp.IN_OUT__c==false,true,!isSaved)}"/>
+                        </apex:outputLabel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Quote Information" id="QI" collapsible="false">
+                <apex:repeat value="{!CList}" var="opp">
+                    <apex:pageBlockSectionItem rendered="{!IF(opp.Section__c=='QI',True,False)}">
+                        <apex:outputLabel >{!opp.FieldLabel__c}</apex:outputLabel>
+                        <apex:outputLabel >
+                            <apex:outputLabel rendered="{!IF(opp.Name!='Quote_Number__c',true,false)}">
+                                <apex:InputField value="{!Approval__c[opp.Name]}" rendered="{!(opp.IN_OUT__c && isSaved)}"/>
+                                <apex:outputField value="{!Approval__c[opp.Name]}" rendered="{!IF(opp.IN_OUT__c==false,true,!isSaved)}"/>
+                            </apex:outputLabel>
+                            <apex:outputLabel rendered="{!IF(opp.Name=='Quote_Number__c',true,false)}">
+                                  <apex:outputLink value="{!Approval__c.Quote_Detail__c}" target="_blank">{!Approval__c.Quote_Number__c}</apex:outputLink>
+                            </apex:outputLabel>
+                        </apex:outputLabel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>                
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Previous Contract" id="PC" collapsible="false" >
+                <apex:repeat value="{!CList}" var="opp">
+                    <apex:pageBlockSectionItem rendered="{!IF(opp.Section__c=='PC',True,False)}">
+                        <apex:outputLabel >{!opp.FieldLabel__c}</apex:outputLabel>
+                        <apex:outputLabel >
+                            <apex:InputField value="{!Approval__c[opp.Name]}" rendered="{!(opp.IN_OUT__c && isSaved)}"/>
+                            <apex:outputLabel value="{!Approval__c[opp.Name]}" rendered="{!IF(opp.IN_OUT__c==false,true,!isSaved)}"/>
+                        </apex:outputLabel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Discount Requested" id="DR" collapsible="false" >
+                <apex:repeat value="{!CList}" var="opp">
+                    <apex:pageBlockSectionItem rendered="{!IF(opp.Section__c=='DR',True,False)}">
+                        <apex:outputLabel >{!opp.FieldLabel__c}</apex:outputLabel>
+                        <apex:outputLabel >
+                            <apex:InputField value="{!Approval__c[opp.Name]}" rendered="{!(opp.IN_OUT__c && isSaved)}" required="{!opp.Required__c}"/>
+                            <apex:outputField value="{!Approval__c[opp.Name]}" rendered="{!IF(opp.IN_OUT__c==false,true,!isSaved)}"/>
+                        </apex:outputLabel>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:relatedList list="NotesAndAttachments" Id="AttchId"/>
+    <apex:relatedList list="ProcessSteps" rendered="{!!isSaved}"></apex:relatedList>
+</apex:page>

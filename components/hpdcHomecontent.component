@@ -1,0 +1,276 @@
+<apex:component controller="HPDCMenu" allowDML="true" id="ComTopFooter"  >
+
+<apex:form id="idform">
+
+<apex:includeScript value="{!URLFOR($Resource.HPDC_JS_Css, 'HPDC_JS_Css/HPDC_jquery.js')}"/>
+<link href="{!URLFOR($Resource.HPDC_JS_Css, '/HPDC_JS_Css/HPDC_style.css')}" rel="stylesheet" type="text/css" />
+
+
+
+<apex:includeScript value="{!URLFOR($Resource.HPDC_JS_Css, 'HPDC_JS_Css/HPDC_custom_script.js')}"/>
+<!-- <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+<!--  <apex:includeScript value="{!URLFOR($Resource.HPDC_JS_Css, 'HPDC_JS_Css/HPDC_script.js')}"/> -->
+
+<script>
+function getid(firstParam)
+       {
+         
+          alert(firstParam);
+          //alert(ele);
+          
+        }
+ </script>  
+
+<style type="text/css">
+@font-face {
+    
+    src: url('{!URLFOR($Resource.HPDC_Fonts, '/HPDC_Fonts/hps-euro-w01-regular-woff.woff')}');
+    src: url('{!URLFOR($Resource.HPDC_Fonts, '/HPDC_Fonts/hps-euro-w01-bold-woff.woff')}');
+    src: url('{!URLFOR($Resource.HPDC_Fonts, '/HPDC_Fonts/hps-euro-w01-bold-ttf.ttf')}');
+    src: url('{!URLFOR($Resource.HPDC_Fonts, '/HPDC_Fonts/hps-euro-w01-regular-ttf.ttf')}');
+}
+
+@font-face {
+    font-family: "HPSimplified";
+    font-style: normal;
+    font-weight: normal;
+    src: url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-regular-eot.eot?#iefix") format("embedded-opentype"), url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-regular-woff.woff") format("woff"), url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-regular-ttf.ttf") format("truetype");
+}
+@font-face {
+    font-family: "HPSimplified";
+    font-style: normal;
+    font-weight: bold;
+    src: url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-bold-eot.eot?#iefix") format("embedded-opentype"), url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-bold-woff.woff") format("woff"), url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-bold-ttf.ttf") format("truetype");
+}
+
+
+
+  html {
+    background-color: white;
+    
+}
+
+
+body{
+background-color: white;
+}
+
+
+#slide_wrapper {
+background-color: white;
+}
+
+.link_list .maimenuli a {
+    font-size: 18px;
+    font-weight: normal;
+    margin-left: 0 !important;
+}
+
+#slide_wrapper {
+    overflow: hidden;
+}
+
+ .link_list li
+ {
+padding-bottom: 0px;
+padding-top: 0px;
+height: 25px;
+ font-size: 18px;
+ }
+
+
+.homemenumargin{
+margin-left:-36px;
+}
+
+ .link_list ul {
+    margin-left: 0px;
+}
+
+#slide_wrapper {
+    overflow: hidden;
+}
+</style>
+
+     
+ 
+ 
+<!--<apex:actionFunction action="{!getdescriptionUnsecure}" name="getid"  reRender="idform">
+        <apex:param name="firstParam" assignTo="{!submenuid}" value="" />
+       
+    </apex:actionFunction> 
+    -->
+   
+    
+<div id="body" class="body">
+                <div class="over_menu" >
+                    <div class="title">
+                        Customization <br/> Services
+                    </div>
+                    <div id="homemenu" class="link_list">
+                        <ul class="links_1 highlight">
+                         <!--   <li  class="single"><a title="Overview" tabindex="2" shape="rect" name="us_en_home_hho-product_l1_hho_fixed_laptops" href="overview.html" class="hho link_metrics" >Overview</a></li>
+                            <li  class="single"><a title="Overview" tabindex="2" shape="rect" name="us_en_home_hho-product_l1_hho_fixed_laptops" href="app_development.html" class="hho link_metrics" >Application Development</a></li>
+                            <li  class="single"><a title="Overview" tabindex="2" shape="rect" name="us_en_home_hho-product_l1_hho_fixed_laptops" href="custom_product.html" class="hho link_metrics">Custom Product Finishing</a></li>
+                        -->
+                        
+                        <apex:repeat value="{!Hpmenu}" var="Segment">
+                              <li class="single "> 
+                                  <span class="maimenuli">
+                                  <table width="208px" border="0" >
+                                    <tr>
+                                      
+                                        <td >
+                                         
+                                         <p style="margin:-2px;"> <!-- <apex:outputLink style="margin-left:-5px;font-family: HPSimplified,Arial !important;"  value="{!Segment.Name}"  onclick="getid('{!Segment.Name}'); return false;"    title="{!Segment.Name}" /> </p>   -->                                                                       
+                            <!-- <apex:outputLink style="margin-left:-5px;font-family: HPSimplified,Arial !important;" title="{!Segment.Name}" onclick="getid('{!Segment.Name}'); return false; "> {!Segment.Name} </apex:outputLink> -->
+                           <!-- <a   style="margin-left:-5px;font-family: HPSimplified,Arial !important;" href="{!MenuredirectUrl}?menu={!Segment.Name}" target="_self" title="{!Segment.Name}">  {!Segment.Name} </a> </p> -->
+                          
+                             <apex:outputlink style="font-family: HPSimplified,Arial !important;" value="{!MenuredirectUrl}?menu={!Segment.Name}" target="_self" title="{!Segment.Name}" rendered="{!IsSiteLogin}">  {!Segment.Name} </apex:outputlink> 
+                             
+                             
+                             <apex:outputlink style="font-family: HPSimplified,Arial !important;" value="{!MenuredirectUrl}&menu={!Segment.Name}" target="_self" title="{!Segment.Name}" rendered="{!!IsSiteLogin}">  {!Segment.Name} </apex:outputlink> </p>
+                                        </td>
+                                       
+                                       
+                                    </tr>
+                                  </table>
+                                  </span>
+                                 
+                              </li>
+                        </apex:repeat> 
+                        </ul>
+                    </div>
+                </div>
+                <div id="slide_wrapper">
+                    <div id="slides" style="background-repeat: no-repeat;">
+                        <div class="slide first active" effect="left">
+                            <div class="image" origin_left="175px" after_left="-650px" origin_bottom="0" style="left: 175px; bottom: 0;">
+                                <!--<img alt="hpe_US_EN_PSG_HHO_Slate7_20130714" xmlns="" src="/images/laptop-01.png" usemap="#map_id0"/> -->
+                                <!--<img alt="hpe_US_EN_PSG_HHO_Slate7_20130714" xmlns="" url="{!URLFOR($Resource.HPDC_Images, '/HPDC_Images/laptop-01.png')}"  usemap="#map_id0"/> 
+                                <img alt="hpe_US_EN_PSG_HHO_Slate7_20130714"  src="/resource/1374046805000/HPDC_Images/HPDC_Images/laptop-01.png" usemap="#map_id0"/> -->
+                                
+                                <apex:image alt="hpe_US_EN_PSG_HHO_Slate7_20130714"  url="{!URLFOR($Resource.HPDC_Images, '/HPDC_Images/laptop-01.png')}" usemap="#map_id0"/>
+                                
+                                <!--<map id="map_id0" name="map_id0"><area shape="rect" coords="0,0,275,394" href="http://www.shopping.hp.com/" name="us_en_home_message_l1_hho_Shared_shopnow"><area shape="rect" coords="276,0,964,394" href="http://www.shopping.hp.com/en_US/home-office/-/products/Tablets/Tablets?SearchParameter=%26%40QueryTerm%3D*%26brandtablets_dte2%3DSlate%26CategoryUUIDLevelX%3DTEcQwSiESggAAAE9byBPqPsP%26%40Sort.TieredPricing%3D0&amp;PageSize=15" name="us_en_home_message_l23_hho_PSG_banner-Slate7-20130714"></map>-->
+                            </div>
+                            <div class="sobanner_tagline" origin_top="20px" origin_right="21px" style="right: 21px; top: 20px;">
+                                <div class="tagline_heading">
+                                    Going beyond the box.
+                                </div>
+                                <div class="tagline_body">
+                                    Introducing mobile application development <br/>services from HP.
+                                </div>
+                                <p class="tagline_cta">
+                                    <a tabindex="102" shape="rect" name="us_en_home_message_l23_hho_PSG_banner-cta-Slate7-20130714" href="page?pagename=services-details&menu=Application%20Development||services-details?menu=Application%20Development">Learn more</a> about this exciting new service today.
+                                </p>
+                                <p>
+                                  <!--  <a tabindex="10" class="secondary-button orange" href="registration.html">Sign up</a> -->
+                                   <!-- <a class="secondary-button orange" href="contact_us.html" tabindex="10">Contact us</a> -->
+                                   <!-- <apex:commandLink title="Contact us" action="{!Contactus}" shape="rect" id="a_contactus" styleclass="secondary-button orange"
+                                    value="Contact us" tabindex="10" /> -->
+                                    
+                                    <apex:Outputlink styleclass="secondary-button orange" tabindex="10" title="Contact us"  id="a_contactus" shape="rect"  value="{!ContactusRedirectUrl}" target="_self" >  Contact us </apex:outputlink> 
+
+                                    
+                                </p>
+                            </div>
+                        </div>
+                        <div class="slide" effect="left">
+                            <div class="image" origin_left="258px" after_left="-500px" origin_bottom="70px" style="left: -500px; bottom: 70px;">
+                              <!--  <img alt="hpe_US_EN_PSG_HHO_Slate7_20130714"  src="/resource/1374046805000/HPDC_Images/HPDC_Images/laptop-02.png" usemap="#map_id0"/> -->
+                                
+                                <apex:image alt="hpe_US_EN_PSG_HHO_Slate7_20130714"  url="{!URLFOR($Resource.HPDC_Images, '/HPDC_Images/laptop-02.png')}" usemap="#map_id0"/>
+                                
+                                
+                                <!--<map id="map_id0" name="map_id0"><area shape="rect" coords="0,0,275,394" href="http://www.shopping.hp.com/" name="us_en_home_message_l1_hho_Shared_shopnow"><area shape="rect" coords="276,0,964,394" href="http://www.shopping.hp.com/en_US/home-office/-/products/Tablets/Tablets?SearchParameter=%26%40QueryTerm%3D*%26brandtablets_dte2%3DSlate%26CategoryUUIDLevelX%3DTEcQwSiESggAAAE9byBPqPsP%26%40Sort.TieredPricing%3D0&amp;PageSize=15" name="us_en_home_message_l23_hho_PSG_banner-Slate7-20130714"></map>-->
+                            </div>
+                            <div class="sobanner_tagline" origin_top="110px" origin_right="0" style="right: -400px; top: 65px; width: 255px;">
+                                <div class="tagline_heading">
+                                    A unique canvas to showcase BRAND.
+                                </div>
+                                <div class="tagline_body">
+                                    Precision, elegance, and class. Introducing permanent product finishing services that make a lasting impression. 
+                                </div>
+                                <p class="tagline_cta">
+                                    <a tabindex="102" shape="rect" name="us_en_home_message_l23_hho_PSG_banner-cta-Slate7-20130714" href="page?pagename=services-details&menu=Custom%20Product%20Finishing||services-details?menu=Custom%20Product%20Finishing">Learn more</a> about this exciting new service today.
+                                </p>
+                                <p>
+                                  <!--  <a tabindex="10" class="secondary-button orange" href="registration.html">Sign up</a> -->
+                                   <!-- <a class="secondary-button orange" href="contact_us.html" tabindex="10">Contact us</a> -->
+                                  <!-- <apex:commandLink title="Contact us" action="{!Contactus}" shape="rect" id="b_contactus" styleclass="secondary-button orange"
+                                    value="Contact us" tabindex="10" /> -->
+                                    
+                                    <apex:Outputlink styleclass="secondary-button orange" tabindex="10" title="Contact us"  id="b_contactus" shape="rect"  value="{!ContactusRedirectUrl}" target="_self" >  Contact us </apex:outputlink> 
+                                </p>
+                            </div>
+                        </div>
+                        <div class="slide last" effect="bottom">
+                            <div class="image" origin_left="155px" origin_bottom="0" style="left: 155px; bottom: -400px;">
+                               <!-- <img alt="hpe_US_EN_PSG_HHO_Slate7_20130714"  src="/resource/1374046805000/HPDC_Images/HPDC_Images/laptop-03.png" usemap="#map_id0"/>-->
+                                <apex:image alt="hpe_US_EN_PSG_HHO_Slate7_20130714"  url="{!URLFOR($Resource.HPDC_Images, '/HPDC_Images/laptop-03.png')}" usemap="#map_id0"/>
+                                <!--<map id="map_id0" name="map_id0"><area shape="rect" coords="0,0,275,394" href="http://www.shopping.hp.com/" name="us_en_home_message_l1_hho_Shared_shopnow"><area shape="rect" coords="276,0,964,394" href="http://www.shopping.hp.com/en_US/home-office/-/products/Tablets/Tablets?SearchParameter=%26%40QueryTerm%3D*%26brandtablets_dte2%3DSlate%26CategoryUUIDLevelX%3DTEcQwSiESggAAAE9byBPqPsP%26%40Sort.TieredPricing%3D0&amp;PageSize=15" name="us_en_home_message_l23_hho_PSG_banner-Slate7-20130714"></map>-->
+                            </div>
+                            <div class="sobanner_tagline" origin_top="50px" origin_right="15px" style="width: 255px; top: 65px; right: -400px;">
+                                <div class="tagline_heading">
+                                    Personalize, Differentiate, <br/>and Inspire.
+                                </div>
+                                <div class="tagline_body">
+                                    Introducing custom laser etching and permanent color bonding services from HP. 
+                                </div>
+                                <p class="tagline_cta">
+                                    <a tabindex="102" shape="rect" name="us_en_home_message_l23_hho_PSG_banner-cta-Slate7-20130714" href="page?pagename=services-details&menu=Custom%20Product%20Finishing||services-details?menu=Custom%20Product%20Finishing">Learn more</a> about this exciting new service today.
+                                </p>
+                                <p>
+                                   <!-- <a tabindex="10" class="secondary-button orange" href="registration.html">Sign up</a> 
+                                   <a class="secondary-button orange" href="contact_us.html" tabindex="10">Contact us</a>-->
+                                   
+                                  <!-- <apex:commandLink title="Contact us" action="{!Contactus}" shape="rect" id="c_contactus" styleclass="secondary-button orange"
+                                    value="Contact us" tabindex="10" /> -->
+                                    
+                                  <apex:Outputlink styleclass="secondary-button orange" tabindex="10" title="Contact us"  id="c_contactus" shape="rect"  value="{!ContactusRedirectUrl}" target="_self" >  Contact us </apex:outputlink> 
+  
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="controls">
+                        <!--BEGIN CAROUSEL CONTROLS -->
+                        <div id="controls_carousel" class="" style="width: 350px;">
+                            <div title="Scroll images left" id="left_arrow" class="png">
+                                <a tabindex="111" shape="rect" href="javascript:void(0);"> <span class="screenReading">Navigate to left</span></a>
+                            </div>
+                            <div id="carousel_container">
+                                <div class="carousel_group enabled">
+                                    <div class="carousel_box" title="Home & Home Office">
+                                        <a tabindex="112" shape="rect" href="javascript:void(0);"> <span class="screenReading">Carousel controller, to navigate to Banner area hit Enter</span></a>
+                                        <!-- -->
+                                    </div>
+                                </div>
+                            <div class="carousel_group ">
+                                    <div class="carousel_box" title="Small & Medium Business">
+                                        <a tabindex="113" shape="rect" href="javascript:void(0);"> <span class="screenReading">Carousel controller, to navigate to Banner area hit Enter</span></a>
+                                        <!-- -->
+                                    </div>
+                                </div><div class="carousel_group ">
+                                    <div class="carousel_box" title="Large Enterprise Business">
+                                        <a tabindex="114" shape="rect" href="javascript:void(0);"> <span class="screenReading">Carousel controller, to navigate to Banner area hit Enter</span></a>
+                                        <!-- -->
+                                    </div>
+                                </div></div>
+                            <div title="Scroll images right" id="right_arrow" class="png">
+                                <a tabindex="115" shape="rect" href="javascript:void(0);"> <span class="screenReading">Navigate to right</span></a>
+                            </div>
+                        </div>
+                        <!-- END CAROUSEL CONTROLS -->
+                        <!--BEGIN NEWS TICKER -->
+                        
+                        <!--END NEWS TICKER -->
+                    </div>
+                    <apex:OutputPanel id="Op1">
+                    <div style="background-color: rgb(255, 255, 255); width: 100%; height: 100px; position: absolute; bottom: -62px; z-index: 80;"></div>
+                    </apex:OutputPanel>
+                </div>
+            </div>
+   </apex:form>         
+</apex:component>

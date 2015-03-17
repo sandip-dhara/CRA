@@ -1,0 +1,80 @@
+<!-- 
+/**********************************************************
+* Page Name: AddCompetitor
+* Author: Accenture
+* Date: 27-JUL-2012 
+* Requirement # Request Id :
+* Description: To add multiple competitors
+***********************************************************/
+-->
+<apex:page standardController="Competitors__c" extensions="AddCompetitorsController"  action="{!checkOptyEditAccess}" tabStyle="Opportunity" id="page">
+   <apex:form id="frm" >
+        <apex:sectionHeader title="{!$Label.Competitors}"/>
+       <apex:pagemessages />
+        <!-- Page block for adding competitors -->
+        <apex:pageBlock title="{!$Label.Add_Competitors}" id="pageBlock">
+            <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton action="{!Save}" value="{!$Label.Save}" rendered="{!hasEditAccess}"/>
+                    <apex:commandButton action="{!Cancel}" value="{!$Label.Cancel}"/>
+            </apex:pageBlockButtons>
+            <!-- Data Table for adding competitors -->
+            <apex:DataTable value="{!CompetitorList}" var="cmpt" cellspacing="15" id="dataTable" rendered="{!hasEditAccess}">
+                    
+                    <!--apex:column headerValue="{!$ObjectType.Competitors__c.fields.Opportunity__c.label}" >                        
+                        <apex:outputField value="{!cmpt.competitor.Opportunity__c }" />
+                    </apex:column>Commented by prakash-->
+                    <apex:column headerValue="{!$ObjectType.Competitors__c.fields.Competitor_Account__c.label}" id="CompetitorCol">                        
+                        <apex:inputField id="competitor" value="{!cmpt.competitor.Competitor_Account__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$Label.Primary}">
+                        <apex:selectRadio value="{!cmpt.competitor.Primary__c}" id="radio" onclick="unCheckOthers('{!$Component.radio}')">
+                            <apex:selectOption itemValue="true" itemLabel=""/>
+                        </apex:selectRadio>
+                    </apex:column>                    
+                   <apex:column headerValue="{!$ObjectType.Competitors__c.fields.Incumbent__c.label}">
+                        <apex:selectRadio value="{!cmpt.competitor.Incumbent__c}" id="radio1" onclick="unCheck('{!$Component.radio1}')">
+                            <apex:selectOption itemValue="true" itemLabel=""/>
+                        </apex:selectRadio>
+                    </apex:column>                                          
+            </apex:DataTable>
+            
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+        
+        /* Setting lookup url on window load*/
+        window.onload = function(){
+            for(var i=0;i<5;i++){
+                var competitorId = 'page:frm:pageBlock:dataTable:'+i+':competitor';
+                var lookupId = competitorId + '_lkwgt';
+                var lookupComp = document.getElementById(lookupId);
+                var opptyid='{!opptyId}';
+                /* Setting lookup url*/
+                if (lookupComp != null) {
+                    lookupComp.href = "javascript: openLookup('/apex/AddCompetitorLookup?lkfm=page%3Afrm&lknm="+competitorId+"&opptyid="+opptyid+"&lktp=' + getElementByIdCS('"+competitorId+"_lktp').value,670,'1','&lksrch=' + escapeUTF(getElementByIdCS('"+competitorId+"').value.substring(0, 80)))";    
+                }
+            } 
+        } 
+        
+        /* Setting lookup url*/
+        function unCheckOthers(selectVar){
+            for(var i=0;i<5;i++){
+                var tmpRadio = document.getElementById('page:frm:pageBlock:dataTable:'+i+':radio:0');
+                var tmpRadioStr = 'page:frm:pageBlock:dataTable:'+i+':radio:0';
+                if(tmpRadioStr.indexOf(selectVar)<0)
+                    tmpRadio.checked=false;
+            }
+        }
+        
+        /* Setting lookup url*/
+        function unCheck(selectVar){
+            for(var i=0;i<5;i++){
+                var tmpRadio = document.getElementById('page:frm:pageBlock:dataTable:'+i+':radio1:0');
+                var tmpRadioStr = 'page:frm:pageBlock:dataTable:'+i+':radio1:0';
+                if(tmpRadioStr.indexOf(selectVar)<0)
+                    tmpRadio.checked=false;
+                    }
+            
+        }
+    </script>
+</apex:page>

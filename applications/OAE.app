@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <defaultLandingTab>OAE_Start</defaultLandingTab>
+    <description>The Object Assignment Engine</description>
+    <label>Object Assignment Engine</label>
+    <tab>OAE_Start</tab>
+    <tab>standard-Case</tab>
+    <tab>standard-Lead</tab>
+    <tab>RuleScenario__c</tab>
+    <tab>UserData__c</tab>
+    <tab>RuleBitz__c</tab>
+    <tab>UserBitz__c</tab>
+    <tab>ScoreDebug__c</tab>
+    <tab>PPT_Translation__c</tab>
+    <tab>Social_Learning</tab>
+    <tab>Skill__c</tab>
+    <tab>User_Skill__c</tab>
+    <tab>AthenaTest__c</tab>
+    <tab>HP_PORTAL_URL__c</tab>
+    <tab>Promotion__c</tab>
+    <tab>Application_Setting__c</tab>
+    <tab>Learning_Image__c</tab>
+    <tab>Work_Element_Contributor_Role__c</tab>
+    <tab>Work_Element_Reviewer_Role__c</tab>
+    <tab>Stage_Work_Element_Predecessor__c</tab>
+    <tab>Contributor__c</tab>
+    <tab>Link__c</tab>
+    <tab>Release_Role__c</tab>
+    <tab>Release_Deliverable__c</tab>
+    <tab>Stage_Work_Element__c</tab>
+    <tab>Core_Team_Member__c</tab>
+    <tab>Risk__c</tab>
+    <tab>Stage_Review__c</tab>
+    <tab>CustomObj__c</tab>
+    <tab>SLPOLd</tab>
+    <tab>Learning_Category__c</tab>
+    <tab>Required_Learning_Category__c</tab>
+    <tab>ES_User__c</tab>
+    <tab>Project__c</tab>
+    <tab>sheobj1mar4__c</tab>
+    <tab>User_Notification_Subscription__c</tab>
+    <tab>Chatter_test__c</tab>
+    <tab>Chatter_test_child__c</tab>
+    <tab>Root_Cause_Control__c</tab>
+    <tab>Business_Impact_Cause__c</tab>
+    <tab>Process_Control__c</tab>
+    <tab>Root_Cause__c</tab>
+    <tab>Business_Impact__c</tab>
+    <tab>SLP_Activity</tab>
+    <tab>SLP_Process_Onboarding_User__c</tab>
+    <tab>SLP_BulkReg_Log__c</tab>
+    <tab>SLP_BulkReg__c</tab>
+    <tab>UpdateProfileImage</tab>
+</CustomApplication>

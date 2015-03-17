@@ -1,0 +1,23 @@
+<apex:page showHeader="false" standardController="Opportunity">
+ <script type="text/javascript">
+        function showBox() {
+        
+             var box = new parent.SimpleDialog("helder"+Math.random(), true);
+             parent.box = box;
+        
+             box.setTitle("Sales Coach - Stage: {!Opportunity.StageName}");
+        
+             box.createDialog();
+             box.setWidth(900);
+             box.setContentInnerHTML("<a href=\"#\" onclick=\"box.hide();\">Close</a><br/><iframe src =\"/apex/SalesCoachV2?id={!Opportunity.Id}\" height=\"700\" width=\"950\" frameborder=\"0\" style=\"border:none; width:850px; margin-left:0; margin-right: auto; height:600px;overflow-x:hidden;\"><p>Your browser does not support iframes.</p></iframe>");
+        
+        
+             box.setupDefaultButtons();
+             
+             box.show();
+        
+        }
+</script>
+
+<a href="#" onclick="showBox();"><img src="{!$Resource.SalesCoachSaasy}" border="0"/></a>
+</apex:page>

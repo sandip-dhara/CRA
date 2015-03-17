@@ -1,0 +1,40 @@
+<!-- *********************************************************
+* PageName: JBP_NewCompetitiveLandscapesPage
+* Author: HP  
+* Date: 19-March-2013 
+* Requirement #:5373
+* Description: This page allow to add 5 competitors to the SubPlan
+********************************************************* -->
+<apex:page standardController="JBP_Competitive_Landscape__c" tabStyle="JBP_Competitive_Landscape__c" extensions="JBP_NewCompLandscapeController">
+<apex:form >
+<apex:sectionHeader title="{!$ObjectType.JBP_Competitive_Landscape__c.label}"/>
+<apex:pageMessages />
+<apex:pageBlock title="{!$Label.JBP_CometitiveLandscapeEdit}">
+    <apex:pageBlockButtons >
+        <apex:commandButton value="{!$Label.Save}" action="{!Save}"/>
+        <apex:commandButton value="{!$Label.Cancel}" action="{!Cancel}"/ >
+    </apex:pageBlockButtons>
+    <b>{!$Label.JBP_GlobalBusinessUnit}</b><apex:OutputText >{!displayGBU}</apex:OutputText>
+    <apex:DataTable value="{!CompetitiveList}" var="cp" cellspacing="5" id="dataTable">
+        <apex:column headerValue="{!$ObjectType.JBP_Competitive_Landscape__c.fields.Competitor__c.label}"  >
+        <apex:inputField id="competitor" value="{!cp.competitor.Competitor__c}"/>
+        </apex:column>  
+        <apex:column headerValue="{!$ObjectType.JBP_Competitive_Landscape__c.fields.Current_Share_of_Business__c.label}" id="ShareofbizId"> 
+        <apex:inputField id="Shareofbiz" value="{!cp.competitor.Current_Share_of_Business__c}"/>
+        </apex:column> 
+        <apex:column headerValue="{!$ObjectType.JBP_Competitive_Landscape__c.fields.Current_Share_of_Business_Prcnt__c.label}" id="ShareofbizprcntId"> 
+        <apex:inputField id="Shareofbizprcnt" value="{!cp.competitor.Current_Share_of_Business_Prcnt__c}"/>
+        </apex:column>
+        <apex:column headerValue="{!$ObjectType.JBP_Competitive_Landscape__c.fields.Share_of_Services__c.label}" id="ShareofServicesId">                      
+        <apex:inputField id="PartnerServices" value="{!cp.competitor.Share_of_Services__c}"/>
+        </apex:column>
+        <apex:column headerValue="{!$ObjectType.JBP_Competitive_Landscape__c.fields.Share_of_Services_Prcnt__c.label}" id="ShareofServicesPrcntId"> 
+        <apex:inputField id="ShareofServicesPrcnt" value="{!cp.competitor.Share_of_Services_Prcnt__c}"/>
+        </apex:column>
+        <apex:column headerValue="{!$ObjectType.JBP_Competitive_Landscape__c.fields.Comments__c.label}" id="CommentsId">                        
+        <apex:inputField id="Comments" value="{!cp.competitor.Comments__c}"/>
+        </apex:column> 
+    </apex:dataTable>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

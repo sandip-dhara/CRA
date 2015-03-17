@@ -1,0 +1,52 @@
+<apex:page standardController="Approval_Matrix_Element__c" extensions="DGApprovalMatrixElement" tabStyle="Approval_Matrix_Element__c" id="thepage">
+<apex:sectionHeader title="Apporval Matrix Element"/>
+  <apex:form id="theform">
+  <apex:pageBlock tabStyle="Opportunity" mode="Edit" title="Information" helpTitle="Approval Matrix Element records" helpUrl="" id="pblock">
+  <apex:PageMessages />
+
+  <apex:pageBlockButtons >
+  <apex:commandButton action="{!save}" value="Save"/>
+  <apex:commandButton action="{!Cancel}" value="Cancel"/>
+  </apex:pageBlockButtons>
+  <apex:pageBlockSection columns="1" id="pbsection">
+  <apex:inputField value="{!AME.Object__c}" Id="Obj" OnChange="ObjectChange()" style="width:160px">
+   <apex:actionFunction Name="getFieldsInfo" action="{!getFieldInfo}" reRender="rt,ap"/>
+   </apex:inputField>     
+   <apex:inputHidden value="{!Approval_Matrix_Element__c.Field_API_Name__c}" />
+   <!--<apex:inputField value="{!AME.Field_Name__c}"/>-->
+   <apex:selectList id="rt" value="{!AME.Field_Name__c}" size="1" style="width:160px">
+       <apex:selectOptions value="{!FieldList}" />
+   </apex:selectList>
+   
+   <apex:inputField value="{!AME.Match_Type__c}" style="width:160px" id="mtype" onchange="ValueFieldReadonly();"/>
+   
+   <apex:inputField value="{!AME.Value__c}" style="width:160px"/>
+   <apex:inputField value="{!AME.Approval_Matrix__c}" style="width:160px"/>
+   <apex:inputField value="{!AME.Value_Max__c}" style="width:160px"  id="vmax"/>
+   <apex:inputField value="{!AME.Value_Min__c}" style="width:160px" id="vmin"/>
+   <!--<apex:inputfield value="{!AME.Field_API_Name__c}" />-->
+   </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+   <script>
+      
+   function ObjectChange(){
+   
+    getFieldsInfo(); 
+    
+   }
+   function ValueFieldReadonly(){
+   
+   if(document.getElementById('thepage:theform:pblock:pbsection:mtype').value == 'Equals' || document.getElementById('thepage:theform:pblock:pbsection:mtype').value == 'Contains' || document.getElementById('thepage:theform:pblock:pbsection:mtype').value == 'Starts With'){
+      document.getElementById('thepage:theform:pblock:pbsection:vmax').disabled = true;
+      document.getElementById('thepage:theform:pblock:pbsection:vmin').disabled = true;
+      }
+      else{
+      document.getElementById('thepage:theform:pblock:pbsection:vmax').disabled = false;
+      document.getElementById('thepage:theform:pblock:pbsection:vmin').disabled = false;
+      }
+      
+      }
+     
+   </script>
+</apex:page>

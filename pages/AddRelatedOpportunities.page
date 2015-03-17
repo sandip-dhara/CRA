@@ -1,0 +1,32 @@
+<!-- 
+/**********************************************************
+* Page Name: AddRealtedOpportunities
+* Author: Accenture
+* Date: 27-MAR-2012 
+* Requirement # Request Id :
+* Description: To add multiple Related Opportunities
+***********************************************************/
+-->
+<apex:page standardController="Opportunity" extensions="RelatedOpportunityController" action="{!checkOptyEditAccess}" tabStyle="Opportunity" id="page">
+    <apex:form >
+        <apex:sectionHeader title="{!$Label.Related_Opportunities_Edit}" subtitle="{!$Label.Add_Related_Opportunities}" />
+        <apex:pageMessages />
+        
+        <!-- Page block for adding related opportunities -->
+        <apex:pageBlock title="{!$Label.Add_Related_Opportunities}">
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!Save}" value="{!$Label.Save}" rendered="{!hasEditAccess}"/>
+            <apex:commandButton action="{!Cancel}" value="{!$Label.Cancel}"/>
+        </apex:pageBlockButtons>
+            <!-- Data table for adding related opportunities -->
+            <apex:DataTable value="{!RelatedOpportunityList}" var="relOpty" rendered="{!hasEditAccess}" cellspacing="5" id="dataTable">
+                <apex:column headerValue="{!$ObjectType.Opportunity.fields.Name.label}" id="opptyCol">                        
+                    <apex:outputLink id="oppty" value="../{!relOpty.currentOpptyID}">{!relOpty.currentOpptyName}</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.Opportunity.fields.Related_Opportunity__c.label}" id="relOpptyCol">                        
+                    <apex:inputField id="relOppty" value="{!relOpty.RelatedOpportunity.Related_Opportunity__c}"/>
+                </apex:column>
+            </apex:dataTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

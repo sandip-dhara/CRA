@@ -1,0 +1,1227 @@
+<apex:page standardcontroller="Release_Stage__c" extensions="ODP_Extension_StageDetails" sidebar="false">
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.ODP_JS_PieChart,'ChartJS/highcharts.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.ODP_JS_PieChart,'ChartJS/exporting.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/winstyle.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/HpstandIcon.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/style.css')}" />
+
+<apex:includeScript value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.default.css')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.core.css')}"/>
+    
+<style>
+    .NotShowWarning{
+        display:none;
+    }
+    .ShowWarning{
+        display:block;
+    }
+    textarea, .uneditable-input {
+        width: 90%;
+    }
+    .modal.fade.in { 
+        top: -5%; 
+    }
+    .bPageBlock .detailList .labelCol{ 
+        width: 25%; 
+    } 
+    .HideColumn{
+        display:none;
+    }
+    .form-detail{
+    margin-left: 2%;
+    margin-top: -1.5%;
+    }
+    .tab-btn-new{
+    margin-left: 85%;
+    margin-top: -1.5%;
+    }
+    .table-label{
+        width:15%;
+        font-weight:bold;
+    }
+</style>
+
+
+<style>
+<!--  *******  -->
+    /* General Links */
+        a:link { text-decoration : none; color : #3366cc; border: 0px;}
+        a:active { text-decoration : underline; color : #3366cc; border: 0px;}
+        a:visited { text-decoration : none; color : #3366cc; border: 0px;}
+        a:hover { text-decoration : underline; color : #ff5a00; border: 0px;}
+        img { padding: 0px; margin: 0px; border: none;}
+    
+    .outer{
+        height:100%;
+    }
+    #contentWrapper{
+        height:1000px;
+    }
+    
+    /*
+        body {
+            font-size:14px;
+            font-weight:bold;
+            color:#0096D6;
+            padding:5px;
+            border-bottom:solid;
+            border-bottom-width:1px;
+            border-bottom-color:#0096D6;
+            height:100%;
+        }
+    */
+
+        #StageWorkElementCount {
+            margin : 0 auto;
+            width:100%;
+        }
+
+        #StageWorkElementCount .extra {
+            padding-left:30px;
+        }
+
+        #StageWorkElementCount .options {
+            padding-left:10px;
+        }
+
+        #StageWorkElementCount .getOption {
+            padding-left:10px;
+            padding-right:20px;
+        }
+        
+        .processbartitle{
+            color:#000000;
+            display:inline-block;
+            width:8em;
+            margin-left:4em;
+            text-align:right;
+            padding-right:1em;
+        }
+     .currentStage{
+        display:inline-block;
+        position:relative;
+        top:-1em;
+        font-weight:bold;
+        font-size: 12px
+     }
+    
+    #StageWorkElementCountable div{
+        display:inline-block;
+        width:30em;
+        font-weight: 300;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        line-height:2.5em;
+    }
+    .processtitle{
+        text-align:right;
+        display:inline-block;
+        width:10em;
+    }    
+<!-- ******* -->
+
+
+    .tableWorkElementColumn a, .tableDeliverableColumn a{
+        color:#000;
+        display:block;
+        width:18em;    
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: nowrap; 
+    }
+
+
+    <!-- Progress with stages-->
+
+
+    ol.progtrckr {
+        margin: 0;
+        padding: 0;
+        list-style-type none;
+    }
+
+    ol.progtrckr li {
+        display: inline-block;
+        text-align: center;
+        line-height: 3em;
+    }
+
+
+    ol.progtrckr li.progtrckr-done {
+        color: #0096D6;
+        border-bottom: 5px solid #0096D6;
+    }
+    
+      ol.progtrckr li.progtrckr-current {
+        color: #0096D6;
+        border-bottom: 5px solid #0096D6;
+    }
+    
+    ol.progtrckr li.progtrckr-todo {
+        color: silver; 
+        border-bottom: 5px solid silver;
+    }
+
+    ol.progtrckr li:after {
+        content: "\00a0\00a0";
+         position: relative;
+        float: left;
+    }
+    ol.progtrckr li:before {
+        position: relative;
+        float: left;
+        left: 52.5%;
+    }
+
+    ol.progtrckr li.progtrckr-done:before {
+        content: "\2713";
+        color: white;
+        background-color: #0096D6;
+        height: 2em;
+        width: 2em;
+        line-height: 2em;
+        border: none;
+        border-radius: 2em;
+        bottom:-2.2em;
+    } 
+    
+    
+    ol.progtrckr li.progtrckr-current:before {
+         content: "\27a8";
+         color: white;
+        background-color: #0096D6;
+        height: 2em;
+        width: 2em;
+        line-height: 2em;
+        border: none;
+        border-radius: 2em;
+        bottom:-1em;
+        font-weight:bold;
+        font-size:18px;
+    }    
+    
+    ol.progtrckr li.progtrckr-todo:before {
+        content: "\039F";
+        color: silver;
+        background-color: white;
+        height: 2em;
+         line-height: 2em;
+        font-size: 1.5em;
+        bottom: -1.2em;
+    }
+    ol.progtrckr li{
+        margin-left:0em !important;
+        width:16.5%;
+    }
+    
+
+    <!-- Progress with stages end-->
+    
+ .pbSubheader {
+        height:18px;
+        border-top:0;
+        color: white;
+        
+        padding: 0px 0px 0px 0px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 300 !important;
+        border-radius: 0px  !important;
+        border-bottom-left-radius:6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    body .bPageBlock .pbBody .pbSubheader img {
+        height: 15px;
+        width: 15px;
+    }
+   .apexp .bPageBlock .apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-color:white;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:16px !important; /* this controls the blue bar font-sizes */
+    }
+
+    .myButtons{
+        background: none  !important;
+        border: 0px  !important;
+        background-color: hsl(198, 100%, 41%) !important;
+        color: #fff !important;
+        font-size: 13px  !important;
+        border-radius: 0px  !important;
+        padding: 6px 6px 6px 6px  !important;
+        border-bottom-left-radius: 6px  !important;
+        border-top-right-radius: 6px  !important;
+      }
+   .myButtons:hover{
+       background-color: #D7410B !important;
+     }
+   .myDisabledButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: gray !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+   .parentDisable{
+       overflow:hidden;
+       //height:550px;
+       clear: both;
+   }
+   #chatterDisplay{
+        position:absolute;
+        top:0%;
+        right:1%;
+        width: 32%;
+        
+        margin-left: 6px;
+   }
+   #chatterWrapper{
+       height:560px;
+       
+       border: 1px solid #ccc;
+       padding:10px !important;
+   }
+    
+  
+    #ActionDiv{
+        position:relative;
+        top:20px;
+        width: 38%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+    
+    #Divtext{
+        width: 30%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 0px;
+    }
+    #DivDelLink{
+        width: 68%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+        margin-right: 0px;
+    }
+   
+   /* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:HPSimplified, Helvetica, Arial, sans-serif; !important;
+            border-top:0px;
+        }
+    .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+        border-top: 0px solid #3044b5;
+     }
+     
+    .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+    .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+        padding: 2px 8px;
+        color: #333;
+        border-bottom: 1px solid #e3deb8;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:13px !important;
+     }
+    /* table row highlight */     
+    body .pbBody table.list tr.dataRow.highlight td{
+    background-color:#ecf4f8;
+    }
+    body .pbBody table.list tr.headerRow th{
+        background:#fff !important;
+        color:#007DBA !important;
+        border:1px solid #ccc;
+    }
+    /* for Header */
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+        border-top:0;
+        color: white;
+        background: transparent;
+        padding: 0px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 300 !important;
+    }
+
+    /* done header */
+    .bPageBlock .detailList .data2Col{
+    padding-left:0px;
+    }
+    body .pbBody table.list tr.headerRow th{
+        padding: 4px 8px;
+    }
+    
+    /* Detail Table Style */
+    
+    .detailList td{
+        line-height:20px;
+    }
+    body .bPageBlock .pbBody .labelCol {
+        color: #4a4a56;
+        line-height: 20px;
+    }
+    .Custom64Tab .secondaryPalette, .individualPalette .Custom64Block .secondaryPalette{
+    border:0px;
+    }
+    
+    /* Textboxes, Textareas sytle */
+    
+    input,textarea{
+        border: 2px solid #CCCCCC;
+        background:#f2f2f2;
+    }
+   
+   /* Other review / Contribute */
+   
+   #otherReview{
+       width:49%;
+       float:left;
+       margin-left:10px;
+   }
+   #contrib{
+       width:49%;
+       float:left;
+   }
+   
+   /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 14px;
+        border-radius: 0px;
+        padding: 8px 8px 8px 8px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    
+    .linkBtn {
+        background: none !important;
+        border: 0px !important;
+        background-color: #007DBA !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        border-radius: 0px !important;
+        padding: 8px 8px 8px 8px !important;
+        border-bottom-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .clear{clear:both}
+    #positionToggle{position:absolute; top:9px; left:9px; }
+    #showHideList{display:none; position:absolute; top:10px; left:10px; border-radius: 5px; border:1px solid #cccccc; background-color:#eeeeee; }
+    #ListInner{padding:10px 10px 10px 10px; }
+    
+    .clearfix {
+    *zoom: 1;
+}
+
+    .clearfix:before, .clearfix:after {
+        display: table;
+        line-height: 0;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    /*label,select,.ui-select-menu { float: left; margin-right: 10px; }
+    .wrap ul.ui-selectmenu-menu-popup li a { font-weight: bold; }*/
+    .ui-selectmenu{
+        height: 1.5em;
+    }
+    .ui-selectmenu-status {
+        line-height: 1.0em;
+    }
+    
+    
+    /* project detail */
+    a{
+    margin-right: 5px;
+    }
+    a:hover{
+    text-decoration: none;
+    }
+    a.disableds {
+       pointer-events: none;
+       cursor: default;
+       background-color:gray;
+    }
+    .alertify-message{
+    font-size: 15px;
+    font-family: -webkit-pictograph;
+    }
+    
+    /*Hunter add css for stage link*/
+    #c_headerBar #c_h_cal{background:#B9B8BB;}
+    #c_headerBar #c_h_ppl{background:#008424;}
+    
+    #alertify{
+        position:absolute;
+        top:40%;
+    }
+    
+    a.myButtons{padding: 1px 1px 1px 1px !important;}
+    
+    .alertify-button{
+        color:white !important;
+    }
+</style>
+<!-- MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL -->
+    <style>
+    .modalDialog {
+        display:none;
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.6); /*background: rgba(0,0,0,0.8);*/
+        z-index: 100;
+        opacity:0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        pointer-events: none;
+    }
+
+    .modalDialog:target {
+        display:block;
+        opacity:1;
+        pointer-events: auto;
+    }
+
+    .modalDialog > div {
+        width: 400px;
+        position: relative;
+        margin: 10% auto;
+        padding: 5px 20px 13px 20px;
+        border-radius: 10px;
+        background: #fff;
+        background: -moz-linear-gradient(#fff, #bbb);
+        background: -webkit-linear-gradient(#fff, #bbb);
+        background: -o-linear-gradient(#fff, #bbb);
+    }
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+    .close:hover { background: #00d9ff; text-decoration: none; }
+    .myLabels{font-weight:bold;}
+    .myData{font-size:14px; width:330px;}
+    #duedatesetting{position:absolute; top:14px; right:30px;color: #fff !important;}
+    #c_headerBar{z-index:1;}
+    
+    #c_headerBar a:hover, .c_headerBar .UserContent a:hover {
+        border: 0px;
+    }
+    .myDisabledButtons{
+        background: none  !important;
+        border: 0px  !important;
+        background-color: gray !important;
+        color: #fff !important;
+        font-size: 13px  !important;
+        border-radius: 0px  !important;
+        padding: 6px 6px 6px 6px  !important;
+        border-bottom-left-radius: 6px  !important;
+        border-top-right-radius: 6px  !important;
+      }
+      
+#crumbs{
+    width:100%;
+}
+#crumbs ul li {   
+    width:50%;
+    float: left;
+    list-style: none;
+}
+#crumbs ul li a {
+    width:90%;
+    display: block;
+    float: left;
+    height: 34px;
+    background: #3498db;
+    text-align: center;
+    padding: 10px 20px 0 45px;
+    position: relative;
+    margin: 0 10px 0 0;
+    font-size: 20px;
+    text-decoration: none;
+    color: #fff;
+}
+
+#crumbs ul li a span {
+    display: block;
+    float: left;
+}
+
+#crumbs ul li a:after {
+    content: "";
+    border-top: 22px solid transparent;
+    border-bottom: 22px solid transparent;
+    border-left: 22px solid #3498db;
+    position: absolute; right: -22px; top: 0;
+    z-index: 1;
+}
+#crumbs ul li a:before {
+    content: "";
+    border-top: 22px solid transparent;
+    border-bottom: 22px solid transparent;
+    border-left: 22px solid #fff;
+    position: absolute; left: 0; top: 0;
+}
+#crumbs ul li:first-child a {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding-left: 40px;
+}
+#crumbs ul li:first-child a:before {
+    display: none;
+}
+#crumbs ul li:last-child a {
+    padding-right: 30px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+#crumbs ul li:last-child a:after {
+    display: none;
+}
+#crumbs ul li a:hover {
+    background: #C1401A;
+    transition: all 0.2s ease;
+}
+#crumbs ul li a:hover:after {
+    border-left-color: #C1401A;
+    transition: all 0.2s ease;
+}
+.fixed {
+    clear: both;
+}
+.icon-nav{
+    font-size: 30px;
+    margin-top:-3px;
+}
+</style>   
+<script>
+function beginConfirm(confirmMsg){                     
+   alertify.confirm(confirmMsg, function (e) {
+        if (e) {
+            BeginStage();
+        } 
+    });             
+   return false;
+}
+
+function reviewConfirm(confirmMsg){                     
+       alertify.confirm(confirmMsg, function (e) {
+            if (e) {
+                StartStageReview();
+            } 
+        });             
+       return false;
+}
+</script>
+
+<style>
+[class^="icon-"], [class*=" icon-"] {
+    background-image: none;
+}
+.VPBody1 {
+    clear: both;
+    margin:0 auto;
+    margin-top: 0px;
+    position:absolute;
+    left:4%;
+    top:50%;
+}
+.VPBlock {
+    width: 85px;
+    margin: 10px 75px 0 0;
+    float: left;
+    text-align: center;
+}
+.VPBlockCircle {
+    position: relative;
+    display: block;
+    width: 85px;
+    height: 85px;
+    border-radius: 9999px;
+    background-color: white;
+    margin-bottom: 1px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.17);
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+}
+.VPCircle {
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+    -moz-transform: scale(1);
+    transform: scale(1);
+    -moz-transition: -moz-transform 0.25s ease-in-out;
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+    -o-transition: -o-transform 0.25s ease-in-out;
+    transition: transform 0.25s ease-in-out;
+    display: block;
+    position: relative;
+    width: 85px;
+    height: 85px;
+    background-size: auto 85px;
+    background-position: left center;
+}
+.VPCircleLarge {
+    -webkit-transform: scale(0.7);
+    -o-transform: scale(0.7);
+    -ms-transform: scale(0.7);
+    -moz-transform: scale(0.7);
+    transform: scale(0.7);
+    -moz-transition: -moz-transform 0.25s ease-in-out;
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+    -o-transition: -o-transform 0.25s ease-in-out;
+    transition: transform 0.25s ease-in-out;
+    display: block;
+    position: relative;
+    width: 85px;
+    height: 85px;
+    background-size: auto 85px;
+    background-position: left center;
+}
+
+.VPOpportunity, .VPBlock .VPOpportunity:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #0096D6), color-stop(95%, #00b7f5));
+    background-image: -webkit-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -moz-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -o-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -ms-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -o-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: linear-gradient(to bottom, #0096D6 5%, #00b7f5 95%);
+    background-color: #0096D6;
+}
+
+.VPNewOpp, .VPBlock .VPNewOpp:hover {
+    background-color:#006699;
+}
+
+.icon-6x{
+    font-size: 40px;
+    padding-top: 20px;
+}
+.VPBlockCircle:hover>.VPCircle{
+    -webkit-transform: scale(1.32);
+    -o-transform: scale(1.32);
+    -ms-transform: scale(1.32);
+    -moz-transform: scale(1.32);
+    transform: scale(1.32);
+    background-position: left center;
+}
+
+.VPBlockCircle:hover>.VPCircleLarge{
+    -webkit-transform: scale(0.9);
+    -o-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    -moz-transform: scale(0.9);
+    transform: scale(0.9);
+    background-position: left center;
+}
+
+
+</style>
+<div id="crumbs">
+<ul>
+ <li><a href="/{!rsc.Offering_Release_ID__c}" title="Go back to Opportunity"><span class="icon-repeat icon-nav icon-hp-smart-update-manager"/> {!rsc.Release_Name__c}</a></li>
+ <li><a href="javascript:void(0);" title="Process Stage Name"><span class="icon-repeat icon-nav icon-steps-stairs"/> {!rsc.Stage_Name__c}</a></li>
+</ul>
+<div class="fixed"></div>
+</div>
+
+        <div class="row-fluid" style="position:relative;top:5px;">
+            
+            <!--<div class="VPBody1">
+                <div class="VPBlock" id="OpportunityBtn">
+                     <a href="/{!rsc.Offering_Release_ID__c}" title="Back to Opportunity Details">
+                        <span class="VPBlockCircle VPOpportunity">
+                            <span class="VPCircle white icon-repeat icon-6x icon-hp-smart-update-manager"/>
+                        </span>
+                    </a>
+                </div>
+            </div>
+-->
+            <div class="span12 mtop20 ">
+                    <!--BEGIN TABS-->
+                    <div class="tabbable custom-tab tabs-left" id="tables">                                 
+                        <ul class="nav nav-tabs tabs-left">
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_0" data-toggle="tab">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-steps-stairs"></i>
+                                    </span> 
+                                    <span>Stage Detail</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_1" data-toggle="tab">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-service-catalog"></i>
+                                    </span> 
+                                    <span>Work Elements</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_2" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-project-management"></i>
+                                    </span> 
+                                    <span>Stage Review</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_3" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-program-planning"></i>
+                                    </span> 
+                                    <span>Action Items</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_4" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-my-files"></i>
+                                    </span> 
+                                    <span>Note / Attachment</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_5" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-management"></i>
+                                    </span> 
+                                    <span>Resource Management</span>
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" style="position:relative; overflow-y:scroll; height:700px;">
+                            <!--TAB 00-->
+                            <div class="tab-pane active" id="tab_3_0">
+                                <apex:pageMessages />
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <apex:commandButton value="Submit Stage Review"
+                                            disabled="{!!IsBizEngaPartners}" 
+                                            styleClass="btnAthena pull-right btn-primary {!IF(IsReadyForStgRew,'','myDisabledButtons')}"
+                                            onclick="javascript:{!IF(IsReadyForStgRew,'return reviewConfirm(\"Confirm to continue begin stage Review?\")','alertify.alert(\"'+ ErrorCategorySubmitReview +'\"); return false;')}"/>
+                                        <apex:actionFunction name="StartStageReview" action="{!StartStageReview}"/>
+
+                                        <apex:commandButton value="Begin Stage"
+                                            disabled="{!!IsBizEngaPartners}" 
+                                            styleClass="btnAthena pull-right btn-primary {!IF(IsReadyForStgBegin,'','myDisabledButtons')}"
+                                            onclick="javascript:{!IF(IsReadyForStgBegin,'return beginConfirm(\"Confirm to continue begin stage?\")','alertify.alert(\"'+ErrorCategoryBeginStage+'\"); return false;')}"/>
+                                        <apex:actionFunction name="BeginStage" action="{!BeginStage}"/>
+   
+                                        <apex:commandButton value="Edit" action="{!edit}" styleClass="btnAthena pull-right btn-primary" disabled="{!!IsBizEngaPartners}"/>
+                                    </apex:form>
+                                </div>
+                                <div>
+                                    <div style="width:95%;">
+                                        <table class="table table-hover">
+                                            <apex:form > 
+                                            <tbody>
+                                                <tr>
+                                                    <td class="table-label" colspan="2"><apex:pagemessages /></td>
+                                                    <td class="table-label">Last Modified By</td><td><apex:outputField value="{!rsc.LastModifiedBy.Name}"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">Process Stage ID</td><td><apex:outputField value="{!rsc.Stage_ID__r.Name}"/></td>
+                                                    <td class="table-label">Process Stage Name</td><td><apex:outputField value="{!rsc.Stage_Name__c}"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">Predecessor Stage ID</td><td><apex:outputField value="{!rsc.Predecessor_Release_Stage_ID__r.Name}"/></td>
+                                                    <td class="table-label">Predecessor Stage Name</td><td><apex:outputField value="{!rsc.Predecessor_Release_Stage_Name__c}"/></td>
+                                                 </tr>
+
+                                                <tr>
+                                                    <td class="table-label">Stage Status</td><td><apex:outputField value="{!rsc.Status__c}"/></td>
+                                                    <td class="table-label">Included</td><td><apex:outputField value="{!rsc.Include__c}"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">Opportunity ID</td><td><apex:outputField value="{!rsc.Offering_Release_ID__c}"/></td>
+                                                    <td class="table-label">Opportunity Name</td><td><apex:outputField value="{!rsc.Release_Name__c}"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">Actual Start Date</td><td><apex:outputField value="{!rsc.Actual_Start_Date__c}"/></td>
+                                                    <td class="table-label">Actual End Date</td><td><apex:outputField value="{!rsc.Actual_End_Date__c}"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">Current Baseline End Date</td><td><apex:outputField value="{!rsc.Current_Baseline_End_Date__c}"/></td>
+                                                    <td class="table-label">Initial Baseline End Date</td><td><apex:outputField value="{!rsc.Initial_Baseline_End_Date__c}"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">PAC Group</td><td><apex:outputField value="{!rsc.PAC_Name__r.Name}"/></td>
+                                                    <td class="table-label">PAC Decision</td><td><apex:outputField value="{!rsc.PAC_Decision__c}"/></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td class="table-label">Iteration Count</td><td><apex:outputField value="{!rsc.Iteration_Count__c}"/></td>
+                                                    <td class="table-label">Stage Contract Approved</td><td><apex:outputField value="{!rsc.Stage_Contract_Approved__c}"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">Meeting Notes</td><td><apex:inputTextarea value="{!rsc.Meeting_Notes__c}" readonly="true" style="height:60px;width:90%;"/></td>
+                                                    <td class="table-label">Tailoring Justification</td><td><apex:inputTextarea value="{!rsc.Tailoring_Justification__c}" readonly="true" style="height:60px;width:90%;"/></td>
+                                                </tr>
+
+                                                
+                                                <apex:pageBlock rendered="{!IsValidateStage}">
+                                                    <tr>
+                                                        <td class="table-label">Direct Benefits</td><td><apex:outputField value="{!StageValidate.Direct_Benefits__c}"/></td>
+                                                        <td class="table-label">Indirect Benefits</td><td><apex:outputField value="{!StageValidate.Indirect_Benefits__c }"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="table-label">Key Driver</td><td><apex:outputField value="{!StageValidate.Key_Driver__c}"/></td>
+                                                        <td class="table-label"></td><td></td>
+                                                    </tr>
+                                                </apex:pageBlock>
+                                                
+                                                <apex:pageBlock rendered="{!IsQuantifyStage}">
+                                                <tr>
+                                                    <td class="table-label">Initial Cost Estimate</td><td><apex:outputField value="{!StageQuantify.Initial_Cost_Estimate__c}"/></td>
+                                                    <td class="table-label">Date of Initial Cost Estimate</td><td><apex:outputField value="{!StageQuantify.Date_of_Initial_Cost_Estimate__c}"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">Revised Cost Estimate</td><td><apex:outputField value="{!StageQuantify.Revised_Cost_Estimate__c}"/></td>
+                                                    <td class="table-label">Date of Revised Estimate</td><td><apex:outputField value="{!StageQuantify.Date_of_Revised_Estimate__c}"/></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="table-label">Product Strategic Alignment</td><td><apex:outputField value="{!StageQuantify.Product_Strategic_Alignment__c}"/></td>
+                                                    <td class="table-label">IT Risk</td><td><apex:outputField value="{!StageQuantify.IT_Risk__c}"/></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td class="table-label">Risk Mitigation Proposal</td><td><apex:inputTextarea value="{!StageQuantify.Risk_Mitigation_Proposal__c}" readonly="true" style="height:60px;width:90%;"/></td>
+                                                    <td class="table-label"></td><td></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td class="table-label">Special Skills Required</td><td><apex:outputField value="{!StageQuantify.Special_Skills_Required__c}"/></td>
+                                                    <td class="table-label"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="table-label">Skills Needed</td><td><apex:inputTextarea value="{!StageQuantify.Skills_needed__c}" readonly="true" style="height:60px;width:90%;"/></td>
+                                                    <td class="table-label">Special Skills Mitigation</td><td><apex:inputTextarea value="{!StageQuantify.Special_Skills_Mitigation__c}" readonly="true" style="height:60px;width:90%;"/></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="table-label">New Technology Required</td><td><apex:outputField value="{!StageQuantify.New_Technology_Required__c}"/></td>
+                                                    <td class="table-label">Technology Needed</td><td><apex:inputTextarea value="{!StageQuantify.Technology_needed__c}" readonly="true" style="height:60px;width:90%;"/></td>
+                                                </tr>
+  
+                                                <tr>
+                                                    <td class="table-label">New license required</td><td><apex:outputField value="{!StageQuantify.New_license_required__c}"/></td>
+                                                    <td class="table-label">1st year recurring cost</td><td><apex:outputField value="{!StageQuantify.First_year_recurring_cost__c}"/></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="table-label">Primary Asset</td><td><apex:outputField value="{!StageQuantify.Primary_Asset__c}"/></td>
+                                                    <td class="table-label">Secondary Asset</td><td><apex:outputField value="{!StageQuantify.Secondary_Asset__c}"/></td>
+                                                </tr>
+
+                                                </apex:pageBlock>
+                                                
+                                                </tbody>
+                                            </apex:form>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane disabled" id="tab_3_1">
+                                <apex:pageMessages />
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <!--<apex:commandButton value="New" action="{!delete}" styleClass="btnAthena pull-right btn-primary"/>
+                                         <apex:commandButton value="Edit" action="{!edit}" styleClass="btnAthena pull-right btn-primary"/> 
+                                        <apex:outputLink value="{!URLFOR($Action.Stage_Work_Element__c.New,null,[STGID=rsc.id])}" title="New Work Element"><span class="white icon-3x icon-program-planning"></span></apex:outputLink>
+                                    -->                                    
+                                    </apex:form>
+                                </div>
+                                <div>
+                                    <div>
+                                        <table class="table table-hover" id="tblBusinessImpact">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Action</th>
+                                                        <th></th>
+                                                        <th>Accountable</th>
+                                                        <th>Work Element ID</th>
+                                                        <th>Name</th>
+                                                        <th>Status</th>
+                                                        <th>Include</th>
+                                                        <th>Optional</th>
+                                                        <th>Review Required</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <apex:repeat value="{!StgWEWarList}" var="swe"> 
+                                                        <tr class="odd gradeX" >
+                                                            <td>
+                                                                <apex:outputLink value="/{!swe.id}/e?retURL=%2F{!rsc.id}"><span title="Edit" class="blue icon-3x icon-edit" disabled="{!!IsBizEngaPartners}"></span></apex:outputLink>
+                                                            </td>
+                                                            <td><span class="{!IF(swe.Warnings='','NotShowWarning','ShowWarning')}"><span title="{!swe.Warnings}" class="red large icon-warning"></span></span></td>
+                                                            <td>
+                                                                <span class="label hpit_athenaListPersonImg"><apex:image url="{!swe.AccSmallPhotoURL}" title="{!swe.AccountableOwnerName}" /></span>
+                                                                <a href="sip:{!swe.AccountableOwner}"  title="Lync Accountable Owner">
+                                                                        <apex:image style="width:35px;height:35px;" url="https://hp--esit--c.cs11.content.force.com/servlet/servlet.ImageServer?id=015Z00000006ynN&oid=00DZ000000N9IbI"/>
+                                                                </a>
+
+                                                            </td>
+                                                            <td><apex:outputLink target="_blank" value="/{!swe.id}" title="More Details About Resources">{!swe.Name}</apex:outputLink></td>
+                                                            <td><apex:outputText value="{!swe.Namec}"/></td>
+                                                            <td ><apex:outputText value="{!swe.Statusc}"/></td>
+                                                            <td ><apex:outputText value="{!swe.Includec}"/></td>
+                                                            <td ><apex:outputText value="{!swe.OptionalC}"/></td>
+                                                            <td ><apex:outputText value="{!swe.ReviewRequiredc}"/></td> 
+                                                        </tr>
+                                                    </apex:repeat>
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                            
+                            <div class="tab-pane disabled" id="tab_3_2">
+                                <apex:pageMessages />
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <!--<apex:commandButton value="Delete" action="{!delete}" styleClass="btnAthena pull-right btn-primary"/>
+                                        <apex:commandButton value="Edit" action="{!edit}" styleClass="btnAthena pull-right btn-primary"/>-->
+                                    </apex:form>
+                                </div>
+                                <div>
+                                    <div>
+                                        <table class="table table-hover" id="tblBusinessImpact">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Action</th>
+                                                        <th>Stage Review ID</th>
+                                                        <th>PAC Member Name</th>
+                                                        <th>Decision</th>
+                                                        <th>Complete</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <apex:repeat value="{!srcs}" var="sr"> 
+                                                        <tr class="odd gradeX" >
+                                                            <td>
+                                                                <apex:outputLink value="/{!sr.id}/e?retURL=%2F{!rsc.id}" disabled="{!!IsBizEngaPartners}">Edit</apex:outputLink>
+                                                                <apex:outputLink disabled="{!!IsBizEngaPartners}">Delete</apex:outputLink>
+                                                            </td>
+                                                            <td ><apex:outputLink value="/{!sr.id}">{!sr.Name}</apex:outputLink></td>
+                                                            <td><apex:outputField value="{!sr.PAC_Member_Name__c}"/></td>
+                                                            <td ><apex:outputField value="{!sr.Decision__c}"/></td>
+                                                            <td ><apex:outputField value="{!sr.Complete__c}"/></td>
+                                                        </tr>
+                                                    </apex:repeat>
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                            
+                            <div class="tab-pane disabled" id="tab_3_3">
+                                <apex:pageMessages />
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <!-- <apex:commandButton value="Create" action="{!delete}" styleClass="btnAthena pull-right btn-primary"/> -->
+                                        <apex:outputLink value="{!URLFOR($Action.Action_Item__c.New,null,[STGID=rsc.id])}" title="Create Action Item"><span class="white icon-3x icon-program-planning"></span></apex:outputLink>
+                                    </apex:form> <!--ODP_Page_CustomizedActionItem [id=rsc.Offering_Release_ID__r.id]-->
+                                </div>
+                                <div>
+                                    <div>
+                                        <table class="table table-hover" id="tblBusinessImpact">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Action</th>
+                                                        <th>Action Item ID</th>
+                                                        <th>Name</th>
+                                                        <th>Action Owner</th>
+                                                        <th>PAC Requestor</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <apex:repeat value="{!aics}" var="ai"> 
+                                                        <tr class="odd gradeX" >
+                                                            <td>
+                                                                <apex:outputLink value="/{!ai.id}/e?retURL=%2F{!rsc.id}" disabled="{!!IsBizEngaPartners}">Edit</apex:outputLink>
+                                                                <apex:outputLink disabled="{!!IsBizEngaPartners}">Delete</apex:outputLink>
+                                                            </td>
+                                                            <td ><apex:outputLink value="/{!ai.id}">{!ai.Name}</apex:outputLink></td>
+                                                            <td><apex:outputField value="{!ai.Name__c}"/></td>
+                                                            <td ><apex:outputField value="{!ai.Action_Owner__c}"/></td>
+                                                            <td ><apex:outputField value="{!ai.PAC_Requestor__c}"/></td>
+                                                            <td ><apex:outputField value="{!ai.Status__c}"/></td>
+                                                        </tr>
+                                                    </apex:repeat>
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane disabled" id="tab_3_4">
+                                <apex:pageMessages />
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <!-- <a href="https://{!host}/002/e?parent_id={!rsc.id}&retURL=%2F{!rsc.id}" title="New Note"><span class="white icon-3x icon-note"></span></a> -->
+                                        <a href="https://{!host}/p/attach/NoteAttach?pid={!rsc.id}&retURL=%2F{!rsc.id}" title="New Attach File"><span class="white icon-3x icon-work-and-life"></span></a>
+                                    </apex:form>
+                                </div>
+                                <div>
+                                    <div>
+                                        <table class="table table-hover" id="tblBusinessImpact">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Action</th>
+                                                        <th>Name</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <apex:repeat value="{!noteattcs}" var="na"> 
+                                                        <tr class="odd gradeX" >
+                                                            <td>
+                                                                <apex:outputLink value="/{!na.id}/e?retURL=%2F{!rsc.id}">Edit</apex:outputLink>
+                                                                <!--<apex:outputLink value="/setup/own/deleteredirect.jsp">Delete-->
+                                                                <apex:outputLink onClick="if ((Modal.confirm && Modal.confirm('Are you sure—')) || (!Modal.confirm && window.confirm('Are you sure–'))) navigateToUrl('/setup/own/deleteredirect.jsp')">Delete
+                                                                    <apex:param name="Id" value="{!rsc.id}"/>
+                                                                    <apex:param name="delID" value="{!na.id}"/>
+                                                                    <apex:param name="retURL" value="{!rsc.id}"/>
+                                                                    <apex:param name="_CONFIRMATIONTOKEN" value="{!CONFIRMATIONTOKEN}"/>
+                                                                </apex:outputLink>
+                                                            </td>
+                                                            <td ><apex:outputLink value="/{!na.id}">{!na.Name}</apex:outputLink></td>
+                                                            <td><apex:outputField value="{!na.Description}"/></td>
+
+                                                        </tr>
+                                                    </apex:repeat>
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!--TAB 05-->
+                            <div class="tab-pane disabled" id="tab_3_5">
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <div class="tab-btn-new">
+                                            <apex:outputLink value="/apex/ODP_CustomizedTeamMemberOverView?OffRelID={!rsc.Offering_Release_ID__c}&stgId={!rsc.Id}" title="Manage Team Members" disabled="{!!IsBizEngaPartners}"><span class="white icon-3x icon-team-management"></span></apex:outputLink>
+                                        </div>
+                                    </apex:form>
+                                </div>
+                                <div>
+                                    <table class="table table-hover" id="tblBusinessImpact">
+                                        <thead>
+                                            <tr>
+                                                <th>Photo</th>
+                                                <th>Role Name</th>
+                                                <th>Member Name</th>
+                                                <th>Contributor</th>
+                                                <th>Reviewer</th>
+                                                <th>Accountable</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <apex:repeat value="{!ResourceList}" var="r"> 
+                                                <tr class="odd gradeX" >
+                                                    <td>
+                                                        <a href="/{!r.uid}" target="_blank">
+                                                            <span class="label hpit_athenaListPersonImg"><apex:image url="{!r.Photo}" /></span>
+                                                        </a>
+                                                    </td>
+                                                    <td>{!r.Role}</td>
+                                                    <td>{!r.Name}</td>
+                                                    <td><img src="/img/checkbox_{!IF(r.Contributor,'','un')}checked.gif" alt="Not Checked" width="21" height="16" class="checkImg" title="Not Checked"/></td>
+                                                    <td><img src="/img/checkbox_{!IF(r.Review,'','un')}checked.gif" alt="Not Checked" width="21" height="16" class="checkImg" title="Not Checked"/></td>
+                                                    <td><img src="/img/checkbox_{!IF(r.Accountable,'','un')}checked.gif" alt="Not Checked" width="21" height="16" class="checkImg" title="Not Checked"/></td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                        </div>    
+                    </div>
+            </div>
+        </div>
+   
+    
+        <!-- BEGIN JAVASCRIPTS -->  
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DataTableColumnFilter.js')}"/>        
+        <!-- ie8 fixes -->
+        <!--[if lt IE 9]>
+       <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+       <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+       <![endif]-->
+    <!-- END JAVASCRIPTS --> 
+</apex:page>

@@ -1,0 +1,1469 @@
+<apex:page standardController="Offering_Release__c" extensions="ODP_Extension_ProjectDetail">
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.ODP_JS_PieChart,'ChartJS/highcharts.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.ODP_JS_PieChart,'ChartJS/exporting.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/winstyle.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/HpstandIcon.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.HPPcommonCss, 'commonCss-1.0/css/style.css')}" />
+
+<apex:includeScript value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.default.css')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.core.css')}"/>
+    
+<style>
+    textarea, .uneditable-input {
+        width: 90%;
+    }
+    .modal.fade.in { 
+        top: -5%; 
+    }
+    .bPageBlock .detailList .labelCol{ 
+        width: 25%; 
+    } 
+    .HideColumn{
+        display:none;
+    }
+    .form-detail{
+    margin-left: 2%;
+    margin-top: -1.5%;
+    }
+    .tab-btn-new{
+    margin-left: 85%;
+    margin-top: -1.5%;
+    }
+    .table-label{
+        width:25%;
+    }
+    a.disabledODP {
+       pointer-events: none;
+       cursor: default;
+    }
+    .liclass{
+        margin-top: 10px;
+        margin-right: 0;
+        margin-bottom: 23px;
+        margin-left: 0;
+    }
+</style>
+
+
+<style>
+<!--  *******  -->
+    .alertify-button{
+        color: white !important;
+    }
+    /* General Links */
+    a:link { text-decoration : none; color : #3366cc; border: 0px;}
+    a:active { text-decoration : underline; color : #3366cc; border: 0px;}
+    a:visited { text-decoration : none; color : #3366cc; border: 0px;}
+    a:hover { text-decoration : underline; color : #ff5a00; border: 0px;}
+    img { padding: 0px; margin: 0px; border: none;}
+    
+    .outer{
+        height:100%;
+    }
+    #contentWrapper{
+        height:1000px;
+    }
+    
+    #StageWorkElementCount {
+    margin : 0 auto;
+    width:100%;
+    }
+    
+    #StageWorkElementCount .extra {
+    padding-left:30px;
+    }
+    
+    #StageWorkElementCount .options {
+    padding-left:10px;
+    }
+    
+    #StageWorkElementCount .getOption {
+    padding-left:10px;
+    padding-right:20px;
+    }
+    
+    .processbartitle{
+    color:#000000;
+    display:inline-block;
+    width:8em;
+    margin-left:4em;
+    text-align:right;
+    padding-right:1em;
+    }
+    .currentStage{
+    display:inline-block;
+    position:relative;
+    top:-1em;
+    font-weight:bold;
+    font-size: 12px
+    }
+    
+    #StageWorkElementCountable div{
+    display:inline-block;
+    width:30em;
+    font-weight: 300;
+    font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+    line-height:2.5em;
+    }
+    .processtitle{
+    text-align:right;
+    display:inline-block;
+    width:10em;
+    }    
+<!-- ******* -->
+
+    .tableWorkElementColumn a, .tableDeliverableColumn a{
+        color:#000;
+        display:block;
+        width:18em;    
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: nowrap; 
+    }
+
+    <!-- Progress with stages-->
+
+
+    ol.progtrckr {
+        margin: 0;
+        padding: 0;
+        list-style-type none;
+    }
+    ol.progtrckr li {
+        display: inline-block;
+        text-align: center;
+        line-height: 3em;
+    }
+    ol.progtrckr li.progtrckr-done {
+        color: #0096D6;
+        border-bottom: 5px solid #0096D6;
+    }
+    ol.progtrckr li.progtrckr-current {
+        color: #0096D6;
+        border-bottom: 5px solid #0096D6;
+    }
+    ol.progtrckr li.progtrckr-todo {
+        color: silver; 
+        border-bottom: 5px solid silver;
+    }
+    ol.progtrckr li:after {
+        content: "\00a0\00a0";
+         position: relative;
+        float: left;
+    }
+    ol.progtrckr li:before {
+        position: relative;
+        float: left;
+        left: 52.5%;
+    }
+    ol.progtrckr li.progtrckr-done:before {
+        content: "\2713";
+        color: white;
+        background-color: #0096D6;
+        height: 2em;
+        width: 2em;
+        line-height: 2em;
+        border: none;
+        border-radius: 2em;
+        bottom:-2.2em;
+    } 
+    ol.progtrckr li.progtrckr-current:before {
+         content: "\27a8";
+         color: white;
+        background-color: #0096D6;
+        height: 2em;
+        width: 2em;
+        line-height: 2em;
+        border: none;
+        border-radius: 2em;
+        bottom:-1em;
+        font-weight:bold;
+        font-size:18px;
+    }    
+    ol.progtrckr li.progtrckr-todo:before {
+        content: "\039F";
+        color: silver;
+        background-color: white;
+        height: 2em;
+         line-height: 2em;
+        font-size: 1.5em;
+        bottom: -1.2em;
+    }
+    ol.progtrckr li{
+        margin-left:0em !important;
+        width:16.5%;
+    }
+    <!-- Progress with stages end-->
+    
+    .pbSubheader {
+            height:14px;
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+        body .bPageBlock .pbBody .pbSubheader img {
+            height: 15px;
+            width: 15px;
+        }
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody 
+
+        .pbSubheader h3 {
+            font-weight: 300;
+            font-family: 'Voces', sans-serif; !important;
+            font-size:16px !important; /* this controls the blue bar font-sizes */
+        }
+    /* for Header */
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 300 !important;
+    }
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: 'Voces', sans-serif; !important;
+        color: #fff;
+        font-size:14px !important; /* this controls the blue bar font-sizes */
+        position:relative;
+        top:-5px;
+    }
+    
+    .myButtons{
+        background: none  !important;
+        border: 0px  !important;
+        background-color: hsl(198, 100%, 41%) !important;
+        color: #fff !important;
+        font-size: 13px  !important;
+        border-radius: 0px  !important;
+        padding: 6px 6px 6px 6px  !important;
+        border-bottom-left-radius: 6px  !important;
+        border-top-right-radius: 6px  !important;
+      }
+   .myButtons:hover{
+       background-color: #D7410B !important;
+     }
+   .myDisabledButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: gray !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+       /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 13px;
+        border-radius: 0px;
+        padding: 6px 6px 6px 6px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    ::-webkit-file-upload-button:hover {
+        background-color: #D7410B !important;
+    }
+    
+   .parentDisable{
+       overflow:hidden;
+       //height:550px;
+       clear: both;
+   }
+   #chatterDisplay{
+        position:absolute;
+        top:0%;
+        right:1%;
+        width: 32%;
+        
+        margin-left: 6px;
+   }
+   #chatterWrapper{
+       height:560px;
+       border: 1px solid #ccc;
+       padding:10px !important;
+   }
+   #ActionDiv{
+        position:relative;
+        top:20px;
+        width: 38%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+    #Divtext{
+        width: 30%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 0px;
+    }
+    #DivDelLink{
+        width: 100%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+   
+   /* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:HPSimplified, Helvetica, Arial, sans-serif; !important;
+            border-top:0px;
+        }
+    .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+        border-top: 0px solid #3044b5;
+     }
+     
+    .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+    .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+        padding: 2px 8px;
+        color: #333;
+        border-bottom: 1px solid #e3deb8;
+        font-family: HPSimplified, Helvetica, Arial, sans-serif; !important;
+        font-size:13px !important;
+     }
+    /* table row highlight */     
+    body .pbBody table.list tr.dataRow.highlight td{
+        background-color:#ecf4f8;
+    }
+    body .pbBody table.list tr.headerRow th{
+        background:#fff !important;
+        color:#007DBA !important;
+        border:1px solid #ccc;
+    }
+
+    .bPageBlock .detailList .data2Col{
+        padding-left:0px;
+    }
+    body .pbBody table.list tr.headerRow th{
+        padding: 4px 8px;
+    }
+    
+    /* Detail Table Style */
+    .detailList td{
+        line-height:20px;
+    }
+    body .bPageBlock .pbBody .labelCol {
+        color: #4a4a56;
+        line-height: 20px;
+    }
+    .Custom64Tab .secondaryPalette, .individualPalette .Custom64Block .secondaryPalette{
+        border:0px;
+    }
+    
+    /* Textboxes, Textareas sytle */
+    input,textarea{
+        border: 2px solid #CCCCCC;
+        background:#f2f2f2;
+    }
+   /* Other review / Contribute */
+
+   /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 14px;
+        border-radius: 0px;
+        padding: 8px 8px 8px 8px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    
+    .linkBtn {
+        background: none !important;
+        border: 0px !important;
+        background-color: #007DBA !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        border-radius: 0px !important;
+        padding: 8px 8px 8px 8px !important;
+        border-bottom-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .clear{clear:both}
+    #positionToggle{position:absolute; top:9px; left:9px; }
+    #showHideList{display:none; position:absolute; top:10px; left:10px; border-radius: 5px; border:1px solid #cccccc; background-color:#eeeeee; }
+    #ListInner{padding:10px 10px 10px 10px; }
+    
+    .clearfix {
+    *zoom: 1;
+}
+
+    .clearfix:before, .clearfix:after {
+        display: table;
+        line-height: 0;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    /*label,select,.ui-select-menu { float: left; margin-right: 10px; }
+    .wrap ul.ui-selectmenu-menu-popup li a { font-weight: bold; }*/
+    .ui-selectmenu{
+        height: 1.5em;
+    }
+    .ui-selectmenu-status {
+        line-height: 1.0em;
+    }
+    
+    
+    /* project detail */
+    a{
+    margin-right: 5px;
+    }
+    a:hover{
+    text-decoration: none;
+    }
+    a.disableds {
+       pointer-events: none;
+       cursor: default;
+       background-color:gray;
+    }
+    .alertify-message{
+    font-size: 15px;
+    font-family: -webkit-pictograph;
+    }
+    
+    /*Hunter add css for stage link*/
+    #c_headerBar #c_h_cal{background:#B9B8BB;}
+    #c_headerBar #c_h_ppl{background:#008424;}
+    
+    #alertify{
+        position:absolute;
+        top:40%;
+    }
+    
+    a.myButtons{padding: 1px 1px 1px 1px !important;}
+</style>
+<!-- MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL -->
+    <style>
+    .modalDialog {
+        display:none;
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.6); /*background: rgba(0,0,0,0.8);*/
+        z-index: 100;
+        opacity:0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        pointer-events: none;
+    }
+
+    .modalDialog:target {
+        display:block;
+        opacity:1;
+        pointer-events: auto;
+    }
+
+    .modalDialog > div {
+        width: 400px;
+        position: relative;
+        margin: 10% auto;
+        padding: 5px 20px 13px 20px;
+        border-radius: 10px;
+        background: #fff;
+        background: -moz-linear-gradient(#fff, #bbb);
+        background: -webkit-linear-gradient(#fff, #bbb);
+        background: -o-linear-gradient(#fff, #bbb);
+    }
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+    .close:hover { background: #00d9ff; text-decoration: none; }
+    .myLabels{font-weight:bold;}
+    .myData{font-size:14px; width:330px;}
+    #duedatesetting{position:absolute; top:14px; right:30px;color: #fff !important;}
+    #c_headerBar{z-index:1;}
+    
+    #c_headerBar a:hover, .c_headerBar .UserContent a:hover {
+        border: 0px;
+    }
+    
+    .row-fluid{
+        position:relative;
+        top:{!IF(flightPlanChanged == 'none','0px','200px')};
+    }
+</style>    
+<script type="text/javascript">
+   <!--Stage Status -->
+     $j = jQuery.noConflict();
+     /*$j(document).ready(function() {
+         alert(1);
+         
+    });*/
+    
+    
+     $j(function(){
+         if(window.location.toString().indexOf('f=t') > 0)
+         {
+             alertify.alert('Gameffective Points have been assigned to you.');
+         }
+         
+         $j("#input_addlinkbtn").click(function(){
+            var url = window.location.toString();
+            var pos = url.split('#')[1];
+            if(pos == undefined)
+            {
+                document.location = url + '#AddLinkView';
+            }
+            else
+            {
+                document.location = url.split('#')[0] + '#AddLinkView';
+            }
+            
+        });
+        
+         $j("#ShowFollower").click(function(){
+             $('#followerList').modal('show');
+         });
+         $j("#NewPPMLink").click(function(){
+            var url = window.location.toString();
+            var pos = url.split('#')[1];
+            if(pos == undefined)
+            {
+                document.location = url + '#AddPPM';
+            }
+            else
+            {
+                document.location = url.split('#')[0] + '#AddPPM';
+            }
+        });
+        
+        $j("#ClosePPM").click(function(){
+            var url = window.location.toString();
+            var pos = url.split('#')[1];
+            if(pos == undefined)
+            {
+                document.location = url + '#Close';
+            }
+            else
+            {
+                document.location = url.split('#')[0] + '#Close';
+            }
+            
+        });
+         
+         var startUp = sforce.connection.query("select id,Stage_Name__c,Status__c from Release_Stage__c where Offering_Release_ID__c ='{!project.id}' and Stage_Name__c = '0. Start-up'").getArray("records")[0]; 
+         var concept = sforce.connection.query("select id,Stage_Name__c,Status__c from Release_Stage__c where Offering_Release_ID__c ='{!project.id}' and Stage_Name__c = 'Concept' ").getArray("records")[0]; 
+         var definition = sforce.connection.query("select id,Stage_Name__c,Status__c from Release_Stage__c where Offering_Release_ID__c ='{!project.id}' and Stage_Name__c = 'Definition'").getArray("records")[0];
+         var validationBetaReady = sforce.connection.query("select id,Stage_Name__c,Status__c from Release_Stage__c where Offering_Release_ID__c ='{!project.id}' and Stage_Name__c = 'Beta Ready' ").getArray("records")[0];
+         var validationBetaComplete = sforce.connection.query("select id,Stage_Name__c,Status__c from Release_Stage__c where Offering_Release_ID__c ='{!project.id}' and Stage_Name__c = 'Validation' ").getArray("records")[0];                                                          
+         var rollOut = sforce.connection.query("select id,Stage_Name__c,Status__c from Release_Stage__c where Offering_Release_ID__c ='{!project.id}' and Stage_Name__c = 'Rollout' ").getArray("records")[0];                                                
+                                                              
+         // start up
+         if(typeof(startUp) == 'undefined')
+             $j("ol.progtrckr li:eq(0)").attr("class","progtrckr-todo");   
+         else{  
+             if(startUp.Status__c == "Complete")
+                $j("ol.progtrckr li:eq(0)").attr("class","progtrckr-done");
+             else if(startUp.Status__c == "Not Started")
+                $j("ol.progtrckr li:eq(0)").attr("class","progtrckr-todo");
+             else{
+                $j("ol.progtrckr li:eq(0)").attr("class","progtrckr-current");
+                $j("ol.progtrckr li:eq(0) span").attr("class","currentStage");
+             }      
+          }
+         //concept
+         if(typeof(concept) == 'undefined')
+             $j("ol.progtrckr li:eq(1)").attr("class","progtrckr-todo");   
+         else{
+             if(concept.Status__c == "Complete")
+                 $j("ol.progtrckr li:eq(1)").attr("class","progtrckr-done");
+             else if(concept.Status__c == "Not Started")
+                 $j("ol.progtrckr li:eq(1)").attr("class","progtrckr-todo");
+             else{
+                $j("ol.progtrckr li:eq(1)").attr("class","progtrckr-current");
+                $j("ol.progtrckr li:eq(1) span").attr("class","currentStage");
+             }
+         }
+         //definition
+         if(typeof(definition) == 'undefined')
+            $j("ol.progtrckr li:eq(2)").attr("class","progtrckr-todo");
+         else{
+            if(definition.Status__c == "Complete")
+                $j("ol.progtrckr li:eq(2)").attr("class","progtrckr-done");
+            else if(definition.Status__c == "Not Started")
+                $j("ol.progtrckr li:eq(2)").attr("class","progtrckr-todo");
+            else{
+                $j("ol.progtrckr li:eq(2)").attr("class","progtrckr-current");
+                $j("ol.progtrckr li:eq(2) span").attr("class","currentStage");
+            }
+         }
+         //validationBetaReady
+         if(typeof(validationBetaReady) == 'undefined')
+            $j("ol.progtrckr li:eq(3)").attr("class","progtrckr-todo");
+         else{
+             if(validationBetaReady.Status__c == "Complete")
+                $j("ol.progtrckr li:eq(3)").attr("class","progtrckr-done");
+             else if(validationBetaReady.Status__c == "Not Started")
+                $j("ol.progtrckr li:eq(3)").attr("class","progtrckr-todo");
+            else{
+                $j("ol.progtrckr li:eq(3)").attr("class","progtrckr-current"); 
+                $j("ol.progtrckr li:eq(3) span").attr("class","currentStage");
+            }
+         }
+        //validationBetaComplete
+        if(typeof(validationBetaComplete) == 'undefined')         
+             $j("ol.progtrckr li:eq(4)").attr("class","progtrckr-todo");
+        else{
+             if(validationBetaComplete.Status__c == "Complete")
+                $j("ol.progtrckr li:eq(4)").attr("class","progtrckr-done");
+             else if(validationBetaComplete.Status__c == "Not Started")
+                $j("ol.progtrckr li:eq(4)").attr("class","progtrckr-todo");
+             else{
+                $j("ol.progtrckr li:eq(4)").attr("class","progtrckr-current");
+                $j("ol.progtrckr li:eq(4) span").attr("class","currentStage");
+             }
+        }
+        //rollOut
+        if(typeof(rollOut) == 'undefined')
+             $j("ol.progtrckr li:eq(5)").attr("class","progtrckr-todo");
+         else{
+             if(rollOut.Status__c == "Complete")
+                $j("ol.progtrckr li:eq(5)").attr("class","progtrckr-done");
+            else if(rollOut.Status__c == "Not Started")
+                $j("ol.progtrckr li:eq(5)").attr("class","progtrckr-todo");
+            else{
+                $j("ol.progtrckr li:eq(5)").attr("class","progtrckr-current");  
+                $j("ol.progtrckr li:eq(5) span").attr("class","currentStage");
+            }
+         }
+     if({!Total>0}){
+         $('#container').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: 'work elements status'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Work Elements',
+                data: [
+                    {
+                        name: 'Not Started',
+                        y: {!notStarted },
+                        sliced: true,
+                        selected: true
+                    },
+                    ['In Progress',   {!inProgress }],
+                    ['In Review',       {!inReview}],
+                    ['Review Complete',   {!reviewComplete}],
+                    ['Failed',     {!failed}],
+                    ['On Hold',   {!onHold}],
+                    ['Cancelled',   {!cancelled}],
+                    ['Complete', {!complete}]
+                ]
+            }]
+        });
+    }
+    
+    $j("table[id$=workElementsTable]").parent().css("width","80%");
+
+    
+    
+     });
+   <!--End -->
+    var stages = new Array();
+    <apex:repeat value="{!showStageList}" var="stage">
+       stages.push({
+           Name: "{!stage.Name}",
+           Id: "{!stage.Id}",
+           Status: "{!stage.Status}",
+           NotStarted: "{!stage.NotStarted}",
+           InProgress: "{!stage.InProgress}",
+           ReadyforReview: "{!stage.ReadyforReview}",
+           UnderReview: "{!stage.UnderReview}",
+           ReviewComplete: "{!stage.ReviewComplete}",
+           Complete: "{!stage.Complete}"
+       });
+     </apex:repeat>   
+ function stageMouseOver(index){
+    $j("#selectStageTitle").html(stages[index].Name + "<br/>" + stages[index].Status);
+    $j("#selectStageDetail").attr('href','/'+ stages[index].Id);
+    $j("#selStageNotStarted").text(stages[index].NotStarted);
+    $j("#selStageInProgress").text(stages[index].InProgress);
+    $j("#selStageReadyforReview").text(stages[index].ReadyforReview);
+    $j("#selStageUnderReview").text(stages[index].UnderReview);
+    $j("#selStageReviewComplete").text(stages[index].ReviewComplete);
+    $j("#selStageComplete").text(stages[index].Complete);
+ }
+    
+    
+ function OpenAddLinkWin()
+    {
+        $j("html,body").animate({scrollTop:$("#AddLinkView").offset().top},1000);
+    }
+    function myAlter(err) {
+        $('#myAlterMessage').html(err);
+        $('#DivMyAlter').modal('show');
+    }
+    function myConfirm(msg,actionId) {
+        $('#myConfirmMessage').html(msg);
+        $('#DivMyConfirm').modal('show');
+        $('#myConfirmSubmit').unbind();
+        $('#myConfirmSubmit').click(function(){
+            $('#DivMyConfirm').hide();
+            $('[id$='+actionId+']').click();
+        });
+    }
+    function myConfirmWithParm(msg,actionId,parm){
+        $('#myConfirmMessage').html(msg);
+        $('#DivMyConfirm').modal('show');
+        $('#myConfirmSubmit').unbind();
+        $('#myConfirmSubmit').click(function(){
+            $('#DivMyConfirm').hide();
+            $('[id$='+actionId+']').each(function(k){
+                if($(this).text() == parm){
+                    $(this).click();
+                    return;
+                }
+            });
+        });
+    }
+    
+
+</script>
+    <apex:pageBlock >
+
+<div id="c_headerBar" class="c_headerBar" style="top:0px; background-color:white; display:{!flightPlanChanged};">   <!-- display:{!flightPlanChanged};-->
+    <div style="width:700Px; float:left">
+        <ul class="c_h_ttl">
+            <apex:repeat value="{!stagesHTML}" var="stage" id="theRepeat">
+                <li>
+                    <apex:outputText escape="false" value="{!stage}"></apex:outputText> 
+                </li>
+            </apex:repeat>
+        </ul>
+        <div class="c_clr"></div>
+    </div>
+    <div style="overflow:hidden;height:112px;font-size:14px;text-align:left;vertical-align: middle;margin-top:4px;border: 1px solid #0096D6;border-radius: 0px;border-bottom-left-radius:12px;border-top-right-radius: 12px;">
+        <table width="100%" height="100%" border="1" style="border: 2px solid #0096D6;">
+          <tr>
+            <td rowspan="3" style="font-size:20px;text-align:center;vertical-align: middle;" width="40%" >
+            <div id="selectStageTitle">{!showStage.Name}<br/>{!showStage.Status}</div>
+                <a id="selectStageDetail" href="/apex/ODP_Page_Stage?retURL=%2F{!project.id}&id={!showStage.id}"  style="float:left;margin-top:3px;background:none;color:#0096D6;width:6px;height:6px;" title="Edit Stage" class="blue icon-3x icon-page-yield"></a>
+            
+                
+            </td>
+            <td id="selectStageDesc" width="30%">Not Started:<span id="selStageNotStarted">{!showStage.NotStarted}</span></td>
+            <td width="30%">In Progress:<span id="selStageInProgress">{!showStage.InProgress}</span></td>
+          </tr>
+          <tr>
+            <td>Ready for Review:<span id="selStageReadyforReview">{!showStage.ReadyforReview}</span></td>
+            <td>Under Review:<span id="selStageUnderReview">{!showStage.UnderReview}</span></td>
+          </tr>
+          <tr>
+            <td>Review Complete:<span id="selStageReviewComplete">{!showStage.ReviewComplete}</span></td>
+            <td>Complete:<span id="selStageComplete">{!showStage.Complete}</span></td>
+          </tr>
+        </table>
+            <!-- <span id="selectStageTitle" style="display: block;padding: 20px 0; font-size:20px">{!showStage.Title}</span>
+            <span id="selectStageDesc" style="display: block;padding: 10px 0;">{!showStage.Description }</span> -->
+    </div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+            function delProjectConfirm(){
+                alertify.confirm('Confirm to delete this opportunity?', function (e) {
+                    if (e) {
+                        deleteProject();
+                        navigateToUrl('{!host}/p/process/Submit?retURL=%2F{!Offering_Release__c.Id}&id={!Offering_Release__c.Id}');
+                        //window.location = '/p/process/Submit?retURL=%2F{!Offering_Release__c.Id}&id={!Offering_Release__c.Id}';
+                    }
+                });
+            }
+            function toURL(flag){
+                if (flag == 'true') {
+                    alertify.alert('Successfully !');
+                    navigateToUrl('https://hp--esit.cs11.my.salesforce.com/a6y/o');
+                }
+            }
+            
+
+            function submitToFFR(){
+                var offrelStatus = "{!project.Status__c}"; 
+                var offrelfacilitator = "{!project.Facilitator__c}";
+                var offrelFPName = "{! project.Flight_Plan_Name__c }";
+                var offrelOwner = "{! project.OwnerId }";
+                var currentUser = "{!$User.Id}";
+                
+                if(offrelOwner == currentUser ){
+                    if(offrelStatus == 'Start Up' && offrelfacilitator != '' && offrelFPName != 'Startup'){ 
+                        alertify.confirm('Once you submit this record for approval, you might not be able to edit it or recall it from the approval process depending on your settings. Continue?',function(e){
+                            if(e){
+                                navigateToUrl('/p/process/Submit?retURL=%2F{!project.Id}&id={!project.Id}','DETAIL','submit');
+                            }
+                        }); 
+                     } 
+                     else if(offrelStatus != 'Start Up')
+                     { 
+                        
+                        alertify.alert("Unable to Submit for Approval<br>Please make sure <br> --Current Opportunity status is Start Up"); 
+                        
+                     }
+                     else if(offrelfacilitator == '')
+                     {
+                        alertify.alert("Unable to Submit for Approval<br>Please make sure <br> --BEP Consultant must be provided"); 
+                        
+                     }
+                     else if(offrelFPName == 'Startup'){
+                        alertify.alert("Unable to Submit for Approval<br>Please make sure <br> --Startup is the default flight plan. Please select suitable flight plan for the current Opportunity");    
+                     }
+               }else {
+                    alertify.alert('Only Opportunity owner can submit.'); 
+               }
+            }
+            
+            
+            
+</script>
+
+<style>
+[class^="icon-"], [class*=" icon-"] {
+    background-image: none;
+}
+.VPBody1 {
+    clear: both;
+    margin:0 auto;
+    position:absolute;
+    left:2%;
+    top:71%;
+}
+.VPNewOpp, .VPBlock .VPNewOpp:hover {
+    background-color:#006699;
+}
+
+.VPBlockCircle {
+    position: relative;
+    display: block;
+    width: 125px;
+    height: 125px;
+    border-radius: 9999px;
+    background-color: white;
+    margin-bottom: 15px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.17);
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+}
+.VPCircle {
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+    -moz-transform: scale(1);
+    transform: scale(1);
+    -moz-transition: -moz-transform 0.25s ease-in-out;
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+    -o-transition: -o-transform 0.25s ease-in-out;
+    transition: transform 0.25s ease-in-out;
+    display: block;
+    position: relative;
+    width: 125px;
+    height: 125px;
+    background-size: auto 125px;
+    background-position: left center;
+}
+.VPCircleLarge {
+    -webkit-transform: scale(0.7);
+    -o-transform: scale(0.7);
+    -ms-transform: scale(0.7);
+    -moz-transform: scale(0.7);
+    transform: scale(0.7);
+    -moz-transition: -moz-transform 0.25s ease-in-out;
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+    -o-transition: -o-transform 0.25s ease-in-out;
+    transition: transform 0.25s ease-in-out;
+    display: block;
+    position: relative;
+    width: 125px;
+    height: 125px;
+    background-size: auto 125px;
+    background-position: left center;
+}
+
+
+.VPOpportunity, .VPBlock .VPOpportunity:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #0096D6), color-stop(95%, #00b7f5));
+    background-image: -webkit-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -moz-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -o-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -ms-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: -o-linear-gradient(top, #0096D6 5%, #00b7f5 95%);
+    background-image: linear-gradient(to bottom, #0096D6 5%, #00b7f5 95%);
+    background-color: #0096D6;
+}
+
+
+.icon-6x
+    font-size: 40px;
+    padding-top: 20px;
+}
+.VPBlockCircle:hover>.VPCircle{
+    -webkit-transform: scale(1.32);
+    -o-transform: scale(1.32);
+    -ms-transform: scale(1.32);
+    -moz-transform: scale(1.32);
+    transform: scale(1.32);
+    background-position: left center;
+}
+
+.VPBlockCircle:hover>.VPCircleLarge{
+    -webkit-transform: scale(0.9);
+    -o-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    -moz-transform: scale(0.9);
+    transform: scale(0.9);
+    background-position: left center;
+}
+
+
+</style>
+
+        <div class="row-fluid">
+            <div class="span12 mtop20 ">
+                    <!--BEGIN TABS-->
+
+
+                    <div class="tabbable custom-tab tabs-left" id="tables">                                 
+                        <ul class="nav nav-tabs tabs-left">
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_0" data-toggle="tab">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-detail-view"></i>
+                                    </span> 
+                                    <span>Opportunity Detail</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_2" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-management"></i>
+                                    </span> 
+                                    <span>Resource Management</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_5" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-pages-with-offer"></i>
+                                    </span> 
+                                    <span>Deliverables</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_6" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-global-deal-support"></i>
+                                    </span> 
+                                    <span>Customer Commitment</span>
+                                </a>
+                            </li>            
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_3" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-warning"></i>
+                                    </span>
+                                    <span>Potential Risk</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_7" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-autonomic"></i>
+                                    </span>
+                                    <span>Related PPM</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="c_h_mail" href="#tab_3_8" data-toggle="tab" class="disabled">
+                                    <span class="is_c" dir="ltr">
+                                        <i class="blue icon-repeat icon-4x icon-travel-approvals"></i>
+                                    </span> 
+                                    <span>Submit For Approval</span>
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        
+
+
+                        
+                                                       
+                        <div class="tab-content" style="position:relative; overflow-y:scroll; height:700px;">
+                            <!--TAB 00-->
+                            <div class="tab-pane active" id="tab_3_0">
+                                <apex:pageMessages />
+                                
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <apex:outputLink value="/apex/ODP_Page_OfferingRelease_Upsert?retURL=%2F{!project.id}&id={!project.id}" disabled="{!!IsBizEngaPartners}" title="Edit"><span class="white icon-3x icon-edit" ></span></apex:outputLink>
+                                        <apex:outputLink onclick="javascript:delProjectConfirm(); return false;" title="Delete" disabled="{!!IsBizEngaPartners}"><span class="white icon-3x icon-delete"></span></apex:outputLink>
+                                        <apex:actionFunction name="deleteProject" action="{!deleteProject}" oncomplete="javascript:return toURL('{!delFlag}');return false;" ></apex:actionFunction>
+                                        <apex:outputLink value="/p/share/CustomObjectSharingDetail?parentId={!project.id}" title="Share" disabled="{!!IsBizEngaPartners}"><span class="white icon-3x icon-share"></span></apex:outputLink>
+                                    </apex:form>
+                                </div>
+                                <div>
+                                    <div style="width:65%;">
+                                        <table class="table table-hover">
+                                            <apex:form >
+                                            <tbody>
+                                                <tr><td class="table-label">Opportunity Name</td><td><apex:outputField value="{!project.Name__c}"/></td></tr>
+                                                <tr><td class="table-label">Business Engagement Partner</td><td><apex:outputField value="{!project.Facilitator__c}"/></td>    </tr>
+                                                <tr><td class="table-label">Opportunity Version</td><td><apex:outputField value="{!project.Offering_Version__c}"/></td></tr>
+                                                <tr><td class="table-label">Opportunity Category</td><td><apex:outputField value="{!project.Offering_Category__c}"/></td></tr>
+                                                <!-- tr><td class="table-label">Opportunity Type</td><td><apex:outputField value="{!project.Release_Type__c}"/></td></tr -->
+                                                <tr><td class="table-label">Opportunity Description</td><td><apex:outputField value="{!project.Release_Description__c}"/></td></tr>
+                                                <tr><td class="table-label">Flight Plan Name</td><td><apex:outputField value="{!project.Flight_Plan_Name__c}"/></td></tr>
+                                                <tr><td class="table-label">Status</td><td><apex:outputField value="{!project.Status__c}"/></td></tr>
+                                                <tr><td class="table-label">Exec Sponsor</td><td><apex:outputField value="{!project.Practice__c}"/></td></tr>
+                                                <tr><td class="table-label">Primary Business Contact</td><td><apex:outputField value="{!project.Primary_Business_Contacts__c}"/></td></tr>
+                                                <tr><td class="table-label">Assumptions / Considerations</td><td>  <apex:inputTextarea richText="true" value="{!project.Assumptions__c}"/></td></tr>
+                                                <tr><td class="table-label">BVP</td><td><apex:outputField value="{!project.BVP__c}"/></td></tr>
+                                                <tr><td class="table-label">Last Modified By</td><td><apex:outputField value="{!project.LastModifiedByID}"/></td></tr>
+                                            </tbody>
+                                            </apex:form>
+                                        </table>
+                                        <div id="OpportunityInput" style="width:100%;">
+                                        <apex:form >
+                                            <apex:pageBlock >
+                                                <div id="DivDelLink">
+                                                    <apex:pageBlockSection columns="1" collapsible="false" title="Opportunity Startup Material" />               
+                                                    <div>
+                                                        <input id="input_addlinkbtn" type="button" value="Add Link" class="myButtons" />
+                                                        <apex:commandButton action="{!FileUploadSave}" value="Add Document" styleclass="myButtons" disabled="false"/>
+                                                        <apex:inputFile style="background:none;border:0px;" value="{!attachDoc.body}" filename="{!attachDoc.name}" id="file" disabled="false"/>
+                                                        <apex:pageBlockTable value="{!attachmentAndLinkList}" var="d" id="docTable" >                          
+                                                            <apex:column colspan="1"  headerValue="Action">
+                                                                <a onclick="javascript:myConfirmWithParm('Confirm to delete this {!d.fileType}?','deleteAttaLink','{!d.docId}'); return false;" style="" title="Delete"><span class="blue large icon-delete"></span></a>
+                                                                <apex:commandLink action="{!deleteAttaLink}" id="deleteAttaLink" value="{!d.docId}" style="display:none">
+                                                                    <apex:param name="deleteDocId" value="{!d.docId}" assignTo="{!addtaLinkId}"/>
+                                                                    <apex:param name="type" value="{!d.fileType}" assignTo="{!addtaLinkType}"/>                                    
+                                                                </apex:commandLink>
+                                                                &nbsp;
+                                                                <a href=" {!IF(d.fileType == 'Document','/servlet/servlet.FileDownload?file=' + d.docId,d.lik)}" target="_blank" title="Open"><span class="blue large icon-open-link-in-new-window"></span></a>
+                                                           </apex:column>                             
+                                                            <apex:column headerValue="Name" value="{!d.name}"/>
+                                                            <apex:column headerValue="Type" value="{!d.fileType}"/>
+                                                            <apex:column headerValue="Added By" value="{!d.addBY}"/>
+                                                            <apex:column headerValue="Last Modified" value="{!d.modifyDate}"/>
+                                                        </apex:pageBlockTable>
+                                                        </div>
+                                                </div>
+                                            </apex:pageBlock>
+                                            
+                                            <div id="AddLinkView" class="modalDialog">
+                                                <div>
+                                                    <a href="#close" Xtitle="Close" class="close">X</a>
+                                                    <p></p>
+                                                    <apex:outputPanel id="tmm">
+                                                        <apex:pageBlock >
+                                                            <apex:pageBlockSection columns="1" collapsible="false" title="AddLink">
+                                                            <apex:messages />
+                                                            <apex:inputText value="{!link.Name__c}"/>
+                                                            <apex:inputtextarea value="{!link.Description__c}" cols="30" rows="8"/>
+                                                            <apex:inputText value="{!link.Link__c}"/>
+                                                            <apex:commandButton value="Save" styleclass="myButtons" action="{!saveLink}" />
+                                                            </apex:pageBlockSection>
+                                                        </apex:pageBlock>
+                                                    </apex:outputPanel>          
+                                                    <p></p>
+                                                </div>
+                                            </div>
+                                        </apex:form>
+                                    </div>
+                                    </div>
+                                    <div id="chatterDisplay">
+                                        <apex:pageBlock >
+                                            <div class="pbSubheader">
+                                                <a href="javascript:void(0);" Id="ShowFollower"  title="{!followers.size} Followers" style="float:left;"><span class="white icon-3x icon-thumbs-up" style="position:relative;top:-5px;"></span></a>
+                                                <div id="followme" style="text-align:right; padding-bottom:0px;float:right;font-size:12px;"><chatter:follow entityID="{!project.id}"/></div>
+                                             </div>    
+                                                
+                                                <div >
+                                                    <div id="chatterWrapper" style="display:block; max-height:650px; overflow:auto; margin:0px; padding:0px;">
+                                                        <chatter:feed entityId="{!project.id}"></chatter:feed>
+                                                    </div>
+                                                    
+                                                    <div id="container" style="width: 500px; height: 300px; margin: 0 auto;float:center;"></div>
+                                                    
+                                                </div>
+                                        </apex:pageBlock>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                           
+                            <!--TAB 02-->
+                            <div class="tab-pane disabled" id="tab_3_2">
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <div class="tab-btn-new">
+                                            <apex:outputLink value="/apex/ODP_CustomizedTeamMemberOverView?OffRelID={!project.id}" title="Manage Team Members" disabled="{!!IsBizEngaPartners}"><span class="white icon-3x icon-team-management"></span></apex:outputLink>
+                                        </div>
+                                    </apex:form>
+                                </div>
+                                <div>
+                                    <apex:pageBlockTable var="member" value="{!teamMembers}">
+                                        <apex:column headerValue="Photo">
+                                            <a href="/{!member.User__c}" target="_blank">
+                                                <span class="label hpit_athenaListPersonImg"><apex:image url="{!member.User__r.SmallPhotourl}" /></span>
+                                            </a>
+                                        </apex:column>
+                                        <apex:column value="{! member.Role_Name__c}"/>
+                                        <apex:column headerValue="Member Name" value="{!member.User__c}"/>
+                                        <apex:column value="{! member.Contributor__c}"/>
+                                        <apex:column value="{! member.Reviewer__c}"/>
+                                        <apex:column value="{! member.Accountable__c}"/>       
+                                    </apex:pageBlockTable>
+
+                                </div>
+                            </div>
+                            <!--TAB 02-->
+                            <div class="tab-pane disabled" id="tab_3_3">
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <div class="tab-btn-new"><apex:outputLink value="{!host}/apex/ODP_PotentialRisk?OFID={!project.id}"  title="Create Potential Risk" disabled="{!!IsBizEngaPartners}"><span class="white icon-3x icon-warning2"></span></apex:outputLink></div>
+                                    </apex:form>
+                                    </div>
+                                <div>
+                                    <apex:form >
+                                    <apex:actionFunction name="deletePotenitalRisk" action="{!deletePotenitalRisk}" oncomplete="javascript:alertify.alert('{!errorMsg}')" > 
+                                        <apex:param name="firstParam" assignTo="{!potenitalRiskId}" value="" />
+                                    </apex:actionFunction> 
+                                    <apex:pageBlockTable var="risk" value="{!potentialRisks}">
+                                        <apex:column colspan="1"  headerValue="Action">
+                                            <a href="Https://{!host}/{!risk.id}/e?retURL=%2F{!project.id}&sfdc.override=1"  title="open" class="{!IF(IsBizEngaPartners,'','disabledODP')}"><span class="blue large icon-open-link-in-new-window"></span></a>
+                                            <apex:outputLink onclick="javascript:return delPotenitalRiskConfirm('{!risk.Id}'); return false" title="delete" disabled="{!!IsBizEngaPartners}"><span class="blue large icon-delete"></span></apex:outputLink>
+                                        </apex:column>
+                                        <apex:column value="{! risk.Name  }"/>
+                                        <apex:column value="{! risk.Potential_Risk_Owner__c}"/>
+                                        <apex:column value="{! risk.Description__c}"/>
+                                        <apex:column value="{! risk.CreatedDate }"/>       
+                                    </apex:pageBlockTable>
+                                    </apex:form>
+                                </div>
+                            </div>
+                           
+                            <!--TAB 04-->
+                            <script type="text/javascript">
+                                function delDeliverableConfirm(deliverableId){
+                                        alertify.confirm("Are you sure ?", function (e) {
+                                            if (e) {    
+                                                 deleteDeliverableById(deliverableId);
+                                            } 
+                                        }); 
+                                        return false;
+                                }
+                            </script>
+                            <div class="tab-pane disabled" id="tab_3_5">
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <div class="tab-btn-new"><apex:outputLink value="{!URLFOR($Action.Release_Deliverable__c.New,null,[OFID=project.id])}" title="New Deliverable" disabled="{!!IsBizEngaPartners}"><span class="white icon-3x icon-pages-with-offer"></span></apex:outputLink></div>
+                                </div>
+                                <div>
+                                    <apex:form >
+                                    <apex:actionFunction name="deleteDeliverableById" action="{!deleteDeliverable}" oncomplete="javascript:alertify.alert('{!errorMsg}')" > 
+                                        <apex:param name="firstParam" assignTo="{!deliverableId}" value="" />
+                                    </apex:actionFunction>
+                                    <apex:pageBlockTable var="deliverable" value="{!deliverables}">
+                                        <apex:column colspan="1"  headerValue="Action">
+                                            <apex:outputLink value="{!host}/apex/ODP_Page_Deliverable?id={!deliverable.id}&retURL=%2F{!project.id}&sfdc.override=1" title="Edit" disabled="{!!IsBizEngaPartners}"><span class="blue large icon-edit"></span></apex:outputLink> 
+                                        </apex:column>
+                                        <apex:column headerValue="Deliverable ID">
+                                             <a href="/{!deliverable.id}" target="_blank" class="hotLink"><apex:outputText value="{!deliverable.Name}" /></a>
+                                        </apex:column>
+                                        <apex:column headerValue="Deliverable Name" value="{! deliverable.Release_Deliverable_Name__c}"/>
+                                        <apex:column headerValue="Include" value="{! deliverable.Include__c }"/>      
+                                    </apex:pageBlockTable>
+                                    </apex:form>
+                                </div>
+                            </div>
+                            <!--TAB 05-->
+                            <script type="text/javascript">
+                                function delCustomerCommitConfirm(customerCommitId){
+                                        alertify.confirm("Are you sure ?", function (e) {
+                                            if (e) {    
+                                                 deleteCustomerCommitById(customerCommitId);
+                                            } 
+                                        }); 
+                                        return false;
+                                }
+                            </script>
+                            <div class="tab-pane disabled" id="tab_3_6">
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail"> <!-- <apex:outputLink value="/apex/ODP_Page_CustomerCommitment?OFID={!project.id}"  title="Create Customer Commitment"> -->
+                                        <div class="tab-btn-new"><apex:outputLink value="{!URLFOR($Action.Customer_Commitment__c.New,null,[OFID=project.id])}" title="Create Customer Commitment" disabled="{!!IsBizEngaPartners}"><span class="white icon-3x icon-global-deal-support"></span></apex:outputLink></div>
+                                    </apex:form>
+                                    </div>
+                                <div>
+                                    <apex:form >
+                                    <apex:actionFunction name="deleteCustomerCommitById" action="{!deleteCustomerCommit}" oncomplete="javascript:alertify.alert('{!errorMsg}')" > 
+                                        <apex:param name="firstParam" assignTo="{!customerCommitId}" value="" />
+                                    </apex:actionFunction>
+                                    <apex:pageBlockTable var="customerCommit" value="{!customerCommits}">
+                                        <apex:column colspan="1"  headerValue="Action">
+                                            <apex:outputLink value="{!host}/apex/ODP_Page_CustomerCommitment?id={!customerCommit.id}&retURL=%2F{!project.id}&sfdc.override=1" disabled="{!!IsBizEngaPartners}">Edit</apex:outputLink> 
+                                            <apex:commandLink value="Del"  onclick="javascript:delCustomerCommitConfirm('{!customerCommit.id}');return false" rendered="{!IsBizEngaPartners}"></apex:commandLink>
+                                        </apex:column>
+                                        <apex:column headerValue="Customer Commitment ID"  value="{! customerCommit.Name}"/>
+                                        <apex:column headerValue="Customer Name" value="{! customerCommit.Customer_Name__c}"/>
+                                        <apex:column headerValue="Commitment Owner" value="{! customerCommit.Commitment_Owner__c}"/>
+                                        <apex:column headerValue="Due Date" value="{! customerCommit.Due_Date__c }"/>
+                                    </apex:pageBlockTable>
+                                    </apex:form>
+                                </div>
+                            </div>
+                            <!--TAB 07-->
+                            <script type="text/javascript">
+                                function delRiskConfirm(riskId){
+                                        alertify.confirm("Are you sure ?", function (e) {
+                                            if (e) {    
+                                                 deleteRiskById(riskId);
+                                            } 
+                                        }); 
+                                        //return false;
+                                }
+                            </script>
+                            <div class="tab-pane disabled" id="tab_3_7">
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <div class="tab-btn-new"><a id="NewPPMLink" href="javascript:void(0)" title="New PPM" class="{!IF(IsBizEngaPartners,'','disabledODP')}"><span class="white icon-3x icon-autonomic"></span></a></div>
+                                    </apex:form>
+                                </div>
+                                
+                                <div>
+                                    <apex:form >
+                                    <apex:actionFunction name="deleteRiskById" action="{!deletePPM}" oncomplete="javascript:alertify.alert('{!errorMsg}')" reRender="ppmListTable" > 
+                                        <apex:param name="firstParam" assignTo="{!ppmId}" value="" />
+                                    </apex:actionFunction>
+                                    <apex:pageBlockTable var="ppm" value="{!risks}" id="ppmListTable">
+                                        <apex:column colspan="1"  headerValue="Action">
+                                            <!-- apex:outputLink value="{!host}/{!ppm.id}/e?retURL=%2F{!project.id}">Edit</apex:outputLink --> 
+                                            <apex:outputLink value="/{!ppm.id}" target="_blank" disabled="{!!IsBizEngaPartners}">Open</apex:outputLink> 
+                                            <apex:commandLink value="Del"  onclick="javascript:delRiskConfirm('{!ppm.id}');return false"></apex:commandLink> 
+                                        </apex:column>
+                                        <apex:column headerValue="PPM ID" value="{! ppm.PPM_ID__c}"/>
+                                        <apex:column headerValue="PPM Name" value="{! ppm.PPM_Name__c}"/>
+                                        <apex:column headerValue="PPM Description" value="{! ppm.PPM_Description__c }"/>
+                                        <apex:column headerValue="PPM Link" value="{! ppm.PPM_Link__c}"/>
+                                    </apex:pageBlockTable>
+                                    </apex:form>
+                                </div>
+
+                            </div>
+                            <!--TAB 08-->
+                            <script type="text/javascript">
+                            $( document ).ready(function() {
+                                $("input[name='piSubmit']").css("display","none");
+                            });
+                            </script>
+                            <div class="tab-pane disabled" id="tab_3_8">
+                                <div class="BDheading_OL">
+                                    <span>&nbsp;</span>
+                                    <apex:form styleClass="form-detail">
+                                        <div class="tab-btn-new">
+                                            <apex:commandLink title="Submit For Review" style="color:white;" styleClass="blue icon-3x icon-travel-approvals"  rendered="{!IsBizEngaPartners}" onclick="javascript:submitToFFR();return false;" ></apex:commandLink> 
+                                        </div>
+                                    </apex:form>
+                                </div>
+                                <apex:relatedList list="ProcessSteps" title="Approval History" ></apex:relatedList>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--END TABS-->
+            </div>
+            
+            <!-- Corner Navigation -->
+            <div class="VPBody1">
+                <div class="VPBlock" id="OpportunityBtn">
+                     <a href="/apex/ODP_Page_VisualPortal" title="My Opportunities">
+                        <span class="VPBlockCircle VPOpportunity">
+                            <span class="VPCircleLarge" title="My Opportunities" style="background-image: url(https://hp--esit--c.cs11.content.force.com/servlet/servlet.ImageServer?id=015Z00000006xrY&oid=00DZ000000N9IbI&lastMod=1413423318000);"></span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        
+        </div>
+    </apex:pageBlock>
+<!--<apex:relatedList id="a6yZ0000000DGCy" list="stages"/> -->
+
+    <!-- BEGIN JAVASCRIPTS -->  
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DataTableColumnFilter.js')}"/>        
+        <!-- ie8 fixes -->
+        <!--[if lt IE 9]>
+       <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+       <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+       <![endif]-->
+    <!-- END JAVASCRIPTS --> 
+<apex:form >
+<div id="AddPPM" class="modalDialog">
+    <div>
+        <a href="javascript:void(0)" id="ClosePPM" Xtitle="Close" class="close">X</a>
+        <p></p>
+        <apex:outputPanel >
+            <apex:pageBlock >
+                <apex:pageBlockSection columns="1" collapsible="false" title="Add PPM">
+                <apex:messages />
+                <apex:inputText value="{!ppm.PPM_ID__c}" label="PPM ID"/>
+                <apex:inputText value="{!ppm.PPM_Name__c}" label="PPM Name"/>
+                <apex:inputText value="{!ppm.PPM_Link__c}" label="PPM Link"/>
+                <apex:inputtextarea value="{!ppm.PPM_Description__c}" cols="30" rows="8" label="Description"/>
+                <apex:commandButton value="Save" styleclass="myButtons" action="{!savePPM}"  />
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>          
+        <p></p>
+    </div>
+</div>
+</apex:form>
+<div id="followerList" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+<apex:pageBlock >
+      <div class="modal-header">
+        <h3>follower list</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0">
+              <apex:pageBlockTable var="follower" value="{!followers}">
+                <apex:column headerValue="Name" value="{! follower.subscriber.name}"/>
+                <apex:column headerValue="Photo">
+                    <img src="{! follower.subscriber.SmallPhotoUrl}" />
+                </apex:column>
+                <apex:column headerValue="Date" value="{! follower.CreatedDate}"/>
+            </apex:pageBlockTable>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true">close</button>
+      </div>
+</apex:pageBlock>
+</div>
+    
+    
+<div id="DivMyAlter" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Error Message</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0" id="myAlterMessage">
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true">OK</button>
+      </div>
+</div>
+<div id="DivMyConfirm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Confirm Message</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0" id="myConfirmMessage">
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true">Cancel</button>
+          <button class="btnAthena EbtnLess" id="myConfirmSubmit">Submit</button>
+      </div>
+</div>    
+</apex:page>

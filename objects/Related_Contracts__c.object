@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Case__c</fullName>
+        <description>This is the association to the Case</description>
+        <externalId>false</externalId>
+        <label>Case</label>
+        <referenceTo>Case</referenceTo>
+        <relationshipLabel>Related Contracts</relationshipLabel>
+        <relationshipName>Related_Contracts</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Contract_Reference__c</fullName>
+        <description>This is the relationship to the individual contract reference record</description>
+        <externalId>false</externalId>
+        <label>Contract Reference</label>
+        <referenceTo>Contract_Reference__c</referenceTo>
+        <relationshipLabel>Related Contracts</relationshipLabel>
+        <relationshipName>Related_Contracts</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Date_Sent__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(isnull(Case__r.Date_Sent_to_Sales__c) , Case__r.Date_Sent_to_Customer__c, IF( isnull(Case__r.Date_Sent_to_Customer__c), Case__r.Date_Sent_to_Sales__c, IF(Case__r.Date_Sent_to_Sales__c&lt;Case__r.Date_Sent_to_Customer__c,Case__r.Date_Sent_to_Sales__c,Case__r.Date_Sent_to_Customer__c)))</formula>
+        <label>Date Sent</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Legal_Period__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( OR(Contract_Reference__r.Region__c = &quot;Asia Pacific&quot;,
+CONTAINS( $Label.CO_LP_Country60 , Contract_Reference__r.Country__c),
+(Route_to_Market__c = &quot;Direct&quot; &amp;&amp;
+OR( CONTAINS( $Label.CO_LP_SO , Contract_Reference__r.Sales_Organization__c),
+CONTAINS( $Label.CO_LP_CountryUKI , Contract_Reference__r.Country__c)
+))), 60,
+
+IF( Route_to_Market__c = &quot;Indirect&quot; &amp;&amp;
+CONTAINS( $Label.CO_LP_CountryUKI , Contract_Reference__r.Country__c), 120,
+
+90))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Legal Period</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quoted_on_Time__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF((ISBLANK(Case__r.Date_Sent_to_Customer__c) &amp;&amp; (ISBLANK(Case__r.Date_Sent_to_Sales__c))), &quot; &quot;, 
+IF( CONTAINS( $Label.CO_BG_Set1 ,TEXT(Case__r.BG__c)) &amp;&amp; ((Contract_Reference__r.Contract_End_date__c - Date_Sent__c) &gt;= Legal_Period__c) , &quot;True &quot;, 
+IF(CONTAINS( $Label.CO_BG_Set2 ,TEXT(Case__r.BG__c)) &amp;&amp; ((Contract_Reference__r.Contract_End_date__c - Case__r.Date_Sent_to_Sales__c) &gt;= 120) || 
+((Contract_Reference__r.Contract_End_date__c - Case__r.Date_Sent_to_Customer__c) &gt;= 90 ), &quot;True &quot;, 
+&quot;False&quot;)))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Quoted on Time</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Route_to_Market__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE( Contract_Reference__r.Channel_Relationship_Code__c , 
+&quot; &quot;, &quot;Direct&quot;, 
+NULL, &quot;Direct&quot;, 
+&quot;FMP&quot;, &quot;Direct&quot;, 
+&quot;ODP&quot;, &quot;Direct&quot;, 
+&quot;OME&quot;, &quot;Direct&quot;, 
+&quot;OMI&quot;, &quot;Direct&quot;, 
+&quot;OMP&quot;, &quot;Direct&quot;, 
+&quot;X&quot;, &quot;Direct&quot;, 
+&quot;Y&quot;, &quot;Direct&quot;, 
+&quot;Z&quot;, &quot;Direct&quot;, 
+&quot;Indirect&quot; )</formula>
+        <label>Route to Market</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Related Contracts</label>
+    <nameField>
+        <displayFormat>CO-{000000}</displayFormat>
+        <label>Related Contracts Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Related Contracts</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+</CustomObject>

@@ -1,0 +1,38 @@
+<!-- 
+/**********************************************************
+* Page Name: JBP_pickSIPage
+* Author:  HP
+* Date: 10-APRIL-2013
+* Requirement # Request Id: 
+* Description: This page is displays a list of Strategic Initiative based on the JBP when clicked on the 
+               'Pick Strategic Initaitive' Button on the Strategic Initiative related list on the sub plan Detail page
+**********************************************************/
+-->
+
+<apex:page controller="JBP_pickSIController">
+    <apex:form >
+    <apex:sectionHeader title="{!$Label.Select_Strategic_Initiatives}"/>
+        <apex:pageBlock >
+        <apex:pageMessages />
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!Add}" disabled="{!IF((AssociatedSI.size==0),true,false)}" value="{!$Label.Add_JBP}"/>
+            <apex:commandButton action="{!cancel}" value="{!$Label.Cancel_JBP}"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockTable rendered="{!IF((AssociatedSI.size!=0),true,false)}" value="{!AssociatedSI}" var="si">
+            <apex:column headerValue="{!$Label.Select_JBP}">
+                <apex:inputCheckbox value="{!si.selected}"/>
+            </apex:column>
+            <apex:column headerValue="{!$Label.Strategic_Initiative}"><apex:outputLink value="/{!si.jbpStI.id}">{!si.jbpStI.Name}</apex:outputLink></apex:column>
+            <apex:column value="{!si.jbpStI.Strategic_Initiative_Name_picklist__c}"/>
+            <apex:column value="{!si.jbpStI.Description__c}"/>
+            <apex:column value="{!si.jbpStI.Start_Date__c}"/>
+            <apex:column value="{!si.jbpStI.End_Date__c}"/>
+            <apex:column value="{!si.jbpStI.Expected_Result_Curr__c}"/>
+            <apex:column value="{!si.jbpStI.Complete__c}"/>
+            <apex:column value="{!si.jbpStI.HP_Investment_Curr__c}"/>
+            <apex:column value="{!si.jbpStI.Partner_Investment_Curr__c}"/>
+        </apex:pageBlockTable>
+        <apex:outputText rendered="{!IF((AssociatedSI.size==0),true,false)}"><b>{!$Label.No_records_found_jbp}</b></apex:outputText>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

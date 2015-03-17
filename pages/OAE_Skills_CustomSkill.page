@@ -1,0 +1,156 @@
+<apex:page controller="OAE_Skills_CustomSkillCtlr" tabstyle="User">
+<apex:sectionheader title="Custom Parameter Selection" subTitle="{!targetObjectType} Object"/>
+  <apex:form >
+	<apex:pageBlock tabstyle="Contact" id="mainBlock">
+		  <apex:pageBlockSection title="Current Custom Fields" collapsible="false" />
+		  <apex:outputText rendered="{!!showExisting}">No object options in use</apex:outputText>
+		  <apex:dataTable value="{!existingParams}" var="theObj" id="tblObj" cellpadding="2" rendered="{!showExisting}">
+			<apex:column width="80">
+				<apex:facet name="header"></apex:facet>
+				<apex:outputPanel id="rendo" onclick="deleteFn('{!theObj.sOne}')" 
+	                styleClass="btn">Remove</apex:outputPanel>
+			</apex:column>
+			<apex:column width="120">
+				<apex:facet name="header">Skill</apex:facet>
+				<apex:outputText value="{!theObj.sOne}"/>
+			</apex:column>
+			<apex:column width="120">
+				<apex:facet name="header">Skill Label</apex:facet>
+				<apex:outputText value="{!theObj.sTwo}"/>
+			</apex:column>
+			<apex:column width="350">
+				<apex:facet name="header">Values</apex:facet>
+				<apex:outputText value="{!theObj.sThree}"/>
+			</apex:column>
+			<apex:column width="120">
+				<apex:facet name="header"></apex:facet>
+				<apex:outputPanel onclick="customFn('{!theObj.sOne}')" 
+				    styleClass="btn">Edit Values</apex:outputPanel>
+			</apex:column>
+			<apex:column width="80">
+				<apex:facet name="header"></apex:facet>
+				<apex:outputPanel onclick="levelFn('{!theObj.sOne}')" 
+				    styleClass="btn">Levels</apex:outputPanel>
+			</apex:column>
+		  </apex:dataTable>
+		  <br/><br/>
+		  <apex:outputPanel onclick="startFn()" styleClass="btn">Create New Custom Skill</apex:outputPanel>      
+		  <br/><br/>
+	
+		<apex:pageBlock tabstyle="Contact" id="newBlock" rendered="{!showNew}">
+		  <apex:pageBlockSection title="Create Custom Skill" collapsible="false" />
+			<table>
+			<tr>
+			<td width="200">
+				Please select an object for which this skill is applicable
+			</td>
+			<td width="400">
+				<apex:selectList value="{!newSkillObject}" size="1" style="width:200px">
+				<apex:selectOptions value="{!objInUseList}"/>
+				</apex:selectList>
+			</td>
+			</tr>
+			<tr>
+			<td>
+				Please enter a label for this custom skill
+			</td>
+			<td>
+				<apex:inputtext value="{!newSkillLabel}"/>
+			</td>
+			</tr>
+			<tr>
+			<td>
+				Please enter the values for this skill
+			</td>
+			<td>
+				<apex:inputtextarea id="pickvals" rows="10" cols="60" value="{!newSkillVals}"/>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			</td>
+			<td align="right">
+				<apex:commandButton value="Submit" action="{!createNewCustomSkill}"/>
+			</td>
+			</tr>
+			</table>
+		</apex:pageBlock>
+	<br/>
+		<apex:pageBlock tabstyle="Contact" id="modifyCustomBlock" rendered="{!showExistingCustom}">
+		  <apex:pageBlockSection title="Current Values" collapsible="false" />
+		  <apex:dataTable value="{!existingCustomVals}" var="strLevel" id="tblInUse" cellpadding="2">
+			<apex:column width="200">
+				<apex:facet name="header">Level</apex:facet>
+				<apex:outputText value="{!strLevel}"/>
+			</apex:column>
+			<apex:column width="250">
+				<apex:facet name="header"></apex:facet>
+				<apex:outputPanel id="rend" onclick="removeCustomFn('{!strLevel}')" 
+				    styleClass="btn">Remove Level</apex:outputPanel>
+			</apex:column>    
+		  </apex:dataTable>
+		  <apex:pageBlockSection title="Add Levels to Level Picklist" collapsible="false" />
+			<br/><br/>
+			<table>
+			<tr>
+			<td>
+				<apex:inputtextarea id="pickvals" rows="10" cols="60" value="{!newCustomVals}"/>
+			</td>
+			</tr>
+			<tr>
+			<td align="right">
+				<apex:commandButton value="Submit" action="{!modifyCustomSkill}"/>
+			</td>
+			</tr>
+			</table>
+		</apex:pageBlock>
+	<br/>
+		<apex:pageBlock tabstyle="Contact" id="modifyLevelsBlock" rendered="{!showLevels}">
+		  <apex:pageBlockSection title="Current Levels" collapsible="false" rendered="{!showExistingLevels}"/>
+		  <apex:dataTable value="{!existingLevels}" var="strLevel" id="tblInUse" cellpadding="2">
+			<apex:column width="200">
+				<apex:facet name="header">Level</apex:facet>
+				<apex:outputText value="{!strLevel}"/>
+			</apex:column>
+			<apex:column width="250">
+				<apex:facet name="header"></apex:facet>
+				<apex:outputPanel id="rend" onclick="removeFn('{!strLevel}')" 
+				    styleClass="btn">Remove Level</apex:outputPanel>
+			</apex:column>    
+		  </apex:dataTable>
+		  <apex:pageBlockSection title="Add Levels to Level Picklist" collapsible="false" />
+			<br/><br/>
+			<table>
+			<tr>
+			<td>
+				<apex:inputtextarea id="pickvals" rows="10" cols="60" value="{!newLevelVals}"/>
+			</td>
+			</tr>
+			<tr>
+			<td align="right">
+				<apex:commandButton value="Submit" action="{!saveLevels}"/>
+			</td>
+			</tr>
+			</table>
+		</apex:pageBlock>
+
+	
+		<apex:actionFunction action="{!showNewArea}" name="startFn" rerender="mainBlock" />
+		<apex:actionFunction action="{!skillDelete}" name="deleteFn">
+			<apex:param name="firstParam" assignTo="{!skillToDelete}" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!showLevelArea}" name="levelFn" rerender="mainBlock">
+			<apex:param name="firstParam" assignTo="{!skillLevelsToEdit}" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!showCustomArea}" name="customFn" rerender="mainBlock">
+			<apex:param name="firstParam" assignTo="{!customToEdit}" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!levelRemove}" name="removeFn" rerender="mainBlock">
+			<apex:param name="firstParam" assignTo="{!levelToRemove}" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!customRemove}" name="removeCustomFn" rerender="mainBlock">
+			<apex:param name="firstParam" assignTo="{!customToRemove}" value="" />
+		</apex:actionFunction>
+	</apex:pageBlock>
+  </apex:form>
+</apex:page>

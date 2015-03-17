@@ -1,0 +1,237 @@
+<apex:page id="SLHomePage" controller="PLMAdminController" showHeader="false"  doctype="html-5.0" applyBodyTag="false" applyHtmlTag="false">
+    <!-- ETR JavaScript -->    
+    <apex:includeScript value="{!URLFOR($Resource.jQuery)}"/> 
+    <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery-ui.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/hp-esm_theme.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/theme.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.forcetk)}"/>
+    <script type="text/javascript" src="/js/function.js"></script>
+    <script src="/soap/ajax/29.0/connection.js"></script>
+    <script src="/soap/ajax/29.0/apex.js"></script>   
+
+   
+<script>
+  
+    $j = jQuery.noConflict();
+    
+    var loginUrl    = 'https://hp--esit.cs11.my.salesforce.com/';
+    var clientId    = '3MVG9GiqKapCZBwFXKA9BpfSmN8ZRd3fhqKL8tQ45Br70v7yYiUOw5n_8N.4zZ23IHu.4Mzxt6OeF7olsGyG8';
+    var redirectUri = 'https://hp--esit.cs11.my.salesforce.com/services/oauth2/success';
+    var proxyUrl    = 'https://hp--esit.cs11.my.salesforce.com/';            
+    $j(document).ready(function() { 
+            //$j("select[id$=inputUser_mlktp]").hide(); 
+            //refreashTree(); 
+            // Get an instance of the REST API client and set the session ID
+            var client = new forcetk.Client(clientId, loginUrl, null);
+            var postObject = JSON.stringify({ "method":"GetOffRelByOfferingID", "OpId":"a6xZ00000004TUs"});
+            client.setSessionToken('{!$Api.Session_ID}');
+            client.apexrest(
+                '/OfferingRelease',
+                function(data, textStatus, jqXHR) {
+                    alert(data);
+                },
+                function(jqXHR, textStatus, errorThrown) {
+                    console.log('ERROR - ' + textStatus)
+                },
+                'POST',
+                postObject,
+                null
+            );
+
+            
+            client.query("SELECT Name FROM Account LIMIT 1 ", function(response){
+                alert(response.records[0].Name);
+            });
+    });
+    
+     function refreashTree(){
+   
+        d = new dTree('d');
+        d.add(0,-1,'My example tree');
+            d.add(1,0,'Node 1','example01.html');
+            d.add(2,0,'Node 2','example01.html');
+            d.add(3,1,'Node 1.1','example01.html');
+            d.add(4,0,'Node 3','example01.html');
+            d.add(5,3,'Node 1.1.1','example01.html');
+            d.add(6,5,'Node 1.1.1.1','example01.html');
+            d.add(7,0,'Node 4','example01.html');
+            d.add(8,1,'Node 1.2','example01.html');
+            d.add(9,0,'My Pictures','example01.html','Pictures I\'ve taken over the years','','','img/imgfolder.gif');
+            d.add(10,9,'The trip to Iceland','example01.html','Pictures of Gullfoss and Geysir');
+            d.add(11,9,'Mom\'s birthday','example01.html');
+            d.add(12,0,'Recycle Bin','example01.html','','','http://destroydrop.com/javascripts/tree/img/trash.gif');        
+            //document.write(d);
+            alert($j("div[id$=dtreeDiv]"));            
+            $j("div[id$=treeDiv]").html(d.toString());
+                       
+            
+           //alert("{!$Api.Session_ID}" + "{!$Api.Partner_Server_URL_140}");
+            var connResult;
+            try{
+                sforce.connection.init("{!$Api.Session_ID}", "{!$Api.Partner_Server_URL_140}");
+                var dgResults = sforce.connection.describeGlobal();
+                            
+                //var queryResult = sforce.connection.query("select Id, Name from offering_Release__c limit 2");
+                //alert(queryResult.getArray('records')[0].Name);
+                //connResult = sforce.connection.login("nkang@hp.com.esit", "dot.cry.can-123sg4bGfdnQleW6SYeE8GCJvZT");
+                //alert(connResult);
+           
+                //success = sforce.apex.execute("RestWSCoreTeamMember", "getList", {method:"GetCTMByOffRel", OfferingReleaseId:"a6yZ0000000CxfN"});
+                //alert(success);
+                           
+            }
+            catch(e){
+                alert(e);
+                sforce.debug.open();
+                sforce.debug.log(e);
+                
+            }
+           
+    } 
+
+</script>
+    <!-- end themed busy popup  --> 
+    
+    <apex:form id="LBform">
+    <apex:pageblock id="LBPageBlock">
+      <html>
+      <head>
+      <title>PLM Admin Console</title>
+      <!-- Athena Style Starts -->    
+      <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/style.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.jscrollpane.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/jquery-ui.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/theme.css')}"/>
+      <!-- Athena Style Ends -->  
+        <!-- Example of an application-specific style -->
+        <style type="text/css">
+            #hpit_top {min-width: 960px;}
+            #hpit_centerBox {min-width: 960px;}
+            .SearchBtn {
+                background-color: #0094D6;
+                border: 0 none;
+                border-bottom-left-radius: 4px;
+                border-top-right-radius: 4px;
+                cursor: pointer;
+                height: 22px;
+                margin: 0 2px;
+                padding: 2px 4px;
+                vertical-align: middle;
+                color: #fff;
+            }
+            .TopSearchInput {
+                border: 2px solid #0094D6;
+                font-size: 14px;
+                height: 18px;
+                margin: 0;
+                padding: 0 0 0 8px;
+                vertical-align: middle;
+                width: 225px;
+            }
+            .hpit_athena_ca_itemLink{width:189px;height:195px;}
+        </style>
+      </head>
+      
+      <body class="hpit_body" >
+      <!-- begin themed header -->
+      <header>
+        <div id="hpit_top" class="">
+          <div id="hpit_topTitle">
+            <h1>PLM Offering Management</h1>
+            <h3>PLM Admin Console</h3>
+          </div>
+          <div id="hpit_topLogo"></div>
+          <nav>
+              <ul id="hpit_topMenu">
+                  <li><a href="https://hp--esit--c.cs11.visual.force.com">Home</a></li>
+                  <li><a href="https://hp--esit--c.cs11.visual.force.com/apex/plmadmin">Service Line</a></li>
+                  <li><a href="https://hp--esit--c.cs11.visual.force.com/apex/plmadmin">Role</a></li>
+                  <li><a href="https://hp--esit--c.cs11.visual.force.com/apex/plmadmin">Stage</a></li>
+                  <li><a href="https://hp--esit--c.cs11.visual.force.com/apex/plmadmin">Risk</a></li>
+                  <li><a href="https://hp--esit--c.cs11.visual.force.com/apex/plmadmin">Deliverable</a></li>
+              </ul>
+          </nav>
+          <div id="hpit_topSearch">
+            <apex:inputText id="searchText" styleClass="TopSearchInput" title="Enter value to search Learning Board"/>
+         <!--   <apex:commandButton action="{!dosearch}" onclick="return validate()" value="Search" styleClass="SearchBtn"  id="searchButton" title="Click to Search for Learning Board"/> -->
+          </div>
+          
+          <!-- Begin Themed User Greeting and Menu -->
+          <div id="hpit_topUser"> <span>Welcome {!$User.FirstName} {!$User.LastName}</span>
+            <ul id="hpit_topUserMenu">
+              <li><a href="#">Logout</a></li>
+            </ul>
+          </div>
+          <!-- End Themed User Greeting and Menu --> 
+          
+        </div>
+      </header>
+      <!-- end themed header --> 
+      
+      <!-- Athena Body Content Starts -->
+      <div><span class="err_msg hpit_error" id="err_msg"></span></div><br />
+      <div class="div_MainContent">
+          <apex:pagemessages ></apex:pagemessages>  
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1" >
+                <table>
+                    <tr><td></td><td><apex:inputField value="{!SLC.Name__c}"/></td></tr>
+                    <tr><td></td><td><apex:inputField value="{!SLC.Short_Description__c}" style="width:100%;"/></td></tr>
+                    <tr><td></td><td><apex:inputField value="{!SLC.Leader_User__c}" id="inputUser"/></td></tr>
+                    <tr><td></td><td><apex:inputField value="{!SLC.Is_Active__c}"/></td></tr>                                       
+                </table>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom" style="width:30px;">
+                <apex:commandButton value="Save" action="{!save}"/>
+            </apex:pageBlockButtons>
+                        
+        </apex:pageBlock>
+        </div>
+        <div class="dtree" id="dtreeDiv">
+             <p><a href="javascript: tree.openAll();">open all</a> | <a href="javascript: tree.closeAll();">close all</a></p>            <div id="treeDiv">            </div>
+        <script>
+            
+        </script>
+        </div>      
+      </body>
+      </html>
+    </apex:pageblock>
+  </apex:form>
+  
+  <style>
+      .div_MainContent{
+          font-size:12px;
+      }
+      
+.dtree {
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #666;
+    white-space: nowrap;
+}
+.dtree img {
+    border: 0px;
+    vertical-align: middle;
+}
+.dtree a {
+    color: #333;
+    text-decoration: none;
+}
+.dtree a.node, .dtree a.nodeSel {
+    white-space: nowrap;
+    padding: 1px 2px 1px 2px;
+}
+.dtree a.node:hover, .dtree a.nodeSel:hover {
+    color: #333;
+    text-decoration: underline;
+}
+.dtree a.nodeSel {
+    background-color: #c0d2ec;
+}
+.dtree .clip {
+    overflow: hidden;
+}
+        
+  </style>
+</apex:page>

@@ -1,0 +1,213 @@
+<!-- 
+/**********************************************************
+* Page Name: ABPScoreCardPage
+* Author:  HP
+* Date: 17/09/2012
+* Requirement # Request Id:3255 
+* Description: When we click the Score Card from AccountPlan  Detail page displaying List of Relationship suit Summary & oragnization Chart 
+**********************************************************/
+-->
+
+<apex:page standardController="Customer_Relationship_Map__c" extensions="ABPScoreCardController" recordSetVar="Customer_Relationship_Map__c" showHeader="false" sidebar="false"   >
+
+    <style type="text/css">
+    .rotation{
+    background-color:#66CCFF;
+    color: #000000; 
+    font-weight:bold;
+    white-space:nowrap;
+    height:130px;
+    text-align:Left;
+    vertical-align:bottom;
+    writing-mode: tb-rl;
+    filter: flipv fliph;  
+    font-family: arial;
+    
+
+    }
+
+    .relscore {
+    border-collapse:collapse;
+    table-layout:fixed;
+    border-color:solid grey 1px;
+    border-top:thick;
+    border-bottom:thick;
+    border-left:thick;
+    border-right:thick;
+    border-left-color:#000000;
+    border-right-color:#000000;
+    border-top-color:#000000;
+    border-bottom-color:#000000;
+    border-spacing:1px";
+    }
+
+    .style_column{
+    background-color:#66CCFF;
+    color: #000000; 
+    font-weight:bold; 
+    width:60px; 
+    height: 25px;
+    text-align:center;
+    vertical-align:middle;
+    padding: 2px;
+    }
+
+    .style_column2{
+    background-color:#66CCFF;
+    color: #000000; 
+    font-weight:bold;
+    height: 25px;
+    text-align:center;
+    vertical-align:middle;
+    padding: 2px;
+    }
+    h1 {
+    color: #5ABBE8;
+    font-size: 28px;
+    }
+    body {
+    padding:10px;
+    }
+    </style>
+
+         
+    <!--Heading of Customer Relation ship Suit-->   
+    
+    <body>
+    <apex:form style="background-color:#FFFFFF">
+    <br />
+    <apex:image url="{!URLFOR($Resource.ABPBar, 'hp.jpg')}" height="28" /><h1 style="color: #5ABBE8;">     Relationship Suite Summary</h1>
+    <br />
+    <hr size="2"></hr>
+    <apex:pageBlock >
+      <apex:pageBlockButtons >
+        <apex:commandButton value="Back To Account Plan" action="{!cancel}"/>
+       </apex:pageBlockButtons>
+    
+    <br></bR>    <br></br><br></br> 
+    <!--Heading of Relationship ScoreCard  -->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:OutputText value="Relationship Scorecard"  style="size:100%;color: #000000; font-size: 14pt; width: 25%; font-weight:bold;text-align:left;padding-left:300px"/>
+    </apex:panelgrid>
+
+    <!--End-->
+
+    <table  border="1" bordercolor="#00000" cellspacing="2" Cellpadding="2" class="relscore">
+      <tr >
+        <td colspan="5" rowspan="2" class="style_column">Political Power Radar Results</td>
+        <td  width="0" rowspan="2" style="background-color: #404040;"></td> 
+        <td colspan="5" rowspan="2" class="style_column">Relationship Type Results</td>
+        <td  width="0" rowspan="2" style="background-color: #404040;"></td>
+        <td  colspan="8" rowspan="2" class="style_column">Role</td>
+      </tr>
+      <tr>
+      </tr>
+      
+    
+   <!--  <tr>
+       
+        <td colspan="2" class="style_column" style="width:60px">Authorizor</td>
+        <td colspan="2" class="style_column" style="width:60px">Influencer</td>
+       <td colspan="2" class="style_column" style="width:60px">Justifier</td>
+        <td colspan="2" class="style_column" style="width:60px">Operationalizer</td>
+      </tr>-->
+      <tr>
+        <td class="style_column" style="width:20%">Contact Name</td>
+         <td class="style_column2" style="width:5%">Title</td>
+        <td class="style_column" >Reports To</td>
+        <td class="style_column" >Total Score</td>
+        <td class="style_column">Result</td>
+        
+        <td  width="0" style="background-color: #404040;"></td>
+        
+        <!--<td style="color: #000000; font-weight:bold;width:40px;height:150px" class="rotation">Total Score</div></td>-->
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'potential-adversary.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'detractor.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'neutral.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'supporter.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'partner-ally.gif')}" /></td>
+        
+        <td   width="0" style="background-color: #404040;"></td>
+        
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'executive.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'decision-maker.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'political-influencer.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'consultant.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'financial-buyer.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'sme.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'end-user.gif')}" /></td>
+        <td style="background-color:#66CCFF;text-align:center;"><apex:image url="{!URLFOR($Resource.ABPrsheaders, 'internal-enabler.gif')}" /></td>
+      </tr>
+      <apex:repeat value="{!RelSuite2}" var="RS" id="RSTable" >
+  <tr>
+    <td align="Left">{!RS.Contact__r.Name}</td>
+    <td width="30" nowrap="nowrap" align="Left">{!RS.Contact__r.Title}</td>
+    <td nowrap="nowrap" align="Left">{!RS.Parent_Contact__c}</td>
+    <td align="Center">{!ROUND(RS.PP_S__c,0)} </td>
+  <apex:variable var="RM_Score" value="{!IF(OR(ISNULL(RS.RM_S__c),ISBLANK(RS.RM_S__c)), 0, RS.RM_S__c)}"/>
+    <td align="Left"><apex:image url="{!If(RelSuiteMax=RS.PP_S__c,URLFOR($Resource.ABPBar, 'BOP.jpg'),If(RelSuiteSMax=RS.PP_S__c,URLFOR($Resource.ABPBar, 'PDZ.jpg'),If(RelSuiteMin=RS.PP_S__c,URLFOR($Resource.ABPBar, 'PWI.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))))}" height="20" /></td>
+    
+    <td  width="0" style="background-color: #404040;"> </td>
+    
+    <td align="center"><apex:image url="{!IF(RM_Score<16,URLFOR($Resource.ABPBar, 'Red.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    
+    <td align="center"><apex:image url="{!IF(AND(RM_Score>15,RM_Score<21),URLFOR($Resource.ABPBar, 'Amber.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(RM_Score>20,RM_Score<30),URLFOR($Resource.ABPBar, 'dgrey.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(AND(RM_Score>29,RM_Score<37),URLFOR($Resource.ABPBar, 'green.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(RM_Score>36,URLFOR($Resource.ABPBar, 'Blue.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    
+    <td  width="0" style="background-color: #404040;"> </td>
+    
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.Role__c,"Executive"),URLFOR($Resource.ABPBar, 'dgreen.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td> 
+    
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.Role__c,"Decision Maker"),URLFOR($Resource.ABPBar, 'dgreen.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.Role__c,"Political Influencer"),URLFOR($Resource.ABPBar, 'dgreen.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.Role__c,"Consultant"),URLFOR($Resource.ABPBar, 'dgreen.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.Role__c,"Financial Buyer"),URLFOR($Resource.ABPBar, 'dgreen.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.Role__c,"Subject Mater Expert"),URLFOR($Resource.ABPBar, 'dgreen.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.Role__c,"End User"),URLFOR($Resource.ABPBar, 'dgreen.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+    <td align="center"><apex:image url="{!IF(CONTAINS( RS.Role__c,"Internal Enabler"),URLFOR($Resource.ABPBar, 'dgreen.jpg'),URLFOR($Resource.ABPBar, 'grey.jpg'))}" height="20" /></td>
+   </tr>
+   </apex:repeat>
+   
+    </table>
+
+     <br></bR>    
+    <br></bR>    
+    <!--Heading of Org Chart-->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:OutputText value="Power Organization Chart"  style="size:100%;color: #000000; font-size: 14pt; width: 25%; font-weight:bold;text-align:center;padding-left:300px"/>
+    </apex:panelgrid>
+    <br></bR>    
+      <html>
+      <head>
+        <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+        <script type='text/javascript'>
+          google.load('visualization', '1', {packages:['orgchart']});
+          google.setOnLoadCallback(drawChart);
+          function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Contact');
+            data.addColumn('string', 'ReportTo');
+            data.addColumn('string', 'ToolTip');
+          
+            data.addRows([
+             
+              {!Contactdata}
+             
+            ]);
+            var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+            chart.draw(data, {allowHtml:true});
+          }
+        </script>
+      </head>
+      <body>
+      <div id='chart_div' style="font-size:18px;"></div>
+      </body>
+    </html>
+    <br></bR>   
+    </apex:pageBlock>
+    </apex:form>
+    
+  </body>       
+</apex:page>

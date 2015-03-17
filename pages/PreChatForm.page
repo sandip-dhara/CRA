@@ -1,0 +1,293 @@
+<apex:page showHeader="false" standardController="LiveChatTranscript" id="PreChatPage">
+
+<script type="text/javascript">
+    (function() {
+        function handlePageLoad() {
+            var endpointMatcher = new RegExp("[\\?\\&]endpoint=([^&#]*)");
+            document.getElementById('prechatForm').setAttribute('action',
+            decodeURIComponent(endpointMatcher.exec(document.location.search)[1]));
+        } 
+        if (window.addEventListener) {
+            window.addEventListener('load', handlePageLoad, false);
+        } 
+        else { 
+            window.attachEvent('onload', handlePageLoad, false);
+        }
+    })();     
+</script>
+
+
+<form method='post' id='prechatForm' onsubmit="return(Validate())">
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<div><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="40"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <h1 style="font-size:20px;color:#0101DF;">Global Help Desk Support for Process Performers</h1>
+</div>
+
+<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><apex:outputText value=" Welcome to Live Chat for Process Performers " style="font-size:15px; background-color:maroon; color:#FFFFFF"/></b>
+<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<center><apex:outputText value="{!$Label.PreChat_Verbiage}" /></center>
+<br/>
+<br/>
+<apex:panelGrid columns="6" cellpadding="6">
+<br/>
+    
+<tr>    
+<td>    
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Name: </b>
+</td>
+<td/>
+<td>
+    <input type='text' name='liveagent.prechat.name' id='prechat_field' value='{!$User.FirstName} {!$User.LastName}' style='width:150px'/><br/>
+</td>
+</tr>
+<tr>
+<td>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Email Address: </b>
+</td>
+<td/>
+<td>
+    <input type='text' name='liveagent.prechat:Email' value='{!$User.Email}' style='width:150px'/><br />
+</td>
+</tr>
+<tr>
+<td>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Region: </b>
+</td>
+<td/>
+<td>
+    <select name="liveagent.prechat:Region" style='width:200px' id='CORegion' onchange="DependentCountry()">
+        <option value="None">Select One...</option>
+        <option value="AMS">AMS</option>
+        <option value="APJ">APJ</option>
+        <option value="EMEA">EMEA</option>
+    </select>
+</td>
+</tr>
+<tr>
+<td>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Country/Team: </b>
+        
+</td>
+<td/>
+<td>
+    <select name="liveagent.prechat:Country/Team" style='width:200px' id="COCountry">
+        <option>Select One...</option>
+    </select>
+</td>
+</tr>
+<tr>
+<td>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Business Function:</b>
+</td>
+<td/>
+<td>
+    <select name="liveagent.prechat:Business Function" style='width:200px' id="COBusinessFunc">
+        <option value="None">Select One...</option>
+        <option>TS</option>
+        <option>SW</option>
+        <option>ICOEM</option>
+    </select>
+</td>
+</tr>
+<tr>
+<td>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>CO Area: </b>
+</td>
+<td/>
+<td>
+    <select name="liveagent.prechat:CO Area" style='width:200px' id='COArea' onchange="ChatButton();DependentSubject()">
+        <option value="None">Select One...</option>
+        <option value="O&C">O&#38;C</option>
+        <option value="eTools">eTools</option>
+        <option value="COMPASS">COMPASS</option> 
+    </select>
+</td>
+</tr>
+<tr>
+<td>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Subject: </b>
+</td>
+<td/>
+<td>    
+    <select name="liveagent.prechat:Subject" style='width:355px' id="COSubject">
+        <option> Select One...</option>
+    </select>
+</td>
+</tr>
+<tr>
+<td>
+    <b><font color="white">Queue: </font></b>
+</td>
+<td/>
+<td>
+    <select name="liveagent.prechat.buttons" style='width:155px;visibility:hidden' id='COQueue' >
+    <option>--None--</option>
+    <option value="{!$Label.Live_AMSOC}">AMS O&#38;C</option>
+    <option value="{!$Label.Live_AMS_Compass}">AMS COMPASS</option>
+    <option value="{!$Label.Live_AMS_etools}">AMS eTools</option>
+    <option value="{!$Label.Live_APJOC}">APJ O&#38;C</option>
+    <option value="{!$Label.Live_APJ_Compass}">APJ COMPASS</option>
+    <option value="{!$Label.Live_APJ_etools}">APJ eTools</option>
+    <option value="{!$Label.Live_EMEAOC}">EMEA O&#38;C</option>
+    <option value="{!$Label.Live_EMEA_Compass}">EMEA COMPASS</option>
+    <option value="{!$Label.Live_EMEA_etools}">EMEA eTools</option>
+    </select>
+</td>
+</tr>
+<td>    
+    <input type='hidden' name='liveagent.prechat:Record Type' value='CO Live Transcript'/><br />
+</td>    
+</apex:panelGrid>
+<br />
+
+<!-- Creates an auto-query for a matching Contact record’s Email field based on the
+value of the liveagent.prechat:Email field -->
+<input type="hidden" name="liveagent.prechat.query:Email" value="User,User.Email" />
+<input type="hidden" name="liveagent.prechat.save:Email" value="Email__c" />
+<input type="hidden" name="liveagent.prechat.save:Region" value="Region__c" />
+<input type="hidden" name="liveagent.prechat.save:Country/Team" value="Country_Team__c" />
+<input type="hidden" name="liveagent.prechat.save:Subject" value="Subject__c" />
+<input type="hidden" name="liveagent.prechat.save:CO Area" value="Area__c" />
+<input type="hidden" name="liveagent.prechat.save:Record Type" value="Record_Type__c" />
+<input type="hidden" name="liveagent.prechat.save:Business Function" value="Business_Function__c" />
+<input type='submit' value='Request Chat' id='prechat_submit'/>
+<style type="text/css">
+p {font-weight: bolder }
+</style>
+
+<script src="/soap/ajax/27.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/27.0/apex.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+   sforce.connection.sessionId = '{!$Api.Session_ID}';
+
+   function ChatButton(){
+ 
+    var x = document.getElementById("COArea").value;
+    var y = document.getElementById("CORegion").value;
+    
+    if(y == "AMS"){
+        if(x=="O&C"){
+           var z = "{!$Label.Live_AMSOC}";
+           document.getElementById("COQueue").value = z;     
+        }
+        else if(x=="eTools"){
+           var z = "{!$Label.Live_AMS_etools}";
+           document.getElementById("COQueue").value = z;     
+        }
+        else if(x=="COMPASS"){
+           var z = "{!$Label.Live_AMS_Compass}";
+           document.getElementById("COQueue").value = z;     
+        }
+    }
+    else if(y=="APJ"){
+        if(x=="O&C"){
+           var z = "{!$Label.Live_APJOC}";
+           document.getElementById("COQueue").value = z;     
+        }
+        else if(x=="eTools"){
+           var z = "{!$Label.Live_APJ_etools}";
+           document.getElementById("COQueue").value = z;     
+        }
+        else if(x=="COMPASS"){
+           var z = "{!$Label.Live_APJ_Compass}";
+           document.getElementById("COQueue").value = z;     
+        }
+    }
+    else if(y=="EMEA"){
+        if(x=="O&C"){
+           var z = "{!$Label.Live_EMEAOC}";
+           document.getElementById("COQueue").value = z;     
+        }
+        else if(x=="eTools"){
+           var z = "{!$Label.Live_EMEA_etools}";
+           document.getElementById("COQueue").value = z;     
+        }
+        else if(x=="COMPASS"){
+           var z = "{!$Label.Live_EMEA_Compass}";
+           document.getElementById("COQueue").value = z;     
+        }
+    }    
+    
+   }  
+   
+   
+    function DependentCountry(){
+       var reg = document.getElementById("CORegion").value;
+       document.getElementById('COCountry').options.length = 0;
+
+       if (reg=="AMS"|| reg=="APJ"|| reg=="EMEA"){
+          var cont = sforce.apex.execute("LiveDependentCountry","CountryTeam",{liveReg:reg});
+          var respArray = cont[0].split("Live_Chat__c:").sort(); 
+          
+          for (i=1;i<respArray.length;i++){
+              var respLive = respArray[i].split(",");
+              optionStr = respLive[0].substring(12);
+              var SelectCon = document.createElement('OPTION');
+              SelectCon.text = optionStr;
+              SelectCon.value = optionStr;
+              document.getElementById('COCountry').options.add(SelectCon);
+          }          
+       }
+    }
+   
+   
+   function DependentSubject(){
+        var area = document.getElementById("COArea").value;
+        document.getElementById('COSubject').options.length = 0;      
+        
+        if (area=="O&C"|| area=="eTools"|| area=="COMPASS"){
+            var Sub = sforce.apex.execute("LiveDependentCountry","LiveSubject",{liveSub:area});
+            var respSub = Sub[0].split("Live_Subject__c:").sort();
+          
+            for (i=1;i<respSub.length;i++){
+                var respNew = respSub[i].split(",");
+                optionSub = respNew[0].substring(12);
+                var SelectSub = document.createElement('OPTION');
+                SelectSub.text = optionSub;
+                SelectSub.value = optionSub;
+                document.getElementById('COSubject').options.add(SelectSub);
+            }          
+        }
+    }
+   
+   
+   function Validate(){
+       if(document.getElementById('CORegion').value=="None"){
+           alert("Please select a region");
+           document.getElementById('CORegion').focus() ;
+           return false;
+       }       
+       if(document.getElementById('COCountry').value=="..Select One.."){
+           alert("Please select a Country");
+           document.getElementById('COCountry').focus() ;
+           return false;
+       }
+       if(document.getElementById('COBusinessFunc').value=="None"){
+           alert("Please select a Business Function");
+           document.getElementById('COBusinessFunc').focus() ;
+           return false;
+       }
+       if(document.getElementById('COArea').value=="None"){
+           alert("Please select a CO Area");
+           document.getElementById('COArea').focus() ;
+           return false;
+       }
+       if(document.getElementById('COSubject').value=="..Select One.."){
+           alert("Please select a Subject");
+           document.getElementById('COSubject').focus() ;
+           return false;
+       }
+   
+    return true;
+   }
+   
+ 
+</script>
+
+</form>
+</apex:page>

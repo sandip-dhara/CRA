@@ -1,0 +1,51 @@
+<apex:page controller="ContactCustomLookupController" action="{!initialize}" showHeader="false" sideBar="false" tabStyle="contact">
+    <!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+    
+    <body class="lookupTab  LookupSearchFrame, marginCls">
+        <apex:form >
+          <apex:sectionHeader title="{!$Label.Contact_Search}" />
+                <apex:actionRegion >  
+                    <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">
+                        <apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>
+                        <apex:inputText id="txtSearch" value="{!searchText}" onkeypress="return searchContactOnEnter(event,this);"/>
+                        <span class="searchspanCls">
+                            <apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!searchContacts}" rerender="searchResults">
+                            </apex:commandButton>
+                        </span>
+                    </apex:outputPanel>
+                    <p>{!$Label.Wildcard_Usage}</p>
+                    
+                     <!-- Page block for showing search result -->
+                    <apex:pageBlock id="searchResults">
+                    <apex:outputpanel styleClass="resultPanelCls" layout="block">
+                        <apex:pageBlockTable value="{!listContact}" var="con">
+                            <apex:column headerValue="Contact Name">
+                            <apex:outputLink value="javascript:top.window.opener.lookupPick('{!FormTag}','{!TextBox}_lkid','{!TextBox}','','{!con.OpportunityContact.Contact.Id}','{!con.ContactName}','null','')">{!con.OpportunityContact.Contact.Name}</apex:outputLink>
+                            </apex:column>
+                            <apex:column value="{!con.OpportunityContact.OpportunityId}"/> 
+                            <apex:column value="{!con.OpportunityContact.Role}"/> 
+                            <apex:column value="{!con.OpportunityContact.isPrimary}"/>    
+                        </apex:pageBlockTable> 
+                        <apex:outputLabel rendered="{!isResultEmpty}">
+                            <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+                        </apex:outputLabel>
+                    </apex:outputpanel>
+                    </apex:pageBlock>
+                </apex:actionRegion>
+                <!-- defining action function for searching opportunities -->
+                <apex:actionFunction action="{!searchContacts}" name="searchContactOnEnterKey" rerender="searchResults">
+                   <apex:param name="firstParam" assignTo="{!searchText}" value="" />
+               </apex:actionFunction>
+        </apex:form>
+        <script>
+        function searchContactOnEnter(ev,searchTextObj)  {
+            var searchTextValue=searchTextObj.value;
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                searchContactOnEnterKey(searchTextValue);  
+                return false;           
+             } 
+         }
+        </script>
+    </body>
+</apex:page>

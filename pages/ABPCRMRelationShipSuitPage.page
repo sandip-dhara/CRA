@@ -1,0 +1,307 @@
+<!-- 
+/**********************************************************
+* Page Name: ABPCRMRelationShipSuitPage
+* Author:  HP
+* Date: 20/09/2012
+* Requirement # Request Id:3256 
+* Description: When we click the New Customer Relationship Map & Edit from Account Plan Detail page displaying RelationShip Suit Summary Page 
+**********************************************************/
+-->
+<apex:page standardController="Customer_Relationship_Map__c" extensions="ABPCRMRelationShipSuitController" tabstyle="Account_Plan__c" showHeader="false" sidebar="False">
+<apex:form >
+ <apex:pageblock >
+   <apex:pageMessages id="pageErrors"></apex:pageMessages>
+     <!--Heading of Relationshiop Suite-->   
+    <apex:panelgrid columns="5" style="width:100%;text-align:left" border="0">
+    <apex:image url="{!URLFOR($Resource.Hp_logo)}" height="24" /><BR>&nbsp;</BR><apex:OutputText value="Relationship Suite"  style="size:100%;color: #000000; font-size: 16pt; width: 25%; font-weight:bold;text-align:left"/>
+    </apex:panelgrid>
+    <hr size="2"></hr>
+    <!--End-->
+      <apex:pageBlockButtons >
+          <apex:commandButton value="Save" action="{!save}"/>
+          <apex:commandButton value="Cancel" action="{!cancel}"/>
+       </apex:pageBlockButtons>
+          
+     <apex:panelgrid columns="2" border="0" style="width:100%;table-layout:fixed">      
+         <apex:panelgrid columns="2" style="width:100%; background-color:#66CCFF" cellPadding="3">
+           <apex:OutputLabel value="Contact Information" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+         </apex:panelGrid>
+         <apex:panelgrid columns="2" style="width:100%; background-color:#66CCFF" cellPadding="3">
+           <apex:OutputLabel value=" ." style="color: #66CCFF; font-size: 12pt; width: 300px; font-weight:bold"/>
+         </apex:panelGrid>
+        <apex:panelgrid columns="2" style="width:50%" cellPadding="3">
+            <apex:OutputLabel value="Account Plan:" style="font-weight:bold"/>
+            <apex:inputField value="{!Customer_Relationship_Map__c.Account_Plan__c}" />
+            
+            <apex:OutputLabel value="Contact:" style="font-weight:bold"/>
+            <apex:inputField value="{!Customer_Relationship_Map__c.Contact__c}" />
+            
+            <apex:OutputLabel value="Reports to:" style="font-weight:bold"/>
+            <apex:selectList id="rt" value="{!Customer_Relationship_Map__c.Parent_Contact__c}" multiselect="false" size="1">
+                <apex:selectOptions value="{!AbpContacts}" />
+            </apex:selectList>
+            
+            <apex:OutputLabel value="Additional Information:" style="font-weight:bold"/>
+            <apex:inputField value="{!Customer_Relationship_Map__c.Additional_Information__c}" />
+        </apex:panelgrid>
+            
+        <apex:panelgrid columns="2" style="width:100%" cellPadding="3">
+            <apex:OutputLabel value="Role:" style="font-weight:bold;"> </apex:OutputLabel>
+                <apex:inputField value="{!Customer_Relationship_Map__c.Role__c}" id="roleId"><img src="/s.gif" alt="Help" class="helpIcon" onmousemove="showToolTipRole();" onmouseout="hideToolTipRole();" />  <div id="divToolTipRole" style="position:absolute;display:none;background:lightyellow;border:1px solid gray;padding:2px;font-size:8pt;font-family:Verdana;margin-left: 170px;" onMouseOut="divToolTipRole()">
+  <span id="rolePickList"></span></div> </apex:inputField>
+
+          <apex:OutputLabel value="Relationship Type:" style="font-weight:bold"/>
+              <apex:inputField value="{!Customer_Relationship_Map__c.EG_ESSN__c}"> <img src="/s.gif" alt="Help" class="helpIcon" onmouseover="showToolTipRelType(this,'{!Customer_Relationship_Map__c.EG_ESSN__c}');" onmouseout="hideToolTipRelType();"/> <div id="divToolTipRelType" style="position:absolute;display:none;background:lightyellow;border:1px solid gray;padding:2px;font-size:8pt;font-family:Verdana;margin-left: 100px;" onMouseOut="divToolTipRelType()">
+  <span id="RelTypeFormulaFeild"></span></div> </apex:inputField>
+
+            
+            <apex:OutputLabel value="BG Scope of the contact:" style="font-weight:bold"/>
+            <apex:inputField value="{!Customer_Relationship_Map__c.Scope_of_the_contact__c}" />
+            
+             <apex:OutputLabel value="BU Scope of the contact:" style="font-weight:bold"/>
+            <apex:inputField value="{!Customer_Relationship_Map__c.Business_Unit__c}" />
+            
+            <apex:OutputLabel value="Aligned HP Exec:" style="font-weight:bold"/>
+            <apex:inputField value="{!Customer_Relationship_Map__c.Aligned_HP_Exec__c}" />
+            
+            
+       <script type="text/javascript">
+       function showToolTipRole() 
+            {
+            el=document.getElementById('{!$Component.roleId}');
+            if (el.options[el.selectedIndex].value== '')
+                   return;
+              var infoSpanRef = document.getElementById('rolePickList');
+              if (el.options[el.selectedIndex].text=='Executive')
+                   infoSpanRef.innerHTML = "{!$Label.CBP_Role_Executive}"; 
+              else if(el.options[el.selectedIndex].text=='Decision Maker')
+                   infoSpanRef.innerHTML = "{!$Label.CBP_Role_DecisionMaker_Help}";
+              else if(el.options[el.selectedIndex].text=='Political Influencer')
+                   infoSpanRef.innerHTML = "{!$Label.CBP_Role_PoliticalInfluencer_Help}";
+              else if (el.options[el.selectedIndex].text=='Consultant')
+                    infoSpanRef.innerHTML = "{!$Label.CBP_Role_Consultant_Help}";
+              else if (el.options[el.selectedIndex].text=='Financial Buyer')
+                   infoSpanRef.innerHTML = "{!$Label.CBP_Role_FinancialBuyer_Help}";
+              else  if (el.options[el.selectedIndex].text=='Subject Matter Expert')
+                    infoSpanRef.innerHTML = "{!$Label.CBP_Role_SubjectMatterExpert_Help}";
+              else  if (el.options[el.selectedIndex].text=='End User')
+                    infoSpanRef.innerHTML = "{!$Label.CBP_Role_EndUser_Help}";
+              else  if (el.options[el.selectedIndex].text=='Internal Enabler')
+                    infoSpanRef.innerHTML = "{!$Label.CBP_Role_Enabler_Help}";
+              else
+                 infoSpanRef.innerHTML = '';
+    
+           var toolTipRef = document.getElementById('divToolTipRole');
+            toolTipRef.style.top = 150 + 50;
+            toolTipRef.style.left = 250;
+            toolTipRef.style.display = 'block';
+ 
+          }
+
+         function hideToolTipRole()
+          {
+             document.getElementById('divToolTipRole').style.display = 'none';
+          }
+
+        </script>
+    
+    
+    
+    
+     <script type="text/javascript">
+     function showToolTipRelType(el, reltype) 
+    {
+         if (reltype == '' )
+             return;
+      var infoSpanRef = document.getElementById('RelTypeFormulaFeild');
+       if (reltype=='Potential Adversary')
+            infoSpanRef.innerHTML = "{!$Label.CBP_RT_PotentialAdversary_Help}"; 
+      else if (reltype == 'Detractor')
+            infoSpanRef.innerHTML = "{!$Label.CBP_RT_Detractor_Help}"; 
+      else  if (reltype == 'Neutral')
+            infoSpanRef.innerHTML = "{!$Label.CBP_RT_Neutral_Help}";
+      else  if (reltype == 'Supporter')
+            infoSpanRef.innerHTML = "{!$Label.CBP_RT_Supporter_Help}"; 
+      else if (reltype == 'Partner Ally')
+            infoSpanRef.innerHTML = "{!$Label.CBP_RT_Partner_Ally_Help}"; 
+ 
+      else
+      infoSpanRef.innerHTML = '';
+       var toolTipRefRelType = document.getElementById('divToolTipRelType');
+       toolTipRefRelType.style.top = 150 + 50;
+       toolTipRefRelType.style.left = 250;
+       toolTipRefRelType.style.display = 'block';
+ 
+       }
+      function hideToolTipRelType()
+           {
+             document.getElementById('divToolTipRelType').style.display = 'none';
+           }
+             </script>
+            
+      </apex:panelgrid>
+     
+        <apex:panelgrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3">
+           
+             <apex:OutputLabel value="Relationship Meter" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+            
+
+        </apex:panelGrid>
+       
+        
+        <apex:panelgrid columns="1" style="width:100%; background-color:#66CCFF" cellPadding="3">
+           
+            <apex:OutputLabel value="Political Power Radar" style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold"/>
+            
+            
+        </apex:panelGrid>
+        
+         <apex:panelgrid columns="1" style="width:100%; background-color:#FFF6B3" cellPadding="3">
+           
+            <apex:OutputLabel value="Meter Scale: 1 - Disagree | 2 - Somewhat Disagree | 3 - Somewhat Agree | 4 - Agree" style="color: #000000; font-size: 10pt; width: 300px"/>
+            
+        </apex:panelGrid>
+        <apex:panelGrid columns="1" style="width:100%; background-color:#FFF6B3" cellPadding="3">
+        
+        <apex:OutputLabel value="Radar Scale: 1 - Disagree | 2 - Somewhat Disagree | 3 - Somewhat Agree | 4 - Agree" style="color: #000000; font-size: 10pt; width: 300px"/>
+        
+        </apex:panelGrid>
+        
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="1. {!$Label.ABP_RS_RM_Q1}" style=""/> 
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S1__c}" style="text-align:center;width: 150px"/>
+          </apex:panelGrid>
+          
+           <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+                       <apex:outputlabel value="1. {!$Label.ABP_RS_PP_Q1}" style=""/> 
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S1__c}" style="text-align:center;width: 150px;height:20px"/>
+          </apex:panelgrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="2. {!$Label.ABP_RS_RM_Q2}" style=""/> 
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S2__c}" style="text-align:center;width: 150px"/>
+          </apex:panelGrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+                    <apex:outputlabel value="2. {!$Label.ABP_RS_PP_Q2}" style=""/> 
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S2__c}" style="text-align:center;width: 150px;height:20px"/>
+          </apex:panelgrid>
+          
+       <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="3. {!$Label.ABP_RS_RM_Q3}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S3__c}" style="text-align:center;width: 150px"/>
+          </apex:panelGrid>
+          
+          
+         <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="3. {!$Label.ABP_RS_PP_Q3}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S3__c}"  style="text-align:right;width: 150px;height:20px"/>
+          </apex:panelgrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="4. {!$Label.ABP_RS_RM_Q4}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S4__c}" style="text-align:center;width: 150px"/>
+          </apex:panelGrid>
+          
+            
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="4. {!$Label.ABP_RS_PP_Q4}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S4__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+          
+          
+         
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="5. {!$Label.ABP_RS_RM_Q5}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S5__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="5. {!$Label.ABP_RS_PP_Q5}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S5__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+           
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputLabel value="6. {!$Label.ABP_RS_RM_Q6}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S6__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputLabel value="6. {!$Label.ABP_RS_PP_Q6}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S6__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="7. {!$Label.ABP_RS_RM_Q7}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S7__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+             <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="7. {!$Label.ABP_RS_PP_Q7}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S7__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="8. {!$Label.ABP_RS_RM_Q8}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S8__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+           <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="8. {!$Label.ABP_RS_PP_Q8}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S8__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="9. {!$Label.ABP_RS_RM_Q9}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S9__c}" style="text-align:center;width: 150px"/>
+           </apex:panelGrid>
+           
+            
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="9. {!$Label.ABP_RS_PP_Q9}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S9__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="10. {!$Label.ABP_RS_RM_Q10}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.RM_S10__c}" style="text-align:center;width: 150px"/> 
+           </apex:panelGrid>
+           
+           
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="10. {!$Label.ABP_RS_PP_Q10}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S10__c}" style="text-align:center;width: 150px"/> 
+          </apex:panelgrid>
+          
+          <!--apex:outputlabel value="." /-->
+           <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px" cellPadding="3">
+          <apex:inputhidden value="{!Customer_Relationship_Map__c.Account_Plan__c}" />
+          <apex:inputhidden value="{!Customer_Relationship_Map__c.Account_Plan__r.Primary_AccountAccount__c}" />
+          </apex:panelgrid>
+          
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="11. {!$Label.ABP_RS_PP_Q11}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S11__c}" style="text-align:center;width: 150px"/>
+          </apex:panelgrid>
+          
+           <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px" cellPadding="3">
+          <apex:inputhidden value="{!Customer_Relationship_Map__c.Account_Plan__c}" />
+          <apex:inputhidden value="{!Customer_Relationship_Map__c.Account_Plan__r.Primary_AccountAccount__c}" />
+          </apex:panelgrid>
+          
+          
+          <apex:panelgrid columns="2" style="width:100%;height:60px; border:solid grey 0px; background-color:#E0ECF8" cellPadding="3">
+          <apex:outputlabel value="12. {!$Label.ABP_RS_PP_Q12}" style=""/>
+          <apex:inputField label="" value="{!Customer_Relationship_Map__c.PP_S12__c}" style="text-align:center;width: 150px"/> 
+        </apex:panelgrid>
+                
+    </apex:panelgrid>
+          
+ </apex:pageblock>
+      
+</apex:form>
+</apex:page>

@@ -1,0 +1,126 @@
+<!--**********************************************************
+    * Page Name:JBP_ManualSharing
+    * Author: HP  
+    * Date: 20-July-2013
+    * Requirement #:5382
+    * Description: Ability for Partner to request PBM to manually add additional Partner Users to view their JBP. Add additional users through the share button;
+    * and receive email when it is shared on them
+**********************************************************-->
+
+<apex:page showHeader="true" sidebar="true" controller="JBP_ManualSharingController" tabStyle="JBP__c">
+<script type='text/javascript'>
+        function noenter(ev)  {
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                doSearchAF();
+                return false;
+             } else {
+                  return true;
+             }
+         }
+</script>
+    <div id="contentWrapper">
+        <div class="bPageTitle">
+            <div class="ptBody">
+                <div class="content">
+                    <img class="pageTitleIcon" src="/img/icon/custom51_100/books32.png"></img>
+                     <h1 class="pageType">
+                    {!JBPPlanName}
+                    <span class="titleSeparatingColon">:</span>
+                    </h1>
+
+                     <h2 class="pageDescription"> New Sharing</h2>
+
+                    <div class="blank"></div>
+                </div>
+                <div class="ptBreadcrumb"></div>
+            </div>
+        </div>
+        <div class="bDescription">Joint BusinessPlan: Specify the sharing for this record. You can share this record and its related data with Users, Partner Users and Public Groups.
+            <br/>
+            <br/>Individual sharing can only be used to grant wider access to data, not to restrict access.</div>
+<apex:form id="main">
+    <apex:pageBlock title="New Sharing" id="main1">
+        <apex:pageBlockButtons >
+            <apex:commandButton title="Save" value="Save" action="{!shareandSendMail}" />
+            <apex:commandButton title="Cancel" value="Cancel" action="{!cancel}" />
+        </apex:pageBlockButtons>
+        <apex:pageblockSection title="Sharing Information" collapsible="false">
+        <apex:panelGroup >
+            <apex:selectList id="ChooseUser" size="1" value="{!selectedUser}">
+            <apex:actionSupport event="onchange" action="{!enterSearch}" reRender="abcd" status="sel1"  /><br/>
+            <apex:outputLabel value="Search:"></apex:outputLabel>
+            <apex:selectOption itemValue="User" itemLabel="User" />
+            <apex:selectOption itemValue="PartnerUser" itemLabel="Partner User" />
+            </apex:selectList>&nbsp;&nbsp;
+            <apex:outputLabel value="for:"></apex:outputLabel>
+            <apex:inputText value="{!searchUser}" onkeypress="return noenter(event);" />
+            <apex:actionFunction name="doSearchAF" action="{!findUser}" />
+            <apex:commandButton action="{!findUser}" value="Find" reRender="abcd" status="sel1"/>                
+        </apex:panelGroup>
+        </apex:pageblockSection>
+        <apex:outputPanel id="out">
+        <apex:actionstatus id="status" startText="Fetching...">
+        <apex:facet name="stop">
+            <apex:outputPanel >
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+               <!-- <apex:outputText rendered="{!displayMsg}"><font size="2" color="Red">Your search returned more than 100 rows. Only the first 100 are displayed. Please refine search criteria.</font></apex:outputText>-->
+                
+           <br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp; <B>Available</B>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+            <B>Share With</B>
+            <apex:panelGrid columns="3" id="abcd">
+                <apex:selectList id="sel1" value="{!leftselected}" multiselect="true" style="width:auto" size="10">
+                <apex:selectOptions value="{!unselectedvalues}" />
+                </apex:selectList>
+                
+                <apex:panelGroup ><br/><br/><br/>
+                &nbsp;&nbsp;&nbsp;Add<br/>
+                &nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.JBPAdd}">
+                <apex:actionSupport event="onclick" action="{!selectclick}" reRender="abcd"  />
+                </apex:image><br/>&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.JBPRemove}">
+                <apex:actionSupport event="onclick" action="{!unselectclick}" reRender="abcd" />
+                </apex:image><br/>Remove
+                </apex:panelGroup>
+                
+                <apex:selectList id="sel2" value="{!rightselected}" multiselect="true" style="width:auto" size="10">
+                <apex:selectOptions value="{!SelectedValues}" />
+                </apex:selectList>
+               
+            </apex:panelGrid>
+            </apex:outputPanel>
+        </apex:facet>
+        </apex:actionstatus>
+        </apex:outputPanel>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        <apex:panelGrid columns="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;Access Level: &nbsp;&nbsp;&nbsp;
+            <apex:outputPanel styleClass="requiredInput" layout="block">
+            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+            <apex:selectList id="ChooseAccess" size="1" value="{!selectedAction}">
+            <apex:selectOption itemValue="Read Only" itemLabel="Read Only" />
+            <apex:selectOption itemValue="Read/Write" itemLabel="Read/Write" /></apex:selectList>
+            </apex:outputPanel>
+        </apex:panelGrid>
+       </apex:pageBlock>
+</apex:form>   
+    </div>
+</apex:page>

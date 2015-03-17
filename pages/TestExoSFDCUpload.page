@@ -1,0 +1,200 @@
+<apex:page controller="inputfilecontroller" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>   
+
+<script type="text/javascript">
+
+// Variable to store your files
+var files;
+ 
+// Grab the files and set them to our variable
+function prepareUpload(event)
+{
+  files = event.target.files;
+}
+
+function CheckFolderExists(folderName)
+{
+var isExists=false;
+$.when( 
+$.ajax({
+ url: 'https://it-services-gw-itg.external.hp.com/gw/hpit/llba/exo/managedocument/getFoldersAndFiles?driveName=SLP_REPO&workspaceName=collaboration&currentFolder=&isFolderOnly=false',//"https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL",
+        dataType:'xml',
+        cache:false,
+        async:false,
+        type: 'Get',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+        
+        $(xml).find('Folder').each(function(){
+                $(this).find("Folders").each(function(){
+                    $(this).find("Folder").each(function(){
+                                            
+                            var folder= $(this).attr('currentFolder');
+                            debugger;
+                            if(folder==folderName)
+                            {
+                            isExists=true;
+                            }
+                            //GetResponseURL(link);
+                        });
+                    });
+                    });
+        //alert(isExists);
+        },
+        error:function (xhr, ajaxOptions, thrownError){  
+        alert(xhr.status);               
+  alert(thrownError);
+  }  
+        })
+        ).then(function(){
+        if(isExists)
+        {
+        debugger;
+        DeleteFolder(folderName);
+        }
+        });
+}
+
+function DeleteFolder(folderName)
+{
+debugger;
+$.ajax({
+ url: 'https://it-services-gw-itg.external.hp.com/gw/hpit/llba/exo/managedocument/deleteFolderOrFile/?driveName=SLP_REPO&workspaceName=collaboration&itemPath='+folderName,//"https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL",
+        type: 'Get',
+        cache:false,
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+                
+        },
+        error:function (xhr, ajaxOptions, thrownError){  
+        alert(xhr.status);               
+  alert(thrownError);  
+  }
+        });
+}
+
+$(document).ready(function(){
+ 
+// Add events
+$('input[type=file]').on('change', prepareUpload);
+
+$('#MyForm').submit(function()
+{
+debugger;
+$('#dvMessage').hide();
+var folderName=$('#txtFolderName').val();
+if(folderName=='')
+{
+$('#dvErrorMessage').html('Please Enter the folder name');
+         $('#dvErrorMessage').css('display','block');
+         $('#dvErrorMessage').show();
+         return false;
+}
+var value=$('[id$=UploadFile]').val();
+if(value=="")
+{
+$('#dvErrorMessage').html('Please Choose a File To Upload');
+         $('#dvErrorMessage').css('display','block');
+         $('#dvErrorMessage').show();
+         return false;
+}
+value=value.substring(value.lastIndexOf('\\')+1,value.length);
+var randomNumber=Math.random().toString().substring(2);
+
+var data = new FormData();
+    $.each(files, function(key, value)
+    {
+        data.append(key, value);
+    });
+    
+    debugger;
+
+CheckFolderExists(folderName);
+
+$.ajax({
+ url: 'https://it-services-gw-itg.external.hp.com/gw/hpit/llba/exo/managedocument/createFolder/?driveName=SLP_REPO&workspaceName=collaboration&currentFolder=&folderName='+folderName,//"https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL",
+        dataType:'xml',
+        async:false,
+        cache:false,
+        type: 'Get',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {      
+        
+           
+        },
+        error:function (xhr, ajaxOptions, thrownError){  
+        alert(xhr.status);               
+  alert(thrownError);  
+  }        
+});
+
+ $.ajax({
+ url: 'https://it-services-gw-itg.external.hp.com/gw/hpit/llba/exo/wcmDriver/uploadFile/upload?uploadId='+randomNumber,
+        type:'Post',
+        async:false,
+        contentType:false,
+        data: data,
+        cache: false,
+        //dataType: 'text/xml',
+        crossDomain: true,
+        processData: false,        
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(data, textStatus, jqXHR) {
+        
+
+        },
+        error:function (xhr, ajaxOptions, thrownError){  
+        alert(xhr.status);               
+  alert(thrownError);  
+  }
+        });        
+
+$.ajax({
+ url: 'https://it-services-gw-itg.external.hp.com/gw/hpit/llba/exo/wcmDriver/uploadFile/control?repositoryName=repository&workspaceName=collaboration&driverName=SLP_REPO&currentFolder='+folderName+'&currentPortal=hpes&action=save&uploadId='+randomNumber+'&fileName='+value+'&language=en&existenceAction=keep',
+        dataType:'xml',
+        async:false,
+        type: 'Get',
+        cache:false,
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success:function(xml)
+        {
+        debugger;
+        $('#dvErrorMessage').hide();
+         $('#dvMessage').html('File Uploaded Succesfully');
+         $('#dvMessage').css('display','block');
+         $('#dvMessage').show();
+        },
+        error:function (xhr, ajaxOptions, thrownError){  
+        alert(xhr.status);               
+  alert(thrownError);  
+  }
+        });
+        return false;
+        });
+});
+</script>
+<div id="dvMessage" style="display:none;color:green;"></div>
+<div id="dvErrorMessage" style="display:none;color:red;"></div>
+<form id="MyForm" method="Post" enctype="multipart/form-data">
+<apex:outputLabel title="Folder Name" value="Folder Name"> <span style="color:red;">*</span></apex:outputLabel>
+<input type="text" id="txtFolderName"/><br/>
+<br/>
+<apex:inputfile value="{!UploadValue}" id="UploadFile"></apex:inputfile>
+<input type="submit" id="btnUpload" value="Upload"/>
+</form>
+</apex:page>

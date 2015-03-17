@@ -1,0 +1,344 @@
+<apex:page Controller="Muthu_ODP_PotentialRisk">
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">   
+<!--<![endif]-->
+    <!-- BEGIN HEAD -->
+<head>
+<meta charset="utf-8" />
+<title>ODP</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<meta content="" name="description" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+</head>
+<!-- END HEAD -->
+
+    <body>
+
+<apex:form >
+    <apex:pageBlock >
+        <apex:pageBlockSection columns="2" title="Potential Risk">
+            <apex:inputField value="{!objWrappers.potentialRiskObj.Project_ID__c}"/>
+            
+            <apex:inputField id="riskDescription" value="{!objWrappers.potentialRiskObj.Description__c}" style="height:30px;width:150px"/>
+        </apex:pageBlockSection>
+        
+           <apex:pageBlockSection columns="1" title="Business Impact">
+              
+        <div class="row-fluid">
+        <div class="span12 mtop20">
+        <button type="button" onclick="fnClickBIAddRow();">Add New</button>
+          <table class="table table-striped table-bordered" id="BusinessImpact">
+                            <thead>
+                            <tr>
+                                <th>Description </th>
+                                <th>Severity</th>
+                                <th>Delete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+          
+        </div>
+      </div>
+          </apex:pageBlockSection>
+          <apex:pageBlockSection columns="1" title="Root Cause">
+             
+        <div class="row-fluid">
+        <div class="span12 mtop20">
+         <button type="button" onclick="fnClickRCAddRow();">Add New</button>
+          <table class="table table-striped table-bordered" id="RootCause">
+                            <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Occurance</th>
+                                <th>Business Impact</th>
+                                <th>Delete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+          
+        </div>
+      </div>
+          </apex:pageBlockSection>
+                 <apex:pageBlockSection columns="1" title="Process Control">
+              
+        <div class="row-fluid">
+        <div class="span12 mtop20">
+         <button type="button" onclick="fnClickPCAddRow();">Add New</button>
+          <table class="table table-striped table-bordered" id="ProcessControl">
+                            <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Detection</th>
+                                <th>Root Cause</th>
+                                <th>Delete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                               <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+          
+        </div>
+      </div>
+          </apex:pageBlockSection>
+          <apex:pageBlockButtons >
+              <apex:commandButton value="Save" onclick="SubmitRiskData()" />
+              <apex:commandButton value="Cancel"/>
+          </apex:pageBlockButtons>
+
+    </apex:pageBlock>
+</apex:form>
+
+
+    <!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DataTableColumnFilter.js')}"/>
+         <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/bootstrap-multiselect.js')}"/>
+
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!-- END JAVASCRIPTS -->   
+    <script>
+ 
+ var biCount=0;
+        $('#ProcessControl').dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+            "bPaginate": false,
+            "bFilter": false,"bInfo": false,
+            "aoColumns": [{ "bSortable": false },{ "bSortable": false },{ "bSortable": false },{ "bSortable": false }]
+        });
+
+        jQuery('#RootCause.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                } else {
+                    $(this).attr("checked", false);
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+
+     
+
+ $('#RootCause').dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+            "bPaginate": false,
+            "bFilter": false,"bInfo": false,
+            "aoColumns": [{ "bSortable": false },{ "bSortable": false },{ "bSortable": false },{ "bSortable": false }]
+        });
+
+        jQuery('#RootCause.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                } else {
+                    $(this).attr("checked", false);
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+
+
+
+ $('#BusinessImpact').dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+            "bPaginate": false,
+            "bFilter": false,"bInfo": false,
+           "aoColumns": [{ "bSortable": false },{ "bSortable": false },{ "bSortable": false }]
+        });
+
+        jQuery('#BusinessImpact.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                } else {
+                    $(this).attr("checked", false);
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+
+
+
+function fnClickBIAddRow() {
+ var oTable = $('#BusinessImpact').dataTable(); 
+    oTable.fnAddData( [
+        '<input type="text" name="biDesc_'+biCount+'" />',
+        '<input type="text" name="biDetection_'+biCount+'">',
+         '<a><span class="icon-trash" onclick="deleteBIRow()"></span></a>' ] );
+        
+        biCount++;
+}
+ 
+function fnClickRCAddRow() {
+
+ var found=false;
+  var businessImpact= $('#BusinessImpact').dataTable();
+    var Options="<select><option value='--Select--'>--Select--</option>";
+   for(var icount=1; icount<businessImpact[0].rows.length;icount++){
+            var Description = $(businessImpact[0].rows[icount].cells[0].children).val();
+             Options+='<option value="'+Description +'">'+Description+'</option>';
+             if(Description.trim() !='' && Description.trim()!= undefined)
+             {
+                 found=true;
+              }
+        }
+        
+     Options+="</select>";
+     if(found)
+     {
+ var oTable = $('#RootCause').dataTable(); 
+    oTable.fnAddData( [
+        '<input type="text" name="rcDesc">',
+        '<input type="text" name="rcDetection">',
+        Options,
+         '<a><span class="icon-trash"></span></a>'
+           ] );
+      }
+}
+
+function fnClickPCAddRow() {
+   var rootCause= $('#RootCause').dataTable();
+   var found=false;
+    var Options="<select><option value='--Select--'>--Select--</option>";
+   for(var icount=1; icount<rootCause[0].rows.length;icount++){
+            var Description = $(rootCause[0].rows[icount].cells[0].children).val();
+             Options+='<option value="'+Description +'">'+Description+'</option>';
+             if(Description.trim() !='' && Description.trim()!= undefined)
+             {
+                 found=true;
+              }
+        }
+        
+     Options+="</select>";
+     if(found)
+     {
+     var oTable = $('#ProcessControl').dataTable(); 
+    oTable.fnAddData( [
+        '<input type="text" name="pcDesc">',
+        '<input type="text" name="pcDetection">',
+        Options,
+         '<a><span class="icon-trash"></span></a>'
+        ] );
+        }
+}
+
+function deleteBIRow() {
+    if (biCount!= 1) {
+        $("BusinessImpact").dataTable().fnDeleteRow(biCount- 1);
+
+        biCount--;
+    }
+  }
+  
+
+function SubmitRiskData() {
+ var processControl= $('#ProcessControl').dataTable(); 
+ var rootCause= $('#RootCause').dataTable();
+  var businessImpact= $('#BusinessImpact').dataTable();
+  
+  debugger;
+  
+  var saveRiskData=new Array();
+   var businessImpactData=new Array();
+   var rootCauseData=new Array();
+     var processControlData=new Array();
+     var potentialRiskData=new Array();
+    
+   for(var icount=1; icount<businessImpact[0].rows.length;icount++){
+            var Description = $(businessImpact[0].rows[icount].cells[0].children).val();
+            var Severity= $(businessImpact[0].rows[icount].cells[1].children).val();
+            
+            businessImpactData.push({"Description__c":Description ,"Severity__c":Severity});
+        }
+        
+        for(var icount=1; icount<rootCause[0].rows.length;icount++){
+            var Description = $(rootCause[0].rows[icount].cells[0].children).val();
+            var Occurance = $(rootCause[0].rows[icount].cells[1].children).val();      
+            var BusinessImpact= $(rootCause[0].rows[icount].cells[2].children).val();    
+
+            rootCauseData.push({"Description":Description ,"Occurance":Occurance,"BusinessImpact":BusinessImpact});
+        }
+        
+        for(var icount=1; icount<processControl[0].rows.length;icount++){
+            var Description = $(processControl[0].rows[icount].cells[0].children).val();
+            var Detection = $(processControl[0].rows[icount].cells[1].children).val();      
+            var RootCause= $(processControl[0].rows[icount].cells[2].children).val();
+
+            processControlData.push({"Description":Description ,"Detection":Detection ,"RootCause":RootCause});
+        }
+        
+        potentialRiskData={
+        Description__c:'Testing from UI',
+        Project_ID__c :'a6yZ0000000DFz2',
+        
+        }
+        
+      saveRiskData={
+          potentialRiskObj:potentialRiskData,
+          businessImpactList:businessImpactData,
+          rootCauseList:rootCauseData,
+          ProcessControlList:processControlData         
+      }  
+      
+           Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.Muthu_ODP_PotentialRisk.saveRiskRecord}',
+                saveRiskData,
+                EventCallback
+            );
+            
+}    
+      
+     function EventCallback(result,event)
+       {
+          debugger;
+       }
+
+
+    </script>
+
+        </body>
+</html>
+</apex:page>

@@ -1,0 +1,56 @@
+<apex:page standardController="Team_Member_Role__c" extensions="ExtendedTeamMemberRoleClass">
+<!--<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+    <script>
+       $j = jQuery.noConflict();
+       $j(document).ready(function() {                                   
+          if({!disbledFiled})
+          {
+              $j("input[id$=teammenber]").prop('disabled', true);
+              $j("a[id$=teammenber_lkwgt]").hide();                          
+          }
+          /*         
+          $j("input[id$=checkCoreMemberTest]").change(function() {
+              
+              alert({!checkCoreMember});           
+              
+              if({!checkCoreMember}){         
+                  $j("input[id$=checkCoreMember]").attr("checked",true);
+              }else{        
+                  $j("input[id$=checkCoreMember]").attr("checked",false);
+              }
+              
+           });
+           */                        
+       });
+    </script> 
+    <apex:pageBlock rendered="{!disbledFiled}">
+        <apex:pageBlockSection columns="1">
+            <a href="/{!CurServiceLineId}">Service Line [{!CurServiceLine}]</a> > 
+            <a href="/{!CurOfferingId}">Offering [{!CurOffering}]</a> > 
+            <a href="/{!CurReleaseId}">Offering Release [{!CurRelease}]</a> >
+            <a href="/{!CurTeamMemberId}">Team Member [{!CurTeamMember}]</a> 
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <apex:form >
+        <apex:pageMessages />
+        <apex:pageBlock title="{!myEditStates} Team Member Role">
+            <apex:pageBlockSection title="Team Member Role Information" columns="1">
+                <apex:inputField value="{!Team_Member_Role__c.Team_Member_ID__c}" id="teammenber">
+                </apex:inputField>
+                <apex:outputText label="Member" id="memberName" value="{!MemberName}" />                
+                <apex:inputField value="{!Team_Member_Role__c.Role_ID__c}" id="roleid">
+                    <apex:actionSupport event="onchange" action="{!DynamicRoleName}" reRender="rolename,checkCoreMember"/>
+                </apex:inputField>
+                <apex:outputText label="Role Name" id="rolename" value="{!RoleName}" />                               
+                <apex:inputCheckbox value="{!Team_Member_Role__c.Core_Member__c}" id="checkCoreMember" selected="{!checkCoreMember}"/>                                                                                              
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Save & New" action="{!DoSaveNew}" /> 
+                 <apex:commandButton value="Cancel" action="{!cancel}"/>               
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>-->
+</apex:page>

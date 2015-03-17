@@ -1,0 +1,59 @@
+<!--*****************************************
+    Author:Mousumi Panda/HP
+    Date: 26-04-2013
+    Release: R5
+    Capability: Deal Governance
+    Description: Used in DGApprovalReminder Class to get content for  reminder email
+ *****************************************-->
+
+<apex:page standardController="Approval__c" >
+<style type="text/css">
+            body {font-family: Arial; font-size: 85%}
+</style>
+
+This is a REMINDER notification, <u>{!Approval__c.RecordType.Name} Approval Request</u> is pending your review. <br/><br/> 
+Click this link: Approval #<apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_270)+4)+Approval__c.Id}">{!Approval__c.Name}</apex:outputlink> to be taken to the Approval Request. <br/><br/>
+<div style= "color: red;">Note: Please log into the system to approve/reject this approval request.</div>
+ <br/> 
+       <table><tr><td>HP Opportunity ID</td><td>:</td><td> {!Approval__c.Opportunity_Id__c}</td></tr>
+               <tr><td>Opportunity Name</td><td>:</td><td> {!Approval__c.Opportunity_Name__c}</td></tr>
+               <tr><td>Account Name</td><td>:</td><td> {!Approval__c.Account_Name__c}</td></tr>
+               <tr><td>Account Country</td><td>:</td><td> {!Approval__c.Account_Shipping_Country__c}</td></tr>
+               <tr><td>Total Opportunity Value</td><td>:</td><td><apex:outputfield value="{!Approval__c.Total_Opportunity_Value__c}"/></td></tr>
+               <tr><td>Opportunity Description</td><td>:</td><td> {!Approval__c.Opportunity__r.Description}</td></tr>
+               <tr><td>Approval Description</td><td>:</td><td> {!Approval__c.Approval_Description__c}</td></tr>
+               <tr><td>Requestor Comments</td><td>:</td><td>{!Approval__c.Requestor_Comments__c}</td></tr>
+               <tr>
+               <td><apex:outputtext value="Pursuit Budget" rendered="{!IF(Approval__c.RecordType.Name == 'Opportunity Review',true,false)}"/><apex:outputtext value="Pricing Approach" rendered="{!IF(Approval__c.RecordType.Name == 'Opportunity Business Review',true,false)}"/></td>
+                <td>:</td>
+               <td><apex:Outputfield value="{!Approval__c.Pursuit_Budget_USD__c}" rendered="{!IF(Approval__c.RecordType.Name == 'Opportunity Review',true,false)}"/><apex:Outputfield value="{!Approval__c.Pricing_Approach__c}" rendered="{!IF(Approval__c.RecordType.Name == 'Opportunity Business Review',true,false)}"/></td>
+               </tr>
+        </table>
+        <br/><br/>
+  <apex:outputPanel rendered="{!if(Approval__c.recordtype.name = 'Opportunity Review',true,false)}" >
+       <!-- {!approval__c.Opportunity_Pursuit_Resource_Requirement__r[0].Id}-->
+   <table class="crs" cellpadding="1" cellspacing="1" border="1px" style="width:85%" >
+   <!-- <apex:dataTable cellspacing="1" cellpadding="1" border="1" style="width:85%" rendered="{!if(Approval__c.recordtype.name = 'Opportunity Review',true,false)}" value="{!Approval__c.Opportunity_Pursuit_Resource_Requirement__r}" var="a">-->
+      <tr style= "background-color:lightblue;">
+        <th><b>Pursuit Team Name/Role</b></th>
+        <th><b>Region/Sub Region/Country</b></th>
+        <th><b>Estimated Start Date</b></th>
+        <th><b>Estimated End Date</b></th>
+        <th><b>Requested Hours</b></th>
+        
+      </tr>
+    
+      <apex:repeat value="{!Approval__c.Opportunity_Pursuit_Resource_Requirement__r}" var="OppPurResReq">
+      <tr>
+        <td><apex:outputfield value="{!OppPurResReq.Pursuit_Team_Name_Role__c}" /></td>
+        <td>{!OppPurResReq.Region_subregion_Country__c}</td>
+        <td>{!OppPurResReq.Estimated_Start_Date__c}</td>
+        <td>{!OppPurResReq.Estimated_End_Date__c}</td>
+        <td>{!OppPurResReq.Requested_Hours__c}</td>
+       
+      </tr>
+     </apex:repeat>
+    
+    </table>
+  </apex:outputPanel>
+</apex:page>

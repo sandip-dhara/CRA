@@ -1,0 +1,76 @@
+<!-- 
+/**********************************************************
+* Page Name: OpptyClone
+* Author: HP
+* Date: 12/17/2012
+* Requirement # Request Id :  #4419
+* Release: R4.0
+* Description: This page provides customized clone functionality for clone button on
+* opportunity detail page
+***********************************************************/
+-->
+<apex:page standardController="Opportunity" extensions="OpptyClone" sidebar="false" showHeader="false" title="Clone opporunity" name="Clone Oppty">
+<script>
+    window.document.title = 'CloneOppty';
+    function closeWindow(){
+        window.close();
+      }
+    function redirectParent(){
+        //var products = document.getElementById('Box_product');
+        
+        var products = document.getElementById('j_id0:j_id2:Box_product');
+        var partners = document.getElementById('Box_partner');
+        var competitors = document.getElementById('Box_competitor');
+        var oppId = gup('id');
+        var newURL = '/'+oppId+'/e?clone=1&retURL=%2F'+oppId;
+        
+        var cloneParameters ='&opp10='+ oppId;
+        
+        if (partners.checked == true) cloneParameters += 'Partners';
+        if (competitors.checked == true) cloneParameters +='Competitors';
+        if (products.checked == true) cloneParameters +='Product';
+        //if (products.checked == true) newURL += 'Product';
+        
+        newURL += cloneParameters;
+       
+        if (navigator.appName=="Microsoft Internet Explorer"){
+             window.returnValue = newURL;
+        }
+        else {
+            window.opener.location.href = newURL;
+        }
+        window.close();
+    }
+    
+    function gup( name ){
+          name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+          var regexS = "[\\?&]"+name+"=([^&#]*)";
+          var regex = new RegExp( regexS );
+          var results = regex.exec( window.location.href );
+          if( results == null )
+            return "";
+          else
+            return results[1];
+        }
+    
+</script>
+
+<apex:form >
+<body bgcolor="#0000ff"/>
+    
+        <!--<apex:pageBlockSection title="Please select the attributes to be cloned:" >-->
+            <br/>
+            <h1 style="margin-left: 2.0em;" >Please select the attributes to be cloned: </h1>
+            <br/><br/>
+            <apex:inputCheckbox id="Box_product" value="{!Product}" disabled="{!!Product}" style="margin-left: 2.0em;"/>Products and Services <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>(Line items with Inactive Products will not be cloned)</b><br/>
+            <!--<input type="checkbox" id="Box_product" value="Product" label="Product" checked = "true" style="margin-left: 2.0em;" /><label for="Box_product">Products and Services</label><br/>-->
+           <br/>
+            <input type="checkbox" id="Box_partner" value="Partner" label="Partner" style="margin-left: 2.0em;" /><label for="Box_partner">Alliance and Channel Partners</label><br/>
+            <br/>
+            <input type="checkbox" id="Box_competitor" value="Competitor" label="Competitor" style="margin-left: 2.0em;" /><label for="Box_competitor">Competitors</label>
+            
+            <br></br><br/><input type="button" class="btn" value="Continue" onclick="redirectParent()" style="margin-left: 2.0em;"/>        
+                     <input type="button" class="btn" value="Cancel" onclick="closeWindow()" style="margin-left: 2.0em;"/>       
+       
+</apex:form>
+</apex:page>

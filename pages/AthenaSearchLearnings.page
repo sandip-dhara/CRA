@@ -1,0 +1,472 @@
+<apex:page showheader="false" controller="AthenaSearchLearnings" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Edit</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+
+    <!-- check box, radio button -->
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/css/uniform.default.css')}" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+    <!-- BEGIN HEADER -->
+    <header>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="HpLogo">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/>
+                    </a>
+                    <div class="nav mtop10">
+                        <h1>Social Learning Platform</h1>
+                        <h3>Learning on your terms!</h3>
+                    </div>
+                <apex:form id="SrchLrngsGLSrchform">
+                    <div class="nav notify-row">
+                       <!--<input type="text" class="span3 mtop16" />
+                            <button class="btnAthena btn-primary" type="button">Search</button>-->
+                             <apex:inputText id="GlblsearchText" styleClass="span3 mtop16" value="{!strGlobalSearchValue}" title="Enter value to search Learning Board"/>
+                            <apex:commandButton action="{!dosearch}" onclick="return validate()" value="Search" styleClass="btnAthena btn-primary"  id="searchButton" title="Click to Search for Learning Board"/>
+                    </div>
+                </apex:form>
+                    <div class="top-nav">
+                        <ul class="nav pull-right top-menu mtop16">
+                            <!-- BEGIN USER LOGIN DROPDOWN -->
+                            <li class="dropdown open">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="username">Welcome {!LoggedinUserDtls.Name}</span>
+                                    <i class="icon-user"></i>
+                                    <!--<b class="caret"></b>-->
+                                </a>
+                                <ul class="dropdown-menu extended logout">
+                                    <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+                                </ul>
+                            </li>
+                            <!-- END USER LOGIN DROPDOWN -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid menunavBar">
+                    <a href="https://{!getSfInstance}/apex/AthenaSocialLearning">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Home.png')}" alt="Icon_Home"/>
+                        </a>
+                    <div class="btn-group">
+                        <a href="#" data-toggle="dropdown">
+                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Menu.png')}" alt="Icon_Menu"/>
+                            </a>
+                        <ul class="dropdown-menu">                            
+                            <li><a href="https://{!getSfInstance}">Salesforce Home</a></li>
+                          <li><a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank">Help &amp; Support</a></li>
+                          <hr />
+                          <li><a href="http://amp.corp.hp.com/" target="_blank">Account Management Portal(AMP)</a></li>
+                          <li><a href="http://ent241.sharepoint.hp.com/teams/GSCDC/es/ITO.aspx" target="_blank">Portfolio Accrediation</a></li>
+                          <li><a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html" target="_blank">What We Sell</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+    <!-- BEGIN CONTAINER -->
+    <div id="container" class="row-fluid">
+    
+  <span class="err_msg hpit_error" id="err_msg"></span>
+        <!-- BEGIN PAGE -->
+        <div id="main-content">
+            <!-- BEGIN PAGE CONTAINER-->
+            <div class="container-fluid">
+                <!-- BEGIN PAGE HEADER-->
+                <div class="row-fluid">
+                    <div class="span12">
+                        <!-- BEGIN PAGE TITLE -->
+                        <div class="breadcrumb">
+                            <h2>Learnings</h2>
+                        </div>
+                        <!-- END PAGE TITLE & BREADCRUMB-->
+                    </div>
+                </div>
+                <!-- END PAGE HEADER-->
+                <!-- SEARCH BTN -->
+                <div class="row-fluid">
+                    <div class="span8">
+                        <div class="span12">
+
+                            <apex:form >
+                            <apex:inputText id="searchText" styleClass="span5 mtop10" value="{!strSearchValue}" title="Enter value to search Learnings"/>
+                            <apex:commandButton onclick="return SaveRelatedBoard();" action="{!searchLearning}" value="Search Learning" styleClass="btnAthena btn-primary"  id="searchButton" title="Click to Search for Learning Board"/>
+                            <apex:inputHidden value="{!hdnFilterType}" id="hiddenRelatedSearchTop" />
+                            </apex:form>
+                            
+                          <!--  <button class="btnAthena btn-primary" type="button">Add Learning</button>-->
+                        </div>
+                    </div>
+                </div>
+                <!-- BEGIN PAGE CONTENT-->
+                <div class="row-fluid">
+                    <div class="span12">
+                        <!-- BEGIN BLOG PORTLET-->
+                        <div class="row-fluid">
+                            <div class="span8">
+                            <apex:form >
+                                      <apex:outputPanel id="FeaturedLBTable" layout="block">
+                                <div class="row-fluid bgGray mtop10" style="border: 1px solid #C5C4C4;">
+                                    <div class="span12">
+                                        <ul id='bp-3-element-test'></ul>
+                                    </div>
+                                      
+
+                                    <apex:commandlink value="Previous" action="{!MyLrngsPrevious}" rendered="{!MyLrngsCon.hasPrevious}" rerender="FeaturedLBTable" status="counterStatus">
+                                    </apex:commandlink>
+                                     <apex:commandlink value="Next" action="{!MyLrngsNext}" rendered="{!MyLrngsCon.hasNext}" rerender="FeaturedLBTable" status="counterStatus">
+                                       </apex:commandlink>
+                                    <apex:repeat value="{!MyLearningsList}" var="lrng" rendered="true">
+
+                                    <div class="widget blue">
+                                        <div class="widget-title">
+                                            <h4>{!lrng.LName}</h4>
+                                            <label class="checkbox labelSearcLearning">
+                                                <div class="checker" id="Div12">
+                                                    <span class="">                                                    
+                                                        <input type="checkbox" disabled="disabled"  value="{!lrng.IsActive}" style="opacity: 0;" /></span>                                                        
+                                                </div>
+                                                Active
+                                            </label>
+                                            <div class="actions phoneLearningActionfull mtop5">
+                                                <a class="colorWhite">
+                                    <span>{!lrng.LikeCount}</span>
+                                    <span>
+                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_likeIcon.png')}" alt="hpit_athena_likeIcon"/>
+                                    </span>
+                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="widget-body clearfix ">
+                                            <div class="actions phoneLearningAction">
+                                                <a href="#" class="btnAthena btn-success"><i class="icon-pencil"></i>&nbsp; Edit</a>
+                                                <a href="#" class="btnAthena"><i class="icon-remove"></i>&nbsp; Remove</a>
+                                            </div>
+                                            <p class="span12 BoardImgList ml0 clearB">
+
+                                                <span>
+                                                      <apex:outputPanel rendered="{!IF(or(CONTAINS(lrng.LType,'Link or Document'),CONTAINS(lrng.LType,'Text')),(IF(lrng.StaticImage,true,false)),false)}">
+                <a src="{!lrng.LURL}"  target="_blank">
+                    <img src='{!lrng.DefaultImageName}'/>
+                </a>
+              </apex:outputPanel>
+                             
+              <apex:outputPanel rendered="{!IF(or(CONTAINS(lrng.LType,'Link or Document'),CONTAINS(lrng.LType,'Text')),(IF(!lrng.StaticImage,true,false)),false)}">                
+                <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Action.Attachment.Download, lrng.AttachmentId)}" style="max-width:500px; max-height:200px" />
+                </a>               
+              </apex:outputPanel>                
+                
+                <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Video'),(IF(CONTAINS(lrng.LURL,'www.brainshark.com'),(IF(CONTAINS(lrng.LURL,'vu?pi='),true,false)),false)),false)}">
+                <iframe src="{!lrng.LURL}&dm=5&pause=1&nrs=1" class="hpit_athena_detailPostIfram" frameborder="0"   scrolling="no" style="border:1px solid #999999"></iframe>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Video'),(IF(CONTAINS(lrng.LURL,'www.brainshark.com'),(!IF(CONTAINS(lrng.LURL,'vu?pi='),true,false)),false)),false)}">
+                <iframe src="{!lrng.LURL}?&dm=5&pause=1&nrs=1" class="hpit_athena_detailPostIfram" frameborder="0"   scrolling="no" style="border:1px solid #999999"></iframe>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Video'),(IF(CONTAINS(lrng.LURL,'youtube.com'),true,false)),false)}">
+                <iframe class="hpit_athena_detailPostIfram"  src="{!lrng.LURL}" frameborder="0"></iframe>
+              </apex:outputPanel>
+                                                </span>
+                                                <span>  {!lrng.LDescription}
+                                                </span>
+                                                <span class="detailDoc">
+                                                    <a href="#" target="_blank">
+                                                        
+
+                                                          <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Link or Document'),(IF(CONTAINS(lrng.DocType,'PDF'),true,false)),false)}">
+              <div> <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/filePDFUpload.png')}" width="25" height="25"/>
+                </a> </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Link or Document'),(IF(CONTAINS(lrng.DocType,'PPT'),true,false)),false)}">
+              <div> <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/filePPTUpload.png')}" width="25" height="25"/>
+                </a> </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Link or Document'),(IF(CONTAINS(lrng.DocType,'DOC'),true,false)),false)}">
+              <div> <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileWordUpload.png')}" width="25" height="25"/>
+                </a> </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Link or Document'),(IF(CONTAINS(lrng.DocType,'OTHER'),true,false)),false)}">
+              <div> <a href="{!lrng.LURL}"  target="_blank">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/fileURLUpload.png')}" width="25" height="25"/>
+                </a> </div>
+            </apex:outputPanel>
+                                                    </a>
+                                                </span>
+                                            </p>
+                                            Type: {!lrng.LType}
+                                            <!-- Display Tags -->
+                                            <div class="tagDisplay clearB clearfix">
+                                                <ul class="tags">
+                                                 <apex:repeat value="{!lrng.AssociatedTags}" var="tags" >
+                                                            <li class="tag"> {!tags}</li>                                                                                                              
+                                                        </apex:repeat>                                                  
+                                                </ul>
+                                            </div>
+                                            <p>
+                                                <button class="btnAthena btn-primary pull-right" onclick="window.location.href='/apex/AthenaViewLearning?id={!lrng.Lid}';" type="button">View details</button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    </apex:repeat>
+                                                                    <div class="span12 clearB ml0">
+                                        <ul id='bp-3-element-test1'></ul>
+                                    </div>
+                                </div>
+                                    </apex:outputPanel>
+                                    </apex:form>
+
+
+                            </div>
+                            <!-- right column starts -->
+                            <div class="span4">
+                            <apex:form >
+                                <div class="widget orange">
+                                    <div class="widget-title">
+                                        <h4>Filter by</h4>
+                                        <div class="tools">
+                                            <a href="javascript:;" class="icon-chevron-down"></a>
+                                        </div>
+                                    </div>
+                                    <apex:inputHidden value="{!hdnFilterType}" id="hiddenRelatedSearch" />
+                                    <div class="widget-body clearfix" style="display: block;">
+                                        <label class="checkbox line">
+                                            <div class="checker" id="uniform-undefined">
+                                                <span>
+                                                    <input name="FilterType" type="checkbox" id="filterAll" value="All" style="opacity: 0;" /></span>
+                                            </div>
+                                            All
+                                        </label>
+                                      
+
+                                        <label class="checkbox line">
+                                            <div class="checker" id="Div6">
+                                                <span>
+                                                    <input name="FilterType" type="checkbox" id="filterDL" value="DL" style="opacity: 0;" /></span>
+                                            </div>
+                                            Document/Links
+                                        </label>
+                                       
+                                        <label class="checkbox line">
+                                            <div class="checker" id="Div7">
+                                                <span>
+                                                    <input name="FilterType" type="checkbox" id="filterText" value="Text" style="opacity: 0;" /></span>
+                                            </div>
+                                            Text
+                                        </label>
+                                       
+                                        <label class="checkbox line">
+                                            <div class="checker" id="Div8">
+                                                <span>
+                                                    <input name="FilterType" type="checkbox" id="filterVideo" value="Video" style="opacity: 0;" /></span>
+                                            </div>
+                                            Video
+                                        </label>
+                                    </div>
+                                   <span  class="widget-body clearfix" style="display: block;">
+<apex:commandButton styleclass="btnAthena btn-primary" onclick="return SaveRelatedBoard();" action="{!LrngFilter}" value="Search" id="FilterButton"/>
+                                   </span>
+
+                                    
+                                </div>
+                            </apex:form>
+                            </div>
+                        </div>
+                        <!-- END BLOG PORTLET-->
+                    </div>
+                </div>
+                <!-- END PAGE CONTENT-->
+                <!-- END PAGE CONTENT-->
+            </div>
+            <!-- END PAGE CONTAINER-->
+        </div>
+        <!-- END PAGE -->
+    </div>
+    <!-- END CONTAINER -->
+
+    <!-- BEGIN FOOTER -->
+    <div id="footer">
+        © Hewlett-Packard Development Company, L.P.     |     HP Restricted
+    </div>
+    <!-- END FOOTER -->
+
+    <!-- BEGIN JAVASCRIPTS -->
+    <!-- Load javascripts at bottom, this will reduce page load time
+         -->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+
+    <!-- paggination js files -->
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-paginator.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/qunit-1.11.0.js')}"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/jquery.uniform.min.js')}"/>
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+
+    <!-- END JAVASCRIPTS -->
+    <script>
+        
+            function validate()
+               {                  
+                    if(document.getElementById('{!$Component.SrchLrngsGLSrchform.GlblsearchText}').value!=''){                        
+                        return true;
+                    }
+                    else{
+                        document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                        return false;
+                    }
+                   //return true;
+                }
+
+    $(function () {
+
+            $(" input[type=radio], input[type=checkbox]").uniform();
+
+            //toggle the componenet with class menu_body
+            $(".menu_body").show();
+            $(".menu_head").click(function () {
+                $(this).next(".menu_body").slideToggle(600);
+                var plusmin;
+                plusmin = $(this).children(".plusminus").text();
+
+                if (plusmin == '+')
+                    $(this).children(".plusminus").text('-');
+                else
+                    $(this).children(".plusminus").text('+');
+            });
+
+
+        });
+    </script>
+    <script type="text/javascript">         
+        $(function () {
+            test("Test bootstrap v3 rendering", function () {
+
+                var element = $('#bp-3-element-test, #bp-3-element-test1');
+
+                var options = {
+                    bootstrapMajorVersion: 3,
+                    currentPage: 3,
+                    numberOfPages: 5,
+                    totalPages: 11
+                }
+
+                element.bootstrapPaginator(options);
+
+                var element = $('#bp-3-element-test, #bp-3-element-test1');
+
+                ok(!element.hasClass('pagination-lg'), "Root element shouldn't have pagination-lg class");
+
+                ok(!element.hasClass('pagination-sm'), "Root element shouldn't have pagination-sm class");
+
+                var list = element.children();
+
+                for (var i = 0; i < list.length; i++) {
+                    var item = $(list[i]);
+
+                    ok(item.is("li"), "Element " + i + " should be li");
+                }
+
+                options = {
+                    size: "large",
+                    bootstrapMajorVersion: 3,
+                    currentPage: 3,
+                    numberOfPages: 5,
+                    totalPages: 11
+                };
+
+                var element = $('#bp-3-element-lg-test');
+
+                element.bootstrapPaginator(options);
+
+                ok(element.hasClass('pagination-lg'), "Root element should have pagination-lg class");
+
+                var element = $('#bp-3-element-sm-test');
+
+                options = {
+                    size: "small",
+                    bootstrapMajorVersion: 3,
+                    currentPage: 3,
+                    numberOfPages: 5,
+                    totalPages: 11
+                };
+
+                element.bootstrapPaginator(options);
+
+                ok(element.hasClass('pagination-sm'), "Root element should have pagination-sm class");
+            })
+        });
+
+        function SaveRelatedBoard() {
+            var strRel = '';
+            $('input[name="FilterType"]:checked').each(function () {
+                if (strRel == '') {
+                    strRel = $(this).val();
+                }
+                else {
+                    strRel = strRel + ',' + $(this).val();
+                }
+            });
+            $('[id$=hiddenRelatedSearch]').val(strRel);
+            $('[id$=hiddenRelatedSearchTop]').val(strRel);
+        }
+    
+        var i, l;
+        var parts = $('[id$=hiddenRelatedSearch]').val().split(",");
+        if (parts.length > 0) {
+            for (i = 0; i < parts.length; i++) {
+                if (parts[i] == 'Video') {
+                    $('[id$=filterVideo]').prop("checked", true);
+                }
+                else if (parts[i] == 'Text') {
+                    $('#filterText').prop("checked", true);
+                }
+                else if (parts[i] == 'DL') {
+                    $('#filterDL').prop("checked", true);
+                }
+                else if (parts[i] == 'All') {
+                    $('#filterAll').prop("checked", true);
+                }
+            }
+        }
+
+    </script>
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

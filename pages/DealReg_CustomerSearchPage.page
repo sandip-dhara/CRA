@@ -1,0 +1,248 @@
+<!-- 
+    /**********************************************************
+    * Page Name: DealReg_CustomerSearchPage
+    * Author: HP
+    * Date: 17-SEP-2012 ,15-Jan-2013
+    * Requirement # Request Id : 
+    * Description: To Search Customers According to the Custmer name,Address.Search will be performed via..Tibco and MDCP service
+    ***********************************************************/
+    -->
+    <apex:page standardController="opportunity" extensions="DealReg_CustomerSearchController"  id="pg" >
+    <script>
+          function disable_quicksave() {
+                  document.getElementById('pg:searchForm:pageBlock:buttons:save').style.display="none";
+                  document.getElementById('pg:searchForm:pageBlock:buttons:bottom:save').style.display="none";    
+          }
+         
+    </script>
+       <apex:form id="searchForm">
+         <apex:outputPanel id="page" layout="block" style="margin:5px;padding:10px;padding-top:2px;">
+           <apex:tabPanel switchType="ajax" selectedTab="name1" id="tabbedPanel">
+              <!--Search for a Customer with Name and Address-->
+              <apex:tab label="Customer Search" name="tab1" id="tabOne" switchType="ajax" reRender="tabbedPanel" status="tabProcess" focus="FocusKey">
+                  <apex:actionStatus id="tabProcess">
+                     <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                         &nbsp;&nbsp;
+                         <FONT COLOR="black" SIZE="2"><i>{!$Label.PROCESSING_REQUEST}</i></FONT>
+                         <br/><br/>
+                         </apex:facet> 
+                  </apex:actionStatus>
+                  <apex:actionRegion >  
+              <apex:outputPanel id="refresh">
+           <apex:pageBlock >    
+               <apex:pageMessages id="error1" rendered="{!isTab1Error}"/>                                
+                 <apex:outputLabel value="Customer Name" style="font-weight:Bold;padding-right:10px;" for="txtSearch" id="FocusKey"/>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;    
+                 <apex:outputLabel value="Country " style="font-weight:Bold;padding-right:10px;" for="txtSearch1"/>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;     
+                 <apex:outputLabel value="City" style="font-weight:Bold;padding-right:10px;" for="txtSearch1"/>
+                 <apex:outputPanel styleClass="requiredInput" layout="block" >          
+                 <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                 <apex:inputText id="txtSearch" value="{!SearchKey}" />
+                 <apex:inputText id="txtSearch1" value="{!SearchCountry}" disabled="true"/>
+                 <apex:inputText id="City" value="{!SearchCity}"   />
+                 <span style="padding-left:5px"><apex:commandButton id="btnGo" value="{!$Label.Search}" action="{!Search}" rerender="refresh,pnlSearchResults" status="mystatus" ></apex:commandButton></span>
+                       <style>
+                         .vfHelpText a            {position:relative;}
+                         .vfHelpText a span       {display: none;}
+                         .vfHelpText a:hover span {display: block;
+                          position:absolute;
+                          top:1.25em;
+                          padding:2px 5px;
+                          left:-15em; width:15em;
+                          z-index:100;
+                          border:1px solid orange;
+                          background-color:#FEFDB9;
+                          color:black;
+                           }
+                       </style>   
+                       <span class="vfHelpText">
+                          <apex:outputLink value="javascript:return false;">
+                          <img src="/s.gif" alt="" class="helpOrb" />
+                          <span>{!$Label.WILDCARD_CNTD}</span>
+                          </apex:outputLink>
+                      </span>
+                 </apex:outputPanel>
+             </apex:pageBlock>             
+          </apex:outputPanel>                         
+              <apex:actionStatus id="mystatus">
+                <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2"><i>{!$Label.SEARCHING_ACCOUNTS}</i></FONT>
+                        <br/><br/>
+                    </apex:facet>                
+               <apex:facet name="stop">                   
+                    <!-- Output Panel for search Results -->         
+                <apex:outputPanel id="pnlSearchResults" style="margin:10px;height:350px;overflow-Y:auto;" layout="block" >
+                <apex:outputLabel style="font-size:13px;color:#B22222;" rendered="{!NOT(isMdcpOrTibcoIsRunning!='False')}">{!mdcpStatus}</apex:outputLabel>
+                <apex:outputLabel style="font-size:13px;color:#B22222;">{!isMdcpFoundInSfdc}</apex:outputLabel>
+                 <apex:pageBlock id="searchResults" rendered="{!searchPanelVisible}"> 
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Select a Customer name for creating a Opportunity/Deal
+                     <apex:outputLabel id="LargeProductsPanel" rendered="{!largeProductFound}">
+                           <center> <b style="color:red;"> Displaying first 25 search results.</b> </center>
+                      </apex:outputLabel>
+                  <apex:pageBlockTable value="{!Accounts}" var="a" id="tblResults">
+                    <apex:column >
+                        <apex:facet name="header">                    
+                           <apex:commandLink action="{!sortColumn}" value="Customer Name{!IF(sortExpression=='Name',IF(sortDirection='ASC','▼','▲'),'')}" reRender="pnlSearchResults">
+                             <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                             <apex:param value="Name" name="column" assignTo="{!sortField}" ></apex:param>
+                           </apex:commandLink>
+                        </apex:facet>
+                         <apex:commandLink action="{!isSubscribedFlag}" value="{!a.Name}">
+                             <apex:param value="{!a.MDCP_Organization_ID__c}" name="column" assignTo="{!mdcpId}" ></apex:param>
+                             <apex:param value="{!a.MDCP_Subscribed_Flag__c}" name="MDCPSubscribedFlag" assignTo="{!isSubscribedFlagCheck}" ></apex:param> 
+                             <apex:param value="{!a.Mdcp_SiteId__c}" name="MDCPSiteIdFlag" assignTo="{!mdcpSiteId}" ></apex:param> 
+                         </apex:commandLink>
+                    </apex:column>
+                    <apex:column >    
+                        <apex:facet name="header">                     
+                         <apex:commandLink action="{!sortColumn}" value="Street{!IF(sortExpression=='ShippingStreet',IF(sortDirection='ASC','▼','▲'),'')}" reRender="pnlSearchResults">
+                            <apex:param value="ShippingStreet" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            <apex:param value="ShippingStreet" name="column" assignTo="{!sortField}" ></apex:param>           
+                      </apex:commandLink> 
+                        </apex:facet> 
+                        <apex:outputfield value="{!a.ShippingStreet}"></apex:outputfield>                                 
+                    </apex:column>
+                    <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:commandLink action="{!sortColumn}" value="City{!IF(sortExpression=='ShippingCity',IF(sortDirection='ASC','▼','▲'),'')}" reRender="pnlSearchResults">
+                                <apex:param value="ShippingCity" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                <apex:param value="ShippingCity" name="column" assignTo="{!sortField}" ></apex:param>           
+                        </apex:commandLink> 
+                        </apex:facet> 
+                        <apex:outputfield value="{!a.ShippingCity}"></apex:outputfield>                                 
+                    </apex:column>
+                    <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:commandLink action="{!sortColumn}" value="State/Province{!IF(sortExpression=='ShippingState',IF(sortDirection='ASC','▼','▲'),'')}" reRender="pnlSearchResults">
+                              <apex:param value="ShippingState" name="column" assignTo="{!sortExpression}" ></apex:param>
+                              <apex:param value="ShippingState" name="column" assignTo="{!sortField}" ></apex:param>           
+                      </apex:commandLink>
+                        </apex:facet> 
+                        <apex:outputfield value="{!a.ShippingState}"></apex:outputfield>                                 
+                    </apex:column>                
+                    <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:commandLink action="{!sortColumn}" value="Zip/Postal Code{!IF(sortExpression=='ShippingPostalCode',IF(sortDirection='ASC','▼','▲'),'')}" reRender="pnlSearchResults">
+                               <apex:param value="ShippingPostalCode" name="column" assignTo="{!sortExpression}" ></apex:param>
+                               <apex:param value="ShippingPostalCode" name="column" assignTo="{!sortField}" ></apex:param>
+                             </apex:commandLink>
+                          </apex:facet> 
+                        <apex:outputfield value="{!a.ShippingPostalCode}"></apex:outputfield>                                 
+                    </apex:column>                
+                     <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:commandLink action="{!sortColumn}" value="Country{!IF(sortExpression=='ShippingCountry',IF(sortDirection='ASC','▼','▲'),'')}" reRender="pnlSearchResults">
+                               <apex:param value="ShippingCountry" name="column" assignTo="{!sortExpression}" ></apex:param>
+                               <apex:param value="ShippingCountry" name="column" assignTo="{!sortField}" ></apex:param>           
+                            </apex:commandLink>
+                        </apex:facet> 
+                        <apex:outputfield value="{!a.ShippingCountry }"></apex:outputfield>                                 
+                    </apex:column>
+                  </apex:pageBlockTable>                                  
+                   <apex:outputLabel style="font-size:12px;color:#B22222;" rendered="{!resultEmpty}">{!resultStatus}</apex:outputLabel>                  
+                  </apex:pageBlock>
+              </apex:outputPanel>
+              </apex:facet>          
+           </apex:actionStatus> 
+          </apex:actionRegion>        
+          </apex:tab>    
+          <!--   Creating a New UnVerified Account  -->
+          <apex:tab label="New Customer" name="tab2" id="tabTwo" switchType="ajax" reRender="tabbedPanel" status="tabProcess" focus="txtCustName">        
+                  <apex:outputPanel id="newCustomer" >
+                  <apex:pageBlock title="New Customer Information" rendered="{!NOT(flag)}" id="pageBlock">
+                   <!-- <apex:actionfunction name="saveData" action="{!saveAccount}"/-->
+                      <apex:pageBlockButtons id="buttons" >
+                         <apex:commandButton id="save" value="Save" action="{!saveAccount}" status="oneclick_quicksave" reRender="searchForm"/> 
+                           <apex:actionStatus id="oneclick_quicksave" onstart="disable_quicksave()"/>
+                         </apex:pageBlockButtons>
+                       <apex:pageMessages id="error" rendered="{!isTab2Error}"/>                  
+                      <apex:pageBlockSection >
+                      <apex:pageblockSectionItem >              
+                        <apex:outputlabel > New Customer Name </apex:outputlabel> 
+                       <apex:outputPanel styleClass="requiredInput" layout="block" >          
+                       <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                       <apex:inputText value="{!Name}" id="txtCustName"/>    
+                    </apex:outputPanel>
+                         </apex:pageblockSectionItem>
+                        <apex:pageblockSectionItem >
+                          <apex:outputlabel >Street</apex:outputlabel>
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >          
+                    <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputtextarea value="{!ShippingStreet}"/>                          
+                      </apex:outputPanel>                 
+                         </apex:pageblockSectionItem>
+                        <apex:pageblockSectionItem >
+                           <apex:outputlabel >City</apex:outputlabel>
+                       <apex:outputPanel styleClass="requiredInput" layout="block" >          
+                 <apex:outputPanel styleClass="requiredBlock" layout="block"/>  
+                        <apex:inputtext value="{!ShippingCity}"/>                                  
+                    </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                        <apex:pageblockSectionItem >                   
+                           <apex:outputlabel >State/Province </apex:outputlabel>
+                        <apex:inputtext value="{! ShippingState}"/>                     
+                    </apex:pageblockSectionItem>
+                        <apex:pageblockSectionItem >  
+                            <apex:outputlabel >Zip/PostalCode </apex:outputlabel>
+                        <apex:inputtext value="{! ShippingPostalCode}"/>                                            
+                         </apex:pageblockSectionItem>
+                        <apex:pageblockSectionItem >
+                            <apex:outputlabel >Country </apex:outputlabel> 
+                          <apex:outputPanel styleClass="requiredInput" layout="block" >          
+                          <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputtext value="{! ShippingCountry }" disabled="true"/>  
+                         </apex:outputPanel>   
+                    </apex:pageblockSectionItem>               
+                  </apex:pageblockSection>      
+                  </apex:pageBlock>
+                  </apex:outputPanel>
+                  <!--    UNVerified Account Association-->              
+               <apex:outputPanel rendered="{!flag}" id="pnlCreateResults" style="margin:10px;height:350px;overflow-Y:auto;" layout="block">
+                <apex:pageBlock id="createResultsid"> 
+                  <apex:pageBlockTable value="{!createResults}" var="b" id="tblResults">
+                      <apex:column >
+                      <apex:facet name="header">
+                        <apex:outputPanel >Customer Name</apex:outputPanel>
+                      </apex:facet>
+                         <apex:outputLink value="/006/e?nooverride=1&opp11=01+-+Understand+Customer&opp4_lkid={!b.Id}"><apex:outputfield value="{!b.Name}" rendered="{!NOT(ISNULL(b.Id))}"  ></apex:outputfield></apex:outputLink> 
+                    </apex:column>
+                    <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:outputPanel >Street</apex:outputPanel>
+                        </apex:facet> 
+                        <apex:outputfield value="{!b.ShippingStreet}"></apex:outputfield>                                 
+                    </apex:column>                    
+                    <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:outputPanel >City</apex:outputPanel>
+                        </apex:facet> 
+                        <apex:outputfield value="{!b.ShippingCity}"></apex:outputfield>                                 
+                    </apex:column>                    
+                    <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:outputPanel >State/Province</apex:outputPanel>
+                        </apex:facet> 
+                        <apex:outputfield value="{!b.ShippingState}"></apex:outputfield>                                 
+                    </apex:column>                    
+                    <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:outputPanel >Zip/Postal Code</apex:outputPanel>
+                        </apex:facet> 
+                        <apex:outputfield value="{!b.ShippingPostalCode}"></apex:outputfield>                                 
+                    </apex:column>                                                   
+                     <apex:column >    
+                        <apex:facet name="header">  
+                            <apex:outputPanel >Country </apex:outputPanel>
+                        </apex:facet> 
+                        <apex:outputfield value="{!b.ShippingCountry }"></apex:outputfield>                                 
+                    </apex:column>
+                   </apex:pageBlockTable>
+                 </apex:pageBlock>
+              </apex:outputPanel>           
+            </apex:tab>
+        </apex:tabPanel>
+      </apex:outputPanel>
+      </apex:form> 
+    </apex:page>

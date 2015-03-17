@@ -1,0 +1,59 @@
+<apex:page standardController="Scoring__c" extensions="OAE_SC_EditExt">   
+<apex:sectionheader title="Scoring" />
+  <apex:form >
+    <apex:pageBlock >
+<table width="100%">
+<tr>
+<td width="30%"><br/>
+<apex:pageBlockSection title="Parameter" collapsible="false">
+<apex:outputPanel id="selectParam">
+<apex:selectList value="{!Scoring__c.Parameter__c}" size="1" style="width:200px" onChange="swapPanels()">
+<apex:selectOptions value="{!paramItems}"/>
+</apex:selectList>
+</apex:outputPanel>
+</apex:pageBlockSection>
+</td>
+<td width="30%">
+<apex:pageBlockSection title="Value" collapsible="false">
+<apex:outputPanel id="selectValue">
+<apex:selectList value="{!Scoring__c.Value__c}" size="1" style="width:200px" id="boom">
+<apex:selectOptions value="{!valueItems}"/>
+</apex:selectList>
+</apex:outputPanel>
+</apex:pageBlockSection>
+</td>
+<td width="30%">
+<apex:pageBlockSection title="Level" collapsible="false"></apex:pageBlockSection>
+<apex:outputPanel id="levelValue">
+<apex:selectList value="{!Scoring__c.Level__c}" size="1" style="width:200px">
+<apex:selectOptions value="{!levelItems}"/>
+</apex:selectList>
+</apex:outputPanel>
+</td>
+<td width="10%">
+<apex:pageBlockSection title="Points" collapsible="false"></apex:pageBlockSection>
+<apex:inputfield value="{!Scoring__c.Points__c}"/>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<apex:commandButton value="Save" action="{!save}" />
+</td>
+</tr>
+</table>
+
+    </apex:pageBlock>
+
+    <apex:actionFunction action="{!refreshValues}" name="swapPanels" rerender="selectValue,levelValue" />
+<apex:inputHidden value="{!Scoring__c.RuleScenario__c}" rendered="false"/>
+<apex:inputHidden value="{!Scoring__c.ParamNumber__c}" rendered="false"/>
+<apex:inputHidden value="{!Scoring__c.isMinutesOnShift__c}" rendered="false"/>
+<apex:inputHidden value="{!Scoring__c.isOnShiftNow__c}" rendered="false"/>
+  </apex:form>
+</apex:page>

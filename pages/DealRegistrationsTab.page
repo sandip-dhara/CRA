@@ -1,0 +1,29 @@
+<apex:page showHeader="true" tabStyle="Deal_Registration__c" >
+ <apex:sectionHeader title="{!$ObjectType.Deal_Registration__c.LabelPlural}" subtitle="Home" />
+<style>
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "accept", "aw9sh2hud92")}] {
+display: none;
+}
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "assign", "aw9sh2hud92")}] {
+display: none;
+}
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "allBox", "aw9sh2hud92")}] {
+display: none;
+}
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "ids", "aw9sh2hud92")}] {
+display: none;
+}
+</style>
+    
+<apex:listViews type="Deal_Registration__c" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),True, False)}"/>
+    <apex:enhancedList type="Deal_Registration__c" height="400" rowsPerPage="200" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),False, True)}"></apex:enhancedList>   
+
+  <apex:pageBlock rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),False, True)}"> 
+    <apex:pageBlockSection title="Useful Reports" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),False, True)}">
+    <apex:outputLink value="{!$Label.Deal_Reg_EMEA_Open_Cases}" target="_0" >{!$Label.DR_EMEA_Open_Cases_Label}</apex:outputLink>
+    <apex:outputLink value="{!$Label.Deal_Reg_APJ_Open_Cases}" target="_0">{!$Label.DR_APJ_Open_Cases_Label}</apex:outputLink>
+
+  
+    </apex:pageBlockSection>
+    </apex:pageblock>
+</apex:page>

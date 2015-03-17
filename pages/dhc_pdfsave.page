@@ -1,0 +1,129 @@
+<apex:page standardController="Opportunity_Plan__c" showHeader="false" sidebar="false" renderAs="pdf">
+<style>
+
+
+</style>
+<apex:form style="" >
+
+<h1 style="font-size:28px;"><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Deal Health Checklist Summary</h1>
+<hr size="1"></hr>
+<br></br>
+
+
+<table width="100%" border="1" cellpadding="5" cellspacing="0" class="table">
+    <tr>
+        <td style="width:50%;">Account Name:&nbsp;<apex:outputField value="{!Opportunity_Plan__c.Opportunity__r.Account.Name}" /></td>
+        <td style="width:50%;">Opportunity Plan Name:&nbsp;<apex:outputfield value="{!Opportunity_Plan__c.Name}"/></td>
+    </tr>
+    <tr border="1">
+        <td style="width:50%;">Opportunity:&nbsp;<apex:outputField value="{!Opportunity_Plan__c.Opportunity__c}" /></td>
+        <td style="width:50%;">Sales Stage:&nbsp;<apex:outputField value="{!Opportunity_Plan__c.Sales_Stage__c}" /></td>
+    </tr>
+    <tr border="1">
+        <td style="width:50%;">Owner:&nbsp;<apex:outputField value="{!Opportunity_Plan__c.Owner__c}" /></td>
+        <td style="width:50%;">Close Date:&nbsp;<apex:outputField value="{!Opportunity_Plan__c.Opp_Close_Date__c}" /></td>
+    </tr>
+</table>
+               
+<br> </br>
+    
+          
+<!-- <apex:iframe src="apex/oppheader?id={!Opportunity_Plan__c.Id}" height="130" width="100%"/>   -->            
+               
+               
+
+<br />
+
+<h2 style="font-size: 16px;">Assessment for Sales Stage: <b><apex:outputField value="{!Opportunity_Plan__c.Sales_Stage__c}"/> </b></h2>
+                   
+<table width="100%" border="1" cellpadding="5" cellspacing="0" class="table">
+  <tr>
+    <th class="csfth" scope="col"><div  style="">Critical Success Factors</div></th>
+    <th class="statusth" scope="col"></th>
+    <th class="assessmentth" scope="col">Assessment</th>
+    <th class="commentsth" scope="col">Get to Green Plan</th>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Will they buy?"/></td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Will_the_client_buy__c,1)+'_dhc.gif')}'); height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Will_the_client_buy__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><div  style=""><apex:outputField value="{!Opportunity_Plan__c.DHC_2_Will_the_client_buy__c}"/></div></td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_WTB__c}" /></td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Buyer Experience with HP"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Buyer_experience_with_HP__c,1)+'_dhc.gif')}'); height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Buyer_experience_with_HP__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Buyer_experience_with_HP__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Buyer_Experience__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Client Relationship and Insight"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Client_Relationship_and_Insight__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Client_Relationship_and_Insight__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Client_Relationship_and_Insight__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Client_Relationship__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Client Decision Process"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Client_Decision_Process__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Client_Decision_Process__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Client_Decision_Process__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Client_Decision_Process__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Competitive Position"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Competitive_Position__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Competitive_Position__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Competitive_Position__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Competitive_Position__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Solution Scope"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Solution_Scope__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Solution_Scope__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Solution_Scope__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Solution_Scope__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Differentiation"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Differentiation__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Differentiation__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Differentiation__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Differentiation__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Teaming"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Teaming__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Teaming__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Teaming__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Teaming__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Sales Team Staffing"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Sales_Team_Staffing__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Sales_Team_Staffing__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Sales_Team_Staffing__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Sales_Team_Staffing__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Deal Shape and Pricing"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Deal_Shape_and_Pricing__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Deal_Shape_and_Pricing__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Deal_Shape_and_Pricing__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Deal_Shape_and_Pricing__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Delivery Leadership Team"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Delivery_Leadership_Team__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Delivery_Leadership_Team__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Delivery_Leadership_Team__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Delivery_Leadership_Team__c}" />&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="csfth"><apex:outputText style="" value="Terms and Conditions"  />&nbsp;</td>
+    <td class="statusth" style="background-image:url('{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Terms_and_Conditions__c,1)+'_dhc.gif')}');height:24;width=24"><img src="{!URLFOR($Resource.dhc,LEFT(Opportunity_Plan__c.DHC_2_Terms_and_Conditions__c,1)+'_dhc.gif')}" style="size" /></td>
+    <td class="assessmentth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_2_Terms_and_Conditions__c}" />&nbsp;</td>
+    <td class="commentsth"><apex:outputField style="" value="{!Opportunity_Plan__c.DHC_Comments_Terms_and_Conditions__c}" />&nbsp;</td>
+  </tr>
+</table>
+<br /><br />
+<table width="100%" border="0" cellpadding="5" style="border:0px;">
+  <tr>
+    <td class="trfooter" width="150px" style="border:0px;">Last Updated By:
+    <apex:outputfield value="{!Opportunity_Plan__c.DHC_last_updated__c}"/></td>
+    
+  </tr>
+</table>
+</apex:form>
+
+</apex:page>

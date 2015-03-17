@@ -1,0 +1,23 @@
+<apex:page standardController="Account_Plan__c" extensions="salesPrismStatsController">
+<table bgcolor="#ffffff" width="150" height="20" border="0" cellspacing="0" cellpadding="0" valign="top">
+    <tr valign="top" height="100%" border="0" cellspacing="0" cellpadding="0">
+        <td align="left" valign="top" height="20" border="0" cellspacing="0" cellpadding="0">
+            <apex:outputLink rendered="{!isPrismAccount}" target="_parent" value="{!linkToPrism}">Go to salesPRISM</apex:outputLink>
+        </td>
+    </tr>
+</table>
+<apex:form >
+ <apex:pageBlock title="SalesPrism Account Details">
+            <apex:pageblockButtons location="top" >
+                <apex:outputText value=""/>
+                <apex:commandLink value="" />
+            </apex:pageblockButtons>
+            <apex:pageblockTable value="{!statsList}" var="s">
+               <apex:repeat value="{!$ObjectType.salesprism__Account_Details__c.FieldSets.statsbox}" var="f">
+                    <apex:column value="{!s[f]}"/>
+                </apex:repeat>
+                 
+            </apex:pageblockTable>
+        </apex:pageBlock>
+</apex:form>      
+</apex:page>

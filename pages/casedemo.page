@@ -1,0 +1,14 @@
+<apex:page standardController="Case" extensions="reopenController" >
+    <script type="text/javascript"> 
+        var casStatus = "{!Case.Status}";
+        
+        if(casStatus == 'Resolved')
+        {
+            document.getElementById('nrbtn').hide();
+        }
+    </script>
+  <apex:form >
+    <apex:commandButton value="Re-Open" id="nrbtn" disabled="{!IF(Case.Status=='Re-Open',false,true)}" />
+    <apex:detail subject="{!Case}"/>
+  </apex:form>
+</apex:page>

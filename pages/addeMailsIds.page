@@ -1,0 +1,173 @@
+<apex:page controller="conAddmailsIds" sidebar="true" showHeader="true" tabStyle="Apttus__APTS_Agreement__c" >
+    <apex:form >
+        <style type="text/css">
+            .customPopup {
+            background-color: white;
+            border-style: solid;
+            border-width: 2px;
+            left: 20%;
+            padding: 10px;
+            position: absolute;
+            z-index: 9999;            
+            width: 500px;
+            top: 0%;
+            }
+            .disabledTextBox {
+            background-color: white;
+            border: 1px solid;
+            color: black;
+            cursor: default;
+            width: 90px;
+            display: table;
+            padding: 2px 1px;
+            text-align:right;
+            }  
+            .pbSubheader{
+            background-color: black;
+            border-color: none;
+            } 
+            .closeButton {
+            float: right;
+            }
+        </style>   
+        <apex:pageBlock id="block">
+            <apex:pageMessages id="errorMsg" />  
+            <apex:pageBlockSection >  
+                <apex:panelGroup >            
+                    <apex:selectList id="select" value="{!selectId}" size="1">                        
+                        <apex:selectOptions value="{!autoRun}" />
+                    </apex:selectList>
+                    <apex:inputText id="searchText" value="{!searchText}"/>
+                    <apex:commandButton value="Search" action="{!getAllEmployees}" rerender="resultDisplay,errorMsg" status="status"/>             
+                </apex:panelGroup>
+            </apex:pageBlockSection>            
+            <apex:actionStatus id="status" startText="Searching... please wait..."/>
+        </apex:pageBlock>
+        <apex:outputPanel id="resultDisplay">
+            <apex:pageBlock >
+                <b><apex:outputLabel value="No of Pages: " style="align:right"></apex:outputlabel>
+                <apex:outputText value="{!NoPage}" style="align:right" />
+                <center>
+                    <apex:outputText value="<"/>        
+                    <apex:outputText value="{!pageNumber}"  />
+                    <apex:outputText value=">"/> 
+                </center> </b>
+                <apex:pageBlockButtons location="top" >
+                    <apex:commandButton value="Prev" action="{!prevpg}" disabled="{!NOT(showprev)}" status="PagingStatus" rerender="resultDisplay"/>            
+                    <apex:commandButton value="Next" action="{!nextpg}" disabled="{!NOT(shownext)}" status="PagingStatus" rerender="resultDisplay"/>
+                <apex:actionStatus startText="Requesting..." id="PagingStatus"/>
+                </apex:pageBlockButtons> 
+                <apex:pageBlockSection title="Search Results" id="resultsBlock" columns="1">            
+                    <apex:pageBlockTable id="searchResult" value="{!searchResults}" var="item">
+                        <apex:column width="20">
+                            <apex:inputCheckbox value="{!item.selected}"/>
+                        </apex:column>
+                        <apex:column headerValue="Name" width="100">
+                            <apex:commandLink value="{!item.fullname}" action="{!getEmployeesDetails}" >
+                                <apex:param name="detName" value="{!item.mail}"/>
+                            </apex:commandLink> 
+                        </apex:column>
+                        <apex:column value="{!item.city},{!item.hpPayrollCountryCode}" headerValue="Location" width="100"/>  
+                        <apex:column value="{!item.telephoneNumber }" headerValue="work No" width="100"/>    
+                        <apex:column value="{!item.mail}" headerValue="Email ID" width="100"/>
+                        <apex:column value="{!item.organisation}" headerValue="Organisation" width="100"/>
+                        <apex:column value="{!item.manager}" headerValue="Manager" width="100"/> 
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                
+                
+                <apex:commandButton value="Additional To" action="{!addToList}" rerender="displayDataPanel,searchResult"/>
+                <apex:commandButton value="CC" action="{!addCCList}" rerender="displayDataPanel,searchResult"/>
+                <apex:commandButton value="BCC" action="{!addBCCList}" rerender="displayDataPanel,searchResult"/>
+                
+                <apex:outputPanel id="displayDataPanel">            
+                <br/><br/> Additional TO Recipients : <br/>
+                <apex:outputText value="{!toMailIds}"/> <br/>
+                <br/><br/> CC Recipients : <br/>
+                <apex:outputText value="{!ccMailIds}"/> <br/>       
+                <br/><br/> BCC Recipients : <br/>
+                <apex:outputText value="{!bccMailIds}"/> <br/> 
+                </apex:outputPanel> 
+                          
+                <apex:outputPanel id="popup">
+                    <apex:outputPanel id="popInnerOutputPnl" styleClass="customPopup" layout="block" rendered="{!displayPopUp}">  
+                        <apex:pageBlock title="Employee Details" id="empDetails">           
+                            <apex:pageBlockSection title="Employee Details Section" id="empDetailsSec" columns="2" >                
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="First Name: " for="name"/>
+                                <apex:outputText value="{!empDetails.givenName}" id="name"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Last Name: " for="name"/>
+                                <apex:outputText value="{!empDetails.lastName}" id="name"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Full Legal Name: " for="name"/>
+                                    <apex:outputText value="{!empDetails.hpLegalName}" id="name"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Company Name: " for="name"/>
+                                    <apex:outputText value="{!empDetails.hpSourceCompany}" id="name"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Address: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.postalAddress}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="City: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.city}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="State: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.state}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Postal Code: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.postalCode}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Country: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.country}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Mail: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.mail}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Location Code: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.hpLocationCode}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Business Unit: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.organisation}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Business Group: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.hpBusinessGroup}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Business Region: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.hpBusinessRegion}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Telephone: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.telephoneNumber}" id="mail"/> 
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Mobile: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.mobile}" id="mail"/> 
+                                </apex:pageBlockSectionItem> 
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Manager Name: " for="mail"/>
+                                    <apex:outputText value="{!empDetails.manager}" id="mail"/> 
+                                </apex:pageBlockSectionItem>          
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                        <apex:commandButton value="Close" title="Close the popup" action="{!closePopup}" styleClass="closeButton" rerender="popup"/>                  
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <br/><br/> <apex:commandButton value="Save" action="{!conAddEmailsIds}"/>        
+            </apex:pageBlock> 
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

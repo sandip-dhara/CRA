@@ -1,0 +1,167 @@
+<apex:page controller="Productsquickaddlookupcontroller" showHeader="false" id="page">
+    <body class="lookupTab  LookupSearchFrame" style="margin: 10px;" id="body">   
+    <apex:sectionHeader title="{!productlevel}" subtitle="{!$Label.Products_Search}"/>
+    &nbsp;
+        <apex:form id="frm">
+            <!-- Search Panel for New Products to be added -->
+            <apex:panelGrid columns="15" style="white-space: nowrap;" id="pg"  >
+            &nbsp;
+                <!--apex:commandButton id="goSearch" action="{!searchProduct}" reRender="searchLayout"  rendered="true" value="{!$Label.Search}"  style="width:80px" status="refreshing" -->
+                <!-- <apex:actionSupport immediate="true" event="onclick"  action="{!searchProduct}"  rerender="searchLayout"/> -->
+
+                &nbsp;&nbsp;
+                <apex:outputLabel for="searchBusinessGroup">
+                    <strong>{!$Label.BG}</strong>
+                </apex:outputLabel>
+                <apex:actionRegion >
+                <apex:selectList value="{!searchBusinessGroup}" size="1"  id="BGpick"  rendered="{!!bgnotnull}">
+                    <apex:selectOptions value="{!BGPicklist}" />   
+                    <apex:actionSupport event="onchange" action="{!OnchangeOfBGmock}"  status="refreshing"  reRender="PB" oncomplete="definegbupickvalue()"/>                  
+                </apex:selectList>
+                <apex:actionFunction name="onchangeofbgvalue"  action="{!OnchangeofBG}"  immediate="false" reRender="GBUpick" status="refreshing"/>
+                <apex:actionFunction name="allgbupicklistvalues"  action="{!GBUPicklistvalues}"  immediate="false" reRender="GBUpick" status="refreshing"/>
+                </apex:actionRegion>
+                <apex:outputText value="{!searchBusinessGroup}" rendered="{!bgnotnull}"/>
+                &nbsp;
+                <apex:outputLabel for="searchGlobalBusinessUnit">
+                    <strong>{!$ObjectType.Product2.fields.GBU__c.label} :</strong>
+                </apex:outputLabel>
+                <apex:actionRegion >
+                <apex:selectList value="{!searchGlobalBusinessUnit}" size="1" id="GBUpick" rendered="{!!gbunotnull}">
+                    <apex:selectOptions value="{!GBUPicklist}"/>  
+                    <apex:actionSupport event="onchange" action="{!OnchangeOfGBU}"  status="refreshing"  reRender="PB"/>                  
+                </apex:selectList>
+                <!--apex:actionFunction name="onchangeofgbuvalue"  action="{!searchProduct}"  immediate="false" reRender="BGpick" status="refreshing"-->
+                </apex:actionRegion>
+                <apex:outputText value="{!searchGlobalBusinessUnit}" rendered="{!gbunotnull}"/>
+                &nbsp;
+                <apex:outputLabel for="productLine2">
+                    <strong>{!$ObjectType.Product2.fields.Product_Line__c.label} :</strong>
+                </apex:outputLabel>
+                <apex:inputText id="productLine2"  style="width:200px" value="{!searchProductLine}" onkeypress="return GetChar(event); false;"/>
+                &nbsp;
+                <apex:outputLabel for="subProductLine2" rendered="{!Issubproductlevel}">
+                    <strong>{!$ObjectType.Product2.fields.Sub_Product_Line__c.label} :</strong>
+                </apex:outputLabel>
+                <apex:inputText id="subProductLine2"  style="width:200px" value="{!searchSubProductLine}" onkeypress="return GetChar(event); false;" rendered="{!Issubproductlevel}"/>
+                <apex:commandButton id="goSearch" action="{!searchProduct}" reRender="searchLayout"  rendered="true" value="{!$Label.Search}"  style="width:80px" status="refreshing" />
+                <apex:actionFunction name="entersearchs" action="{!searchProduct}" reRender="searchLayout" status="refreshing"/>
+            </apex:panelGrid>
+            <br/>
+            <apex:panelGrid columns="1"  >
+                <apex:panelGroup >
+                
+                <Strong>
+                <apex:selectRadio value="{!filters}">
+                    <apex:selectOption itemValue="startswith" itemLabel="{!$Label.Starts_with}" />
+                    <apex:selectOption itemValue="contains" itemLabel="{!$Label.Contains}" />
+                </apex:selectRadio>
+                </Strong>
+                </apex:panelGroup>
+            </apex:panelGrid>
+            <apex:actionStatus id="refreshing">
+                <apex:facet name="start">
+                    <img src="{!$Resource.AjaxAnimation}" />
+                    &nbsp;&nbsp;
+                    <FONT COLOR="black" SIZE="2"><b><i>{!$Label.Refreshing_Records}</i></b></FONT>
+                </apex:facet>
+            </apex:actionStatus>
+            <br/><br/>  
+            <!-- New Products Displayed here -->
+            <!--<apex:outputPanel id="searchLayout" layout="block">-->
+             <apex:outputPanel id="searchLayout">
+
+               <apex:pageBlock id="PB" >
+                
+                    <apex:outputLabel id="LargeProductsPanel"  rendered="{!largeProductFound}">
+                        <center> <b style="color:red;"> {!$Label.Displaying_first} {!$Label.Query_Limit} {!$Label.search_results}</b> </center>
+                    </apex:outputLabel>
+                    <apex:pageblockTable value="{!lstPricebookEntries}" var="product">
+                        <apex:column headerValue="{!$Label.Product_Name}" id="pr">
+                            <a onclick="selectProduct('{!product.pe.Id}', '{!JSENCODE(product.pe.Name)}','{!JSENCODE(product.pe.Product2.Business_Group__c)}','{!JSENCODE(product.BGUName)}','{!JSENCODE(product.pe.Product2.Product_Line__c)}','{!JSENCODE(product.pe.Product2.Sub_Product_Line__c)}','{!TextBox}', '{!product.pe.Product2.Service__c}','{!section}')" onmouseover="displayResult('{!$Component.pr}')">{!product.pe.Name} </a>
+                        </apex:column>   
+                        <apex:column headerValue="{!$ObjectType.Product2.fields.Business_Group__c.label}" value="{!product.pe.Product2.Business_Group__c}"/>
+                        <apex:column headerValue="{!$Label.GBU}" value="{!product.pe.Product2.GBU__c}"/>
+                        <apex:column headerValue="{!$ObjectType.Product2.fields.Product_Line__c.label}" value="{!product.pe.Product2.Product_Line__c}"/>
+                        <apex:column headerValue="{!$ObjectType.Product2.fields.Sub_Product_Line__c.label}" value="{!product.pe.Product2.Sub_Product_Line__c}" rendered="{!Issubproductlevel}"/>
+                        <!--apex:column >
+                        <apex:inputField value="{!product.pe.UnitPrice}" id="unitPrice" rendered="false"/> 
+                        <apex:column--> 
+                                        </apex:pageblockTable> 
+                </apex:pageBlock> 
+                <apex:outputLabel id="NoProductsPanel"  rendered="{!noProductFound}">
+                    <center> <b> {!$Label.No_Search_Results} </b> </center>
+                </apex:outputLabel>
+            </apex:outputPanel>
+           <!-- <apex:actionFunction action="{!GBUFilter}" name="GBU" reRender="GBUpick,PB" status="refreshing">
+                <apex:param name="BGparam" assignTo="{!BGvalue}" value=""/>
+            </apex:actionFunction>
+            <apex:actionFunction action="{!searchProduct}" name="search" reRender="PB" status="refreshing"/>  -->
+            
+        </apex:form>
+        <script>
+        /* This method sends selected Product data to the parent Page*/
+        function selectProduct(productId, productName, businessGroup, globalBusinessUnit, productLine, subProductLine, textBox,serviceFlag,section) {
+           
+            window.parent.opener.backPopulate(productId, productName, businessGroup, globalBusinessUnit, productLine, subProductLine, textBox, serviceFlag,section);
+        }
+        
+        /* This method changes the cursor style */
+        function displayResult(p1){
+            document.getElementById(p1).style.cursor="pointer";
+        }
+       function GBUFilter(){
+            //alert("before val");
+            
+            var bgval=document.getElementById('page:frm:BGpick').value;
+            document.getElementById('page:frm:GBUpick').disabled=true;
+            //alert(bgval);
+            GBU(bgval);
+            search();
+        }
+   /*Code to Click search button on click of Enter */    
+         function GetChar(e){  
+            if(window.event){                    
+                key = window.event.keyCode;                 
+                //IE               
+            } 
+            else{                    
+                key = e.which;     //firefox               
+            }               
+            if(key == 13) {                 
+                entersearchs();
+                return false;                              
+            }     
+        } 
+        /* For R4 requriement*/
+ 
+        
+  function definegbupickvalue(){
+     var bgpickvalue=document.getElementById('page:frm:BGpick').value;
+      if(bgpickvalue=='None'){      
+          document.getElementById('page:frm:GBUpick').disabled=true;
+          allgbupicklistvalues();
+          
+      }else{
+          
+          document.getElementById('page:frm:GBUpick').disabled=true;
+          onchangeofbgvalue();
+          
+      }
+     
+ }
+ 
+     function definebgpickvalue(){     
+        var bgpickvalue=document.getElementById('page:frm:BGpick').value; 
+        document.getElementById('page:frm:BGpick').disabled=true;
+        alert(bgpickvalue);
+        //onchangeofgbuvalue();
+        if(bgpickvalue=='None'){
+                    document.getElementById('page:frm:BGpick').disabled=true;
+                     //onchangeofgbuvalue();
+         }    
+     }
+        
+        </script>
+    </body>
+</apex:page>

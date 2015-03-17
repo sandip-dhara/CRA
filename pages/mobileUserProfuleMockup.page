@@ -1,0 +1,428 @@
+<apex:page controller="AthenaUserProfile" extensions="mobileUserData" showheader="false" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.slideshow, 'responsiveslides.css')}" />
+        <apex:includeScript value="{!URLFOR($Resource.slideshow, 'responsiveslides.js')}" />
+        
+        <style type="text/css" rel="stylesheet">
+            @font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            body{
+                font-family:"HP Simplified",sans-serif;
+                color:#fff;
+            }
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif; 
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                    .infoFld .menu_button{
+                    position:absolute;
+                    top:14px;
+                    right:6px;
+                    width:24px;
+                    height:24px;
+                    z-index:3;
+                }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:20px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:29px;
+            }
+            
+            .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+        </style>
+    
+    <body>
+        <div data-role="page" id="startpage">
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>            
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">                
+                <li data-icon="false"><a data-ajax="false" href="/apex/mSLPLanding0" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+          <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+    </div>
+
+       <div data-role="content" data-scroll="true">
+     <div class="column1">
+    <apex:image url="{!UserDtls.FullPhotoUrl}" styleClass="communityOwnerImg"/>
+    </div>
+    <div class="column2">
+         <h2>{!UserDtls.name}</h2>
+         <label>{!UserDtls.Department}</label>
+     </div>
+     
+     <div id="aboutme" style="clear:both;">
+     <p>{!UserDtls.AboutMe}</p>
+     </div>
+     
+     <div id="mydetails" style="margin-top:30px;clear:left;">
+         <ul data-role="listview">
+                    <li style="font-weight:bold;">Authored Boards<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Authored.png')}"/></span><span style="color: #000000; background:transparent;border:none;float:right;margin-right:10px;">{!myBoardsCount}</span></li>
+                    <li style="font-weight:bold;">Contributed Boards<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Communities.png')}"/></span><span style="color: #000000; background:transparent;border:none;float:right;margin-right:10px;">{!myBoardsContributedCount}</span></li>
+                    <li style="font-weight:bold;">Followers<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Followers.png')}"/></span><span id="followValue" style="color: #000000; background:transparent;border:none;float:right;margin-right:10px;">{!followersCount}</span></li>
+                    <li style="font-weight:bold;">Following<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Following.png')}"/></span><span style="color: #000000; background:transparent;border:none;float:right;margin-right:10px;">{!followingCount}</span></li>
+                </ul>
+     </div>
+     
+      <div class="ui-grid-a">
+                <div class="ui-block-a">
+                     <div id="myfollow" style="{!IF((IsLoggedInUser),"display:none","display:block")};margin-top:30px;">
+                     <a href="#" data-role="button" id="followButton" data-mini="false" style="background:#F9A006;color:#ffffff;line-height:30px;" onclick="followPerson()" >
+                     <div id="followDiv">
+                     <img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Following-White.png')}" style="height:30px;vertical-align:middle;margin-right:5px" id="followText"/>
+                     Follow
+                     </div>
+                     </a>
+                     </div>
+                     <div style="visibility:hidden; height:0px">
+                <apex:form id="flwForm">
+                      <apex:OutputPanel >         
+                          <apex:commandbutton value="Follow" style="{!IF((IsLoggedInUser),"display:none","display:block")}" action="{!followOwner}" id="btnFollow" styleClass="btnAthena btn-primary shareBtn" rendered="{!!IsFollowOwner}">
+                          </apex:commandbutton>
+                          <apex:commandbutton value="Unfollow" style="{!IF((IsLoggedInUser),"display:none","display:block")}" action="{!unfollowOwner}" id="Commandbutton1" styleClass="btnAthena btn-primary shareBtn" rendered="{!IsFollowOwner}">
+                          </apex:commandbutton>
+                      </apex:OutputPanel>
+                  </apex:form>
+                  </div>
+                </div>
+                <div class="ui-block-b">
+                    <div id="myemail" style="{!IF((IsLoggedInUser),"display:none","display:block")}; margin-top:30px;">
+                    <a href="mailto:{!UserDtls.Email}" data-role="button" data-mini="false" style="background:#F9A006;color:#ffffff;line-height:30px;">
+                    <div>
+                    <img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Email-Large.png')}" style="height:30px;vertical-align:middle;margin-right:5px" />
+                    Email</div>
+                    </a>
+                 </div>
+                </div>
+      </div><!-- /grid-a -->
+     </div> <!--Content-->
+        
+      </div><!-- page-->
+    </body>
+    
+    <style>
+        .ui-panel-inner{padding: 0}
+    </style>
+    <script type="text/javascript">
+        $(function () {
+        
+        if({!IsFollowOwner}){
+                $('#followDiv').empty();
+                $('#followDiv').append('<img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Following-White.png')}" style="height:30px;vertical-align:middle;margin-right:5px" id="followText"/>' + "Unfollow").trigger('create');
+            }
+            else{
+                $('#followDiv').empty();
+                $('#followDiv').append('<img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Following-White.png')}" style="height:30px;vertical-align:middle;margin-right:5px" id="followText"/>' + "Follow").trigger('create');
+            }
+
+            if(localStorage.getItem("lastState")==$('#followButton').text()||localStorage.getItem("lastState")==""||localStorage.getItem("lastState")==undefined){
+                //do nothing
+            }
+            else{
+                if(localStorage.getItem("lastState")=='Follow'){
+                    $("#followValue").text({!followersCount}+1);
+                }
+                else{
+                    //$("#followValue").text({!followersCount}-1);
+                }
+            }
+        
+            $(window).on('resize', adjust_height);
+            
+            $('#buttonSearch').on('ontap click', function(e){
+                setTimeout(function(){
+                    $('#search-basic').focus();
+                }, 200);
+            });
+        });
+       
+        
+        $('#search-basic').live("keypress", function(e) {
+            
+            /* ENTER PRESSED*/
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                var searchTerm= $('#search-basic').val();
+                
+                if (searchTerm.length <=2) {
+                    alert('A minimum of 3 characters should be entered');
+                    return;
+                }
+                
+                if (searchTerm.length >=3998) {
+                        alert('A maximum of 3997 characters should be entered');
+                        return;
+                    }
+                
+                window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+searchTerm;
+                $.mobile.loading( "show", {
+                      text: "Loading...",
+                      textVisible: true,
+                      textOnly: false
+                } ); // Displays load spinner while loading
+            }
+        })
+        
+         function highlightRow(elem){
+            $(elem).css({background: '#FF8800'});
+            setTimeout(function(){
+                 $(elem).css({background: 'transparent'});
+            }, 800);
+        }  
+        
+        $('#listviewmenu').on('click tap mousedown', 'li', function() {
+            highlightRow($(this));
+        });
+        
+        $('#menuImage').on('click tap mousedown touchstart', '', function() {
+            $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });
+        
+        $('#menuImageList').on('click tap mousedown touchstart', '', function() {
+            $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });    
+        
+        $('#searchImage').on('click tap mousedown touchstart', '', function() {
+            $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+            setTimeout(function(){
+                 $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+            }, 300);
+        });  
+        
+         $("a[href^='mailto:']").on("click",function() {
+            window.top.location = $(this).prop("href");
+            return false;
+            });
+            
+            function followPerson(){
+                if({!IsFollowOwner}){
+                    $("[id$=Commandbutton1]").click();
+                    localStorage.setItem("lastState", "Unfollow");
+                    localStorage.setItem("lastValue", {!followersCount});
+                }
+                else{
+                    $("[id$=btnFollow]").click();
+                    localStorage.setItem("lastState", "Follow");
+                    localStorage.setItem("lastValue", {!followersCount});
+                }
+            };                      
+                     
+    </script>
+    <style type="text/css">
+        .starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+        .image-container {
+            margin: 1px;
+            padding: 1px;
+            width:120px;
+            height:120px;
+            background-color: #000000;
+        }
+        
+        .communityOwnerImg {
+    margin-top:3px;
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    -webkit-border-radius: 40px;
+    -moz-border-radius: 40px;
+    border: 1px solid white;
+    }
+    
+    .column1{
+        float:left;
+        margin:1%;
+    }
+    
+    .column2{
+        float:left;
+        margin:1%;
+    }
+    
+    #startpage{
+    overflow:auto;
+    background:#ffffff;
+    }
+    
+    .ui-listview .ui-btn-up-d, .ui-listview .ui-btn-down-d, .ui-listview .ui-btn-hover-d {
+    background: -moz-linear-gradient(white, white) repeat scroll 0 0 white;
+    border: 1px solid #CCCCCC;
+    color: #444444;
+    font-weight: bold;
+    text-shadow: 0 1px 1px white;
+    }
+    </style>
+
+</apex:page>

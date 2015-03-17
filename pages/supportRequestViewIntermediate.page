@@ -1,0 +1,60 @@
+<apex:page standardController="Support_Request__c" extensions="supportRequestViewIntermediateController" action="{!redirect}" sidebar="false">
+<!--Apttus code begins used for alert message after submitting the request -->
+<script src="/resource/jQuery" type="text/javascript"></script>
+<script src="/soap/ajax/26.0/connection.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var j$=jQuery.noConflict();
+    var currentURL=window.location.href;
+    var sId=currentURL.slice(currentURL.indexOf("a17"),currentURL.lastIndexOf("&sf"));
+    var sid = '{!$API.session_id}';
+    var server = 'https://'+window.location.host+'/services/Soap/u/26.0';
+    sforce.connection.init(sid, server);
+    var supportRequestObj= sforce.connection.query("Select Support_Category__c,Support_Sub_Type__c FROM support_request__c where Id='"+sId+"'");
+    var connectionObj= sforce.connection.query("Select Id FROM attachment where parentId='"+sId+"'"); 
+    var connectionObjArr= connectionObj.getArray('records');
+    var supportRecord = supportRequestObj.getArray('records');
+    var supportCategory = supportRecord[0].Support_Category__c;
+    var supportSubType = supportRecord[0].Support_Sub_Type__c;
+    j$(document).ready(function(){
+         if(supportCategory == 'Functional Support' && supportSubType == 'Legal')
+            {
+             var onclickAttr = j$("input[name*=attachFile]").attr('onclick');
+             j$("input[name*=attachFile]").removeAttr('onclick');
+             var redirectUrl = onclickAttr.split("'");
+                j$("input[name*=attachFile]").bind('click', function() {
+                 if(connectionObjArr.length>0){
+                     window.location.href= redirectUrl[1];
+                  }
+                  else{
+                  var isConfirm=confirm("Please do not attach any documents which the customer considers "+'"Restricted"'+" or limited to in-country use only. Such documents should be manually delivered to your local country Legal team.Click "+'"Ok"'+" to proceed with attachments or click "+'"Cancel"'+" to proceed to "+'"Submit"'+" without attachments.");
+                  if(isConfirm){
+                  window.location.href= redirectUrl[1];
+                        }        
+                    }      
+               });
+             
+             setTimeout(function(){
+             j$("span.listTitle").bind('hover',function(){
+                 setTimeout(function(){
+                 j$("input[name*=attachFile]").unbind();
+                 j$("input[name*=attachFile]").bind('click', function() {
+                 if(connectionObjArr.length>0){
+                     window.location.href= redirectUrl[1];
+                  }
+                  else{
+                  var isConfirm=confirm("Please do not attach any documents which the customer considers "+'"Restricted"'+" or limited to in-country use only. Such documents should be manually delivered to your local country Legal team.Click "+'"Ok"'+" to proceed with attachments or click "+'"Cancel"'+" to proceed to "+'"Submit"'+" without attachments.");
+                  if(isConfirm){
+                  window.location.href= redirectUrl[1];
+                        }        
+                    }      
+               });},2000);
+                 });
+              },1000);
+             }
+            });
+                     
+                  
+</script>
+<!-- Apttus CODE End-->
+  <apex:detail rendered="{!showStandardPage}" inlineEdit="true"/>
+</apex:page>

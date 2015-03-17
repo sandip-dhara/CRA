@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>For testing World Region</description>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Country_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Country Name</label>
+        <length>40</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Geographic_Hierarchy__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( NOT( ISBLANK( Country_Name__c ) ) , IF(ISBLANK(ParentId__r.ParentId__r.ParentId__r.ParentName__c),&apos;&apos;, ParentId__r.ParentId__r.ParentId__r.ParentName__c &amp; &quot;;&quot;) &amp; IF(ISBLANK(ParentId__r.ParentId__r.ParentName__c),&apos;&apos;, ParentId__r.ParentId__r.ParentName__c &amp; &quot;;&quot;) &amp; IF(ISBLANK(ParentId__r.ParentName__c),&apos;&apos;, ParentId__r.ParentName__c &amp; &quot;;&quot;) &amp; IF(ISBLANK(ParentName__c),&apos;&apos;, ParentName__c &amp; &quot;;&quot;) &amp; Country_Name__c &amp; &quot;;&quot; , &apos;&apos;)</formula>
+        <label>Geographic Hierarchy</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ParentId__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>ParentId</label>
+        <referenceTo>World_Region__c</referenceTo>
+        <relationshipName>CountryRegionHierarchies</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ParentName__c</fullName>
+        <description>Parent country Name</description>
+        <externalId>false</externalId>
+        <label>ParentName</label>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Region__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( NOT( ISBLANK( Country_Name__c ) ), BLANKVALUE( ParentId__r.ParentId__r.ParentId__r.ParentName__c , BLANKVALUE( ParentId__r.ParentId__r.ParentName__c , BLANKVALUE(  ParentId__r.ParentName__c , BLANKVALUE(  ParentName__c , &apos;&apos; )))), Country_Name__c )</formula>
+        <label>Region</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sub_Region1__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( NOT( ISBLANK( Country_Name__c ) ), IF( NOT( ISBLANK( ParentId__r.ParentId__r.ParentId__r.ParentName__c ) ), ParentId__r.ParentId__r.ParentName__c , IF( NOT( ISBLANK( ParentId__r.ParentId__r.ParentName__c ) ), ParentId__r.ParentName__c , IF( NOT( ISBLANK( ParentId__r.ParentName__c) ), ParentName__c, Country_Name__c) ) ), &apos;&apos;)</formula>
+        <label>Sub Region1</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sub_Region2__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( NOT( ISBLANK( Country_Name__c ) ), IF( NOT( ISBLANK( ParentId__r.ParentId__r.ParentId__r.ParentName__c ) ), ParentId__r.ParentName__c , IF( NOT( ISBLANK( ParentId__r.ParentId__r.ParentName__c ) ), ParentName__c , Country_Name__c ) ), &apos;&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Sub Region2</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sub_Region3__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( NOT( ISBLANK( Country_Name__c ) ), IF( NOT( ISBLANK( ParentId__r.ParentId__r.ParentId__r.ParentName__c ) ), ParentName__c , Country_Name__c ), &apos;&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Sub Region3</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>World Region</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Country_Name__c</columns>
+        <columns>ParentId__c</columns>
+        <columns>Geographic_Hierarchy__c</columns>
+        <columns>Region__c</columns>
+        <columns>Sub_Region1__c</columns>
+        <columns>Sub_Region2__c</columns>
+        <columns>Sub_Region3__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+        <language>en_US</language>
+    </listViews>
+    <listViews>
+        <fullName>All1</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>All_Fields</fullName>
+        <columns>NAME</columns>
+        <columns>ParentId__c</columns>
+        <columns>ParentName__c</columns>
+        <columns>Country_Name__c</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>LAST_UPDATE</columns>
+        <filterScope>Everything</filterScope>
+        <label>All_Fields</label>
+    </listViews>
+    <nameField>
+        <label>World Region</label>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>World Regions</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

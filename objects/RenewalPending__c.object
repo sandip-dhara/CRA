@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Object required for the Re-Processing of Rejected Contracts for Opportunity Renewal</description>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>AccountId__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Account</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>RenewalPending</relationshipLabel>
+        <relationshipName>RenewalPending</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Account_AMID_L2__c</fullName>
+        <externalId>false</externalId>
+        <formula>AccountId__r.AMID_L2__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Account AMID L2</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Account_Available_Flag__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Domain Account Available Flag</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Account_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>AccountId__r.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Account Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Account_id__c</fullName>
+        <externalId>false</externalId>
+        <formula>AccountId__r.Id</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Account Id</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Business_Work_Stream__c</fullName>
+        <description>Example   Pending Renewals for Business Work Stream</description>
+        <externalId>false</externalId>
+        <label>Business Work Stream</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CMU_MDCP_Organization_ID__c</fullName>
+        <description>MDCP_Organization_ID from CMU related to CRS ID [Sold to Customer id] from Contract</description>
+        <externalId>false</externalId>
+        <label>CMU MDCP Organization ID</label>
+        <length>20</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Case_Safe_ID__c</fullName>
+        <externalId>false</externalId>
+        <formula>Id &amp; 
+MID(&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ012345&quot;,( 
+IF(FIND(MID(Id,1,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,1,0) 
++IF(FIND(MID(Id,2,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,2,0) 
++IF(FIND(MID(Id,3,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,4,0) 
++IF(FIND(MID(Id,4,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,8,0) 
++IF(FIND(MID(Id,5,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,16,0) 
+)+1,1) 
+&amp; 
+MID(&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ012345&quot;,( 
+IF(FIND(MID(Id,6,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,1,0) 
++IF(FIND(MID(Id,7,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,2,0) 
++IF(FIND(MID(Id,8,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,4,0) 
++IF(FIND(MID(Id,9,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,8,0) 
++IF(FIND(MID(Id,10,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,16,0) 
+)+1,1) 
+&amp; 
+MID(&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ012345&quot;,( 
+IF(FIND(MID(Id,11,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,1,0) 
++IF(FIND(MID(Id,12,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,2,0) 
++IF(FIND(MID(Id,13,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,4,0) 
++IF(FIND(MID(Id,14,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,8,0) 
++IF(FIND(MID(Id,15,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,16,0) 
+)+1,1)</formula>
+        <label>Case Safe ID</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_AMID_L2__c</fullName>
+        <description>AMID_L2 from Contract  Feed of SAP</description>
+        <externalId>false</externalId>
+        <label>Contract AMID L2</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_AMP_ID__c</fullName>
+        <description>Contract AMP ID</description>
+        <externalId>false</externalId>
+        <label>Contract AMP ID</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_Category__c</fullName>
+        <externalId>false</externalId>
+        <label>Domain Category</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contract_End_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Domain End Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Contract_Start_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Domain Start Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Doc_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Domain Document Type</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Error_Code__c</fullName>
+        <externalId>false</externalId>
+        <label>Error Code</label>
+        <length>20</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Error_Message__c</fullName>
+        <externalId>false</externalId>
+        <label>Error Message</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Group_contract_no__c</fullName>
+        <externalId>false</externalId>
+        <label>Domain Number</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Procedure__c</fullName>
+        <description>Renewal Data Load to SFDC</description>
+        <externalId>false</externalId>
+        <label>Procedure</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Process_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Process Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Region__c</fullName>
+        <externalId>false</externalId>
+        <label>Region</label>
+        <length>50</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SOld_To_Customer_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>Sold To Customer ID</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sales_Org__c</fullName>
+        <externalId>false</externalId>
+        <label>Sales Org</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sales_doc_number__c</fullName>
+        <externalId>true</externalId>
+        <label>Sales Doc Number</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sales_rep_Available_Flag__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Domain Sales Rep Available Flag</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Ship_to_Customer_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Ship To Customer Name</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Target_Object__c</fullName>
+        <description>Example Contract</description>
+        <externalId>false</externalId>
+        <label>Target Object</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>RenewalPending</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Sales_doc_number__c</columns>
+        <columns>Region__c</columns>
+        <columns>Error_Message__c</columns>
+        <columns>Contract_Category__c</columns>
+        <columns>Doc_Type__c</columns>
+        <columns>SOld_To_Customer_ID__c</columns>
+        <columns>Status__c</columns>
+        <columns>Account_Available_Flag__c</columns>
+        <columns>Sales_rep_Available_Flag__c</columns>
+        <columns>Process_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>All_Failed_Contracts</fullName>
+        <columns>Sales_doc_number__c</columns>
+        <columns>Account_Available_Flag__c</columns>
+        <columns>Sales_rep_Available_Flag__c</columns>
+        <columns>SOld_To_Customer_ID__c</columns>
+        <columns>Error_Message__c</columns>
+        <columns>Status__c</columns>
+        <columns>Process_Date__c</columns>
+        <columns>Region__c</columns>
+        <columns>Sales_Org__c</columns>
+        <columns>Group_contract_no__c</columns>
+        <columns>Contract_Start_Date__c</columns>
+        <columns>Contract_End_Date__c</columns>
+        <columns>Ship_to_Customer_Name__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>CMU_MDCP_Organization_ID__c</field>
+            <operation>equals</operation>
+        </filters>
+        <label>All Failed Contracts</label>
+        <language>en_US</language>
+        <sharedTo>
+            <allInternalUsers></allInternalUsers>
+            <allPartnerUsers></allPartnerUsers>
+        </sharedTo>
+    </listViews>
+    <nameField>
+        <label>Renewal Pending SalesDocNumber</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>RenewalPending</pluralLabel>
+    <searchLayouts>
+        <searchResultsAdditionalFields>Sales_doc_number__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Doc_Type__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Error_Message__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>AccountId__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Contract_AMP_ID__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Group_contract_no__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Contract_End_Date__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Contract_Start_Date__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>SOld_To_Customer_ID__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

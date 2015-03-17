@@ -1,0 +1,36 @@
+<apex:page standardController="Opportunity" extensions="HPQuoteCustomRelatedListController" sidebar="false" >\
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Request New Quote"/>
+                <apex:CommandButton value="Sync"/>
+                <apex:CommandButton value="Show Previous Versions"/>
+                <apex:CommandButton value="Hide"/>
+                <apex:CommandButton value="Show All"/>
+            </apex:pageBlockButtons>
+            <apex:pageblockTable value="{!listHPQuotes}" var="hpQuote">
+                <apex:column >
+                    <apex:facet name="header">Action</apex:facet>
+                    <apex:inputCheckbox />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Quote Name</apex:facet>
+                    <apex:outputLink target="_top" value="/{!hpQuote.Id}" title="{!hpQuote.Name}">{!hpQuote.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!hpQuote.Originating_System_Quote_ID__c}"/>
+                <apex:column value="{!hpQuote.Originating_System_Quote_Version__c}"/>
+                <apex:column value="{!hpQuote.Quote_Start_Date__c}"/>
+                <apex:column value="{!hpQuote.Quote_End_Date__c}"/>
+                <apex:column value="{!hpQuote.Quote_Status__c}"/>
+                <apex:column value="{!hpQuote.Grand_Total__c}"/>
+                <apex:column value="{!hpQuote.Synced_To_Opportunity__c}"/>
+                <apex:column value="{!hpQuote.Last_Synced_to_Opportunity__c}"/>
+                <apex:column value="{!hpQuote.LastModifiedDate}"/>
+            </apex:pageblockTable>
+            <!--
+            <apex:panelGrid columns="4">
+                <apex:commandLink action="{!showAllRecords}">Show All</apex:commandlink>
+            </apex:panelGrid>-->
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

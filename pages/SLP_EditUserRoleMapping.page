@@ -1,0 +1,550 @@
+<apex:page Controller="SLP_EditUserRoleMappingController" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+  <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+  <!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+  <!--[if !IE]><!-->
+  <html lang="en">
+  <!--<![endif]-->
+  <!-- BEGIN HEAD -->
+  <head>
+  <meta charset="utf-8" />
+  <title>Social Learning</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta content="" name="description" />
+  <meta content="" name="author" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+  <script type="text/javascript">
+
+
+
+      function DeleteRow(data) {
+          debugger
+          var oTable = $('#UserResultTable').DataTable();
+          var RowData = $(data).closest("tr").get(0);
+          var FoucsData = $(RowData.cells[1]).text();
+          oTable.fnDeleteRow(oTable.fnGetPosition(RowData));
+          var opt = '<option value="' + FoucsData + '">' + FoucsData + '</option>';
+          $('#KPI_Left').append(opt);
+      }
+      function AddNewRow() {
+          debugger;
+          $('#dvErrorMsg').hide();
+          var oTable = $('#UserResultTable').DataTable();
+          var Selectoptions = $('#KPI_Left option');
+          var EnterVal = $.trim($('#txtAddNewRow').val());
+          var isExist = false;
+          if ($($(oTable)[0].rows[1].cells[0]).text() != "No data available in table") {
+              for (var icnt = 0; icnt < $(Selectoptions).length; icnt++) {
+                  if ($($(Selectoptions)[icnt]).text().toLowerCase() == EnterVal.toLowerCase()) {
+                      isExist = true;
+                  }
+              }
+              for (var iLoop = 0; iLoop < $(oTable)[0].rows.length; iLoop++) {
+                  if ($($(oTable)[0].rows[iLoop].cells[1]).text().toLowerCase() == EnterVal.toLowerCase()) {
+                      isExist = true;
+                  }
+              }
+
+          }
+
+          if (!isExist) {
+              var chkbox = '<input type="checkbox" />';
+
+              $('#UserResultTable').dataTable().fnAddData([
+                  chkbox,
+                  $('#txtAddNewRow').val(),
+                  '<a class="icon-remove pull-right a_underNone editTopic_a colorRed" onclick="DeleteRow(this)" />'
+              ]);
+          }
+          else {
+              $('#dvErrorMsg').show();
+          }
+          $('#DivAddExpertPopup').modal('hide');
+
+      }
+
+      function MoveListBox(selectFrom, moveTo) {
+          debugger;
+          var selectedItems = $(selectFrom).find("option:selected").clone();
+          if (selectedItems.length > 0) {
+              $('span.error-keyup-2').remove();
+
+              UpdateDataTable(selectedItems);
+
+              $(moveTo).append(selectedItems);
+              $(selectFrom).find("option:selected").remove();
+          }
+          else {
+              $('span.error-keyup-2').remove();
+              $(selectFrom).after("<span class='error error-keyup-2' style='color:red;'>Select atleast one Area of Focus </span>");
+          }
+      }
+
+      function UpdateDataTable(selectedItems) {
+
+          var selectedItemsR = $('#KPI_Left').find("option:selected");
+          $(selectedItemsR).remove();
+          //$('#KPI_Left').find("option:selected").remove();
+          for (var iCount = 0; iCount < selectedItems.length; iCount++) {
+
+              var chkbox = '<input type="checkbox" />';
+
+              $('#UserResultTable').dataTable().fnAddData([
+                  chkbox,
+                  $(selectedItems[iCount]).text(),
+                  '<a class="icon-remove pull-right a_underNone editTopic_a colorRed" onclick="DeleteRow(this)" />'
+              ]);
+
+          }
+      }
+
+      function addrow() {
+          $('#txtAddNewRow').val('');
+          $('#DivAddExpertPopup').modal('show');
+
+      }
+      $(function () {
+
+          $('#UserResultTable').dataTable({
+              "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+              "sPaginationType": "bootstrap",
+              "iDisplayLength": 5,
+              "oLanguage": {
+                  "sLengthMenu": "_MENU_ records per page",
+                  "oPaginate": {
+                      "sPrevious": "Prev",
+                      "sNext": "Next"
+                  }
+              },
+              "aoColumnDefs": [{
+                  'bSortable': true,
+                  'aTargets': [0]
+              }]
+          });
+          $('.dataTables_length').css("display", "none");
+      });
+      function SetUserName(userId, userName) {
+          var controlid = document.getElementById('{!$Component.UserProfileForm.txtUserName}');
+          controlid.value = userName;
+          controlid = document.getElementById('{!$Component.UserProfileForm.hdnUserId}');
+          controlid.value = userId;
+          $('#UserNamePopUp').modal('hide');
+          return false;
+      }
+
+      function Redirect(result, event) {
+          window.location.href = window.location.href;
+      }
+
+      function SearchListBox(TextBox, MainListBox, HdnListBox, SecondListBox) {
+          $("#" + TextBox).css({ "background-image": "url(../Content/img/loader.gif)", "background-position": "right", "background-repeat": "no-repeat", "background-size": "contain" });
+          var textbox = $("#" + TextBox).val();
+          var listbox = $('#' + MainListBox).find("option");
+          var hdnlist = $('#' + HdnListBox).find("option");
+          if (textbox == "") {
+              $("#" + TextBox).css({ "background-image": "none" });
+          }
+          var resultMarkup = "";
+          if (listbox.length != hdnlist.length) {
+
+              $.each(hdnlist, function (indexA, valueA) {
+                  $.each($('#' + SecondListBox).find("option"), function (indexB, valueB) {
+
+                      if (valueA.value == valueB.value) {
+                          valueA.selected = "selected";
+                      }
+                  });
+              });
+              $('#' + HdnListBox).find("option:selected").remove();
+          }
+
+          if (listbox.length > hdnlist.length || (listbox.length < hdnlist.length && $('#' + HdnListBox).find("option").length == 0)) {
+              $('#' + HdnListBox).empty();
+              $.each($('#' + MainListBox).find("option"), function (index, e) {
+                  resultMarkup += '<option value="' + e.value + '">' + e.text + '</option>';
+              });
+              $('#' + HdnListBox).html(resultMarkup);
+          }
+
+          resultMarkup = "";
+          var Items = $('#' + HdnListBox).find("option");
+          for (var childIndex = 0; childIndex < Items.length; childIndex++) {
+
+              if (Items[childIndex].text.toLowerCase().indexOf(textbox.toLowerCase()) == 0) {
+                  resultMarkup += '<option value="' + Items[childIndex].value + '">' + Items[childIndex].text + '</option>';
+
+              }
+          }
+          $('#' + MainListBox).empty();
+          $('#' + MainListBox).html(resultMarkup);
+          if (resultMarkup == "") {
+              $("#" + TextBox).css({ "background-image": "none" });
+          }
+          setTimeout(function () { $("#" + TextBox).css({ "background-image": "none" }); }, 300);
+      }
+
+
+      $(document).ready(function () {
+          $('#KPI_Left').empty();
+          var result = document.getElementById('{!$Component.DataForm.AvailableExperts}').value;
+          var output = [];
+          if (result != "[]") {
+              var data = JSON.parse(result);
+              for (var index = 0; index < data.length; index++) {
+                  output.push('<option value="' + data[index]['Id'] + '" title="' + data[index]['Secondary_Industry_Name__c'] + '">' + data[index]['Secondary_Industry_Name__c'] + '</option>');
+              }
+              $('#KPI_Left').append(output.join(""));
+          }
+          $('#btnSaveChanges').click(function () {
+              debugger
+              var controlid = document.getElementById('{!$Component.UserProfileForm.hdnUserId}');
+              var userId = controlid.value;
+              controlid = document.getElementById('{!$Component.UserProfileForm.roles}');
+              var roleId = controlid.value;
+
+              if (roleId == '' && $('#KPI_Right option').length <= 0) {
+                  $('#dvErrMsg').html('Please select a role or area of focus');
+                  $('#dvErrMsg').show();
+                  return false;
+              }
+
+              if (roleId == '' && $('#KPI_Right option').length > 0) {
+                  $('#dvErrMsg').html('Please select a role');
+                  $('#dvErrMsg').show();
+                  return false;
+              }
+
+              // Start By Komala
+              //if(roleId=='')
+              //{
+              //$('#dvErrMsg').html('Please select a role');
+              //$('#dvErrMsg').show();
+              //return false;
+              //}
+
+              //if($('#KPI_Right option').length<=0)
+              //{
+              //$('#dvErrMsg').html('Please select an expert');
+              //$('#dvErrMsg').show();
+              //return false;
+              //}
+
+              // End By Komala
+
+              $('#dvErrMsg').hide();
+
+              //var experts = '';
+              debugger
+
+              //var oTable = $('#UserResultTable').dataTable().fnGetNodes();
+              var lstAreaFocus = new Array();
+              //var NoOfRows = oTable.length;
+
+              //for (var icount = 1; icount <= NoOfRows; icount++)
+              //{
+              //    var IsExpert = oTable[0].rows[icount].cells[0].children[0].checked;
+              //    var AreaOfFocus = $(oTable[0].rows[icount].cells[1]).text();
+
+              //    var clsAreaOfFocus = {
+              //        IsExpert: IsExpert,
+              //        AreaFocusName: AreaOfFocus
+              //    };
+
+              //    lstAreaFocus.push(clsAreaOfFocus);
+              //}
+
+              var oTable = $("#UserResultTable").dataTable().fnGetNodes();
+
+              $(oTable).each(function (index, domElement) {
+                  debugger
+                  var IsExpert = $(domElement).find("td:eq(0)").find('input')[0].checked;
+                  var AreaOfFocus = $(domElement).find("td:eq(1)")[0].innerText;
+                  var clsAreaOfFocus =
+                      {
+                          IsExpert: IsExpert,
+                          AreaFocusName: AreaOfFocus
+                      };
+
+                  lstAreaFocus.push(clsAreaOfFocus);
+              });
+
+              Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SLP_EditUserRoleMappingController.SaveChanges}',
+                    userId,
+                    roleId,
+                    lstAreaFocus,
+                    Redirect
+                );
+          });
+
+          $("#KPIMoveRight").unbind().bind("click", function (event) {
+              $('#dvErrorMsg').hide();
+              var id = $(event.target).attr("id");
+              var selectFrom = "#KPI_Left";
+              //var moveTo = id == "KPIMoveRight" ? "#KPI_Right" : "#KPI_Left";
+              MoveListBoxToTable(selectFrom);
+              var ADelete = $("#KPI_Left option:selected");
+              $(ADelete).remove();
+
+          });
+
+      });
+
+      function MoveListBoxToTable(selectFrom) {
+          debugger;
+          var selectedItems = $(selectFrom).find("option:selected").clone();
+
+          if (selectedItems.length > 0) {
+              $('span.error-keyup-2').remove();
+
+              UpdateDataTable(selectedItems);
+
+              //$(moveTo).append(selectedItems);
+
+              //e.preventDefault();
+          }
+          else {
+              $('span.error-keyup-2').remove();
+              $(selectFrom).after("<span class='error error-keyup-2' style='color:red;'>Select atleast one area of focus</span>");
+          }
+      }
+
+
+      function Sort(elementId) {
+          // Convert the listbox options to a javascript array and sort (ascending)
+          var sortedList = $.makeArray($(elementId + " option"))
+              .sort(function (a, b) {
+                  return $(a).text() < $(b).text() ? -1 : 1;
+              });
+          // Clear the options and add the sorted ones
+          $(elementId).empty().html(sortedList);
+      }
+
+      function MoveAllListBox(selectFrom, moveTo) {
+          $('span.error-keyup-2').remove();
+          var selectedItems = $(selectFrom).find("option");
+          var output = [];
+          $.each(selectedItems, function (key, e) {
+              output.push('<option value="' + e.value + '" title="' + e.text + '">' + e.text + '</option>');
+          });
+          $(moveTo).append(output.join(""));
+          selectedItems.remove();
+          Sort(moveTo);
+      }
+
+
+
+
+    </script>
+  </head>
+  <!-- END HEAD -->
+  <!-- BEGIN BODY -->
+  <body>
+  <!-- BEGIN HEADER -->
+  <header>
+    <apex:form id="DataForm">
+      <apex:inputhidden id="AvailableExperts" value="{!GetAvailableExperts}"/>
+      <apex:inputhidden id="SelectedExperts" value="{!GetSelectedExperts}"/>
+    </apex:form>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-fluid"> <!--<a class="HpLogo"> -->
+      <!--<apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/insight_web_logo.png')}" style="width:220px" alt="HP Logo"/></a>    --> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo" styleClass="HpLogo"/>
+<!--          </a> -->
+          <div class="nav mtop20">
+            <h1 class="h1fontS">insight</h1>
+            <h3>Information - on your terms</h3>
+          </div>
+          <ul class="nav pull-right top-menu ">
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span>
+              <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="userImage" alt="no_username"/>
+              </span> 
+              <!--<b class="caret"></b>--> 
+              </a>
+              <ul class="dropdown-menu extended logout">
+                <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a></li>
+                <li><a href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!LoggedinUserDtls.id}">Edit Profile</a></li>
+                <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+              </ul>
+            </li>
+            <!-- END USER LOGIN DROPDOWN -->
+          </ul>
+          <c:SLP_SearchCustomComponent InputString="Edit User Role And Expertise Mapping Page"></c:SLP_SearchCustomComponent>
+          <div class="alert alert-error topSearchEr" style="display:none;" id="err_msg"> </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-fluid menunavBar"> <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/slp_activity" title="Home"></a> <a class="icon-book topNavIcon"  href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Library"></a>
+          <apex:OutputPanel rendered="{!IsLearningBoardCreator}"> <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus"></span></a> <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/SLP_createcommunity" title="Create Community"><span class="icon-plus NaviconPlus"></span></a> </apex:OutputPanel>
+          <!--<a class="icon-question-sign topNavIcon pull-right" href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank" title="Help"></a> --> 
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- END HEADER --> 
+  
+  <!-- BEGIN CONTAINER -->
+  <div id="container" class="row-fluid"> 
+    <!-- BEGIN PAGE -->
+    <div id="main-content">
+      <div class="BDheading">
+        <h2>User Role and Expert mapping</h2>
+      </div>
+      <!-- BEGIN PAGE CONTAINER-->
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span12 mtop20">
+            <div class="alert alert-error"  id="dvErrMsg" style="display:none"></div>
+            <apex:form styleClass="form-horizontal" id="UserProfileForm">
+              <div class="control-group">
+                <label class="control-label">User Name</label>
+                <div class="controls"> 
+                  <!--                <input type="text" disabled="" placeholder="User Name" class="span6 " />-->
+                  <apex:inputtext html-placeholder="User Name" styleClass="span6" id="txtUserName" value="{!GetUserDetails.name}" html-readonly="readonly"/>
+                  <apex:inputhidden id="hdnUserId" value="{!UserId}"/>
+                  <!--<span class=""><a class="btnAthena btn-primary" style="padding: 7px 12px !important;" data-toggle="modal" href="#UserNamePopUp"><span class="icon-search"></span> </a></span> By Komala -->
+                  <div id="UserNamePopUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                    <div class="modal-header">
+                      <h3>Search User Name</h3>
+                    </div>
+                    <div class="modal-body"> </div>
+                    <!--<div class="modal-footer">
+                    <a class="btnAthena btn-primary" data-dismiss="modal" aria-hidden="true" href="https://{!getSfInstance}/apex/AthenaSocialLearning">Cancel</a>
+                    <button class="btnAthena btn-primary">Select</button>
+                  </div>--> 
+                  </div>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">Role</label>
+                <div class="controls">
+                  <apex:selectList multiselect="false" size="1" value="{!SLPRoleId}" id="roles" required="true">
+                    <apex:selectOptions value="{!LstRolesOption}" ></apex:selectOptions>
+                  </apex:selectList>
+                </div>
+              </div>
+              <div class="control-group">
+              
+                <label class="control-label">Select Expert</label>
+                <div class="controls">
+                <div class='error error-keyup-2' style="display:none;color:red;" id="dvErrorMsg" >Area of focus already exist</div>
+                  <table class="hpit_BVP_SealectBox BDbg span10 ml0">
+                    <tr>
+                      <td class="hpit_BVP_SealectBox_L span4">Available Area of Focus
+                        <input type="text" id="searchtext_kpileft" class="SearchBox input-text" onkeyup='SearchListBox("searchtext_kpileft", "KPI_Left", "HdnKPI_Left", "KPI_Right")' />
+                        <select id="HdnKPI_Left" multiple="multiple" class="span12" style="display:none;">
+                        </select>
+                        <select id="KPI_Left" multiple="multiple" class="span12 h250">
+                        </select></td>
+                      <td class="hpit_BVP_SealectBox_Btn"><input type="button" class="btn btnAthena btn-primary btnAthenaPopP" id="KPIMoveRight" value=">" alt="Move Right" />
+                        
+                        <!-- <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="KPIMoveLeft" value="<" alt="Move Left" />
+                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="KPIMoveAllRight" value=">>" alt="Move Right" />
+                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="KPIMoveAllLeft" value="<<" alt="Move Left" /> --></td>
+                      <td class="hpit_BVP_SealectBox_R"><!--  <input type="text" id="searchtext_kpiright" class="SearchBox input-text" onkeyup='SearchListBox("searchtext_kpiright", "KPI_Right", "HdnKPI_Right", "KPI_Left")' />
+                        <select id="HdnKPI_Right" multiple="multiple" class="span12" style="display:none;">
+                        </select>
+                        <select id="KPI_Right" multiple="multiple" class="span12" style="height:250px">
+                        </select> -->
+                        
+                        <div class="span12 mtop20 userResultTable">
+                          <div> <a class="btnAthena btn-primary btnAthenaPopP pull-right" style="margin-top:-12px; margin-right:7px;" onclick="addrow()">Add New Area of Focus</a> </div>
+                          <br />
+                          <table class="table table-striped table-bordered" id="UserResultTable">
+                            <thead>
+                              <tr>
+                                <th>Expert</th>
+                                <th>Area of   Focus</th>
+                                <th> Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            <apex:repeat value="{!ExpertSelected}" var="ExprtSelected">
+                             <tr class="odd gradeX" >
+                                <td width="15$"><apex:inputCheckbox value="{!ExprtSelected.Is_Expert__c}" /></td>
+                                <td width="70%">{!ExprtSelected.SLP_Secondary_Industry_Id__r.Secondary_Industry_Name__c}</td>
+                                <td width="15%"><a class="icon-remove pull-right a_underNone editTopic_a colorRed" onclick="DeleteRow(this)"/></td>
+                              </tr>
+                            </apex:repeat>
+                            
+                            </tbody>
+                          </table>
+                        </div></td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="form-actions">               
+                <a class="btnAthena btn_cancel_a" href="https://{!getSfInstance}/apex/SLP_UserRoleAndExpertiseMapping">Cancel</a> 
+                <a class="btnAthena btn-primary" data-dismiss="modal" aria-hidden="true" id="lnkRedirect" style="display:none;" href="https://{!getSfInstance}/apex/SLP_UserRoleAndExpertiseMapping"></a> 
+                <button class="btnAthena btn-primary" type="button" id="btnSaveChanges">Save</button>
+            </div>              
+            </apex:form>
+          </div>
+        </div>
+        <!-- END PAGE CONTENT--> 
+      </div>
+      <!-- END PAGE CONTAINER--> 
+    </div>
+    <!-- END PAGE --> 
+  </div>
+  <!-- END CONTAINER -->
+  
+  <!-- <div id="DivAddExpertPopup" class="modal hide fade PositionF" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static" style="width: 55%;"> -->
+   <div id="DivAddExpertPopup" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+    <div class="modal-header">
+      <h3>Add New Area of Focus</h3>
+    </div>
+    <div class="modal-body">
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="span8"> <span>
+            <label>Area of Focus</label>
+            <input type="text"  id="txtAddNewRow" class="span11"  />
+            </span> </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btnAthena EbtnLess btn_cancel mr3" data-dismiss="modal" aria-hidden="true">Cancel</button>
+      <input type="button" value="Add" class="btnAthena btn-primary btnAthenaPopP" onclick="AddNewRow()" />
+    </div>
+  </div>
+  
+  <!-- BEGIN FOOTER -->
+  <div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+  <!-- END FOOTER --> 
+  
+  <!-- BEGIN JAVASCRIPTS --> 
+  <!-- Load javascripts at bottom, this will reduce page load time
+         -->
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>
+  <!-- ie8 fixes --> 
+  <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]--> 
+  
+  <!--common script for all pages-->
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+  
+  <!-- END JAVASCRIPTS -->
+  
+  </body>
+  <!-- END BODY -->
+  </html>
+</apex:page>

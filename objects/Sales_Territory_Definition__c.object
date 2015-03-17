@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>AMID__c</fullName>
+        <externalId>false</externalId>
+        <label>AMID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>AccountPreviewQuery__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(Sales_Territory__r.IsConfidential__c, &quot; (Confidential_Account__c=TRUE&quot;, &quot; (Confidential_Account__c=FALSE&quot;)&amp;
+IF(Sales_Territory__r.IsPartner__c , &quot; AND Recordtype.Name=&apos;Partner&apos;&quot;, &quot; AND Recordtype.Name=&apos;Customer&apos;&quot;)&amp;
+IF( Exclude__c,
+IF(NOT(ISBLANK(AMID__c)),&quot; AND AMID_L2__c != &apos;&quot;&amp;AMID__c&amp;&quot;&apos;) AND&quot;,
+IF(NOT(ISBLANK(MDCP_ID__c)),&quot;AND MDCP_Organization_ID__c != &apos;&quot;&amp;MDCP_ID__c&amp;&quot;&apos;) AND&quot;,
+IF(NOT(ISBLANK( Industry_Vertical__c )),&quot; AND Industry_Vertical__c != &apos;&quot;&amp; Industry_Vertical__c&amp;&quot;&apos;) AND&quot;,
+IF(NOT(ISBLANK(BG_Sales_Coverage_Segment__c)),&quot; AND (NOT Coverage_Segmentation__c LIKE &apos;%&quot;&amp; BG_Sales_Coverage_Segment__c&amp;&quot;%&apos;)) AND&quot;,&quot;&quot;)))),
+IF(ISBLANK(AMID__c), &quot;&quot;, &quot; AND AMID_L2__c=&apos;&quot;&amp;AMID__c&amp;&quot;&apos;&quot;)&amp;
+IF(ISBLANK( MDCP_ID__c ), &quot;&quot;, &quot; AND MDCP_Organization_ID__c=&apos;&quot;&amp;MDCP_ID__c&amp;&quot;&apos;&quot;)&amp;
+IF(ISBLANK( Business_Relationship__c ), &quot;&quot;, &quot; AND MDCP_Business_Relationship__c=&apos;&quot;&amp;Business_Relationship__c&amp;&quot;&apos;&quot;)&amp;
+IF(ISBLANK( Source_System_ID__c ), &quot;&quot;, &quot; AND Source_System_Account_ID__c=&apos;&quot;&amp; Source_System_ID__c&amp;&quot;&apos;&quot; )&amp;
+IF(ISBLANK( Industry_Vertical__c ), &quot;&quot;, &quot; AND Industry_Vertical__c=&apos;&quot;&amp; Industry_Vertical__c&amp;&quot;&apos;&quot; )&amp;
+IF(ISBLANK( Named_Account__c ), &quot;&quot;, &quot; AND Named_Account__c LIKE &apos;%&quot;&amp; Named_Account__c&amp;&quot;%&apos;&quot; )&amp;
+IF(ISBLANK( RAD__c ), &quot;&quot;, &quot; AND RAD__c LIKE &apos;%&quot;&amp; RAD__c &amp;&quot;%&apos;&quot; )&amp;
+IF(ISBLANK( BG_Sales_Coverage_Segment__c ), &quot;&quot;, &quot; AND Coverage_Segmentation__c LIKE &apos;%&quot;&amp; BG_Sales_Coverage_Segment__c&amp;&quot;%&apos;&quot; )&amp;
+IF(ISBLANK( BA_Market_Segment__c ), &quot;&quot;, &quot; AND BG_Target_Segments__c LIKE &apos;%&quot;&amp; BA_Market_Segment__c&amp;&quot;%&apos;&quot; )&amp;
+IF(ISBLANK( Geographic_Hierarchy__c ), &quot;&quot;, &quot; AND WorldRegion_Hierarchy__c LIKE &apos;%&quot;&amp; Geographic_Hierarchy__c &amp;&quot;%&apos;&quot; )&amp;
+IF(ISBLANK (Country__c ), &quot;&quot;, &quot; AND ShippingCountry=&apos;&quot;&amp; Country__c &amp;&quot;&apos;&quot;)&amp;
+IF(ISBLANK ( State_Province__c ), &quot;&quot;, &quot; AND ShippingState=&apos;&quot;&amp; State_Province__c &amp;&quot;&apos;&quot;)&amp;
+IF(ISBLANK ( Postal_Code_Start__c ), &quot;&quot;, &quot; AND ShippingPostalCode&gt;=&apos;&quot;&amp; Postal_Code_Start__c &amp;&quot;&apos;&quot;)&amp;
+IF(ISBLANK ( Postal_Code_End__c ), &quot;) OR&quot;, &quot; AND ShippingPostalCode&lt;=&apos;&quot;&amp; Postal_Code_End__c &amp;&quot;&apos;) OR&quot;))</formula>
+        <label>AccountPreviewQuery</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>BA_Market_Segment__c</fullName>
+        <externalId>false</externalId>
+        <label>BG Target Segment</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>BG_Sales_Coverage_Segment__c</fullName>
+        <externalId>false</externalId>
+        <label>BG Sales Coverage Segment</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Business_Relationship__c</fullName>
+        <externalId>false</externalId>
+        <label>Business Relationship</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Case_Safe_ID__c</fullName>
+        <description>This field will display the 18-character case sensitive ID in application reports.</description>
+        <externalId>false</externalId>
+        <formula>Id &amp; 
+MID(&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ012345&quot;,( 
+IF(FIND(MID(Id,1,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,1,0) 
++IF(FIND(MID(Id,2,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,2,0) 
++IF(FIND(MID(Id,3,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,4,0) 
++IF(FIND(MID(Id,4,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,8,0) 
++IF(FIND(MID(Id,5,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,16,0) 
+)+1,1) 
+&amp; 
+MID(&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ012345&quot;,( 
+IF(FIND(MID(Id,6,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,1,0) 
++IF(FIND(MID(Id,7,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,2,0) 
++IF(FIND(MID(Id,8,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,4,0) 
++IF(FIND(MID(Id,9,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,8,0) 
++IF(FIND(MID(Id,10,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,16,0) 
+)+1,1) 
+&amp; 
+MID(&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ012345&quot;,( 
+IF(FIND(MID(Id,11,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,1,0) 
++IF(FIND(MID(Id,12,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,2,0) 
++IF(FIND(MID(Id,13,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,4,0) 
++IF(FIND(MID(Id,14,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,8,0) 
++IF(FIND(MID(Id,15,1), &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;)&gt;0,16,0) 
+)+1,1)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Case Safe ID</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Country__c</fullName>
+        <externalId>false</externalId>
+        <label>Country</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Exclude__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>This field is used to exclude the Account which match this definition for a particular field</description>
+        <externalId>false</externalId>
+        <label>Exclude</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Filter__c</fullName>
+        <externalId>true</externalId>
+        <label>Filter</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Geographic_Hierarchy__c</fullName>
+        <description>Geographic Hierarchy</description>
+        <externalId>false</externalId>
+        <label>Geographic Hierarchy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Index__c</fullName>
+        <description>Index created to check for Duplicate Rules.</description>
+        <externalId>true</externalId>
+        <label>Index</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Industry_Vertical__c</fullName>
+        <externalId>false</externalId>
+        <label>Industry Vertical</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>LocationPreviewQuery__c</fullName>
+        <externalId>false</externalId>
+        <formula>&apos;(Id != null&apos;&amp;
+IF(ISBLANK (Partner_Locator_Id__c ),&quot;&quot;,&quot; AND Name =&apos;&quot;&amp;Partner_Locator_Id__c&amp;&quot;&apos;&quot;) &amp;
+IF( ISBLANK( MDCP_ID__c ) , &quot;&quot;, &quot; AND MDCP_Organization_ID__c =&apos;&quot;&amp;MDCP_ID__c&amp;&quot;&apos;&quot;) &amp;
+IF( ISBLANK( Business_Relationship__c ) , &quot;&quot;, &quot; AND Business_Relationship__c LIKE &apos;%&quot; &amp;Business_Relationship__c&amp; &quot;%&apos;&quot;) &amp;
+IF( ISBLANK( Country__c ) , &quot;&quot;, &quot; AND Country__c =&apos;&quot; &amp;Country__c&amp; &quot;&apos;&quot;) &amp;
+IF( ISBLANK( State_Province__c ) , &quot;&quot;, &quot; AND State__c =&apos;&quot;&amp;State_Province__c&amp; &quot;&apos;&quot;) &amp;
+IF( ISBLANK( Postal_Code_Start__c ) , &quot;&quot;, &quot; AND Postal_Code__c &gt;=&apos;&quot;&amp;Postal_Code_Start__c&amp;&quot;&apos;&quot;) &amp;
+IF( ISBLANK( Postal_Code_End__c ) , &quot;&quot;, &quot; AND Postal_Code__c &lt;=&apos;&quot; &amp;Postal_Code_End__c&amp; &quot;&apos;&quot; ) &amp;
+IF( ISBLANK( Geographic_Hierarchy__c ) , &quot;)OR&quot;, &quot; AND WorldRegion_Hierarchy__c LIKE &apos;%&quot;&amp;Geographic_Hierarchy__c&amp;&quot;%&apos;)OR&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>LocationPreviewQuery</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>MDCP_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>MDCP Organization ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Named_Account__c</fullName>
+        <externalId>false</externalId>
+        <label>Named Account</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Partner_Locator_Id__c</fullName>
+        <externalId>false</externalId>
+        <label>Partner Locator Id</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Postal_Code_End__c</fullName>
+        <externalId>false</externalId>
+        <label>Postal Code (End)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Postal_Code_Start__c</fullName>
+        <externalId>false</externalId>
+        <label>Postal Code (Start)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>RAD__c</fullName>
+        <externalId>false</externalId>
+        <label>RAD</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Rule_Type__c</fullName>
+        <description>Rule Type</description>
+        <externalId>false</externalId>
+        <label>Rule Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Account Profile</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Industry</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Sales Coverage</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Geographic</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Sales_Territory__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Sales Territory Short Name</label>
+        <referenceTo>Sales_Territory__c</referenceTo>
+        <relationshipLabel>Sales Territory Definitions</relationshipLabel>
+        <relationshipName>Sales_Territory_Definitions</relationshipName>
+        <required>true</required>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Source_System_ID__c</fullName>
+        <externalId>true</externalId>
+        <label>Source System ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>State_Province__c</fullName>
+        <externalId>false</externalId>
+        <label>State/Province</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Sales Territory Definition</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Sales_Territory__c</columns>
+        <columns>AMID__c</columns>
+        <columns>Industry_Vertical__c</columns>
+        <columns>BG_Sales_Coverage_Segment__c</columns>
+        <columns>Postal_Code_End__c</columns>
+        <columns>Postal_Code_Start__c</columns>
+        <columns>Country__c</columns>
+        <columns>Filter__c</columns>
+        <columns>Geographic_Hierarchy__c</columns>
+        <columns>MDCP_ID__c</columns>
+        <columns>Named_Account__c</columns>
+        <columns>RAD__c</columns>
+        <columns>Source_System_ID__c</columns>
+        <columns>State_Province__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>{000000}</displayFormat>
+        <label>Sales Territory Definition Name</label>
+        <trackHistory>true</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Sales Territory Definitions</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>PostalCodeStart_must_have_PostalEnd</fullName>
+        <active>true</active>
+        <description>Postal Code Start must always have Postal Code End.</description>
+        <errorConditionFormula>OR ((AND(!ISBLANK( Postal_Code_Start__c ), ISBLANK( Postal_Code_End__c )) ), (AND(ISBLANK( Postal_Code_Start__c ), !ISBLANK( Postal_Code_End__c ))))</errorConditionFormula>
+        <errorMessage>Postal Code Start must always have Postal Code End and vice versa.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>PostalCode_must_be_accompanied_byCountry</fullName>
+        <active>true</active>
+        <description>Postal Codes must always be accompanied by Country</description>
+        <errorConditionFormula>AND( AND(!ISBLANK( Postal_Code_Start__c ), !ISBLANK( Postal_Code_End__c )), ISBLANK( Country__c ) )</errorConditionFormula>
+        <errorMessage>Postal Codes must always be accompanied by Country</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Rule_cannot_contain_CountryState_Postal</fullName>
+        <active>true</active>
+        <description>No single rule can contain Country, State and postal code</description>
+        <errorConditionFormula>NOT(OR(ISBLANK( Country__c ), ISBLANK( State_Province__c ), ISBLANK( Postal_Code_End__c ), ISBLANK( Postal_Code_Start__c )))</errorConditionFormula>
+        <errorMessage>Single rule cannot contain Country, State and Postal code.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>SingleRule_can_have_1_AcuntProfileInfo</fullName>
+        <active>true</active>
+        <description>Single Rule can only have 1 Account Profile Criteria Value (AMID, MDCPID, &amp; Source System Id)</description>
+        <errorConditionFormula>Not(OR(IF( AMID__c=&apos;&apos; &amp;&amp; MDCP_ID__c=&apos;&apos; &amp;&amp;  Source_System_ID__c =&apos;&apos;,true,false),
+IF( AMID__c=&apos;&apos; &amp;&amp; MDCP_ID__c=&apos;&apos; &amp;&amp; Source_System_ID__c !=&apos;&apos;,true,false),
+IF( AMID__c=&apos;&apos; &amp;&amp; MDCP_ID__c !=&apos;&apos; &amp;&amp; Source_System_ID__c =&apos;&apos;,true,false),
+IF( AMID__c!=&apos;&apos; &amp;&amp; MDCP_ID__c=&apos;&apos; &amp;&amp; Source_System_ID__c =&apos;&apos;,true,false)))</errorConditionFormula>
+        <errorMessage>Single Rule can only have 1 Account Profile Criteria Value (AMID, MDCPID, &amp; Source System Id)</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>StatePro_must_be_accompanied_by_Country</fullName>
+        <active>true</active>
+        <description>State/Province must always be accompanied by Country.</description>
+        <errorConditionFormula>AND(!ISBLANK( State_Province__c ), ISBLANK( Country__c ) )</errorConditionFormula>
+        <errorMessage>State/Province must always be accompanied by Country.</errorMessage>
+    </validationRules>
+</CustomObject>

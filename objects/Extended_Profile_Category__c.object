@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>MDCP_Active__c</fullName>
+        <description>The field provides an indication whether this record is still current or has been inactivated (logically deleted) in the MDCP source system.</description>
+        <externalId>false</externalId>
+        <label>MDCP Active</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Parent_Category_Name__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Lookup to Extended Profile Category. Extended Profile Category reference to a parent Extended Profile Category object&apos;s record.</description>
+        <externalId>false</externalId>
+        <label>Parent Category Name</label>
+        <referenceTo>Extended_Profile_Category__c</referenceTo>
+        <relationshipLabel>Extended Profile Categories</relationshipLabel>
+        <relationshipName>Extended_Profile_Categories</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Userkey__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <description>External ID field for creating record uniqueness withing this new custom object. Details on how the key will be built are pending on the MDCP design of the WS response for extended partner profile.</description>
+        <externalId>true</externalId>
+        <label>Userkey</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <label>Extended Profile Category</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Parent_Category_Name__c</columns>
+        <columns>MDCP_Active__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+        <language>en_US</language>
+    </listViews>
+    <nameField>
+        <label>Extended Profile Category Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Extended Profile Categories</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Parent_Category_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>MDCP_Active__c</customTabListAdditionalFields>
+        <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
+        <excludedStandardButtons>Accept</excludedStandardButtons>
+        <lookupDialogsAdditionalFields>Parent_Category_Name__c</lookupDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Parent_Category_Name__c</lookupPhoneDialogsAdditionalFields>
+        <searchFilterFields>NAME</searchFilterFields>
+        <searchFilterFields>Parent_Category_Name__c</searchFilterFields>
+        <searchResultsAdditionalFields>Parent_Category_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>MDCP_Active__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

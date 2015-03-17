@@ -1,0 +1,286 @@
+<apex:component allowDML="true"  controller="HPDCMenu" id="ComNaviBar" >  <!-- controller="hpdcTopNavigationBarController" -->
+
+  <apex:form >
+  
+  
+<!-- <script src="http://code.jquery.com/jquery-1.9.0.js"></script> 
+ 
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script> -->
+ <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>  
+ 
+ <!--[if lte IE 8]>
+ <link href="{!URLFOR($Resource.HPDC_JS_Css, '/HPDC_JS_Css/HPDC_ie.css')}" rel="stylesheet" type="text/css" /> 
+<![endif]-->
+ <link href="{!URLFOR($Resource.HPDC_JS_Css, '/HPDC_JS_Css/HPDC_style.css')}" rel="stylesheet" type="text/css" />
+
+ 
+<apex:includeScript value="{!URLFOR($Resource.HPDC_JS_Css, '/HPDC_JS_Css/HPDC_jquery.js')}"/>
+<link href="{!URLFOR($Resource.HPDC_JS_Css, '/HPDC_JS_Css/HPDC_style.css')}" rel="stylesheet" type="text/css" />
+
+
+<apex:includeScript value="{!if(strurl == 'true',URLFOR($Resource.HPDC_JS_Css, '/HPDC_JS_Css/HPDC_custom_script.js'),'')}" />
+
+
+<style type="text/css">
+
+
+@font-face {
+    
+    src: url('{!URLFOR($Resource.HPDC_Fonts, '/HPDC_Fonts/hps-euro-w01-regular-woff.woff')}');
+    src: url('{!URLFOR($Resource.HPDC_Fonts, '/HPDC_Fonts/hps-euro-w01-bold-woff.woff')}');
+    src: url('{!URLFOR($Resource.HPDC_Fonts, '/HPDC_Fonts/hps-euro-w01-bold-ttf.ttf')}');
+    src: url('{!URLFOR($Resource.HPDC_Fonts, '/HPDC_Fonts/hps-euro-w01-regular-ttf.ttf')}');
+}
+
+@font-face {
+    font-family: "HPSimplified";
+    font-style: normal;
+    font-weight: normal;
+    src: url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-regular-eot.eot?#iefix") format("embedded-opentype"), url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-regular-woff.woff") format("woff"), url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-regular-ttf.ttf") format("truetype");
+}
+@font-face {
+    font-family: "HPSimplified";
+    font-style: normal;
+    font-weight: bold;
+    src: url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-bold-eot.eot?#iefix") format("embedded-opentype"), url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-bold-woff.woff") format("woff"), url("http://www8.hp.com/h10180/hp-fonts/v1-0/hps-euro-bold-ttf.ttf") format("truetype");
+}
+
+
+
+  html {
+    background-color: white;
+    
+}
+
+.link_list .maimenuli a {
+    font-size: 18px;
+    font-weight: normal;
+    margin-left: 0 !important;
+}
+
+ .link_list li
+ {
+padding-bottom: 0px;
+padding-top: 0px;
+height: 25px;
+ 
+ }
+ 
+#slide_wrapper {
+    overflow: hidden;
+}
+
+.menumargin{
+margin:-2px;
+}
+</style>
+<script>
+    var j$ = jQuery.noConflict();
+    j$(document).ready(function(){
+     
+        var a;
+        var b;        
+        j$("a").each(function(id,elm){
+            var str = elm.href;
+            if(str.indexOf("||") != -1){
+                var a = str.split('||');                    
+                if('{!IsSiteLogin}' == 'true'){
+                    elm.href = a[1];
+                }else{
+                    elm.href = a[0];
+                }
+            }                
+        });
+        if('{!lstMenuId}' != null){
+           a = "{!lstMenuId}";
+           a = a.replace('[','');
+           a = a.replace(']','');
+           a = a.replace(' ','');
+           b = a.split(",");          
+        }
+        if(b != null){
+            var temp = b[0];
+            temp = temp.trim();
+            j$("#"+temp).addClass("opened");
+            j$("#id_"+temp).slideDown();
+        }
+        
+        
+        
+        
+        
+      /* if(j$.browser.msie)
+        {
+           
+            if(j$.browser.version < 8.0)
+            {  
+                
+                j$( "li" ).add( "p" ).css( "float", "left" );
+                 
+            }
+        } */
+        
+        
+    });
+    function openSubMenu(id){
+        var a;
+        var b;
+        var check = 0;
+        if(j$("#"+id).hasClass('opened')){
+            check = 1;
+        }
+        if('{!lstMenuId}' != null){
+           a = "{!lstMenuId}";
+           a = a.replace('[','');
+           a = a.replace(']','');
+           a = a.replace(' ','');
+           b = a.split(",");          
+        }
+        if(b != null){
+           for(var i =0;i < b.length;i++){                    
+               var temp = b[i];
+               temp = temp.trim();
+               if(j$("#"+temp).hasClass('opened')){
+                    j$("#"+temp).removeClass("opened");
+                    j$("#id_"+temp).slideUp();                       
+               }
+           }
+        }
+        if(check == 1){
+            j$("#"+id).removeClass("opened");
+            j$("#id_"+id).slideUp();                       
+        }else{
+            j$("#"+id).addClass("opened");
+            j$("#id_"+id).slideDown();            
+        }        
+    }
+    
+    
+
+ 
+</script>
+
+<script type="text/javascript">
+
+
+
+
+        
+
+
+
+function logout()
+    {
+      
+    }
+</script>
+<!-- <apex:form > -->
+  <apex:actionFunction action="{!getdescription}" name="getid" rerender="Op1">
+        <apex:param name="firstParam" assignTo="{!submenuid}" value="" />
+        <apex:param name="secondParam" assignTo="{!menuname}" value="" /> 
+    </apex:actionFunction>
+    <apex:actionFunction name="logout" action="{!LoginLogout}"/> 
+<!-- </apex:form>    -->
+    
+<div> <!--id="everything" class="everything" > -->
+     <div id="top_buyhp" class="top_buyhp"> </div>
+     <div id="content"  >
+<div id="header" class="header">
+                <!--  BEGIN TWO COLUMN STRUCTURE-->
+                <div class="hf_row2_10_90">
+                    <!-- BEGIN HP LOGO -->
+                    <div class="fst10 hplogo">
+                        <!-- BEGIN HP LOGO -->
+                       <!-- <a title="HP.com Home" tabindex="1" shape="rect" name="us_en_home__header_corp_fixed_homepage" href="page?pagename=Home||/hpdevice/Home" class="logo png link_metrics"><span class="hidden">HP.com Home</span></a> -->
+                       <apex:outputLink target="_self" title="HP.com Home" tabindex="1" value="{!urlHome}" styleClass="logo png link_metrics"><span class="hidden">HP.com Home</span></apex:outputLink>
+                        <!--END HP LOGO-->
+                    </div>
+                    <!-- END HP LOGO-->
+                    <!-- BEGIN TWO ROW STRUCTURE -->
+                    <div class="lst90">
+                       
+                        <!-- BEGIN MAIN NAV MENU --> 
+                        <div class="hf_clf" style="margin-top: 31px;">
+                            <ul style="float:left;padding-top: 0px;" id="js_main_nav" class="main_nav hf_wht hf_f120">
+                                <li class="header_titles hf_float_min open_pop_up" ><a title="Customization Services" tabindex="2" shape="rect" href="javascript:void(0);" class="hf_cnt0_35_0_10 hf_dsb hf_wht" >Customization <br clear="none" />
+                                 Services</a>
+                                <div class="sub_menu_wrapper pop_up_div"  style="display: none;">
+                                    <div class="hf_carat_up">
+                                    </div>
+                                    <ul class="sub_menu">
+                                         <apex:repeat value="{!lstWPMenu}" var="Segment">
+                                               <li class="single"> 
+                                                  <span  >
+                                                  <table width="350px" border="0" >
+                                                    <tr>                                                      
+                                                        <td  align="left" style="font-size:13px;font-weight:normal;margin:0px;padding-bottom:0px;padding-top: 0px;" width="180px">                                                         
+                                                             <p style="margin:-3px;padding-bottom:0px;padding-top:0px;" class="hho link_metrics">
+                                                                 <a title="{!Segment.Name}"  id="{!Segment.id}" tabindex="2" shape="rect" href="javascript:void(0);" class="hf_wht js_nav_toggler green_arrow " ><span>&nbsp;</span>{!Segment.Name}</a>
+                                                             </p>                                             
+                                                        </td>                                              
+                                                    </tr>
+                                                  </table>
+                                                  </span>                                              
+                                                  <ul id="id_{!Segment.id}" class="submenu" style="display:none">
+                                                      <apex:repeat value="{!Segment.subMenu}" var="ob">
+                                                          <li class="single">
+                                                              <table width="250px" border="0" style="margin-left:13px;">
+                                                                  <tr>                                                                    
+                                                                    <td class="Trim" style="font-size:13px;font-weight:bold;padding-left:0px;font-family: HPSimplified,Arial !important;" width="220px">
+                                                                        <p class="menumargin">                                                                      
+                                                                           <!--  <a title="{!ob.Name}" tabindex="2" shape="rect" href="/apex/hpdcAuthenticatedMenuDetailsTemplate?menu={!Segment.Name}&tab={!ob.Name}" class="hho link_metrics" xmlns="http://www.w3.org/1999/xhtml">{!ob.Name}</a>  -->
+                                                                             
+                                                                            <apex:outputlink title="{!ob.Name}" tabindex="2" shape="rect" value="{!MenuredirectUrl}?menu={!Segment.Name}&tab={!ob.Name}"  target="_self" rendered="{!IsSiteLogin}">{!ob.Name}</apex:outputlink> 
+                                                                            
+                                                                            
+                                                                            <apex:outputlink title="{!ob.Name}" tabindex="2" shape="rect" value="{!MenuredirectUrl}&menu={!Segment.Name}&tab={!ob.Name}"  target="_self"  rendered="{!!IsSiteLogin}">{!ob.Name}</apex:outputlink> 
+                                                                         
+                                                                          
+                                                                        <!-- <a title="{!ob.Name}" tabindex="2" shape="rect" value="{!MenuredirectUrl}?menu={!Segment.Name}&tab={!ob.Name}"  target="_self" class="hho link_metrics" xmlns="http://www.w3.org/1999/xhtml">{!ob.Name}</a> -->
+                                                                         </p>
+                                                                            
+                                                                        </td>
+                                                                       
+                                                                        
+                                                                    </tr>
+                                                              </table>
+                                                          </li>
+                                                      </apex:repeat>
+                                                  </ul>                                       
+                                              </li>
+                                        </apex:repeat> 
+                                    </ul>
+                                </div>
+                                </li>
+                                <li class="header_titles hf_float_min" >                              
+                                   <apex:outputLink target="_self" styleClass="hf_cnt0_35_0_10 hf_dsb hf_wht link_metrics" title="Start Customization Request" value="{!urlSCRequest}">Start Customization <br clear="none" /> Request</apex:outputLink>
+                                    <!-- <a class="hf_cnt0_35_0_10 hf_dsb hf_wht link_metrics" title="Start Customization Request" href="page?pagename=Leadrequest||/hpdevice/Leadrequest">Start Customization <br clear="none" /> Request </a> -->
+                                </li>                                
+                                <li class="header_titles hf_float_min" >
+                                    <!-- <a class="hf_cnt0_35_0_10 hf_dsb hf_wht link_metrics" title="View Portfolio" href="page?pagename=Portfolio||/hpdevice/Portfolio">View Portfolio </a> -->
+                                    <apex:outputLink target="_self" styleClass="hf_cnt0_35_0_10 hf_dsb hf_wht link_metrics" title="View Portfolio" value="{!urlPortfolio}">View <br clear="none" /> Portfolio</apex:outputLink>
+                                </li>
+                                <li class="header_titles hf_float_min" >
+                                    <a title="Get Customer Brochure" class="hf_cnt0_35_0_10 hf_dsb hf_wht link_metrics" href="hpdcDocument?doc=HPDC_Services_Brochure" target="_blank">Get Customer  <br clear="none" /> Brochure </a>
+                                </li>                                
+                            </ul>
+                            
+                            <!--
+                              <apex:commandLink title="Log out" action="{!LoginLogout}" style="float:right; margin-top: 9px;margin-left:505px;color: #FFFFFF;" styleclass="comp-overlay btn btn-small"
+                                value="Log out"   />
+                            -->
+                        </div>
+                        <!-- END MAIN NAV  MENU -->
+                        <apex:outputPanel rendered="{!IsTab}" style="margin-left:241px;">
+                           <!--  <a style="margin-top: 8px;color: #FFFFFF;" title="Log out" onclick="logout()" class="comp-overlay btn btn-small"  >Log out</a> -->
+                        </apex:outputPanel> 
+                    </div>
+                    <!-- END TWO ROW STRUCTURE -->
+                </div>
+                <!-- END TWO COLUMN STRUCTURE -->
+            </div>
+            </div>
+            </div>
+
+   </apex:form>        
+</apex:component>

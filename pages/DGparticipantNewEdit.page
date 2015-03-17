@@ -1,0 +1,46 @@
+<apex:page standardController="Reviewer__c" extensions="DGparticipantNewEditController">
+
+<style>
+.warning_text{
+font-size: 14px;
+color: red;
+font-weight:bold;
+}
+</style>
+
+  <apex:form >
+
+<!--{!If(AND($CurrentPage.parameters.id != null,AND(Reviewer__c.Reviewer__c != $User.Id,$User.Id!=Reviewer__c.createdby.id)), true,false)}-->
+  <apex:outputPanel rendered="{!AND(HasAccess==False,Reviewer__c.Id!=null)}"><p class="warning_text">You are not the assigned Reviewer for this record. Please click 'Cancel' to return to the previous page.</p></apex:outputPanel>
+  <br />
+  <apex:pageblock title="Reviewer Information" mode="edit">
+  <apex:pageblockbuttons location="both">
+  <apex:commandButton action="{!SaveReviewer}" value="Save" rendered="{!If(AND($CurrentPage.parameters.id != null,HasAccess==False), false,true)}" />
+   <apex:commandButton action="{!cancel}" value="Cancel" />
+  </apex:pageblockbuttons>
+  <apex:pagemessages ></apex:pagemessages>
+  <apex:pageblocksection collapsible="false" columns="2"
+  title="Information" showHeader="true">
+  <apex:inputfield rendered="{!If($CurrentPage.parameters.id == null, true,false)}" value="{!Reviewer__c.Reviewer__c}"/>
+  <apex:outputfield rendered="{!If($CurrentPage.parameters.id == null, false,true)}" label="Reviewer" value="{!Reviewer__c.Reviewer__c}"/>
+  
+  <apex:inputfield rendered="{!If($CurrentPage.parameters.id == null, false,false)}" value="{!Reviewer__c.Reviewer_Workspace__c}" />
+  <apex:outputfield rendered="{!If($CurrentPage.parameters.id != null, true,false)}" value="{!Reviewer__c.Reviewer_Workspace__c}" />
+  
+  <apex:inputfield rendered="{!If($CurrentPage.parameters.id == null, true,false)}" value="{!Reviewer__c.Signoff_Type__c}" />
+  <apex:outputfield rendered="{!If($CurrentPage.parameters.id != null, true,false)}" value="{!Reviewer__c.Signoff_Type__c}" />
+  
+  <apex:inputfield rendered="{!If($CurrentPage.parameters.id == null, true,false)}" value="{!Reviewer__c.Do_not_email__c}" />
+  <apex:outputfield rendered="{!If($CurrentPage.parameters.id != null, true,false)}" value="{!Reviewer__c.Do_not_email__c}" />
+ 
+
+  <apex:pageblocksectionItem />
+  
+  <apex:inputfield rendered="{!If($CurrentPage.parameters.id != null, true,false)}" value="{!Reviewer__c.Signoff_Feedback__c}" />
+  <apex:pageBlockSectionItem />
+  <apex:inputfield style="width:100%;" rendered="{!If($CurrentPage.parameters.id == null, false,true)}" value="{!Reviewer__c.Comments__c}" />
+  </apex:pageblocksection>
+  </apex:pageblock>
+  </apex:form>
+  
+</apex:page>

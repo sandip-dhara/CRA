@@ -1,0 +1,776 @@
+<apex:page showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Edit</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="hp" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-fileupload.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/tagit.ui-zendesk.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/jquery.tagit.css')}" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+    
+    <!-- BEGIN HEADER -->
+<header>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container-fluid"> <a class="HpLogo"> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/></a>
+        <div class="nav mtop10">
+          <h1>Social Learning Platform</h1>
+          <h3>Learning on your terms</h3>
+        </div>
+        <ul class="nav pull-right top-menu mtop16">
+          <!-- BEGIN USER LOGIN DROPDOWN -->
+          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">anto fernando</span> <span><apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_username.jpg')}" styleClass="userImage" alt="no_username"/></span> 
+            <!--<b class="caret"></b>--> 
+            </a>
+            <ul class="dropdown-menu extended logout">
+              <li><a href="#">Log Out</a></li>
+            </ul>
+          </li>
+          <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+        <div class="nav notify-row"> <span class="add-on icon-search topSearchIcon topSearch"></span>
+          <input type="text" name="accounts" size="20" class="typeahead-devs" placeholder="Please Enter Day Name" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="navbar-inner">
+      <div class="container-fluid menunavBar"> 
+        <a class="icon-home topNavIcon"></a> 
+        <a class="icon-book topNavIcon"></a>
+        <a class="topNavIconC"></a>
+        <a class="icon-question-sign topNavIcon pull-right"></a>
+      </div>
+    </div>
+</header>
+<!-- END HEADER --> 
+<!-- BEGIN CONTAINER -->
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+<div id="main-content">
+<div class="BDbg">
+  <div class="BDheading">
+    <input type="text" class="span7 inp5" placeholder="Edit Title" />
+  </div>
+  <div class="container-fluid">
+    <div class="row-fluid mtop10">
+      <div class="span8">
+        <div class="PositionR"> <a class="a_underNone" data-toggle="modal" href="#EditImage">
+          <div class="EditBoardTitImg icon-pencil"> </div>
+          </a>
+          <div id="EditImage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+            <div class="modal-header">
+              <h3>Board header image</h3>
+            </div>
+            <div class="modal-body">
+              <div class="control-group Editratio">
+                <label class="control-label">Choose image</label>
+                <div class="controls"> <span class="mr10">
+                  <input type="radio" id="ShowuploadImage" name="optionsRadios1" value="option2"  />
+                  Upload from Computer </span> <span>
+                  <input id="ShowDefaultImage" type="radio" name="optionsRadios1" value="option1"  />
+                  Default Image </span> </div>
+              </div>
+              <div class="check ShowuploadImage clearB" style="display: none">
+                <p>This image appears at the top of each learning board Recommended size is 920px * 320px</p>
+                <div class="controls">
+                  <div data-provides="fileupload" class="fileupload fileupload-new">
+                    <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail"> 
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" style="width: auto; border: 0 none;" alt="no_image"/>
+                    </div>
+                    <div style="max-width: 200px; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                    <div> <span class="btnAthena btn-file"><span class="fileupload-new">Select image</span> <span class="fileupload-exists">Change</span>
+                      <input type="file" class="default" />
+                      </span> </div>
+                  </div>
+                  <span class="label label-important">NOTE!</span> <span>Attached image thumbnail is
+                  supported in Latest Firefox, Chrome, Opera,
+                  Safari and Internet Explorer 10 only </span> </div>
+              </div>
+              <div class="check ShowDefaultImage clearB" style="display: none">
+                <div class="control-group">
+                  <label class="control-label">Select Default Image </label>
+                  <div class="controls" style="min-height: 200px">
+                    <select>
+                      <option>Choose image</option>
+                      <option >Image Name</option>
+                      <option >Image Name</option>
+                    </select>
+                    <div class="viewDefaultImage thumbnail">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" styleClass="viewDefNoImage" alt="no_image"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+              <button class="btnAthena btn-primary">Save</button>
+            </div>
+          </div>
+
+            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_detail_imagel.jpg')}" alt="no_detail_image"/>
+
+          <div class="BoardTit">
+            <div class="span8 mtop5">
+              <input type="text" class="span11 inp5" placeholder="Edit Sub Title" />
+            </div>
+            <div class="span4">
+              <button class="icon-edit btnAthena btn-primary edit_item-personPhoto" href="#ChangeOwner" data-toggle="modal"></button>
+              <div id="ChangeOwner" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                <div class="modal-header">
+                  <h3>Change Owner</h3>
+                </div>
+                <div class="modal-body">
+                  <div class="span5">
+                    <label>Curent Owner :</label>
+                  </div>
+                  <div class="span5"> <span>fernando, anto</span> </div>
+                  <div class="span5 ml0">
+                    <label>New Owner :</label>
+                  </div>
+                  <div class="span5"> <span>
+                    <input type="text" class="span10 " />
+                    </span> <a class="a_underNone fs21"><i class="icon-search"></i></a> 
+                    <!-- search owner --> 
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                  <button class="btnAthena btn-primary">Save</button>
+                </div>
+              </div>
+              <div class="hpit_athena_ca-item-personPhoto mtop10"> 
+                  <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_username_small.jpg')}" width="35" height="35" alt="no_detail_image"/>
+              </div>
+              <a class="a_underNone">
+              <div class="hpit_athena_ca-item-personName colorWhite mtop10"> fernando, Anto </div>
+              </a> </div>
+          </div>
+        </div>
+      </div>
+      <div class="span4">
+        <div>
+          <div>
+            <textarea class="span12" rows="3" placeholder="Edit Description"></textarea>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Add Tags</label>
+            <div class="controls">
+              <input name="tags" id="learningTags" value="Social, Learning" class="hide" />
+              <!-- Tag Hidden Value -->
+              <ul id="learningTagsTop">
+              </ul>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Label 3</label>
+            <div class="controls controls-row">
+              <select class="span12 " data-placeholder="Choose a Category" tabindex="1">
+                <option value="">Select...</option>
+                <option value="Category 1">Category 1</option>
+                <option value="Category 2">Category 2</option>
+                <option value="Category 3">Category 5</option>
+                <option value="Category 4">Category 4</option>
+              </select>
+            </div>
+          </div>
+          <div class="controls mtop10"> <span class="mr10">
+            <input type="checkbox" />
+            Default Image </span> <span class="mr10">
+            <input type="checkbox" />
+            Default Image </span> <span class="pull-right mtop10">
+            <input type="button" class="btnAthena" value="Cancel" />
+            <input type="button" class="btnAthena btn-primary" value="Save" />
+            </span> </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+    <div class="row-fluid mtop20">
+      <div class="span8">
+        <div class="panel-group" id="accordion">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title"> <a class="accordion-toggle a_underNone" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"> <span class="icon-plus-sign-alt"></span> Collapsible #1 </a></h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in">
+              <div class="panel-body">
+                <div class="span12">
+                  <div class="span4">
+                    <div class="m10"> <img src="img_athena/antena_defaultImgLearning.png" /> </div>
+                  </div>
+                  <div class="span8">
+                    <div class="m10">
+                      <div> <a class="icon-remove pull-right a_underNone editTopic_a colorRed"></a> <a class="icon-pencil pull-right a_underNone editTopic_a e_IconColor"></a> <a class="icon-sort-by-order btnAthena btn-primary pull-right"></a> <a class="btnAthena btn-primary pull-right icon-plus" data-toggle="modal" href="#AddTopics"> Add Topics</a>
+                        <div id="AddTopics" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                          <div class="modal-header">
+                            <h3>Add Topics</h3>
+                          </div>
+                          <div class="modal-body">
+                            <div class="TABclass">
+                              <ul class="nav nav-tabs" id="myTab">
+                                <li class="active"><a data-toggle="tab" href="#SearchTopics" class="icon-search"> Search Existing</a></li>
+                                <li><a data-toggle="tab" href="#CreateNewTopics" class="icon-plus"> Create New</a></li>
+                              </ul>
+                              <div class="tab-content" id="myTabContent">
+                                <div id="SearchTopics" class="tab-pane fade active in">
+                                  <div class="row-fluid">
+                                    <div class="span12">
+                                      <div class="span7">
+                                        <div class="control-group">
+                                          <label class="control-label">Search Learning</label>
+                                          <div class="controls controls-row">
+                                            <input type="text" class="input-block-level" placeholder="Text input" name="" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="span5">
+                                        <input type="button" class="btnAthena btn-primary mtop30" value="Search" />
+                                      </div>
+                                      <p class="searchResult clearB">Search result <span>(3)</span></p>
+                                    </div>
+                                  </div>
+                                  <div class="row-fluid">
+                                    <div class="span12">
+                                      <div class="clearB mbot10 clearfix">
+                                        <div class="STsearch">
+                                          <div class="m5 pull-left mtop25">
+                                            <input type="checkbox" />
+                                          </div>
+                                          <div class="STimage"> <img src="img_athena/no_searchResult.jpg" /> </div>
+                                          <div class="pull-left">
+                                            <h1>Heading</h1>
+                                            <h2><a class="a_underline">topic</a></h2>
+                                            <p>content maximum 60 charecters...</p>
+                                            <div> <a class="STdocIcon"><img src="img_athena/fileExcelUpload.png" /></a> </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="clearB mbot10 clearfix">
+                                        <div class="STsearch">
+                                          <div class="m5 pull-left mtop25">
+                                            <input type="checkbox" />
+                                          </div>
+                                          <div class="STimage"> <img src="img_athena/no_searchResult.jpg" /> </div>
+                                          <div class="pull-left">
+                                            <h1>Heading</h1>
+                                            <h2><a class="a_underline">topic</a></h2>
+                                            <p>content maximum 60 charecters...</p>
+                                            <div> <a class="STdocIcon"><img src="img_athena/fileExcelUpload.png" /></a> </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="clearB mbot10 clearfix">
+                                        <div class="STsearch">
+                                          <div class="m5 pull-left mtop25">
+                                            <input type="checkbox" />
+                                          </div>
+                                          <div class="STimage"> <img src="img_athena/no_searchResult.jpg" /> </div>
+                                          <div class="pull-left">
+                                            <h1>Heading</h1>
+                                            <h2><a class="a_underline">topic</a></h2>
+                                            <p>content maximum 60 charecters...</p>
+                                            <div> <a class="STdocIcon"><img src="img_athena/fileExcelUpload.png" /></a> </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="mbot20">
+                                    <div class="controls mtop10"> <span class="pull-right mtop30">
+                                      <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                                      <input type="button" class="btnAthena btn-primary" value="Save" />
+                                      </span> </div>
+                                  </div>
+                                </div>
+                                <div id="CreateNewTopics" class="tab-pane fade ">
+                                  <div class="row-fluid">
+                                    <div class="span12">
+                                      <div class="control-group">
+                                        <h1 class="catHeading">What Category</h1>
+                                        <hr />
+                                        <label class="control-label">Select type of learning</label>
+                                        <div class="controls controls-row">
+                                          <select class="span12 " data-placeholder="Choose a Category" tabindex="1">
+                                            <option value="">Select type of learning</option>
+                                            <option value="Category 1">Text/Image</option>
+                                            <option value="Category 2">Video</option>
+                                            <option value="Category 3">Link/Document</option>
+                                          </select>
+                                        </div>
+                                      </div>
+                                      <div class="divName1">
+                                        <div class="control-group">
+                                          <label class="control-label">Topic</label>
+                                          <div class="controls controls-row">
+                                            <input type="text" class="input-block-level" placeholder="Text input" name="" />
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Description </label>
+                                          <div class="controls controls-row">
+                                            <textarea class="span12 " rows="3"></textarea>
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Add Tags</label>
+                                          <div class="controls">
+                                            <input name="tags" id="Text1" value="Social, Learning" class="hide" />
+                                            <!-- Tag Hidden Value -->
+                                            <ul id="Ul1">
+                                            </ul>
+                                          </div>
+                                        </div>
+                                        <div class="control-group Editratio">
+                                          <label class="control-label">Choose image</label>
+                                          <div class="controls"> <span class="mr10">
+                                            <input type="radio" id="Radio1" name="optionsRadios1" value="option2"  />
+                                            Upload from Computer </span> <span>
+                                            <input id="Radio2" type="radio" name="optionsRadios1" value="option1"  />
+                                            Default Image </span> </div>
+                                        </div>
+                                        <div class="check ShowuploadImage clearB" style="display: none">
+                                          <p>This image appears at the top of each learning board Recommended size is 920px * 320px</p>
+                                          <div class="controls">
+                                            <div data-provides="fileupload" class="fileupload fileupload-new">
+                                               <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail"> <img alt="" src="img_athena/no_image.gif" style="width: auto; border: 0 none;" /> </div>
+                                              <div style="max-width: 200px; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                                              <div> <span class="btnAthena btn-file"><span class="fileupload-new">Select image</span> <span class="fileupload-exists">Change</span>
+                                                <input type="file" class="default" />
+                                                </span> </div>
+                                            </div>
+                                            <span class="label label-important">NOTE!</span> <span>Attached image thumbnail is
+                                            supported in Latest Firefox, Chrome, Opera,
+                                            Safari and Internet Explorer 10 only </span> </div>
+                                        </div>
+                                        <div class="check ShowDefaultImage clearB" style="display: none">
+                                          <div class="control-group">
+                                            <label class="control-label">Select Default Image </label>
+                                            <div class="controls" style="min-height: 200px">
+                                              <select>
+                                                <option>Choose image</option>
+                                                <option >Image Name</option>
+                                                <option >Image Name</option>
+                                              </select>
+                                              <div class="viewDefaultImage thumbnail"> <img class="viewDefNoImage" alt="no_image"  src="img_athena/no_image.gif" /> </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <hr />
+                                        <div class="mbot20">
+                                          <div class="controls mtop10"> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Publish </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Featued </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Client Facing </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Practice Approved </span> <span class="pull-right mtop30">
+                                            <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                                            <input type="button" class="btnAthena btn-primary" value="Save" />
+                                            </span> </div>
+                                        </div>
+                                      </div>
+                                      <div class="divName2">
+                                        <div class="control-group">
+                                          <label class="control-label">Topic</label>
+                                          <div class="controls controls-row">
+                                            <input type="text" class="input-block-level" placeholder="Text input" name="" />
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Description </label>
+                                          <div class="controls controls-row">
+                                            <textarea class="span12 " rows="3"></textarea>
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Add Tags</label>
+                                          <div class="controls">
+                                            <input name="tags" id="Text2" value="Social, Learning" class="hide" />
+                                            <!-- Tag Hidden Value -->
+                                            <ul id="Ul2">
+                                            </ul>
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Url</label>
+                                          <div> <span>
+                                            <input type="text" class="span10 " />
+                                            <button class="btnAthena btn-primary mtop-10" type="button">Test</button>
+                                            <span class="colorBlue">Vedio Preview</span><br />
+                                            <span>
+                                            <div class="span10"> <img class="span12" src="img_athena/no_video.png" alt="" /> </div>
+                                            </span> <br />
+                                            <div class="clearB"><a>View instructions for uploading Brainshark videos</a></div>
+                                            <br />
+                                            <span>YouTube video must be in below format</span><br />
+                                            <span>http ://www.youtube.com/watch?v=TSNLsBiep31 </span> </span> </div>
+                                        </div>
+                                        <hr />
+                                        <div class="mbot20">
+                                          <div class="controls mtop10"> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Publish </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Featued </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Client Facing </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Practice Approved </span> <span class="pull-right mtop30">
+                                            <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                                            <input type="button" class="btnAthena btn-primary" value="Save" />
+                                            </span> </div>
+                                        </div>
+                                      </div>
+                                      <div class="divName3">
+                                        <div class="control-group">
+                                          <label class="control-label">Topic</label>
+                                          <div class="controls controls-row">
+                                            <input type="text" class="input-block-level" placeholder="Text input" name="" />
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Description </label>
+                                          <div class="controls controls-row">
+                                            <textarea class="span12 " rows="3"></textarea>
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Add Tags</label>
+                                          <div class="controls">
+                                            <input name="tags" id="Text3" value="Social, Learning" class="hide" />
+                                            <!-- Tag Hidden Value -->
+                                            <ul id="Ul3">
+                                            </ul>
+                                          </div>
+                                        </div>
+                                        <div class="control-group Editratio">
+                                          <label class="control-label">Choose image</label>
+                                          <div class="controls"> <span class="mr10">
+                                            <input type="radio" id="Radio3" name="optionsRadios1" value="option2"  />
+                                            Upload from Computer </span> <span>
+                                            <input id="Radio4" type="radio" name="optionsRadios1" value="option1"  />
+                                            Default Image </span> </div>
+                                        </div>
+                                        <div class="check ShowuploadImage clearB" style="display: none">
+                                          <p>This image appears at the top of each learning board Recommended size is 920px * 320px</p>
+                                          <div class="controls">
+                                            <div data-provides="fileupload" class="fileupload fileupload-new">
+                                              <div style="width: 200px; height: 150px;" class="fileupload-new thumbnail"> <img alt="" src="img_athena/no_image.gif" style="width: auto; border: 0 none;" /> </div>
+                                              <div style="max-width: 200px; max-height: 150px; line-height: 20px;" class="fileupload-preview fileupload-exists thumbnail"></div>
+                                              <div> <span class="btnAthena btn-file"><span class="fileupload-new">Select image</span> <span class="fileupload-exists">Change</span>
+                                                <input type="file" class="default" />
+                                                </span> </div>
+                                            </div>
+                                            <span class="label label-important">NOTE!</span> <span>Attached image thumbnail is
+                                            supported in Latest Firefox, Chrome, Opera,
+                                            Safari and Internet Explorer 10 only </span> </div>
+                                        </div>
+                                        <div class="check ShowDefaultImage clearB" style="display: none">
+                                          <div class="control-group">
+                                            <label class="control-label">Select Default Image </label>
+                                            <div class="controls" style="min-height: 200px">
+                                              <select>
+                                                <option>Choose image</option>
+                                                <option >Image Name</option>
+                                                <option >Image Name</option>
+                                              </select>
+                                              <div class="viewDefaultImage thumbnail"> <img class="viewDefNoImage" alt="no_image"  src="img_athena/no_image.gif" /> </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="control-group">
+                                          <label class="control-label">Url </label>
+                                          <div class="controls controls-row"> <span>
+                                            <input type="text" class="span10" />
+                                            <button class="btnAthena btn-primary mtop-10" type="button">Test</button>
+                                            <div class="colorBlue clearB">upload new documents to this directory</div>
+                                            </span> </div>
+                                        </div>
+                                        <hr />
+                                        <div class="mbot20">
+                                          <div class="controls mtop10"> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Publish </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Featued </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Client Facing </span> <span class="mr10">
+                                            <input type="checkbox" />
+                                            Practice Approved </span> <span class="pull-right mtop30">
+                                            <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                                            <input type="button" class="btnAthena btn-primary" value="Save" />
+                                            </span> </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <h4>heading</h4>
+                      <p> content content content contentcontent contentcontent contentcontent contentcontent contentcontent contentcontent contentcontent contentcontent contentcontent contentcontent contentcontent contentcontent contentcontent content </p>
+                      <div>
+                        <button class="demo btnAthena btn-primary pull-right">share</button>
+                        <span class="detailDoc"> <a target="_blank" href="#"> <img class="mrl" width="25" height="25" src="img_athena/fileURLUpload.png" /> </a> </span> <span><img src="img_athena/hpsharedIcon.png" class="pull-right mrl" /></span> </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="span4">
+        <div class="row-fluid ">
+          <div class="hpit_athena_rightDiv span12"> Contributors <a class="ml10 icon-plus" href="#AddContributors" data-toggle="modal" > Add</a>
+                <div id="AddContributors" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                  <div class="modal-header">
+                    <h3>Add AddContributors</h3>
+                  </div>
+                  <div class="modal-body">
+                    <div class="span5">
+                      <label>Search Owner :</label>
+                    </div>
+                    <div class="span5"> <span>fernando, anto</span> </div>
+                    <div class="span5 ml0">
+                      <label>New Owner :</label>
+                    </div>
+                    <div class="span5"> <span>
+                      <input type="text" class="span10 " />
+                      </span> <a class="a_underNone fs21"><i class="icon-search"></i></a> 
+                      <!-- search owner --> 
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btnAthena btn-primary">Save</button>
+                  </div>
+                </div>
+            <hr />
+            <div class="removeFdiv">
+              <li class="dropdown" id="header_inbox_bar"> <a href="#" class="dropdown-toggle hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> <img width="35" height="35" src="img_athena/no_username_small.jpg" /> </a>
+                <ul class="dropdown-menu extended inbox">
+                  <li> <a href="#"> <span class="photo hpit_athena_ca-item-personPhoto"><img src="img_athena/no_username_small.jpg" alt="avatar" /></span> <span class="subject">
+                    <div class="from">Name</div>
+                    </span>
+                    <div class="message"> <span>Title</span><br />
+                      <br />
+                      <button>follow</button>
+                      <span>Followers (212)</span> </div>
+                    </a> </li>
+                </ul>
+              </li>
+              <a class="icon-remove-sign removeFbtn"></a> </div>
+            <div class="removeFdiv">
+              <li class="dropdown" id="Li1"> <a href="#" class="dropdown-toggle hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> <img width="35" height="35" src="img_athena/no_username_small.jpg" /> </a>
+                <ul class="dropdown-menu extended inbox">
+                  <li> <a href="#"> <span class="photo hpit_athena_ca-item-personPhoto"><img src="img_athena/no_username_small.jpg" alt="avatar" /></span> <span class="subject">
+                    <div class="from">Name</div>
+                    </span>
+                    <div class="message"> <span>Title</span><br />
+                      <br />
+                      <button>follow</button>
+                      <span>Followers (212)</span> </div>
+                    </a> </li>
+                </ul>
+              </li>
+              <a class="icon-remove-sign removeFbtn"></a> </div>
+            <div class="removeFdiv">
+              <li class="dropdown" id="Li2"> <a href="#" class="dropdown-toggle hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> <img width="35" height="35" src="img_athena/no_username_small.jpg" /> </a>
+                <ul class="dropdown-menu extended inbox">
+                  <li> <a href="#"> <span class="photo hpit_athena_ca-item-personPhoto"><img src="img_athena/no_username_small.jpg" alt="avatar" /></span> <span class="subject">
+                    <div class="from">Name</div>
+                    </span>
+                    <div class="message"> <span>Title</span><br />
+                      <br />
+                      <button>follow</button>
+                      <span>Followers (212)</span> </div>
+                    </a> </li>
+                </ul>
+              </li>
+              <a class="icon-remove-sign removeFbtn"></a> </div>
+          </div>
+        </div>
+        <div class="row-fluid ">
+          <div class="hpit_athena_rightDiv span12"> Followers
+            <hr />
+            <li class="dropdown" id="Li3"> <a href="#" class="dropdown-toggle hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> test </a>
+              <ul class="dropdown-menu extended inbox">
+                <li> <a href="#"> <span class="photo hpit_athena_ca-item-personPhoto"><img src="img_athena/no_username_small.jpg" alt="avatar" /></span> <span class="subject">
+                  <div class="from">Name</div>
+                  </span>
+                  <div class="message"> <span>Title</span><br />
+                    <br />
+                    <button>follow</button>
+                    <span>Followers (212)</span> </div>
+                  </a> </li>
+              </ul>
+            </li>
+            <li class="dropdown" id="Li4"> <a href="#1" class="dropdown-toggle hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> <img width="35" height="35" src="img_athena/no_username_small.jpg" /> </a>
+              <ul class="dropdown-menu extended inbox">
+                <li> <a href="#1"> <span class="photo hpit_athena_ca-item-personPhoto"><img src="img_athena/no_username_small.jpg" alt="avatar" /></span> <span class="subject">
+                  <div class="from">Name1</div>
+                  </span>
+                  <div class="message"> <span>Title1</span><br />
+                    <br />
+                    <button>follow1</button>
+                    <span>Followers (212)1</span> </div>
+                  </a> </li>
+              </ul>
+            </li>
+            <li class="dropdown" id="Li5"> <a href="#2" class="dropdown-toggle hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> <img width="35" height="35" src="img_athena/no_username_small.jpg" /> </a>
+              <ul class="dropdown-menu extended inbox">
+                <li> <a href="#2"> <span class="photo hpit_athena_ca-item-personPhoto"><img src="img_athena/no_username_small.jpg" alt="avatar" /></span> <span class="subject">
+                  <div class="from">Name2</div>
+                  </span>
+                  <div class="message"> <span>Title2</span><br />
+                    <br />
+                    <button>follow2</button>
+                    <span>Followers (212)2</span> </div>
+                  </a> </li>
+              </ul>
+            </li>
+          </div>
+        </div>
+        
+        <div class="row-fluid ">
+          <div class="hpit_athena_rightDiv span12"> Related boards 
+              <a class="icon-sort-by-order btnAthena btn-primary"></a>
+              <a class="ml10 icon-plus" data-toggle="modal" href="#AddBoards" > Add</a>
+            <div id="AddBoards" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static" style="width: 55%; left: 44%;">
+              <div class="modal-header">
+                <h3>Add Related Boards</h3>
+              </div>
+              <div class="modal-body">
+                <div class="row-fluid">
+                  <div class="span12">
+                    <div class="span8"> <span>
+                      <input type="text" placeholder="Enter title of learning board" class="span11" />
+                      </span> </div>
+                    <div class="span4">
+                      <button class="btnAthena btn-primary">Search</button>
+                    </div>
+                    <div class="clearB">
+                        item 1<br />
+                        iteam 2<br />
+                        item 3<br />
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                <button class="btnAthena btn-primary">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- END PAGE --> 
+</div>
+<!-- END CONTAINER --> 
+
+<!-- BEGIN FOOTER -->
+<div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+<!-- END FOOTER --> 
+
+    <!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    
+    <!-- page js files --> 
+
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-fileupload.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}"/>
+<!-- Add Tags  --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+
+    <!-- END JAVASCRIPTS -->   
+    <script>
+        $(document).ready(function () {
+            $('input.typeahead-devs').typeahead({
+                name: 'accounts',
+                local: []
+            });
+
+        })
+    </script> 
+<script>
+    $(function () {
+        var sampleTags = ['cloud', 'athena', 'sample', 'board', 'UI', 'css', 'jQuery', 'salesforce', 'html5', 'responcive', ];
+
+
+
+        //-------------------------------
+        // Single TAG field
+        //-------------------------------
+        $('#learningTagsTop').tagit({
+            availableTags: sampleTags,
+            // This will make Tag-it submit a single form value, as a comma-delimited field.
+            singleField: true,
+            singleFieldNode: $('#learningTags')
+        });
+
+
+
+        //show hide imageUpload
+        $("input[type=radio]").change(function () {
+            var divId = $(this).attr("id");
+            $("div.check").hide();
+            $("." + divId).show();
+            $("input[type=checkbox]").change();
+        });
+
+
+
+    });
+    </script> 
+
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

@@ -1,0 +1,137 @@
+<!-- 
+/**********************************************************
+* Page Name: Product_Specialty_Tab_Partner
+* Author: Sunder/Raghvendra
+* Date: 01-Oct-2013
+* CR : 1242
+* Description: To Display Specialty Opportunity Matched for logged in user based on BR/Locations
+***********************************************************/
+-->
+<apex:page StandardController="Sales_Territory__c" sidebar="false" extensions="SpecialtyMatchesforPartnerAccounts" tabStyle="Opportunity" id="page">
+    <apex:sectionHeader title="{!$ObjectType.Product_Specialty_Oppty_Assignment__c.LabelPlural}" subtitle="Home" />
+    <apex:pageBlock >
+        <apex:pageBlockSection title="Back to Main Opportunity List">
+            <apex:pageBlockSectionItem >        
+                <apex:outputLink value="{!$Page.HP_OpportunityTabOverride}" > « Back</apex:outputLink>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+    <apex:form id="frm">
+        <apex:pageBlock id="pageblock">            
+            <apex:pageMessages id="errorMessage"/> 
+            <apex:pageBlockSection title="Select Report Parameters" id="pageblocksection">           
+                <!--Sunder Test New Start  --> 
+                <apex:pageBlockSectionItem id="pageBlockSectionItemLocNew">        
+                    <apex:outputLabel value="Channel/Alliance Partner:" for="uLocationList"/>
+                    <apex:outputPanel layout="block" id="outputpanel">
+                        <apex:inputHidden id="hiddenLocIdVal" value="{!locIdStringVal}"/>
+                        <apex:inputTextarea id="uLocationTextArea" value="{!lookupLocNew.Location__c}" rows="4" cols="50" disabled="true"/>
+                        <apex:outputLink id="uLocationList">
+                        <apex:image value="/s.gif" alt="Partner Lookup (New Window)" styleClass="lookupIcon" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" title="Partner Lookup (New Window)"/>
+                        </apex:outputLink>
+                        <apex:commandButton id="LocTextAreabtnGo" value="{!$Label.Go}" action="{!populateSpeOpptyfromLocLookup}" rerender="displayblock,errorMessage"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <!--Sunder Test New End  -->  
+            </apex:pageBlockSection>
+            <apex:outputText value="**Note: If query returns more than 50K Specialty Opportunity Matches, page will error out (Salesforce governor limit)." />
+        </apex:pageBlock>
+    
+    <apex:pageBlock id="displayblock">
+        <apex:outputText value="The Selected Channel/Allaince Partner(s) has {!total_size} Specialty Opportunity Matche(s) and Showing {!IF(total_size != null && total_size > 0,(PageNumber*ListSize)+1 - ListSize,0)}-{!IF((PageNumber*ListSize)>total_size,total_size,(PageNumber*ListSize))} of {!total_size} Specialty Opportunity Matche(s)." id="totalrows"/>
+         <!--Raghv Start-->
+                <apex:pageBlockButtons id="buttons">
+                   <apex:outputPanel id="myButtons">
+                        <apex:commandButton action="{!Beginning}" title="Beginning" value="first" disabled="{!disablePrevious}" status="status" reRender="displayblock"/>
+                        <apex:commandButton action="{!Previous}" title="Previous" value="previous" disabled="{!disablePrevious}" status="status" reRender="displayblock"/>        
+                        <apex:commandButton action="{!Next}" title="Next" value="next" disabled="{!disableNext}" status="status" reRender="displayblock"/>
+                        <apex:commandButton action="{!End}" title="End" value="last" disabled="{!disableNext}" status="status" reRender="displayblock"/>
+                   </apex:outputPanel>
+               </apex:pageBlockButtons>
+                <!--Raghv End-->
+       <apex:pageBlockSection columns="1" title="Specilty Opportunity Matches" collapsible="false">
+      
+           <apex:outputPanel id="myPanel">               
+               <apex:pageblockTable value="{!displaySOMRecords}" var="pomacct" id="specialtytable">
+                   <!--<apex:column headerValue="{!$ObjectType.Channel_Partner__c.fields.Partner_Type__c.label}" value="{!pomacct.partnerData.Partner_Type__c}"/>
+                   <apex:column headerValue="{!$ObjectType.Channel_Partner__c.fields.Channel_Partner__c.label}" value="{!pomacct.partnerData.Channel_Partner__c}"/>-->
+                   <apex:column >
+                        <apex:facet name="header">Customer</apex:facet>
+                        <apex:outputLink value="/{!pomacct.prodsplmatch.Opportunity__r.AccountId}">{!pomacct.prodsplmatch.Opportunity__r.Account.Name}</apex:outputLink> 
+                   </apex:column>
+                   <apex:column headerValue="{!$ObjectType.Product_Specialty_Oppty_Assignment__c.fields.HP_Opportunity_Id__c.label}" value="{!pomacct.prodsplmatch.HP_Opportunity_Id__c}" />
+                   <apex:column headerValue="{!$ObjectType.Product_Specialty_Oppty_Assignment__c.fields.Opportunity__c.label}" value="{!pomacct.prodsplmatch.Opportunity__c}"/>
+                   <!--<apex:column headerValue="Total Opportunity Value" value="{!pomacct.prodsplmatch.Opportunity__r.Amount}"/>-->
+                   <!--<apex:column headerValue="Total Opportunity Value1" value="{!pomacct.prodsplmatch.Opportunity_Amount__c}"/>
+                   <apex:column headerValue="Total Opportunity Value">{!pomacct.prodsplmatch.Opportunity__r.CurrencyIsoCode} {!pomacct.prodsplmatch.Opportunity__r.Amount}</apex:column>-->
+                    <apex:column headerValue="Total Opportunity Value">
+                       <apex:panelgroup id="amountid">
+                            <apex:outputtext value="{!pomacct.prodsplmatch.Opportunity__r.CurrencyISOCode}" />
+                            <apex:outputText value="{0, number, ###,###,###.00}" style="text-align:Left;">
+                            <apex:param value="{!pomacct.prodsplmatch.Opportunity__r.Amount}" />
+                            </apex:outputText>
+                            <apex:outputText value=".00" rendered="{!ISBLANK(pomacct.prodsplmatch.Opportunity__r.Amount)}" >
+                            <apex:param value="{!pomacct.prodsplmatch.Opportunity__r.Amount}" />
+                            </apex:outputText> 
+                       </apex:panelgroup>
+                       <apex:panelgroup rendered="{!(activeUser != pomacct.prodsplmatch.Opportunity__r.CurrencyIsoCode)}">
+                        (
+                        <apex:outputText value="{!activeUser}" />
+                        
+                        <apex:outputText value="{0, number, ###,###,###.00}" >
+                        <apex:param value="{!pomacct.opptyAmount.Amount}" />
+                        </apex:outputText>
+                        <apex:outputText value=".00"  rendered="{!ISBLANK(pomacct.prodsplmatch.Opportunity__r.Amount)}">
+                        <apex:param value="{!pomacct.prodsplmatch.Opportunity__r.Amount}" />
+                        </apex:outputText>
+                        )
+                      </apex:panelgroup>
+                   </apex:column>             
+                   <apex:column headerValue="{!$ObjectType.Product_Specialty_Oppty_Assignment__c.fields.Stage__c.label}" value="{!pomacct.prodsplmatch.Stage__c}"/>                   
+                   <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.ProductName__c.label}">
+                       <apex:repeat value="{!pomacct.productName}" var="product">
+                           <apex:outputText value="{!product}"/><br/>
+                       </apex:repeat>
+                   </apex:column>
+                   <apex:column >
+                        <apex:facet name="header">Location Name</apex:facet>
+                        <apex:outputLink value="/{!pomacct.locationObj.Id}">{!pomacct.locationObj.Location_Name__c}</apex:outputLink> 
+                   </apex:column>     
+                   <!--<apex:column headerValue="{!$ObjectType.Location__c.fields.Location_Name__c.label}" value="{!pomacct.locationObj.Location_Name__c}"/>-->
+                   <apex:column headerValue="{!$ObjectType.Location__c.fields.Business_Relationship__c.label}" value="{!pomacct.locationObj.Business_Relationship__c}"/>
+                   <apex:column headerValue="{!$ObjectType.Location__c.fields.City__c.label}" value="{!pomacct.locationObj.City__c}"/>
+                   <apex:column headerValue="{!$ObjectType.Location__c.fields.State__c.label}" value="{!pomacct.locationObj.State__c}"/>  
+                   <!--<apex:column headerValue="{!$ObjectType.Location__c.fields.Country__c.label}" value="{!pomacct.locationObj.Country__c}"/>-->
+                   <!--<apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.ProductName__c.label}" value="{!pomacct.productName}"/>-->
+               </apex:pageBlockTable>
+               
+           </apex:outputPanel>
+       </apex:pageBlockSection>
+   </apex:pageBlock>
+   </apex:form>
+   <script>
+        window.onload = function(){
+            var locationListId = 'page:frm:pageblock:pageblocksection:pageBlockSectionItemLocNew:uLocationList';
+            var locationListAreaId = 'page:frm:pageblock:pageblocksection:pageBlockSectionItemLocNew:uLocationTextArea';
+            modifyLocLookupListButton(locationListId,locationListAreaId);
+        }
+        function modifyLocLookupListButton(locationListId,locationListAreaId){
+            var locationListObj = document.getElementById(locationListId);
+            if (locationListObj != null) {               
+                    //locationListObj.href = "javascript: openLookup('/apex/Product_Specialty_Loc_Multiselect_Lookup?lkfm=page%3Afrm&lknm="+locationListAreaId+"&lktp=' + getElementByIdCS('"+locationListAreaId+"').value,670,'1','&lksrch=' + escapeUTF(getElementByIdCS('"+locationListAreaId+"').value.substring(0, 80)))";
+                    locationListObj.href = "javascript: openLookup('/apex/Product_Specialty_Loc_Multiselect_Lookup?lkfm=page%3Afrm&lknm="+locationListAreaId+"&lktp=' + getElementByIdCS('"+locationListAreaId+"').value,670,'1')";
+                }
+        }
+        function ValueFromLocChildWindow(idString,nameString){
+            document.getElementById('page:frm:pageblock:pageblocksection:pageBlockSectionItemLocNew:uLocationTextArea').value = '';
+            document.getElementById('page:frm:pageblock:pageblocksection:pageBlockSectionItemLocNew:uLocationTextArea').value = nameString;
+            document.getElementById('page:frm:pageblock:pageblocksection:pageBlockSectionItemLocNew:hiddenLocIdVal').value = idString;
+        }
+        function clearLocation(){        
+             alert('Go executed');
+            // document.getElementById('page:frm:pageblock:pageblocksection:pageBlockSectionItemLocNew:uLocationTextArea').value = '';
+        }
+        
+    </script>
+</apex:page>

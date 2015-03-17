@@ -1,0 +1,17 @@
+<apex:page controller="AthenaEditRepeater">
+  
+ <apex:pageBlock id="table"  >
+  <apex:repeat value="{!lstL1}" var="dev">
+  <apex:pageblockSection title="{!dev.LeaningCat}" columns="1" collapsible="true" id="CollapseDefault">
+  <apex:repeat value="{!lstL2}" var="sec">
+    <tr>
+     <td>
+        <apex:outputText value="{!sec.LeaningBoardName}" />
+    <apex:image url="{!URLFOR($Action.Attachment.Download, sec.LeaningBoardName)}" />
+     </td>
+   </tr>
+  </apex:repeat>
+     </apex:pageblockSection>
+  </apex:repeat>
+ </apex:pageBlock>
+</apex:page>

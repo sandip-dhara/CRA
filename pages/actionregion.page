@@ -1,0 +1,232 @@
+<apex:page standardController="Learning_Board__c" extensions="actionregioncontroller" showheader="false" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+  <html>
+  <head>
+  <title>Athena</title>
+  
+  <!-- Athena Style Starts -->
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/style.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_css, '/athena_css/jquery.jscrollpane.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/jquery-ui.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.athena_repo, '/athena_repo/css/theme.css')}"/>
+  <!-- Example of an application-specific style -->
+  <style type="text/css">
+body {
+    width: 99%;
+    margin: 0 auto;
+    margin-top: 1%;
+}
+#hpit_top {
+    min-width: 960px;
+}
+#hpit_centerBox {
+    min-width: 960px;
+}
+.zen {
+    width: 100px;
+    float: right;
+    padding-top: 11px;
+}
+.zen-mediaBody a {
+    padding: 0
+}
+.zen-media a {
+    padding: 0
+}
+</style>
+  
+  <!-- Athena Style Ends -->
+  </head>
+  
+  <body class="hpit_body">
+  <!-- begin themed header -->
+  <header>
+    <div id="hpit_top" class="">
+      <div id="hpit_topTitle">
+        <h1>Social Learning Platform</h1>
+        <h3>Learning on your terms!</h3>
+      </div>
+      <div id="hpit_topLogo"></div>
+      <nav>
+        <ul id="hpit_topMenu">
+        </ul>
+      </nav>
+      <div id="hpit_topSearch">
+        <input id="hpit_topSearchBox" type="text" value="Search" />
+        <button id="" class="SearchBtn"><span>Search</span></button>
+      </div>
+      
+      <!-- Begin Themed User Greeting and Menu -->
+      <div id="hpit_topUser"> <span>Welcome {!GetLoggedinUserDtls.Name}</span>
+        <ul id="hpit_topUserMenu">
+          <li><a href="#">Logout</a></li>
+        </ul>
+      </div>
+      <!-- End Themed User Greeting and Menu --> 
+      
+    </div>
+  </header>
+  <!-- end themed header --> 
+  
+  <!-- Athena Body Content Starts -->
+  
+    <div class="hpit_Athena_innerContainer"> 
+      
+      <!-- topBar -->
+      <div class="hpit_athena_inTopBar">
+        <div class="hpit_athena_inTopBarHeader">
+          <h2>{!Learning_Board__c.Name__c}</h2>
+        </div>
+        <div class="hpit_athena_inTopBarR1"> 
+        <apex:form id="form1">
+        <apex:actionRegion >
+           <a class="hpit_athena_fontBold"> <span >{!LBLikeCount}</span>            
+          <apex:commandButton disabled="{!LikedOrNotLB}" styleClass="hpit_athena_LikeBtn"  action="{!LearningBoardLike}" id="LBlike" reRender="form1"/>
+          </a>
+        </apex:actionRegion>  
+          </apex:form>
+          <chatter:follow entityId="{!Learning_Board__c.id}"/>
+        </div>
+      </div>
+      
+      <!-- Detail Veiw container starts -->
+      <div class="hpit_athena_detailViewLeft">
+        <div class="hpit_athena_leftCont">
+          <p> <span class="hpit_athena_BoardImg"> <img src="data:{!LearningBoardDtls.AttContentType};base64,{!LearningBoardDtls.Attbody}" width="321" height="214"/> 
+            <!--      <apex:image url="{!URLFOR($Resource.athena_images, 'images/Android1.png')}" width="321" height="214"/> --> 
+            </span> <strong> </strong><br />
+            {!Learning_Board__c.Description__c} </p>
+          <p> <strong></strong><br />
+          </p>
+          
+          <!-- Comments  -->
+          <div class="hpit_athena_comments">
+            <div class="menu_container">
+              <p class="menu_head"><span class="plusminus">+</span> Comment <span class="hpit_athena_ComIcon">
+                <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIconBlack.png')}" width="14" height="14"/>
+                </span><span class="hpit_athena_ComIconCount"> {!LBCommentCount} </span></p>
+              <div class="menu_body" style="display: none;">
+                <div  style="overflow-x:hidden;height:360px;" class="menu_bodyDiv"> 
+                   <chatter:feed entityid="{!Learning_Board__c.Id}" />  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hpit_athena_contBot">
+          <div class="hpit_athena_contBotDiv">
+            <h2>HP's Android implementations</h2>
+            <span class="hpit_athena_Fright">
+            <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIconBlack.png')}" width="14" height="14"/>
+            </span> </div>
+          <p> <span class="hpit_athena_detailPostImg">
+            <apex:image url="{!URLFOR($Resource.athena_images, 'images/Android2.png')}" width="500" height="191"/>
+            </span> It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. </p>
+          <span class="hpit_athena_detailDocDown"> <a>
+          <apex:image url="{!URLFOR($Resource.athena_images, 'images/filePDFUpload.png')}" width="25" height="25"/>
+          </a> </span> </div>
+        
+        <!--<h2>HP's Android implementations</h2>--> 
+        <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/Android2.png')}" width="629" height="191"/> -->
+        <div class="hpit_athena_contBot">
+          <apex:repeat value="{!LearningDtls}" var="lrng" >
+            <h2>{!lrng.LName}</h2>
+            <apex:form id="form">
+                <apex:actionRegion >
+                    <apex:commandLink style="" value="Like" action="{!LearningLike}" id="link" reRender="form">
+                        <apex:param name="LearningId"  value="{!lrng.LID}" assignTo="{!Learningid}"/>
+                        
+                    </apex:commandLink>
+                </apex:actionRegion>
+            </apex:form>
+            <div class="hpit_athena_leftCont">
+              <p> 
+              <span>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Video URL'),(IF(CONTAINS(lrng.LURL,'www.brainshark.com'),true,false)),false)}">
+                <iframe src="{!lrng.LURL}&dm=5&pause=1&nrs=1" frameborder="0" width="321" height="214" scrolling="no" style="border:1px solid #999999"></iframe>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'Video URL'),(IF(!CONTAINS(lrng.LURL,'www.brainshark.com'),true,false)),false)}">
+                <iframe width="640" height="360" src="//www.youtube.com/embed/UfMG2B9eNVg?feature=player_detailpage" frameborder="0"></iframe>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'URL'),(IF(CONTAINS(lrng.DocType,'PDF'),true,false)),false)}">
+                <div> <img src="data:{!lrng.AttContentType};base64,{!lrng.Attbody}" width="640" height="360"/> <a href="{!lrng.LURL}" target="_blank">Click here to see pdf</a> </div>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'URL'),(IF(CONTAINS(lrng.DocType,'PPT'),true,false)),false)}">
+                <div> <img src="data:{!lrng.AttContentType};base64,{!lrng.Attbody}" width="640" height="360"/> <a href="{!lrng.LURL}" target="_blank">Click here to see ppt</a> </div>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'URL'),(IF(CONTAINS(lrng.DocType,'DOC'),true,false)),false)}">
+                <div> <img src="data:{!lrng.AttContentType};base64,{!lrng.Attbody}" width="640" height="360"/> <a href="{!lrng.LURL}" target="_blank">Click here to see document</a> </div>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(CONTAINS(lrng.LType,'URL'),(IF(CONTAINS(lrng.DocType,'OTHER'),true,false)),false)}">
+                <div> <img src="data:{!lrng.AttContentType};base64,{!lrng.Attbody}" width="640" height="360"/> <a href="{!lrng.LURL}" target="_blank">Click here to see more</a> </div>
+              </apex:outputPanel>
+              </span> <strong></strong><br />
+              {!Learning_Board__c.Description__c}
+              </p>
+              <p> <strong></strong><br />
+              </p>
+            </div>
+          </apex:repeat>
+        </div>
+      </div>
+      <div class="hpit_athena_detailViewRight">
+        <div class="hpit_athena_rightDiv">
+          <div class="hpit_athena_detailRgtDivTopL"> <span>
+            <apex:image Url="{!LearningBoardOwnerDtls.FullPhotoUrl}" width="35" height="35" />
+            </span> <a class="hpit_athena_ca_itemLink" href="/apex/athenaUserProfile?id={!LearningBoardOwnerDtls.id}"> {!Learning_Board__c.Owner.Name} </a> </div>
+          <div class="hpit_athena_detailRgtDivTopR"> <span>{!LBOwnerLikeCount}</span>
+            <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_likeIconBlack.png')}" width="14" height="14"/>
+            <span style="margin-left:5px">{!LBOwnerCommentCount}</span>
+            <apex:image url="{!URLFOR($Resource.athena_images, 'images/hpit_athena_chatIconBlack.png')}" width="14" height="14"/>
+          </div>
+          <div class="hpit_athena_detailRgtDivTopCont">
+            <p> {!LearningBoardOwnerDtls.AboutMe} </p>
+            <div class="hpit_athena_detailFolws"> <a><span></span></a>
+              <div class="hpit_athena_followersImg">
+                <chatter:followers entityid="{!LearningBoardOwnerDtls.Id}"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hpit_athena_rightDiv">
+          <h3>Related boards</h3>
+          <hr>
+          </hr>
+          <div>
+            <apex:repeat value="{!RelatedLearningBoards}" var="rlb" > <a class="hpit_athena_ca_itemLink" href="/apex/athenaLearningBoardDtls?id={!rlb.Lbid}">
+              <p class="hpit_athena_rightHeading"> {!rlb.LBName}</p>
+              <p> <img src="data:{!rlb.AttContentType};base64,{!rlb.Attbody}"  width="272" height="162"/> </p>
+              </a>
+              <hr>
+              </hr>
+            </apex:repeat>
+            
+            <!--  <p> Sales goals to the next level</p> --> 
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- ETR JavaScript -->
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/jquery-ui.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/hp-esm_theme.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.athena_repo, '/athena_repo/js/theme.js')}"/>
+  <script type="text/javascript">
+        //toggle the componenet with class menu_body
+    $(".menu_body").hide();
+    $(".menu_head").click(function(){
+        $(this).next(".menu_body").slideToggle(600); 
+        var plusmin;
+        plusmin = $(this).children(".plusminus").text();
+        
+        if( plusmin == '+')
+        $(this).children(".plusminus").text('-');
+        else
+        $(this).children(".plusminus").text('+');
+    });
+
+   
+    </script>
+  </body>
+  </html>
+</apex:page>

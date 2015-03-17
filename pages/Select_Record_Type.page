@@ -1,0 +1,63 @@
+<apex:page controller="SelectRecordType" tabStyle="Apttus__APTS_Agreement__c">
+    <style>
+        .descriptionStyle{
+            font-family: Arial,Helvetica,sans-serif;
+            color: #222;
+            margin: 16px 0;
+            font-size: 109%;
+            text-align: left;
+        }
+    </style>
+    <apex:form >
+        <apex:actionFunction name="getAPIParams" id="getAPIParams" action="{!dologin}" reRender="theForm" >
+                 <apex:param name="sessionId" assignTo="{!apiSessionId}" value="{!$Api.Session_ID}" />
+                 <apex:param name="serverURL" assignTo="{!apiServerURL}" value="{!$Api.Partner_Server_URL_140}" />
+             </apex:actionFunction>
+        <script language="JavaScript">      
+          window.onload = function() { getAPIParams();}
+        </script>
+        <apex:sectionHeader title="New Agreement" subtitle="Select Agreement Record Type"/>
+        <div class="descriptionStyle">
+            Select a record type for the new agreement. To skip this page in the future, change your record type settings on your personal setup page.
+        </div>
+        <apex:pageBlock title="Select Agreement Record Type">            
+            <apex:pageBlockSection columns="1">
+                <apex:outputPanel >
+                    <table width="100%">
+                        <tr>
+                            <td width="15%">
+                                <b>Record Type of new record</b>
+                            </td>
+                            <td>
+                                <apex:selectList size="1" value="{!selectedRecordType}">
+                                    <apex:selectOptions value="{!lstSelectRecordTypes}"></apex:selectOptions>
+                                </apex:selectList>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center">
+                                <apex:commandButton value="Save & Continue" action="{!SaveAndContinue}"/>
+                                <apex:commandButton value="Cancel" action="{!Cancel}"/>
+                            </td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <h3 style="font-family:Arial,Helvetica,sans-serif;">Available Agreement Record Types</h3>
+        <apex:outputPanel >
+            <table style="border:1px solid #e0e3e5;margin-top:15px;" rules="all" cellpadding="5">
+                <tr style="background-color:#ccc;background: #f2f3f3;">
+                    <th><b>Record Type Name</b></th>
+                    <th><b>Description</b></th>
+                </tr>
+                <apex:repeat value="{!lstRecordType}" var="rt">
+                    <tr>
+                        <td><b>{!rt.Name}</b></td>  
+                        <td>{!rt.Description}</td>                  
+                    </tr>
+                </apex:repeat>
+            </table>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

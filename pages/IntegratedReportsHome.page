@@ -1,0 +1,56 @@
+<apex:page showHeader="true" controller="IntegratedReportController" standardStylesheets="true">
+
+<style type = "text/css">
+
+        .validationMessage{           
+               font-family:"HP Simplified", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+               color: blue!important;
+         }
+        .ReportName{
+                   font-weight:bold;
+                   font-size:17px!important;
+                   font-family:"HP Simplified","Helvetica Neue", Helvetica, Arial, sans-serif !important;
+                   color: black!important; size:15!important ;
+             }
+         .OutputPanel{
+                overflow:visible;
+                height:1000px;
+                width:1000px;
+         }    
+    </style>
+   
+<apex:form >
+
+ <apex:pageBlock id="pgBlock">
+  <apex:outputLink value="{!$Page.IntegratedReportsHome}" rendered="{!isReport}" styleClass="ReportName" >Back To Integrated Report List<br/><br/></apex:outputLink>
+    <apex:pageBlockSection collapsible="false" columns="1" Title="{!pageBlockTitle}" >
+     
+        
+             <apex:outputpanel id="linkView" rendered="{!isLink}">
+                    <apex:commandLink action="{!linkClick}"  value="Sales Manager Report" styleClass="ReportName" reRender="reportView, linkView, iframeView, pgBlock" title="Standard SalesForce.com metrics based on Opportunity data: Pipeline, Upside, Committed, Won">
+                        <apex:param name="fb" value="{!$Label.SALESMANAGERDASHBOARD_URL}" assignTo="{!linkforIFrame}"/>
+                    </apex:commandLink><br/>
+                       <apex:outputText styleClass="validationMessage" value="This view is intended for Sales Managers only, If you are a Sales Manager, and do not have access, please "/>
+                    <apex:outputLink styleClass="validationMessage" value="{!$Label.SALESMANAGERUAMURL}" target="_blank">Click Here</apex:outputLink>
+                    <apex:outputText styleClass="validationMessage" value=" (Connection to HP Network required) "/>
+                        <br/><br/>
+                        
+                 
+              </apex:outputpanel>
+                         
+                    <apex:outputpanel id="reportView" rendered="{!isReport}">   
+                        <apex:outputPanel id="iframeView" styleClass="OutputPanel">
+                            <apex:iframe src="{!linkforIFrame}" scrolling="true"/>
+                        </apex:outputPanel>
+                            
+                   </apex:outputpanel> 
+                   
+               
+    </apex:pageBlockSection>
+    
+
+ </apex:pageBlock>
+ 
+</apex:form>
+
+</apex:page>

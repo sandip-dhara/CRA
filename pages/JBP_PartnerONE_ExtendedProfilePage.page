@@ -1,0 +1,24 @@
+<!-- 
+    /**********************************************************
+    * Page Name: JBP_PartnerONE_ExtendedProfilePage
+    * Author: HP
+    * Date: 27-Mar-2013
+    * Requirement # Request Id : 5357
+    * Description: To display PartnerOne Extended Profile records related to the Joint Business Plan Account.
+    ***********************************************************/
+    -->
+<apex:page id="page" standardController="JBP__c" extensions="JointPlanSpclController">
+    <apex:form id="frm">
+        <apex:pageBlock >
+            <apex:pageblockTable value="{!spclList}" var="a">
+                <apex:column headerValue="{!$Label.JBP_Name}"> 
+                    <apex:outputLink value="Javascript:void();" onclick="window.open('/{!a.Extended_Profile_Category_Item__c}','_parent');">
+                                                                            {!a.Extended_Profile_Category_Item__r.Name}</apex:outputLink> 
+                </apex:column> 
+                <apex:column value="{!a.Item_Business_Area_Group__c}" headerValue="{!$Label.JBP_Business_Group}"/>
+                <apex:column value="{!a.Effective_Date__c}" headerValue="{!$Label.JBP_Effective_Date}"/>
+                <apex:column value="{!a.Expiry_Date__c}" headerValue="{!$Label.JBP_Expiry_Date}"/>
+            </apex:pageblockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

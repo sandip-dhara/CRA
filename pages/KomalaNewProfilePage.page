@@ -1,0 +1,596 @@
+<apex:page showheader="false" standardstylesheets="true" doctype="html-5.0" controller="KomalamNewProfilePageController">
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Edit User Profile</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="hp" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-fileupload.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/tagit.ui-zendesk.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/jquery.tagit.css')}" />
+    
+    <script type="text/javascript">
+        function SubmitSearchForm(event) {
+            if (event.keyCode == 13) {
+                var txtSearch = document.getElementById('{!$Component.UPForm.searchText}');
+                if (txtSearch.value.trim().length == 0) {
+                    document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                    document.getElementById('err_msg').style.display = 'block';
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+                else {
+                    document.getElementById('err_msg').style.display = 'none';
+                    var button = document.getElementById("{!$Component.UPForm.searchButton}");
+                    button.click();
+                }
+                return true;
+            }
+        }
+    </script>
+    
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+    
+        
+    <!-- BEGIN HEADER -->
+<header>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container-fluid"> <a class="HpLogo"> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/></a>
+        <div class="nav mtop10">
+          <h1 class="h1fontS">Social Learning Platform</h1>
+          <h3 class="h3fontS">Learning on your terms</h3>
+        </div>
+        <ul class="nav pull-right top-menu mtop16">
+          <!-- BEGIN USER LOGIN DROPDOWN -->
+          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span><apex:image url="{!LoggedinUserDtls.SmallPhotoUrl}" styleClass="userImage" alt="no_username"/></span> 
+            <!--<b class="caret"></b>--> 
+            </a>
+            <ul class="dropdown-menu extended logout">
+              <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a></li>
+              <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+            </ul>
+          </li>
+          <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+        <apex:form id="UPform">
+        <div class="nav notify-row"> <span class="add-on icon-search topSearchIcon topSearch"></span>
+          <apex:inputText id="searchText" styleClass="typeahead-devs" size="20" value="{!strSearchValue}" html-Placeholder="Please Enter Search Text" onkeydown="SubmitSearchForm(event);"/>
+          <apex:commandButton action="{!RedirectToSLP_GlobalSearch}" value="Search" id="searchButton" title="Click to Search for Learning Board" style="display:none;"/>
+        </div>
+        </apex:form>
+      </div>
+       <div class="alert alert-error span4 pull-right mr30" style="display:none" id="err_msg"></div>
+    </div>
+  </div>
+  <div class="navbar">
+  <div class="navbar-inner">
+      <div class="container-fluid menunavBar"> 
+        <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Home"></a> 
+        <a class="icon-book topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Library"></a>
+        <apex:OutputPanel rendered="{!IsLearningBoardCreator}"> 
+        <a class="topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"></a>     
+        </apex:OutputPanel>
+        <a class="icon-question-sign topNavIcon pull-right" href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank" title="Help"></a>
+      </div>
+    </div> 
+    </div>
+</header>
+<!-- END HEADER --> 
+
+<!-- BEGIN CONTAINER -->
+<apex:form >
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+  <div id="main-content"> 
+    <!-- BEGIN PAGE CONTAINER-->
+    <div class="container-fluid"> 
+      <!-- SEARCH BTN -->
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="profile_leftDiv PositionR"> 
+              <apex:image url="{!useredit.fullphotourl}" alt="profileImage" Styleclass="pofilimgS"/>
+           <!-- <a data-toggle="modal" href="#ChageProfileImg" class="clearfix">Change image </a>-->
+
+            <!-- <span class="icon-pencil"></span> --> </div>
+            
+            <!-- Start Change Profile Image Div -->
+            <div id="ChageProfileImg" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+              <div class="modal-header">
+                <h3>Change profile image</h3>
+              </div>
+              <div class="modal-body">
+                
+                    <div class=" clearB">
+                  <p>This image appears at the top of each learning board Recommended size is 130px * 165px</p>
+                  <div class="controls">
+                    <div data-provides="fileupload" class="fileupload fileupload-new">
+                      <div class="previewImgWidth fileupload-new thumbnail"> 
+                          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/no_image.gif')}" alt="no_image"/>
+                          </div>
+                      <div class="previewNoImg fileupload-preview fileupload-exists thumbnail"></div>
+                      <div> <span class="btnAthena btn-file"><span class="fileupload-new">Select image</span> <span class="fileupload-exists">Change</span>
+                        <input type="file" class="default" />
+                        </span> </div>
+                    </div>
+                    <span class="label label-important">NOTE!</span> <span>Attached image thumbnail is
+                    supported in Latest Firefox, Chrome, Opera,
+                    Safari and Internet Explorer 10 only </span> </div>
+                </div>
+                
+              </div>
+              <div class="modal-footer">
+                <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                <button class="btnAthena btn-primary">Save</button>
+              </div>
+            </div>
+            
+            <!-- End Change Profile Image Div -->
+                        
+          <div class="profile_rightDiv mtop10">
+            <div class="span12">
+              <div class="span5">
+              <!--<apex:inputText html-placeholder="Name" value="{!useredit.Name}" />-->
+              <label>{!useredit.Name}</label>
+              <apex:inputText html-placeholder="Title,Department" value="{!Title}" styleClass="span8 inp5" />
+              </div>
+              <div class="span7">
+                <div class="span12">
+                  <div class="span3 pull-right" style="width:20%">
+                    <div class="clearfix">
+                      <div class="badgesRead">{!FollowersCount}</div>
+                      <div class="pull-left"> <span class="icon-mail-reply"></span> <br />
+                        <span>Followers</span> </div>
+                    </div>
+                  </div>
+                  <div class="span3 pull-right">
+                    <div class="clearfix">
+                      <div class="badgesRead">{!PeopleFollowingCount}</div>
+                      <div class="pull-left"> <span class="icon-mail-forward"></span> <br />
+                        <span>Following</span> </div>
+                    </div>
+                  </div>
+                  <div class="span3 pull-right">
+                    <div class="clearfix">
+                      <div class="badgesRead">{!BoardsContributedCount}</div>
+                      <div class="pull-left"> <span class="icon-group"></span> <br />
+                        <span>Boards Contributed</span> </div>
+                    </div>
+                  </div>
+                  <div class="span3 pull-right">
+                    <div class="clearfix">
+                      <div class="badgesRead">{!BoardsCount}</div>
+                      <div class="pull-left"> <span class="icon-edit"></span> <br />
+                        <span>Boards Created</span> </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="hpit_athena_rightDiv clearB">
+<!--              <textarea placeholder="About you" rows="3" Class="span12" value="{!useredit.AboutMe}"/>-->
+                  <apex:inputtextarea html-placeholder="About you" rows="3" styleClass="span12" value="{!AboutMe}"/>
+            </div>
+          </div>
+        </div>
+      </div>
+            <div>
+               
+                <!--<button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>-->
+                <a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!useredit.id}" title="Cancel" class="btnAthena btn-primary">Cancel</a>
+                <!--<button class="btnAthena btn-primary">Save</button>-->
+                <apex:commandButton styleClass="btnAthena btn-primary"  onclick=" return funcGetData()" action="{!saveUserProfile}" value="Save"/>
+               
+            </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="span3">
+             <div class="hpit_athena_rightDiv">
+             <h3>My Notifications</h3>
+             Notify Me When:
+              <hr />
+              <div>
+              <apex:inputcheckbox value="{!LBShare}"></apex:inputcheckbox>Learning Board is shared<br/>
+              <apex:inputcheckbox value="{!LBRate}"></apex:inputcheckbox>Learning Board is Rated<br/>
+              <apex:inputcheckbox value="{!TShare}"></apex:inputcheckbox>Topic is shared<br/>
+              <apex:inputcheckbox value="{!TRate}"></apex:inputcheckbox>Topic is Rated<br/>
+              <apex:inputcheckbox value="{!UFollow}" ></apex:inputcheckbox>User started following<br/>               
+              </div>
+            </div>
+            <div class="hpit_athena_rightDiv">
+              <div>
+                 <!--<apex:inputText html-placeholder="Edit location" value="{!Location}" styleClass="span11 inp5" />-->
+                 <div class="icon-location-arrow clearfix"> <apex:inputText value="{!Location}" html-placeholder="City,State,Country" styleClass="span11 inp5"/></div>
+                 <div class="icon-twitter clearfix"> <apex:inputText value="{!twitterurl}" html-placeholder="Twitter Link" styleClass="span11 inp5"/></div> 
+                 <div class="icon-linkedin-sign clearfix"> <apex:inputText value="{!linkedinurl}" html-placeholder="LinkedIn Link" styleClass="span11 inp5"/></div> 
+                 <div class="icon-star clearfix"> <label>Average Content Rating {! IF((TotalRating==null),0.00,TotalRating)}</label></div> 
+              </div>
+            </div>
+            <div class="hpit_athena_rightDiv">
+              <h3>Add Expertise</h3>
+              <hr />
+              <div class="control-group">
+              <div class="controls">
+                <!--<apex:repeat value="{!userskilledit}" var="uskill" >-->
+                <input name="tags" id="learningTags" value="{!AssociatedSkills}" class='hide'/>
+                <!--</apex:repeat>-->
+                <ul id="learningTagsTop">
+                
+                </ul>
+                <!-- <input name="tags" id="learningTags" value="Social, Learning" class="hide" />-->
+                <!-- Tag Hidden Value -->
+<div style="display:none">
+                <apex:inputText id="txtSkills" value="{!skilltags}" />
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="hpit_athena_rightDiv">
+
+              Projects <!-- <a href="#EditProjects" data-toggle="modal" class="ml10" target="_top"><span class="icon-plus"></span> Edit Projects</a> -->
+                <div id="EditProjects" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                  <div class="modal-header">
+                    <h3>Edit Projects</h3>
+                  </div>
+                  <div class="modal-body">
+                <apex:repeat value="{!proedit}" var="proe" >
+                <apex:inputText value="{!proe.Name__c}"/>
+                <apex:inputText value="{!proe.Timeframe__c}"/>
+                <apex:inputTextarea value="{!proe.Description__c}"/>
+                </apex:repeat>                         
+                   
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btnAthena btn-primary">Save</button>
+                  </div>
+                </div>
+              <hr />
+                 <apex:repeat value="{!proedit}" var="proe" >
+               <h4><p>{!proe.Name__c}</p></h4>
+               <h5><span class="icon-calendar">{!proe.Timeframe__c}</span></h5>
+               <p>{!proe.Description__c}</p>
+                </apex:repeat>
+
+            </div>  
+          </div>
+          
+          <div class="span9">
+            <div class="TABclass">
+              <ul class="nav nav-tabs" id="myTab">
+                <li class="active"><a data-toggle="tab" href="#1">Boards</a></li>
+                <li><a data-toggle="tab" href="#2">Activity</a></li>
+                <li><a data-toggle="tab" href="#3">Boards Following ({!BoardFollowingCount})</a></li>
+                <li><a data-toggle="tab" href="#4">People Following ({!PeopleFollowingCount})</a></li>
+                <li><a data-toggle="tab" href="#5">Followers ({!FollowersCount})</a></li>
+              </ul>
+              <div class="tab-content" id="myTabContent">
+                <div id="1" class="tab-pane fade active in">
+                  <!--<p class="searchResult">Search result (2)</p>-->
+                  <div>
+                    <div class="TABclass">
+                      <ul class="nav nav-tabs" id="Ul1">
+                        <li class="active"><a data-toggle="tab" href="#6">Boards Created <span class="countNum">({!BoardsCount})</span></a></li>
+                        <li><a data-toggle="tab" href="#7">Boards Contributed <span class="countNum">({!BoardsContributedCount})</span></a></li>
+                      </ul>
+                      <div class="tab-content" id="Div1">
+                        <div id="6" class="tab-pane fade active in">
+                          <!--<p class="searchResult">Search result (2)</p>-->
+<div>
+                   <apex:repeat value="{!UserOwnedLBList}" var="uOwndlb">
+                   
+                    <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                          <div class="hpit_athena_ca-item-main">
+                            <div class="hpit_athena_ca-item-firstHalf">                                                 
+                                <div class="{!IF((uOwndlb.IsActive==true),"hpit_athena_ca-item-topBar","hpit_athena_ca-item-topBarInactive")}">
+                                <div class="hpit_athena_ca-item-topBarDate"> <apex:OutputText value="{0,date,MMM dd}">
+                              <apex:param value="{!uOwndlb.LBCrtDate}"/>
+                            </apex:outputtext> </div>
+                                <div class="hpit_athena_ca-item-topBarChat">
+                                  <div class="hpit_athena_ca-item-topBarChatImg">
+                                      <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                  </div>
+                                  <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndlb.LBNoOfComments}</div>
+                                </div>
+                              </div>
+                             <div class="ca-icon"> <a  href="/apex/athenaLearningBoardDtls?id={!uOwndlb.id}">
+                              <apex:outputPanel rendered="{!!uOwndlb.StaticImage}"> 
+                                <!-- <img src="data:{!uOwndlb.AttContentType};base64,{!uOwndlb.Attbody}" /> -->
+                                <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndlb.AttachmentId)}" />
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!uOwndlb.StaticImage}">
+                                                            <img src='{!uOwndlb.DefaultImageName}'/>
+                               <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}"/>-->
+                              </apex:outputPanel>
+                              </a> </div>
+                            </div>
+                            <a class="a_underNone">
+                                <div class="hpit_athena_ca-item-BottomBar">
+                                 <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}">
+                          <h3>{!uOwndlb.LBName}</h3>
+                          </a>
+                                </div>
+                            </a>
+                            <div class="hpit_athena_ca-item-SecondHalf">
+                              <div class="hpit_athena_ca-item-person cf">
+                                <div class="hpit_athena_ca-item-personPhoto"><apex:image value="{!uOwndlb.LBOwnerURL}" width="35" height="35" alt="no_username_small"/> </div>
+                                <a class="a_underNone"><div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!uOwndlb.LBOwnerID}">
+                        {!uOwndlb.LBOwnerName}</a> </div></a>
+                            <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((uOwndlb.LBOwnerTitle == null),'',uOwndlb.LBOwnerTitle)} </div>
+                              </div>
+                              <div class="hpit_athena_ca-item-PersonPost">
+                                <p>{!uOwndlb.LBDescription}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>                  
+                        </apex:repeat> 
+                        </div>
+                        </div>
+                        <!-- 1,1-->
+                        <div id="7" class="tab-pane fade ">
+                          <!--<p class="searchResult">Search result (2)</p>-->
+<div>
+                            <apex:repeat value="{!UserContLbList}" var="uOwndlb">
+                            <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                          <div class="hpit_athena_ca-item-main">
+                            <div class="hpit_athena_ca-item-firstHalf">
+                              <div class="hpit_athena_ca-item-topBar">
+
+                                <div class="hpit_athena_ca-item-topBarDate"> <apex:OutputText value="{0,date,MMM dd}">
+                              <apex:param value="{!uOwndlb.LBCrtDate}"/>
+                            </apex:outputtext> </div>
+                                <div class="hpit_athena_ca-item-topBarChat">
+                                  <div class="hpit_athena_ca-item-topBarChatImg">
+                                      <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                  </div>
+                                  <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndlb.LBNoOfComments}</div>
+                                </div>
+                              </div>
+                             <div class="ca-icon"> <a  href="/apex/athenaLearningBoardDtls?id={!uOwndlb.id}">
+                              <apex:outputPanel rendered="{!!uOwndlb.StaticImage}"> 
+                                <!-- <img src="data:{!uOwndlb.AttContentType};base64,{!uOwndlb.Attbody}" /> -->
+                                <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndlb.AttachmentId)}" />
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!uOwndlb.StaticImage}">
+                                                            <img src='{!uOwndlb.DefaultImageName}'/>
+                               <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}"/>-->
+                              </apex:outputPanel>
+                              </a> </div>
+                            </div>
+                            <a class="a_underNone">
+                                <div class="hpit_athena_ca-item-BottomBar">
+                                 <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}">
+                          <h3>{!uOwndlb.LBName}</h3>
+                          </a>
+                                </div>
+                            </a>
+                            <div class="hpit_athena_ca-item-SecondHalf">
+                              <div class="hpit_athena_ca-item-person cf">
+                                <div class="hpit_athena_ca-item-personPhoto"><apex:image value="{!uOwndlb.LBOwnerURL}" width="35" height="35" alt="no_username_small"/> </div>
+                                <a class="a_underNone"><div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!uOwndlb.LBOwnerID}">
+                        {!uOwndlb.LBOwnerName}</a> </div></a>
+                         <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((uOwndlb.LBOwnerTitle == null),'',uOwndlb.LBOwnerTitle)} </div>
+                              </div>
+                              <div class="hpit_athena_ca-item-PersonPost">
+                                <p>{!uOwndlb.LBDescription}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>   
+                            </apex:repeat> 
+                        </div>
+                        </div>
+                        <!-- 1,2--> 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 1-->
+                <div id="2" class="tab-pane fade ">
+                  <!--<p class="searchResult">Search result (2)</p>-->
+
+                </div>
+                <!-- 2-->
+                <div id="3" class="tab-pane fade ">
+                  <!--<p class="searchResult">Search result (2)</p>-->
+<div>   
+                   <apex:repeat value="{!boardfollowg}" var="uOwndlb">
+                         <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                          <div class="hpit_athena_ca-item-main">
+                            <div class="hpit_athena_ca-item-firstHalf">
+                              <div class="hpit_athena_ca-item-topBar">
+
+                                <div class="hpit_athena_ca-item-topBarDate"> <apex:OutputText value="{0,date,MMM dd}">
+                              <apex:param value="{!uOwndlb.LBCrtDate}"/>
+                            </apex:outputtext> </div>
+                                <div class="hpit_athena_ca-item-topBarChat">
+                                  <div class="hpit_athena_ca-item-topBarChatImg">
+                                      <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                  </div>
+                                  <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndlb.LBNoOfComments}</div>
+                                </div>
+                              </div>
+                             <div class="ca-icon"> <a  href="/apex/athenaLearningBoardDtls?id={!uOwndlb.id}">
+                              <apex:outputPanel rendered="{!!uOwndlb.StaticImage}"> 
+                                <!-- <img src="data:{!uOwndlb.AttContentType};base64,{!uOwndlb.Attbody}"/> -->
+                                <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndlb.AttachmentId)}" />
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!uOwndlb.StaticImage}">
+                                                            <img src='{!uOwndlb.DefaultImageName}'/>
+                               <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}"/>-->
+                              </apex:outputPanel>
+                              </a> </div>
+                            </div>
+                            <a class="a_underNone">
+                                <div class="hpit_athena_ca-item-BottomBar">
+                                 <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}">
+                          <h3>{!uOwndlb.LBName}</h3>
+                          </a>
+                                </div>
+                            </a>
+                            <div class="hpit_athena_ca-item-SecondHalf">
+                              <div class="hpit_athena_ca-item-person cf">
+                                <div class="hpit_athena_ca-item-personPhoto"><apex:image value="{!uOwndlb.LBOwnerURL}" width="35" height="35" alt="no_username_small"/> </div>
+                                <a class="a_underNone"><div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!uOwndlb.LBOwnerID}">
+                        {!uOwndlb.LBOwnerName}</a> </div></a>
+                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((uOwndlb.LBOwnerTitle == null),'',uOwndlb.LBOwnerTitle)} </div>
+                              </div>
+                              <div class="hpit_athena_ca-item-PersonPost">
+                                <p>{!uOwndlb.LBDescription}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>   
+                    </apex:repeat> 
+                    </div>
+                </div>
+                <!-- 3-->
+                <div id="4" class="tab-pane fade ">
+                  <!--<p class="searchResult">Search result (2)</p>-->
+<div>
+                    <div class="row-fluid">
+                        <div class="span12">  
+                        <apex:repeat value="{!followg}" var="fol" >  
+                          <div class="span4 PFspace">
+                              <div class="span2 PFimg" style="min-width:50px">
+                                  <apex:image Url="{!fol.SmallPhotoUrl}" />
+                              </div>
+                              <div class="span9">
+                                  <!--<li class="mtop10">{!fol.Name}</li>-->
+                                  <li class="mtop10"><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!fol.id}">{!fol.Name}</a></li>
+                                  <li class="mtop10">{!IF((fol.title == null || fol.title == 'null'),'',fol.title)}</li>
+                              </div>
+                          </div>         
+                        </apex:repeat>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 4-->
+                <div id="5" class="tab-pane fade ">
+                  <!--<p class="searchResult">Search result (2)</p>-->
+<div>
+                    <div class="row-fluid">
+                     <div class="span12">  
+                      <apex:repeat value="{!Followers}" var="fol" >  
+                          <div class="span4 PFspace">
+                              <div class="span2 PFimg" style="min-width:50px">
+                                  <apex:image Url="{!fol.SmallPhotoUrl}" />
+                              </div>
+                              <div class="span9">
+                                  <!--<li class="mtop10">{!fol.Name}</li>   -->                               
+                                  <li class="mtop10"><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!fol.id}">{!fol.Name}</a></li>
+                                   <li class="mtop10">{!IF((fol.title == null || fol.title == 'null'),'',fol.title)}</li>
+                              </div>
+                          </div>         
+                       </apex:repeat>
+                  </div>
+                  </div>
+                  </div>
+                </div>
+                <!-- 5--> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END PAGE CONTENT--> 
+    </div>
+    <!-- END PAGE CONTAINER--> 
+  </div>
+  <!-- END PAGE --> 
+</div>
+</apex:form>
+<!-- END CONTAINER --> 
+                    <div id="dvShowChatter" style="display:none;">
+                       <chatter:feed entityid="{!UserDtls.id}" />
+                    </div>
+
+<!-- BEGIN FOOTER -->
+<div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+<!-- END FOOTER --> 
+
+    <!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}"/>
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-fileupload.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+
+    <!-- END JAVASCRIPTS -->   
+    <script>
+        $(document).ready(function () {
+            $('input.typeahead-devs').typeahead({
+                name: 'accounts',
+                local: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+            });
+
+        })
+
+    </script>
+    
+<script>
+    $(function () {
+        var sampleTags = [{!Availskill}];
+
+
+
+        //-------------------------------
+        // Single TAG field
+        //-------------------------------
+        $('#learningTagsTop').tagit({
+            availableTags: sampleTags,
+            // This will make Tag-it submit a single form value, as a comma-delimited field.
+            singleField: true,
+            singleFieldNode: $('#learningTags')
+        });
+
+    });
+    
+    function funcGetData()
+    {
+        var skilltags= $('[id$=learningTags]').val();
+        $('[id$=txtSkills]').val(skilltags);
+    }
+    
+    $(document).ready(function(){
+    $("#2").append($("#dvShowChatter"));
+    $("#dvShowChatter").css('display','block');
+    $("#dvShowChatter").show();
+    });
+    </script> 
+
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

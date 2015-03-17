@@ -1,0 +1,112 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<apex:page controller="PageBrowserController" showheader="false">
+
+<apex:outputPanel rendered="{!$CurrentPage.parameters.webformeditor == null}">
+<script type="text/javascript">
+	
+	//for FCKEditor (render with no url param)
+	function SelectPage( pageId )
+	{
+		var url = './page?pageid='+pageId;
+		if(window.opener != null) {
+			window.opener.SetUrl( url ) ;
+			window.close() ;
+		}
+		else {
+			alert('Could not reach editor window. If your user profile has development mode enabled, please disable it.');
+		}
+	}
+	
+
+</script>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!$CurrentPage.parameters.webformeditor != null}">
+
+<script type="text/javascript">
+	//For WebFormEditor (render with webformeditor param) ... probably two script tags
+	function SelectPage( pageId )
+	{
+		var url = 'page?pageid='+pageId;
+		if(window.opener != null) {
+			var returlfield = window.opener.document.getElementById('page:pageForm:pageBlock:pbselectobject:pbsireturl:returl');
+			returlfield.value = url;
+			window.close() ;
+		}
+		else {
+			alert('Could not reach editor window. If your user profile has development mode enabled, please disable it.');
+		}
+	}
+
+</script>
+</apex:outputPanel>
+
+	<apex:form >
+
+	<apex:pageBlock title="Page Browser">
+		
+		<apex:pageBlockSection title="Pages" id="selectblock" columns="2">
+			<!-- Site Select -->
+			<apex:selectList value="{!selectedsiteid}" size="1" id="selectsitelist" style="width:250px;">
+					<apex:actionSupport event="onchange" action="{!selectSite}" rerender="selectblock,messages" status="status1"/>
+					<apex:selectOptions value="{!siteselect}"/>		
+			</apex:selectList>		
+			<apex:pageblocksectionitem >
+				<!-- Action Status -->
+				<apex:actionStatus stopText="" id="status1">	
+					<apex:facet name="start">				
+						<apex:image url="{!URLFOR($Resource.CMSForce, '/Icons/Colored/PNG/time.png')}" title="Wait..."/>									
+					</apex:facet>
+				</apex:actionStatus>
+			</apex:pageblocksectionitem>	
+			<!-- Folders Select -->
+			<apex:outputPanel >
+			<apex:commandLink value="Back to previous folder" action="{!back}" rerender="selectblock,messages" rendered="{!NOT(ISNULL(currentfolder))}"/><br/>
+			<!-- <apex:outputText value="{!currentfolder.Name} / {!currentfolder.Parent_CMSFolder__c}" rendered="{!NOT(ISNULL(currentfolder))}"/> -->
+			<apex:pageBlockTable value="{!folders}" var="f" rendered="{!folders != null}">
+				<apex:column headervalue="Folder : {!IF(NOT(ISNULL(currentfolder)),currentfolder.Name,'')}">
+					<apex:image url="{!URLFOR($Resource.CMSForce, '/JSTree/folder_blue.png')}"/>&nbsp;
+					<apex:commandLink value="{!f.Name}" action="{!selectFolder}" rerender="selectblock,messages">
+						<apex:param name="folderid" value="{!f.Id}"/>
+					</apex:commandLink>
+				</apex:column>
+			</apex:pageBlockTable>
+			</apex:outputPanel>
+			
+			<!-- Pages Select -->
+			<apex:outputPanel >
+			<br/>
+			<apex:pageBlockTable value="{!pages}" var="p">
+				<apex:column headerValue="Name">
+					<a href="javascript:SelectPage('{!p.Id}');">{!p.Name}</a>
+				</apex:column>				
+				<apex:column headerValue="Last Modified">
+					{!p.LastModifiedDate}
+				</apex:column>
+				<apex:column headerValue="By">
+					{!p.LastModifiedBy.Name}
+				</apex:column>
+			</apex:pageBlockTable>
+			</apex:outputPanel>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+
+	</apex:form>
+
+</apex:page>

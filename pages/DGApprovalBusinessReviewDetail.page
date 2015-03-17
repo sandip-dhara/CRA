@@ -1,0 +1,286 @@
+<!-- *****************************************************
+Author: Mousumi Panda
+Created Date: 26-APR-2013
+Release: R5
+Capability: Deal Governance
+Description: Edit page for Opportunity Business Review
+***********************************************************-->
+
+<apex:page standardController="Approval__c" extensions="DGPopulatingApprovers,DGCoordinatorAccess">
+  <style>
+
+.bordernone
+{
+border:none;
+border-color:#f3f3f3;
+div.hideCurrDate span.dateInput span.dateFormat{
+    display:none;
+    }
+{
+
+
+</style>
+  <Script>
+     function validate(){
+        var submit = confirm("You are about to submit this approval request. The request will be locked from editing, and a summary of this opportunity and its planning tools will be attached to the request. Do you want to continue?");
+        if (submit == true) {
+        return true;
+        }else {
+        return false;  
+    }        
+} 
+</Script>
+  <apex:form >
+    <apex:pagemessages ></apex:pagemessages>
+    <apex:sectionHeader title="Approval" subtitle="{!Approval__c.Approval_Long_Name__c}"/>
+    <apex:pageBlock title="Opportunity Business Review Detail" mode="maindetail">
+      <apex:pageBlockButtons location="Top">
+        <apex:commandButton value="Edit" action="{!customEdit}" rendered="{!NOT(isSubmit)}"/>
+        <apex:commandButton value="Submit For Approval" action="{!populateApprovers}" onclick="return validate()" rendered="{!NOT(isSubmit)}"/>
+        <apex:commandButton value="Change Approvers"  action="{!CustomChangeApprover}" rendered="{!IF(CoordinatorAccess == true && Approval__c.Status__c == 'Submitted' && (Approval__c.Approval_Flow_Type__c == 'Sequential' || Approval__c.Approval_Flow_Type__c == 'Hybrid'), true, false)}"/>
+        <apex:commandButton value="Get Opportunity Summary"  onclick="window.open('apex/dg_Snapshot?id={!Approval__c.Opportunity_system_id__c}','Popup','resizable=yes,scrollbars=yes,toolbar=no,status=no')" rendered="{!IF(CoordinatorAccess == true && Approval__c.Status__c == 'Submitted', true, false)}"/>
+      </apex:pageBlockButtons>
+      <apex:pageBlockSection columns="2" title="Opportunity Information" id="pbsec">
+        <apex:outputField value="{!Approval__c.Opportunity_Id__c}"/>
+        <apex:outputField value="{!Approval__c.Opportunity_Type__c}"/>
+        <apex:pageBlockSectionItem >
+          <apex:OutputLabel value="Opportunity Name"/>
+          <apex:OutputLink value="/{!Approval__c.Opportunity_system_id__c}" > {!Approval__c.Opportunity_Name__c} </apex:OutputLink>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!Approval__c.Close_Date__c}"/>
+        <apex:pageBlockSectionItem >
+          <apex:OutputLabel value="Account Name"/>
+          <apex:OutputLink value="/{!Approval__c.Account_id__c}" > {!Approval__c.Account_Name__c} </apex:OutputLink>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!Approval__c.Sales_Stage__c}"/>
+        <apex:outputField label="Opportunity Owner" value="{!Approval__c.Opportunity_Owner__c}"/>
+        <apex:outputField label="Opportunity's Owner BG" value="{!Approval__c.Owners_BG__c}"/>
+        <apex:outputField label="Region (Account Region)" value="{!Approval__c.Region_Account_Region__c}"/>
+        <!--<apex:outputField value="{!Approval__c.Total_Opportunity_Value__c}"/>-->
+        
+            <apex:outputtext label="{!$Label.Total_Opportunity_Value}">
+                <apex:panelgroup id="amountid">
+                    <apex:outputtext value="{!Approval__c.CurrencyISOCode}" />
+                    <apex:outputText value="{0, number, ###,###,###.00}" style="text-align:Left;">
+                        <apex:param value="{!optyAmount}" />
+                    </apex:outputText>
+                    <apex:outputText value=".00" rendered="{!ISBLANK(optyAmount)}" >
+                    <apex:param value="{!optyAmount}" />
+                    </apex:outputText> 
+                </apex:panelgroup>
+                <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != oppty.CurrencyIsoCode)}">
+                                (
+                                <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                                
+                                <apex:outputText value="{0, number, ###,###,###.00}" >
+                                <apex:param value="{!opAmount}" />
+                                </apex:outputText>
+                                <apex:outputText value=".00"  rendered="{!ISBLANK(opAmount)}">
+                                <apex:param value="{!opAmount}" />
+                                </apex:outputText>
+                                )
+               </apex:panelgroup>
+          </apex:outputtext>
+          <apex:OutputField value="{!Approval__c.Proposal_Due_Date__c}"/>
+      </apex:pageBlockSection>
+      
+      <!--Business Review Details -->
+      <apex:pageBlockSection columns="2" title="Review Details">
+        <apex:outputField value="{!Approval__c.Meeting_Review_Request_Date__c}"/>
+        <apex:outputField value="{!Approval__c.Pricing_Approach__c}"/>
+        <apex:outputField value="{!Approval__c.Approval_Description__c}"/>
+        <apex:outputField value="{!Approval__c.Requestor_Comments__c}"/>
+        <apex:outputfield value="{!Approval__c.Status__c}"/>
+        <apex:outputfield value="{!Approval__c.Approval_Routing_Note__c}"/>
+        <apex:outputfield value="{!Approval__c.Solution_Mix__c}" rendered="{!Approval__c.Solution_Mix__c != null && Approval__c.Solution_Mix__c != '' && Approval__c.Solution_Mix__c!='None'}"/>
+      </apex:pageBlockSection>
+      
+      <!--BG Specific Information for IPG,PSG and PPS-->
+      <apex:pageBlockSection columns="2" title="BG Specific Information({!Approval__c.Opportunity__r.Business_Group2__c})" rendered="{!IF((Approval__c.Opportunity__r.Business_Group2__c=='PPS') || (Approval__c.Opportunity__r.Business_Group2__c=='PSG') || (Approval__c.Opportunity__r.Business_Group2__c=='IPG'),true,false)}">
+        <apex:outputField value="{!Approval__c.System_Pricing_Margin__c}"/>
+        <apex:outputField value="{!Approval__c.Overall_Risk_Rating__c}"/>
+        <apex:outputField value="{!Approval__c.Alliance_Markup__c}"/>
+        <apex:outputField value="{!Approval__c.Office_jet_Pro_HW_Pricing_Margin__c}"/>
+        <apex:outputField label="Office-jet Pro Supplies Pricing Margin(%)" value="{!Approval__c.Office_jet_ProSupplies_Pricing_Margin__c}"/>
+        <apex:outputField value="{!Approval__c.Billing_Model__c}"/>
+        <apex:outputField value="{!Approval__c.Is_this_part_of_an_ES_deal__c}"/>
+        <apex:outputField label="If yes, is the PM% in the region ES 10pt target window?" value="{!Approval__c.If_yes_is_the_PM_in_the_region_ES_10pt__c}"/>
+        <apex:outputField value="{!Approval__c.Date_Time_bid_is_due_to_the_customer__c}"/>
+        <apex:outputField value="{!Approval__c.Inbound_regions_for_multi_region_deal__c}"/>
+      </apex:pageBlockSection>
+      
+      <!--BG Specific Information for TS-->
+      
+      <apex:pageBlockSection columns="2" title="BG Specific Information(TS)" rendered="{!IF(Approval__c.Opportunity__r.Business_Group2__c=='TS',true,false)}">
+        <apex:outputField value="{!Approval__c.Engagement_Margin__c}"/>
+        <apex:outputField value="{!Approval__c.Gross_Margin__c}"/>
+        <apex:outputField label="Lead Country" value="{!Approval__c.Opportunity__r.Account_Shipping_Country__c}" />
+        <apex:outputField value="{!Approval__c.Billing_Model_TS__c}"/>
+        <apex:outputField value="{!Approval__c.Opportunity__r.Account.Confidential_Account__c }" />
+        <apex:outputField value="{!Approval__c.Opportunity__r.Multi_Country_Type__c}" />
+        <apex:outputField value="{!Approval__c.Opportunity__r.Confidential__c}" />
+        <apex:outputField value="{!Approval__c.Opportunity__r.Non_standard_Opportunity__c}" />
+        <apex:outputField value="{!Approval__c.Lead_Org__c}"/>
+      </apex:pageBlockSection>
+      
+      <!--BG Specific Information for ES-->
+      <apex:pageBlockSection columns="2" title="BG Specific Information(ES)" rendered="{!IF(Approval__c.Opportunity__r.Business_Group2__c=='ES',true,false)}">
+        <apex:outputField value="{!Approval__c.Risk_Rating__c}"/>
+        <apex:outputField value="{!Approval__c.Additional_Pursuit_BudgetUSD__c}"/>
+        <apex:outputField value="{!Approval__c.Contract_Type__c}" />
+      </apex:pageBlockSection>
+      <apex:pageBlockSection columns="1" title="BG Specific Information(SW)" id="swsection" rendered="{!IF(Approval__c.Solution_Mix__c == 'Product',true,false)}">
+        <apex:pageBlockSection columns="2" title="Opportunity Type" id="Opptyp">
+          <apex:OutputField value="{!Approval__c.Software__c}" id="Software" />
+          <apex:OutputField label="Support Type" value="{!Approval__c.Support_Type__c}" rendered="{!Approval__c != 'N/A'}" id="supprttyp"  />
+          <apex:OutputField label="Support Duration" value="{!Approval__c.Support_Duration__c}" rendered="{!Approval__c != 'N/A'}" id="suppdur" />
+          <apex:OutputField label="Upfront Support %" value="{!Approval__c.Upfront_Support__c}" rendered="{!Approval__c != 'N/A'}" id="upfrontsupp" />
+          <apex:OutputField label="Upfront Support Pricing Methodology" value="{!Approval__c.Upfront_Support_Pricing_Methodology__c}" rendered="{!Approval__c != 'N/A'}" id="upfrontsuppmeth" />
+          <apex:OutputField value="{!Approval__c.Premier_Support__c}" />
+          <apex:OutputField label="Education" value="{!Approval__c.Education__c}" id="Education"/>
+          <apex:OutputField label="SaaS" value="{!Approval__c.SaaS__c}" id="saas" />
+          <apex:OutputField label="Third Party Products" value="{!Approval__c.Third_Party_Products__c}" id="thirdproduct" />
+          <apex:OutputField label="Is Deal being financed?" value="{!Approval__c.Is_Deal_being_financed__c}"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Deal Value" id="Dealvalsection">
+          <apex:OutputField value="{!Approval__c.Net_Product__c}"/>
+          <apex:OutputField value="{!Approval__c.Product_Discount_Pct__c}"/>
+          <apex:OutputField value="{!Approval__c.Net_Hardware_0__c}"/>
+          <apex:OutputField value="{!Approval__c.Net_Support__c}" />
+          <apex:OutputField value="{!Approval__c.Net_SaaS__c}"/>
+          <apex:OutputField value="{!Approval__c.SaaS_Discount__c}" />
+          <apex:OutputField label="Net Education?" value="{!Approval__c.Net_Education__c}"/>
+          <apex:OutputField value="{!Approval__c.Net_Packaged_Services__c}"/>
+          <apex:OutputField value="{!Approval__c.Education_Discount__c}"/>
+          <apex:OutputField label="Highest Individual Packaged Services Discount % " value="{!Approval__c.Highest_Individual_Packaged_Services_Dis__c}" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Deal Information">
+          <apex:OutputField label="What is Being Requested" value="{!Approval__c.What_is_Being_Requested__c}"/>
+          <apex:OutputField label="Governing Terms" value="{!Approval__c.Governing_Terms__c}" />
+          <apex:OutputField value="{!Approval__c.Agreement_Name__c}" rendered="{!Approval__c.Governing_Terms__c == 'Existing Master' || Approval__c.Governing_Terms__c == 'New Master (HP or Customer Paper)'}"/>
+          <apex:OutputField label="Quote Proposal Expiration Date?" value="{!Approval__c.Quote_Proposal_Expiration_Date__c}"/>
+          <apex:OutputField label="Partner Involvement" value="{!Approval__c.Partner_Involvement__c}" />
+          <apex:OutputField label="Primary Channel Partner" value="{!Oppty.Primary_Partner__r.Name}" rendered="{!Approval__c.Partner_Involvement__c == 'Indirect'}"/>
+          <apex:OutputText value="Please add primary channel partner to Opportunity." rendered="{!Approval__c.Partner_Involvement__c == 'Indirect'}"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="General License Info" id="glf" >
+          <apex:OutputField label="Installed Base SW Relicensing" value="{!Approval__c.Installed_Base_SW_Relicensing__c}"/>
+          <apex:OutputField label="Future License Price Hold Discount" value="{!Approval__c.Future_License_Price_Hold_Discount__c}"/>
+          <apex:OutputField label="Description of Price Hold Discount" value="{!Approval__c.Description_of_Price_Hold_Discount__c}" id="dofhd"/>
+          <apex:OutputField label="Geographic License Option" value="{!Approval__c.Geographic_License_Option__c}"/>
+          <apex:OutputField label="Anticipated Carve Out from License" value="{!Approval__c.Anticipated_Carve_Out_from_License__c}" />
+          <apex:OutputField value="{!Approval__c.Reason_for_Carve_Out__c}" id="rfco" rendered="{!Approval__c.Anticipated_Carve_Out_from_License__c = 'Yes'}"/>
+          <apex:OutputField label="Promotion being used" value="{!Approval__c.Promotion_being_used__c}" />
+          <apex:OutputField label="3P Royalty Products with HP SKUs Included" value="{!Approval__c.X3P_Royalty_Products_with_HP_SKUs_Includ__c}" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Enterprise License Agreement" id="ela" rendered="{!Approval__c.Software__c != 'N/A'}">
+          <apex:OutputField label="Customer Address" value="{!Approval__c.Customer_Address__c}"/>
+          <apex:OutputField label="Customer Phone No" value="{!Approval__c.Customer_Phone_No__c}"/>
+          <apex:OutputField label="ELA Term (in months)" value="{!Approval__c.ELA_Term_in_months__c}"/>
+          <apex:OutputField label="ELA Structure" value="{!Approval__c.ELA_Structure__c}" />
+          <apex:OutputField value="{!Approval__c.If_Other_Please_Specify_Type__c}" id="pst" rendered="{!Approval__c.ELA_Structure__c = 'Other'}"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Legal Quote">
+          
+          <apex:OutputField label="Customer Contact Name" value="{!Approval__c.Customer_Contact_Name__c}" />
+          <apex:OutputField value="{!Approval__c.SAID_of_Existing_SW_Installation__c}"/>
+          <apex:OutputField label="Language on Quote" value="{!Approval__c.Language_on_Quote__c}" />
+          <apex:OutputField label="Payment Terms" value="{!Approval__c.Payment_Terms__c}" />
+          <apex:OutputField value="{!Approval__c.Additional_Language_to_include_on_Quote__c}"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Splits" id="split">
+          <apex:OutputField label="Revenue Splits" value="{!Approval__c.Revenue_Splits__c}"/>
+          <apex:OutputField label="Multi-Region Deal?" value="{!Approval__c.Multi_Region_Deal__c}" rendered="{!Approval__c.Revenue_Splits__c='Yes'}"/>
+          <apex:OutputField label="Regions Involved" value="{!Approval__c.Regions_Involved__c}" rendered="{!Approval__c.Revenue_Splits__c='Yes'}"/>
+          <apex:OutputField label="Potential Inter-region $250K Revenue Split?" value="{!Approval__c.Potential_Inter_region_250K_Revenue_Spl__c}" rendered="{!Approval__c.Revenue_Splits__c='Yes'}"/>
+          <apex:OutputField label="All sides in agreement?" value="{!Approval__c.All_sides_in_agreement__c}" rendered="{!Approval__c.Revenue_Splits__c='Yes'}"/>
+        </apex:pageBlockSection>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection columns="1" title="BG Specific Information(SW)" id="swsectionservices" rendered="{!IF(Approval__c.Solution_Mix__c == 'Service',true,false)}">
+        <apex:pageBlockSection columns="2" title="Opportunity Type" id="Service-Opptyp">
+          <apex:OutputField label="Services" value="{!Approval__c.Services__c}" id="Services"/>
+          <apex:OutputField label="Education" value="{!Approval__c.Education__c}" id="Education"/>
+          <apex:OutputField label="SaaS" value="{!Approval__c.SaaS__c}" id="saas" />
+          <apex:OutputField label="Third Party Products" value="{!Approval__c.Third_Party_Products__c}" id="thirdproduct" />
+          <apex:OutputField label="Is Deal being financed?" value="{!Approval__c.Is_Deal_being_financed__c}" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Pricing Info" id="Pricinginfosection">
+          <apex:OutputField label="Net Professional Services" value="{!Approval__c.Net_Professional_Services__c}" />
+          <apex:OutputField label="Net Travel Expenses" value="{!Approval__c.Net_Travel_Expenses__c}" />
+          <apex:OutputField label="Net Packaged Services" value="{!Approval__c.Net_Packaged_Services__c}" />
+          <apex:OutputField label="EM% (via SWIPER)" value="{!Approval__c.EM_via_SWIPER__c}" />
+          <apex:OutputField label="Net Education" value="{!Approval__c.Net_Education__c}" />
+          <apex:OutputField value="{!Approval__c.Education_Discount__c}"/>
+          <apex:OutputField label="Highest Individual Packaged Services Discount % " value="{!Approval__c.Highest_Individual_Packaged_Services_Dis__c}" />
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Deal Information">
+          <apex:OutputField label="Governing Terms" value="{!Approval__c.Governing_Terms__c}"/>
+          <apex:OutputField value="{!Approval__c.Agreement_Name__c}" rendered="{!Approval__c.Governing_Terms__c == 'Existing Master' || Approval__c.Governing_Terms__c == 'New Master (HP or Customer Paper)'}"/>
+          <apex:OutputField label="Partner Involvement" value="{!Approval__c.Partner_Involvement__c}" />
+          <apex:OutputField label="Primary Channel Partner" value="{!Oppty.Primary_Partner__r.Name}" rendered="{!Approval__c.Partner_Involvement__c == 'Indirect'}"/>
+          <apex:OutputText value="Please add primary channel partner to Opportunity." rendered="{!Approval__c.Partner_Involvement__c == 'Indirect'}"/>
+          <apex:OutputField label="Risk Rating" value="{!Approval__c.Overall_Risk_Rating__c}" />
+          <apex:OutputField label="Primary Services Opportunity Structure" value="{!Approval__c.Primary_Services_Opportunity_Structure__c}" />
+          <apex:OutputField label="Deal Composition" value="{!Approval__c.Deal_Composition__c}"/>
+          <apex:OutputField label="Proposal Center Contact Email" value="{!Approval__c.Proposal_Center_Contact_Email__c}" rendered="{!OR(Approval__c.Deal_Composition__c = 'Multi-Element Deal in Single Country',Approval__c.Deal_Composition__c = 'Multi-Element Deal in Multiple Country')}"/>
+          <apex:OutputField label="Email of BU Contact Responsible for Multi-Element Deal" value="{!Approval__c.Email_of_BU_Contact_Responsible_for_Mult__c}" rendered="{!OR(Approval__c.Deal_Composition__c = 'Multi-Element Deal in Single Country',Approval__c.Deal_Composition__c = 'Multi-Element Deal in Multiple Country')}"/>
+        </apex:pageBlockSection>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+    <!--Custom Attachment --> 
+    <!-- modified in release R6 for version control of attachment by praveen kumar reddy  -->
+    
+    <apex:pageBlock Title="Attachments">
+      <apex:pageblockButtons location="top">
+        <apex:commandButton value="Attach" title="Attach" action="/apex/UploadAttachment?Approvalid={!Approval__c.id}&Page=DGApprovalBusinessReviewDetail&context=Approval" rendered="{!IF(((Approval__c.Submitter__c == $User.Id || Approval__c.CreatedById == $User.Id) && (Approval__c.Status__c == 'Open' || Approval__c.Status__c == 'Rejected' || Approval__c.Status__c == 'Recalled')) || CoordinatorAccess == true ,true,false)}"/>
+        <apex:param id="VF" name="VFPage" value="$CurrentPage.Name"/>
+      </apex:pageblockButtons>
+      <apex:pageBlockTable value="{!Attachments}" var="att" id="at" width="100%" columns="8">
+        <apex:column headerValue="Action">
+          <apex:CommandLink value="Check Out" action="{!LockAttachment}" rendered="{!IF(att.checkedOutBy!=loggedInUserName && att.at.Description != 'System Generated Snapshot',true,false)}"> <!-- rendered="{!IF(att.isChecked== false,true,false)}"  -->
+            <apex:param name="lastmodified" value="{!att.checkedOutBy}" assignTo="{!lastmodified}"/>
+            <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+            <apex:param name="bLock" value="true" assignTo="{!block}" />
+          </apex:commandLink>
+          <apex:outputtext value=" | " rendered="{!IF(att.checkedOutBy!=loggedInUserName && att.at.Description != 'System Generated Snapshot',true,false)}"/>
+          <apex:CommandLink value="Edit" rendered="{!IF(att.isChecked== true && att.checkedOutBy==loggedInUserName && att.at.Description != 'System Generated Snapshot',true,false)}" action="{!customAttachmentEdit}"> <!-- && att.LastModifiedById== $User.Id  -->
+            <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+            <!--<apex:param name="lastmodifiedBy" value="{!att.LastModifiedBy}" assignTo="{!lastmodifiedBy}"/>-->
+            <apex:param name="filename" value="{!att.at.name}" assignTo="{!filename}"/>
+          </apex:commandLink>
+          <apex:outputtext value=" | " rendered="{!IF(att.isChecked== true && att.checkedOutBy==loggedInUserName && att.at.Description != 'System Generated Snapshot',true,false)}" />
+          <apex:CommandLink value="Delete" action="{!DeleteAttachment}" rendered="{!IF(((((Approval__c.Submitter__c == $User.Id || Approval__c.CreatedById == $User.Id)) && (Approval__c.Status__c == 'Open' || Approval__c.Status__c == 'Rejected' || Approval__c.Status__c == 'Recalled')) || CoordinatorAccess == True) && att.at.Description != 'System Generated Snapshot' &&att.isChecked== false ,True,False)}">
+            <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+          </apex:commandLink>
+          <apex:outputtext value=" | " rendered="{!IF(((((Approval__c.Submitter__c == $User.Id || Approval__c.CreatedById == $User.Id)) && (Approval__c.Status__c == 'Open' || Approval__c.Status__c == 'Rejected' || Approval__c.Status__c == 'Recalled')) || CoordinatorAccess == True) && att.at.Description != 'System Generated Snapshot' &&att.isChecked== false ,True,False)}"/>
+          <apex:CommandLink value="Version History" rendered="{!att.at.Description != 'System Generated Snapshot'}"  onclick="window.open('/apex/DGAttachmentVersionHistoryPage?filename={!att.at.name}&ApprovalWorkspaceID={!att.at.parentID}&page=DGApprovalBusinessReviewDetail','Popup','left=320px,width=700px,height=400px,resizable=yes,scollbars=yes,toolbar=no,status=no')"> </apex:commandLink>
+        </apex:column>
+        <apex:column headerValue="Description">
+          <apex:outputField value="{!att.at.Description}"/>
+        </apex:column>
+        <apex:column headerValue="Attachment">
+          <apex:outputLink value="{!URLFOR($Action.Attachment.Download, att.at.id)}" target="_blank">{!att.at.name}</apex:outputLink>
+        </apex:column>
+        <apex:column headerValue="Version Number">
+          <apex:outputText value="{!att.VersionNumber}"/>
+        </apex:column>
+        <apex:column headerValue="Created By">
+          <apex:outputField value="{!att.at.CreatedById}"/>
+        </apex:column>
+        <apex:column headerValue="Created Date">
+          <apex:outputField value="{!att.at.CreatedDate}"/>
+        </apex:column>
+        <apex:column headerValue="Check-Out By">
+          <apex:outputText value="{!att.checkedOutBy}" rendered="{!IF(att.isChecked== true,true,false)}"/>
+        </apex:column>
+        <apex:column headerValue="Check-Out Date">
+          <apex:outputField value="{!att.at.LastModifiedDate}" rendered="{!IF(att.isChecked== true,true,false)}"/>
+        </apex:column>
+      </apex:pageBlockTable>
+    </apex:pageBlock>
+  </apex:form>
+  
+  
+  <apex:relatedList list="Approval_workspaces__r"/>
+  <apex:relatedList list="ProcessSteps"/>
+</apex:page>

@@ -1,0 +1,181 @@
+<apex:page standardController="Opportunity_Plan__c" showHeader="false" sidebar="false">
+<apex:includeScript value="{!$Resource.jquery172}" />
+
+<script>
+window.onbeforeunload = warn_if_form_dirty;
+form_dirty = false;
+warn_onunload = true;
+
+function warn_if_form_dirty()
+{
+    if(warn_onunload == true && form_dirty == true)
+    {
+        warning_msg = "You have made changes to the value proposition and haven't saved.";
+        return warning_msg;
+    }
+}
+
+
+is_form_dirty = false;
+
+j$ = jQuery.noConflict();
+
+function updateme() {
+    var dateobject = new Date();
+    var themonth = dateobject.getMonth();
+    var theday = dateobject.getDate();
+    var theyear = dateobject.getFullYear();
+    last_updated = j$('[id$="last_updated"]');
+    last_modified = j$('[id$="last_modified"]');
+    last_updated[0].value = '{!$User.LastName}, ' + '{!$User.FirstName} ' + themonth + '/' + theday + '/' + theyear;
+    last_modified[0].value = themonth + '/' + theday + '/' + theyear;
+    
+}
+
+function isFormDirty(a){
+    is_form_dirty = a;
+    
+}
+
+</script>
+
+<style type="text/css">
+table {
+    border-collapse:collapse;
+    border-width: 0px;
+    border: 0px;
+}
+
+body {
+    padding:10px;
+}
+
+
+h2 {
+    color: #000000;
+    font-size: 18px;
+}
+
+.trquestion {
+    background-color: #5ABBE8;
+    font-weight: bold;
+    border: 1px solid #000;
+}
+
+.trresponse {
+    border: 1px solid #000;
+    background-color: #cccccc;
+}
+
+.trfooter {
+    border: 0px;    
+}
+
+textarea {
+    width:95%;
+}
+
+</style>
+
+<body>
+<apex:form >
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color:#5ABBE8;font-size:28px;">Value Proposition Builder</h1>
+<hr />
+<apex:messages />
+
+<!--Commenting the code for the SaaSPMO Issue/Risk # 0985 by Abrar on 29-05-2013
+<table width="100%" border="1" cellpadding="5">
+
+  <tr style="display:none;">
+    <td class="trfooter" width="150px">Last Modified By:</td>
+    <td class="trfooter" width="auto"><apex:inputfield value="{!Opportunity_Plan__c.VP_last_updated_by__c}" id="last_updated"/></td>
+    <td class="trfooter" width="160px">Last Modified Date:</td>
+    <td class="trfooter" width="100px"><apex:inputfield value="{!Opportunity_Plan__c.VP_last_modified__c}" id="last_modified"/></td>
+    <td class="trfooter" width="100px">&nbsp;</td>
+    <td class="trfooter" width="auto">&nbsp;</td>
+  </tr>
+</table>-->
+
+  <br />
+<table width="100%" cellpadding="5">
+  <tr class="trfooter">
+    <td>
+<strong>Instructions:</strong> The Value Proposition may begin as a hypothesis. Through our customer dialogues, it evolves to a co-developed, concrete description of how the customer and HP will work together to achieve a business result. The table below is a place to capture the critical elements of a value proposition. A well-developed value proposition will address all of these elements. </td>
+  </tr>
+</table>
+<br />
+
+<div style="text-align:center;">
+<apex:commandButton action="{!save}" value="Save" onclick="warn_onunload=false;updateme();"/><apex:commandButton action="{!cancel}" value="Cancel" /><input class="btn" type="button" value="Help" onClick="window.open('/apex/value_proposition_help','_blank','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no, width=500, height=250');" />
+</div>
+
+<br />
+
+<table width="100%" border="1" cellpadding="5">
+  <tr>
+    <td class="trquestion">1. What are or could be the client’s most important problems to solve and/or results to achieve? (Business Issues/Initiatives)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_01_clients_most_important_problems__c}" onchange="form_dirty=true;" /></td>
+  </tr>
+  <tr>
+    <td class="trquestion">2. How do or would they show up in the organization? (Evidence)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_02_how_do_they_show_up__c}" onchange="form_dirty=true;"   /></td>
+  </tr>
+  <tr>
+    <td class="trquestion">3. What is or could be the effect of these issues? (Impact in $$$ or on a scale of 1-10)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_03_effects_of_issues__c }" onchange="form_dirty=true;" /></td>
+  </tr>
+  <tr>
+    <td class="trquestion">4. Who is or could be affected? How does this align with the strategy of the organization or individual? (Context)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_04_who_is_affected__c}" onchange="form_dirty=true;" /></td>
+  </tr>
+  <tr>
+    <td class="trquestion">5. What constraints do or may exist that would prevent the customer from addressing the problem or achieving the result? (Constraints)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_05_constraints__c}" onchange="form_dirty=true;" /></td>
+  </tr>
+  <tr>
+    <td class="trquestion">6. What alternatives does or might the customer have to address these issues/initiatives? (Options in addition to HP’s solutions: e.g., HP’s competitors, internal options, do nothing, etc.)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_06_alternatives__c}" onchange="form_dirty=true;" /></td>
+  </tr>
+  <tr>
+    <td class="trquestion">7. What are we offering to address this situation? (HP’s solution)  What are the reasons adopting your solution makes sense?</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_07_what_are_we_offering__c}" onchange="form_dirty=true;" /></td>
+  </tr>
+  <tr>
+    <td class="trquestion">8. What will it or could it take to implement our solution? (Resources – Time, People and Money)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_08_what_will_it_take__c}" onchange="form_dirty=true;" /></td>
+  </tr>
+  <tr>
+    <td class="trquestion">9. What criteria would a solution like this need to meet? (Highest level decision criteria)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:inputfield value="{!Opportunity_Plan__c.VP_09_criteria__c}" onchange="form_dirty=true;" /></td>
+  </tr>
+  <tr>
+    <td class="trfooter"><h2>Value Proposition: </h2><apex:inputfield value="{!Opportunity_Plan__c.VP_value_proposition__c}" onchange="form_dirty=true;" /></td>
+  </tr>
+</table>
+<br />
+<div style="text-align:center;">
+<apex:commandButton action="{!save}" value="Save" onclick="warn_onunload=false;updateme();"/><apex:commandButton action="{!cancel}" value="Cancel" /><input class="btn" type="button" value="Help" onClick="window.open('/apex/value_proposition_help','_blank','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no, width=500, height=250');" />
+<br />
+</div>
+</apex:form>
+</body>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

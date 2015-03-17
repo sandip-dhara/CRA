@@ -1,0 +1,1043 @@
+<apex:page standardcontroller="Opportunity_Plan__c"
+    extensions="dhc_extension" standardStylesheets="true"
+    showheader="false" sidebar="false" title="Opportunity_plan__c">
+    <apex:includeScript value="{!$Resource.jquery172}" />
+    <apex:includeScript value="/soap/ajax/21.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/21.0/apex.js"/> 
+    
+
+
+    <script type="text/javascript">
+    j$ = jQuery.noConflict();
+    sforce.debug.trace = true;
+        sforce.connection.sessionId = "{!$Api.Session_ID}";
+        var prev_stage = '';
+        var clearBoxes;
+        var inputBoxes;
+        var csfBoxes;
+        has_warning_fired = false;
+        
+        function alertMe(sel_data)
+        {
+        new_stage = sel_data.value;
+        
+        
+        if (has_warning_fired == true){
+            getPicklistValues(new_stage)
+        }
+        if (has_warning_fired == false)
+            {
+            var r=confirm('WARNING: You are changing the Opportunity Stage for this deal. All ratings will be removed.  However, the Get to Green data will remain as-is until user modified.  A snapshot of the current DHC will be saved to the attachments for this opportunity for historical needs.');
+            if(r==true)
+                {
+                
+                
+                try
+                    {
+                        dhc_extension.saveCopy('{!Opportunity_Plan__c.id}',function(result, event){
+                            if(result == 1){
+                                getPicklistValues(new_stage);
+                            }
+                            else {
+                                alert('The system was unable to save a copy of your PDF.');
+                            }
+                        });
+                    }
+                catch(e)
+                    {
+                        alert(e);   
+                    }
+
+                
+                has_warning_fired=true;
+            } 
+            else 
+            {
+                sel_data.value = prev_stage;
+                getPicklistValues(prev_stage);
+            }
+        }
+        
+    }
+
+    function getPicklistValues(sel_val){
+        var stage;
+        var stage_csf;
+        
+        //Set sales stage value
+        switch(sel_val)
+        {
+            case 'Stage 1&2-Understand/Validate':
+                stage = 0;
+                stage_csf = 'a';
+                break;
+            case 'Stage 3-Qualify':
+                stage = 1;
+                stage_csf = 'b';
+                break;
+            case 'Stage 4 a&b-Develop/Propose Solution':
+                stage = 2;
+                stage_csf = 'c';
+                break;
+            default:
+            stage = 0;
+            stage_csf = 'a';
+            ;
+        }
+        
+        
+        
+        
+        //Clear select boxes
+        j$.each(clearBoxes, function(data){
+            clearBoxes.empty();
+        });
+        
+        //modify visibility of csf boxes
+        j$.each(csfBoxes, function(data){
+            id_string = this.id;
+            compareme = id_string.indexOf(stage_csf,5);
+            
+            if(compareme > -1){
+                j$(this).css('display','block');
+            }
+            else {
+                j$(this).css('display','none');
+            }
+        });
+        
+        
+        
+        
+        //get ratings file
+        j$.ajax({
+            url: "{!$Resource.dhc_ratings}",
+            dataType: 'json',
+            async: false,
+            data: '',
+            cache: false,
+            success:function(data){
+                
+                
+                //for each select box
+                j$.each(data.result[stage].rating, function(key, val){
+                    //set target select box
+                    targetBox = j$('#ass_'+key);
+                    
+                    
+                    //load ratings for target box
+                    j$.each(val, function(key2, val2){
+                        if (prev_stage == sel_val){
+                        
+                        
+                            if (inputBoxes[key].value === val2){
+                                
+                                targetBox.append(j$('<option>', { val2 : val2 }).prop('selected',true).text(val2));
+                                
+                            }
+                            else {
+                            
+                                targetBox.append(j$('<option>', { val2 : val2  }).text(val2 ));
+                        }
+                        }
+                        else {
+                            
+                            targetBox.append(j$('<option>', { val2 : val2  }).text(val2 ));
+                        }
+                    });
+                    
+                });
+            },
+            complete: function(r, s){
+                    
+            }
+            });
+    }
+
+
+
+    
+j$(window).load(function() {
+        //Store select boxes in local memory
+        clearBoxes = j$('[id*="ass"]');
+        
+        //Store input boxes to local memory
+        inputBoxes = j$('[id*="inputBoxes"]');
+        
+        //Store csf boxes in local memory
+        csfBoxes = j$('div[id^="csf_"]');
+        
+        salesstage = j$('select[id$="salesstage"]');
+        prev_stage = salesstage[0].value;
+        getPicklistValues(prev_stage);
+
+});
+    
+
+
+var selectids = new Array();
+
+
+function fillForms(){
+    inputboxes = j$('[id*="inputBoxes"]');
+    
+    for( e=0; e<inputboxes.length; e++ ){
+            csf_rating = j$('#ass_'+e).val();
+            inputboxes[e].value=csf_rating;
+        }
+        
+    var dateobject = new Date();
+    var themonth = dateobject.getMonth();
+    var theday = dateobject.getDate();
+    var theyear = dateobject.getFullYear();
+    //last_updated = j$('[id$="last_updated"]');
+    //last_updated[0].value = '{!$User.LastName}, ' + '{!$User.FirstName}, ' + themonth + '/' + theday + '/' + theyear;
+}
+
+
+
+</script>
+<style>
+
+body {
+    margin: 10px;
+}
+
+table {
+    border-collapse:collapse;
+        
+}
+
+td {
+    border-width:1px;
+    border-style: solid;
+    border-color: #000000;  
+}
+
+.tdheader{
+    background-color: #5ABBE8;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+
+
+
+.tdcsf {
+    font-weight: bold;
+    text-align: center;
+}
+
+.tdgtgp{
+    background-color:#f3f3f3;
+    width: 300px;
+    padding: 10px;
+}
+
+</style>
+
+<body>
+
+
+    <apex:actionregion >
+        <apex:form id="theform">
+
+    
+        <apex:outputPanel id="theformpanel">
+            <apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="font-size:28px;color:#5ABBE8;">Deal Health Checklist Edit</h1>
+<hr size="1"></hr>
+            
+           <br />
+            <apex:messages />
+            <apex:panelgrid columns="1" border="1" style="width:100%;" columnClasses="cols">
+            
+            <apex:panelgroup >
+                <div class="thclass"><h1>Instructions</h1></div>
+                </apex:panelGroup>
+            <apex:panelgroup >
+            <p>1. Set the Sales Stage. Questions will display according to the sales
+            stage (Stage 1&amp;2-Understand/Validate, Stage 3-Qualify, and Stage
+            4a&amp;b-Develop/Propose Solution and Beyond).<br/>
+            2. Assess the CSF using the descriptions for Red, Amber, Green and
+            the supporting questions for the Sales Stage. <br/>
+            3. Enter a high-level "Get to Green Plan" for any Red or
+            Amber selection.</p>
+            </apex:panelgroup>
+            </apex:panelgrid>
+           <br />
+            
+            <apex:panelGrid columns="" border="1" id="maingrid"
+                columnClasses="cols" style="width:100%;">
+                <apex:panelgroup >
+                <div class="thclass"><h1>Deal Health Checklist Information</h1></div>
+                </apex:panelGroup>
+            
+            
+                          
+                <apex:panelgroup >
+                    <div style="width:50%;display:inline-block;"><b>Assessment for Sales Stage: </b>
+                    <apex:inputField value="{!Opportunity_Plan__c.Sales_Stage__c}"  id="salesstage" onchange="alertMe(this)" >
+                    </apex:inputField></div>  <apex:outputField value="{!Opportunity_Plan__c.DHC_Sales_Stage_Warning__c}"/>
+                    
+                </apex:panelGroup>  
+                
+                
+
+                
+            </apex:panelGrid>
+            
+            <br />
+            
+            <div style="width: 200px;margin-left:auto;margin-right:auto;">
+                <apex:commandButton action="{!save}" value="Save" onclick="fillForms()" /><apex:commandButton action="{!cancel}" value="Cancel" /><input type="button" class="btn" value="Help" onclick="window.open('/apex/dhc_help','dhc_help','width=600,height=300')" />
+            </div>
+            
+            <br />
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="tdheader">Critical Success Factors</td>
+    <td class="tdheader">Critical Success Factor Assessment</td>
+    <td class="tdheader">Get to Green Plan</td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Will the Client Buy?</td>
+    <td style="padding: 10px;"><select id="ass_0"></select>
+        <br />
+        <div id="csf_0a">
+                <p><b>Criteria:</b></p>
+                <ul>
+                    <li>What business issue(s) is the client trying to solve
+                    and/or results trying to achieve?</li>
+                    <li>What is the impact of these issues today, in terms of $$,
+                    importance (1-10), or scale for the customer?</li>
+                    <li>Does the client have a reasonable expectation of the time
+                    required to complete the pursuit?</li>
+                    <li>What happens if the client ignores this issue? What
+                    alternatives do they have? (including do nothing)</li>
+                </ul>
+                </div>
+                <div id="csf_0b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Does the client have adequate funding and resources
+                        available?</li>
+                        <li>Who is the client sponsor? Do they have executive level
+                        sponsorship?</li>
+                        <li>Does the client have clarity on their decision making
+                        process?</li>
+                        <li>Is this initiative in the decision maker's performance
+                        objectives and do they express an urgency to drive to completion?</li>
+                    </ul>
+                </div>
+                        <div id="csf_0c">
+                            <p><b>Criteria:</b></p>
+                            <ul>
+                                <li>Has the client identified adequate funding/budget for the
+                                solution?</li>
+                                <li>Does the solution exactly meet the customer's
+                                needs/business issues?</li>
+                                <li>Are there any threats of the procurement being
+                                challenged, and how do we mitigate?</li>
+                            </ul>
+                        </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_WTB__c}" style="height:100%;width:100%;" id="Comments_WTB" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Buyer Experience with HP</td>
+    <td style="padding: 10px;"><select id="ass_1"></select>
+        <br />
+        <div id="csf_1a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>What is the current book of business with HP and what is
+                        the related client satisfaction rating? (Voice of the Client,
+                        Relationship Assessment Process)</li>
+                        <li>Who is in the decision process and have they bought from
+                        HP prior to this opportunity?</li>
+                        <li>What is the perception of HP? What has the customer
+                        provided as feedback in surveys such as the Voice of the Client or
+                        the RAP Scores.</li>
+                        <li>If there is a sourcing advisor and/or consultant, what is
+                        their experience with the client?</li>
+                    </ul>
+                </div>
+                <div id="csf_1b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>How does the client view HP across multiple levels?</li>
+                        <li>How well developed is the account's ABP and customer
+                        engagement? Have we demonstrated industry/business expertise?</li>
+                        <li>If there is a sourcing advisor and/or consultant, how do
+                        they view HP? How are they behaving toward HP? How is that
+                        affecting the client’s view? What can we do to improve it?</li>
+                        <li>Are alliance partners bringing value and any extra
+                        advantage to the client?</li>
+                    </ul>
+                </div>
+                <div id="csf_1c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Is HP aligned to the client's strategic agenda? Does the
+                        client view HP as reputable and capable?</li>
+                        <li>If there is a sourcing advisor and/or consultant, how do
+                        they view HP? How are they behaving toward HP? How is that
+                        affecting the client’s view? What can we do to improve it?</li>
+                        <li>How has the client’s view of HP shifted through the
+                        pursuit process? What has caused that shift?</li>
+                        <li>What should our proposal strategy be based on the
+                        client's view of HP?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Buyer_Experience__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Client Relationship and Insight</td>
+    <td style="padding: 10px;"><select id="ass_2"></select>
+        <br />
+        <div id="csf_2a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>What does the initial Relationship Scorecard tell us
+                        about HP's coverage with the key contacts on the opportunity? And
+                        about their perception of HP?</li>
+                        <li>Are there any political dynamics affecting the
+                        scope/solution of this opportunity?</li>
+                        <li>Has HP shared initial Value Proposition hypothesis with
+                        key contacts and gained their agreement to next steps?</li>
+                    </ul>
+                </div>
+                <div id="csf_2b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Have we identified the power base and does the
+                        relationship plan cover all of these contacts?</li>
+                        <li>By what criteria are the key stakeholders making their
+                        decisions?</li>
+                        <li>What is the current delivery scenario (incumbent /
+                        inhouse) and what are its challenges?</li>
+                    </ul>
+                </div>
+                <div id="csf_2c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Does the Relationship Scorecard show strong positioning
+                        of HP with the key contacts in the power base, and have we
+                        identified all key roles for this opportunity?</li>
+                        <li>Has the Value Proposition been discussed and agreed on by
+                        key decision makers and influencers?</li>
+                        <li>Does the proposal address the client's buying criteria
+                        and is it satisfying key stakeholder's personal success criteria?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Client_Relationship__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Client Decision Process</td>
+    <td style="padding: 10px;"><select id="ass_3"></select>
+        <br />
+        <div id="csf_3a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Who is driving the initiative within the client
+                        organization?</li>
+                        <li>Is the decision making centralized or de-centralized?</li>
+                        <li>Has the client completed a transaction of this scope in
+                        the past?</li>
+                        <li>Is there a sourcing advisor and/or consultant involved,
+                        if so, who? If not, are they needed?</li>
+                        <li>What other items could have an impact on the decision
+                        process? (I.e., regulatory authorities, works council, legal
+                        advisors, etc.)</li>
+                    </ul>
+                </div>
+                <div id="csf_3b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Do we have a view into the customer's decision making
+                        process (steps, decisions, when, who, criteria)?</li>
+                        <li>What is the highest level of review and approval that
+                        will be needed and do we have a relationship with them? (E.g.,
+                        Board of Director, CEO, CFO, etc.)</li>
+                        <li>Have we met and built a relationship with the person
+                        signing the deal?</li>
+                        <li>Who has empowered the decision maker to act on behalf of
+                        the client organization?</li>
+                        <li>If de-centralized, who are the major decision makers that
+                        will need to support this solution? Have we identified them in the
+                        relationship plan?</li>
+                        <li>If the client has not done a deal of this size/scope, do
+                        they understand what it will take to make it happen? Are we
+                        working with the client to establish this process with/for them?</li>
+                        <li>If there is a sourcing advisor and/or consultant, have we
+                        met with them to understand the decision process and timeline?</li>
+                        <li>Do we understand the decision criteria for each decision
+                        maker and their weighting/importance?</li>
+                    </ul>
+                </div>
+                <div id="csf_3c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Do we have the complete scope of the decision process
+                        (steps, decisions, when, who, criteria)?</li>
+                        <li>Have we established a relationship with the ultimate
+                        decision maker, understand their criteria, and aligned the value
+                        proposition?</li>
+                        <li>Do we understand how a transaction of this size gets
+                        decided on in this client organization?</li>
+                        <li>Have we met with and have insights into all decision
+                        makers business and personal agendas?</li>
+                        <li>Do HP and the key decision makers have an agreed process
+                        and are they actively working a process for the deal (large size
+                        transaction)?</li>
+                        <li>Does a close plan exist and has the client signed off on
+                        it?</li>
+                        <li>Has the team aligned the HP internal process to the
+                        customer decision process? Are there any anticipated internal
+                        approval challenges?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Client_Decision_Process__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Competitive Position</td>
+    <td style="padding: 10px;"><select id="ass_4"></select>
+        <br />
+        <div id="csf_4a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Who are the competitors? Are any of these incumbent?</li>
+                        <li>What is the status of the relationships with these
+                        competitors in the account?</li>
+                        <li>How well do HP strengths/capabilities align with the
+                        client's business issue?</li>
+                        <li>Does significant other business exist with HP and the
+                        client?</li>
+                        <li>Have we thought through creating significant barriers to
+                        entry for the competition?</li>
+                    </ul>
+                </div>
+                <div id="csf_4b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Is the client accepting the meetings from HP and engaging
+                        with HP experts and executives openly, actively?</li>
+                        <li>Can the client articulate the HP value proposition?</li>
+                        <li>Do we have the price to win defined as part of a
+                        competitive pricing strategy?</li>
+                        <li>Has the HP team decided on the appropriate competitive
+                        strategy and do we have plans in place to deploy?</li>
+                        <li>Is the client using terminology or marketing words from a
+                        competitor to describe the scope of services they want to buy?</li>
+                        <li>Do we understand the sales strategy of our competitor and
+                        plan to defeat?</li>
+                        <li>Is the client using terminology or marketing words from a
+                        competitor to describe the scope of services they want to buy?</li>
+                        <li>Do we understand the sales strategy of our competitor and
+                        plan to defeat?</li>
+                    </ul>
+                </div>
+                <div id="csf_4c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Has the client confirmed the HP/client value proposition
+                        and are they using it in their language internally?</li>
+                        <li>How well is HP defending against the competitors' sales
+                        strategies?</li>
+                        <li>Have we validated the price to win/position to base case?
+                        </li>
+                        <li>Have we had the senior executive meetings with the
+                        decision makers and key process owners to confirm position?</li>
+                        <li>Have we confirmed we have the right team for the account?
+                        </li>
+                        <li>How is the Competitive Sales Plan, agreed previously,
+                        going? What changes have occurred as a result of competitive
+                        tactics and countertactics?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Competitive_Position__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Solution Scope</td>
+    <td style="padding: 10px;"><select id="ass_5"></select>
+        <br />
+        <div id="csf_5a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Have we gotten feedback from the client that the
+                        potential solution could address their priority business issues?</li>
+                        <li>Is the client strongly convinced this is the right
+                        solution scope or approach and have we begun to educate them on
+                        the HP Portfolio with references?</li>
+                        <li>Have we identified the full context of who in the client
+                        org could be affected by the solution?</li>
+                        <li>Does HP believe there are more cost effective approaches
+                        for the customer to achieve success, and have we shared the
+                        alternatives?</li>
+                        <li>Is the risk of delivering what they envision risky for HP
+                        and its reputation or the client's business?</li>
+                        <li>How will our competition respond and are they better
+                        positioned?</li>
+                    </ul>
+                </div>
+                <div id="csf_5b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Have all key contacts in the decision making process
+                        agreed to the solution scope and alignment to addressing business
+                        issue(s)?</li>
+                        <li>Have we delivered a solution like this before and do we
+                        have solid references?</li>
+                        <li>What are the alternatives the customer could consider?</li>
+                        <li>What are the reasons that adopting the HP solution makes
+                        sense for the client?</li>
+                        <li>Have all the considerations of implementation and
+                        transition been factored into the solution? (Who will be affected
+                        across the client organization?)</li>
+                        <li>Does our solution address the client's risks and/or
+                        concerns?</li>
+                    </ul>
+                </div>
+                <div id="csf_5c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Is the HP solution being viewed as a mutually developed
+                        value proposition and will it address the customer's business
+                        issues as they defined them?</li>
+                        <li>How are solution, price to win, and proposed terms
+                        validated against the client’s expectations / requirements?</li>
+                        <li>Are there elements of the solution that can be
+                        implemented in the current state (assuming current client)?</li>
+                        <li>Can our solution be differentiated using HP Labs, key
+                        strategic partners, or existing clients?</li>
+                        <li>What is most important benefit to the client's success
+                        that our solution highlights?</li>
+                        <li>Is our solution scope less risky for the client, with a
+                        simpler execution? Does our solution have less risk than the
+                        competition's approach?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Solution_Scope__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Differentiation</td>
+    <td style="padding: 10px;"><select id="ass_6"></select>
+        <br />
+        <div id="csf_6a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>What are the potential unique competitive advantages HP
+                        can employ to interest the client for this scope?</li>
+                        <li>What short-term investments could be made to
+                        differentiate the offering?</li>
+                        <li>How can we differentiate the relationship to distinguish
+                        our people in the minds of the client assessment and leadership
+                        team?</li>
+                        <li>What would we like to change about the opportunity to
+                        allow HP to be able to provide a unique competitive advantage to
+                        the client?</li>
+                    </ul>
+                </div>
+                <div id="csf_6b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>What portfolio offerings, product design, industry
+                        specific offerings, products and services when uniquely linked
+                        together, or cost advantages can HP use to differentiate itself?</li>
+                        <li>What are the differentiating strengths and weaknesses of
+                        each known competitor that are unique to this client situation?</li>
+                        <li>What is our specific plan for executive interaction to
+                        build advantage into the relationship?</li>
+                        <li>What executive options beyond the client request could
+                        strengthen our proposal in the client’s mind? Are there latent
+                        (unarticulated) needs that were discovered that allow HP to shift
+                        the proposal toward HP competitive advantages?</li>
+                    </ul>
+                </div>
+                <div id="csf_6c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Which offerings will be highlighted in the proposal that
+                        clearly differentiate HP from competitors?</li>
+                        <li>How will we, in the HP proposal and via our sales effort,
+                        defend against competitive differentiation (tactics and
+                        countertactics)?</li>
+                        <li>What additional support is required from HP
+                        leadership/executive sponsor to more deeply distinguish HP people
+                        in the perspective of the client?</li>
+                        <li>Would HP be able to command a proposal price premium,
+                        need to provide pricing at parity, or need to be lower priced than
+                        each competitor to win at this stage? Please provide evidence
+                        about the degree of or lack of differentiation driving your
+                        perspective.</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Differentiation__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Teaming</td>
+    <td style="padding: 10px;"><select id="ass_7"></select>
+        <br />
+        <div id="csf_7a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>What are the client’s requirements around teaming?</li>
+                        <li>Are there any incumbent service providers? How are they
+                        liked by the client/performance? Would we consider them a
+                        competitor or partner?</li>
+                        <li>Are there any unique client requirements that require
+                        specific domain expertise that HP does not hold?</li>
+                        <li>Which companies have key relationships with the client?
+                        (I.e., audit or other supplier or business partner relationship)</li>
+                        <li>What does an HP “Dream Team” look like from the client’s
+                        perspective?</li>
+                        <li>Is our teaming approach focused on low cost or best value
+                        and innovation?</li>
+                    </ul>
+                </div>
+                <div id="csf_7b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>What is the current make-up of the HP team and status of
+                        Teaming Agreements? What is the level of commitment from our
+                        partners? (I.e., senior level relationships with partner)
+                        Exclusivity on any Teaming Agreements?</li>
+                        <li>Have we been able to confirm the client’s preferences on
+                        teaming? Does our team make-up address the client’s business
+                        drivers?</li>
+                        <li>What are the gaps in our capability to deliver these
+                        services, and what partners (incumbent or otherwise) do we still
+                        need to fill gaps?</li>
+                        <li>Are we engaged in joint sales/solution activities with
+                        key partners?</li>
+                        <li>Are necessary fire-wall protections in place with HP
+                        segments?</li>
+                        <!-- Commented By Vinay S for ALM #:3464                    
+                        <li>Can the teaming partners help us perform a black hat
+                        and/or participate in our win strategy lab?</li>
+                             --> 
+                      <li>Can the teaming partners help us perform a black hat 
+                      and/or engage in workshop?</li>
+                      <li>Is the client open to innovation? If so, what partners do
+                        they perceive as bringing them innovation or fresh ideas?</li>
+                    </ul>
+                </div>
+                <div id="csf_7c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Have our partners committed dedicated resources to the
+                        bid?</li>
+                        <li>Are teammate performance commitments on track?</li>
+                        <li>Are there any solutioning challenges with our partners?</li>
+                        <li>Are there any pricing challenges from our partners
+                        relative to Price to Win?</li>
+                        <li>What role will the partners have in our solutioning,
+                        writing, references, and red team?</li>
+                        <li>How do we elicit the proposal support we need and
+                        discriminators that teaming partners bring and get that content
+                        into the proposal?</li>
+                        <li>Do we still believe we have addressed the client’s
+                        preferences on teaming and validated that needs remain the same as
+                        compared to the start of the pursuit?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Teaming__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Sales Team Staffing</td>
+    <td style="padding: 10px;"><select id="ass_8"></select>
+        <br />
+        <div id="csf_8a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Do we have the right industry representation on the team
+                        to properly validate the opportunity?</li>
+                        <li>Do we have the right technical representation on the
+                        team?</li>
+                        <li>How would the client view our capabilities in this
+                        industry?</li>
+                        <li>Do we have any executive relationships that can help
+                        validate this opportunity with the client?</li>
+                        <li>Who is leading it from a sales perspective (account,
+                        sales, sales leadership)?</li>
+                    </ul>
+                </div>
+                <div id="csf_8b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Has the right industry team fully qualified the
+                        opportunity?</li>
+                        <li>Has the right technical team assessed the opportunity and
+                        can we meet the client's expectation?</li>
+                        <li>Do we have the team it would take to win this
+                        opportunity?</li>
+                        <li>Are they available to pursue the opportunity?</li>
+                        <li>Who is leading the sales effort (sales exec, strategic
+                        sales exec)?</li>
+                    </ul>
+                </div>
+                <div id="csf_8c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Have we filled all of the pursuit team positions?</li>
+                        <li>Do we have the A team on the opportunity? What is the
+                        quality of each relationship?</li>
+                        <li>Do we have the executive support from a relationship
+                        perspective?</li>
+                        <li>How is the team perceived by the client?</li>
+                        <li>Is HP competitively positioned to win, and do we have
+                        differentiation with our sales/industry/delivery team?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Sales_Team_Staffing__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Deal Shape and Pricing</td>
+    <td style="padding: 10px;"><select id="ass_9"></select>
+        <br />
+        <div id="csf_9a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Does the client have an idea of what price range they
+                        expect to see from HP/our competitors based on the scope of the
+                        deal at this stage? Have we asked the client for this information?</li>
+                        <li>Do we have an initial view on our ability to achieve the
+                        client’s expected price range based on our initial assessment of
+                        what our proposed solution scope would look like?</li>
+                        <li>Has the client purchased these services before, e.g.
+                        subsidiary, other geography? Do they already have an internal
+                        benchmark for the services that they wish to purchase?</li>
+                        <li>Do we have an view, based on an initial understanding of
+                        a deal structure, of how our pricing will compare to our
+                        competitors’ prices? What is the basis for this view?</li>
+                        <li>Is the client looking at price from a Total Cost of
+                        Ownership (TCO) perspective? If not, how can they be steered in
+                        this direction? I.e., do we/client have a view of current assets,
+                        premises costs, depreciation policies, and likely cost/structure
+                        of retained organization?</li>
+                    </ul>
+                </div>
+                <div id="csf_9b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>What is our level of confidence that we have the
+                        Competitive Price Range correct? Why do we believe that we are
+                        tracking accurately to a Competitive Price Range?</li>
+                        <li>Other than client guidance what reference data inputs are
+                        we using to determine that our Competitive Price Range is correct?</li>
+                        <li>Please demonstrate how we are managing our “glide path”
+                        from initial pricing submission to land at Competitive Price Range
+                        at Best and Final Offer (BAFO) through RFI/RFP phases i.e.
+                        credibility factor with client team?</li>
+                        <li>Based on our proposed solution, can the services the
+                        client is requesting be benchmarked easily, will it be possible to
+                        obtain market pricing to support future price discussions?</li>
+                        <li>Have we identified any specific structural
+                        advantage/disadvantage against competitors, e.g. competitor’s need
+                        to use 3rd parties for services such as “break-fix” driving margin
+                        on margin issues, ability to include other HP Services that can be
+                        exploited – HP Finance, etc in our price?</li>
+                    </ul>
+                </div>
+                <div id="csf_9c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>When did we last discuss Competitive Price Range range
+                        with client and at what level in client organization?</li>
+                        <li>What is our level confidence that we now have the
+                        Competitive Price Range correct prior to BAFO submission?</li>
+                        <li>What price do we expect our primary competitor bid at?
+                        What is the basis of our understanding?</li>
+                        <li>Have we been able to establish Total Cost of Ownership
+                        (TCO) position with client to ensure a like for like comparison
+                        with our primary competitor? Can we articulate clear value based
+                        differentials for HP?</li>
+                        <li>Does our Competitive Price Range meet corporate
+                        margins/metrics for associated risk? If not on what basis are we
+                        requesting support from senior management to approve submission at
+                        Competitive Price Range i.e. what is our recovery plan/risk
+                        mitigation plan post contract signature?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Deal_Shape_and_Pricing__c}"
+                            style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Delivery Leadership Team</td>
+    <td style="padding: 10px;"><select id="ass_10"></select>
+        <br />
+        <div id="csf_10a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Have we given thought to identifying a delivery leader
+                        and team?</li>
+                        <li>How rapidly will the pursuit progress? When do we need to
+                        begin preparation for transition and delivery?</li>
+                        <li>When will we need to put our delivery people in front of
+                        the customer to describe our solution approach?</li>
+                    </ul>
+                </div>
+                <div id="csf_10b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Do we have candidates identified that are knowledgeable
+                        and credible?</li>
+                        <li>Do we understand their availability issues?</li>
+                        <li>Have we ensured the delivery candidates have a full
+                        understanding of the value proposition with the client?</li>
+                    </ul>
+                </div>
+                <div id="csf_10c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Are delivery team candidates identified and available to
+                        work with the pursuit team in presenting a solution to the
+                        customer?</li>
+                        <li>Is the defined delivery leader on board, been thoroughly
+                        briefed on the solution, and met with the client to begin
+                        establishing relationships?</li>
+                        <li>Are the candidates polished and effective in front of the
+                        customer?</li>
+                        <li>Are the candidates available if a positive decision is
+                        made by the customer to proceed to down-select?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Delivery_Leadership_Team__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+  <tr>
+    <td class="tdcsf">Terms and Conditions</td>
+    <td style="padding: 10px;"><select id="ass_11"></select>
+        <br />
+        <div id="csf_11a">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>What do the client requirements (RFI, RFP, scope
+                        document, etc.) tell us about the client's approach to terms and
+                        conditions? If nonstandard, have you researched acceptable
+                        alternatives?</li>
+                        <li>What challenges/issues have arisen in discussions to
+                        date? What mitigation strategies have you identified to address
+                        potential future conflicts early in order to prevent last moment
+                        concessions? How will these strategies affect the deal's risk
+                        profile?</li>
+                       <!-- Commented By Vinay S for ALM #:3464                    
+                        <li>Does HP have an existing relationship with this client in ES or other HP Business Units? &#91;NOTE: Product T&#38;C's are
+                        likely not going to be relevant to ES, but client posture and
+                        level of difficulty in negotiation would be an indicator.&#93;
+                        Does the applicable contract and/or the client relationship
+                        history provide insight into the client's attitudes and expectations?</li>
+                             -->  
+                     <li>Does HP have an existing relationship with any HP Business Units?
+                         &#91;NOTE: Product T&#38;C's are likely not going to be relevant to ES, but client 
+                         posture and level of difficulty in negotiation would be an indicator.] Does the 
+                         applicable contract and/or the client relationship history provide insight into the 
+                         client's attitudes and expectations? </li>
+
+                    </ul>
+                </div>
+                <div id="csf_11b">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Are we talking to budget owners vs. centralized IT (who
+                        often is a reseller of our services). If decentralized, will you
+                        proposed a sufficiently robust governance structure that includes
+                        client internal complementary obligations/responsibilities?</li>
+                        <li>Are client demands in line with revenue/profit
+                        opportunity? How confident are you that HP can overcome the
+                        T&#38;C challenges without eroding deal value?</li>
+                        <li>Are all terms that have an impact on the deal risk rating
+                        identified and proposed mitigations documented? Based on your
+                        assessment of the T&#38;C risks/issues identified to date, should
+                        HP make further investments in this pursuit to reach a compromise
+                        agreement with client?</li>
+                    </ul>
+                </div>
+                <div id="csf_11c">
+                    <p><b>Criteria:</b></p>
+                    <ul>
+                        <li>Are all terms that have an impact on the deal risk rating
+                        documented and resolved? If not, how many major issues remain, and
+                        what are they?</li>
+                        <li>What is the estimated impact of the open major issues? Is
+                        the pricing strategy appropriate to the risk level? [Note: If we
+                        are selling on price, keep things generic with add-on service
+                        menu.]</li>
+                        <li>What is your strategy to negotiate existing challenges?
+                        What is the estimated impact of this strategy on deal
+                        value/performance? Is the entire HP Executive Sponsor chain on
+                        board with the proposed mitigation strategy?</li>
+                        <li>If there are approved variances from HP standards, how
+                        are the appropriate mitigation and execution approaches
+                        incorporated into the proposal?</li>
+                        <li>Is the entire HP Executive Sponsor chain aligned with the
+                        T&#38;C's negotiation strategy to ensure one face to the client?</li>
+                    </ul>
+                </div>
+    </td>
+    <td class="tdgtgp"><apex:inputfield value="{!Opportunity_Plan__c.DHC_Comments_Terms_and_Conditions__c}"
+                        style="height:100%;width:100%;" /></td>
+  </tr>
+</table>            
+
+            <br />
+            <div style="width: 200px;margin-left:auto;margin-right:auto;">
+                <apex:commandButton action="{!save}" value="Save" onclick="fillForms()" /><apex:commandButton action="{!cancel}" value="Cancel"/>
+                <input type="button" class="btn" value="Help" onclick="window.open('/apex/dhc_help','dhc_help','width=600,height=300')" />
+            </div>
+            <br />
+            <apex:inputField style="display:none;" id="inputBoxes0"
+                value="{!Opportunity_Plan__c.DHC_2_Will_the_client_buy__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes1"
+                value="{!Opportunity_Plan__c.DHC_2_Buyer_experience_with_HP__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes2"
+                value="{!Opportunity_Plan__c.DHC_2_Client_Relationship_and_Insight__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes3"
+                value="{!Opportunity_Plan__c.DHC_2_Client_Decision_Process__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes4"
+                value="{!Opportunity_Plan__c.DHC_2_Competitive_Position__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes5"
+                value="{!Opportunity_Plan__c.DHC_2_Solution_Scope__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes6"
+                value="{!Opportunity_Plan__c.DHC_2_Differentiation__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes7"
+                value="{!Opportunity_Plan__c.DHC_2_Teaming__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes8"
+                value="{!Opportunity_Plan__c.DHC_2_Sales_Team_Staffing__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes9"
+                value="{!Opportunity_Plan__c.DHC_2_Deal_Shape_and_Pricing__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes10"
+                value="{!Opportunity_Plan__c.DHC_2_Delivery_Leadership_Team__c}" />
+            <apex:inputField style="display:none;" id="inputBoxes11"
+                value="{!Opportunity_Plan__c.DHC_2_Terms_and_Conditions__c}" />
+            </apex:outputPanel>
+            
+            
+        </apex:form>
+    </apex:actionregion>
+    <div style="width:50%;display:inline;">
+                    <b>Last Updated: </b>
+                    <apex:outputField value="{!Opportunity_Plan__c.DHC_last_updated__c}" />
+                    </div>
+</body>
+
+</apex:page>

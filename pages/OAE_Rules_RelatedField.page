@@ -1,0 +1,64 @@
+<apex:page controller="OAE_Rules_RelatedFieldCtlr">   
+<apex:sectionheader title="Field Selection Wizard" subTitle="Selected:  {!fullPath}"/>
+  <apex:form >
+    <apex:pageBlock tabstyle="Contact" >
+      <apex:pageBlockSection title="Option 1: Select the top-level object" collapsible="false" />
+      <apex:commandButton action="{!objAssign}" value="Select" id="objButton" />
+          You can select this field ({!fullPath}) for ID-matching rules<br/><br/>
+
+      <apex:pageBlockSection title="Option 2: Select a field on this object" collapsible="false" />
+        <apex:dataTable value="{!unusedParams}" var="schmField" id="tblUnused" cellpadding="2">
+          <apex:column width="200">
+            <apex:facet name="header">Field</apex:facet>
+            <apex:outputText value="{!schmField.sOne}"/>
+          </apex:column>
+          <apex:column width="150">
+            <apex:facet name="header">Type</apex:facet>
+            <apex:outputText value="{!schmField.sTwo}"/>
+          </apex:column>
+          <apex:column width="200">
+            <apex:facet name="header">Path</apex:facet>
+            <apex:outputText value="{!schmField.sThree}"/>
+          </apex:column>
+          <apex:column width="250">
+            <apex:facet name="header"></apex:facet>
+            <apex:outputPanel id="rend" onclick="assignFn('{!schmField.sThree}','{!schmField.sTwo}')" styleClass="btn">
+            	Add This Field
+            </apex:outputPanel>
+          </apex:column>
+        </apex:dataTable>
+
+      <apex:pageBlockSection title="Option 3: Select a related object for further traversal" collapsible="false" />
+        <apex:dataTable value="{!childObjs}" var="kids" id="tblChildObj" cellpadding="2">
+          <apex:column width="200">
+            <apex:facet name="header">Field</apex:facet>
+            <apex:outputText value="{!kids.sOne}"/>
+          </apex:column>
+          <apex:column width="150">
+            <apex:facet name="header">Object</apex:facet>
+            <apex:outputText value="{!kids.sTwo}"/>
+          </apex:column>
+          <apex:column width="200">
+            <apex:facet name="header">Relationship</apex:facet>
+            <apex:outputText value="{!kids.sThree}"/>
+          </apex:column>
+          <apex:column width="250">
+            <apex:facet name="header"></apex:facet>
+            <apex:outputPanel id="rendy" onclick="objFn('{!kids.sThree}','{!kids.sTwo}','{!kids.sOne}')" styleClass="btn">
+                Select This Object
+            </apex:outputPanel>
+          </apex:column>
+        </apex:dataTable>
+
+        <apex:actionFunction action="{!fieldAdd}" name="assignFn" rerender="rend">
+          <apex:param name="firstParam" assignTo="{!addThisField}" value="" />
+          <apex:param name="secondParam" assignTo="{!fieldType}" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction action="{!objLoop}" name="objFn" rerender="rendy">
+          <apex:param name="firstParam" assignTo="{!addThisField}" value="" />
+          <apex:param name="secondParam" assignTo="{!objectForward}" value="" />
+          <apex:param name="thirdParam" assignTo="{!fieldType}" value="" />
+        </apex:actionFunction>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

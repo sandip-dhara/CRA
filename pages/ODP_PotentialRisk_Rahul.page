@@ -1,0 +1,1611 @@
+<apex:page standardcontroller="Potential_Risk__c" extensions="ODP_Extension_PotentialRisk_Rahul" sidebar="false">
+
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+<style>
+    textarea, .uneditable-input {
+        width: 90%;
+    }
+     .modal.fade.in { 
+    top: -5%; 
+    }
+    .bPageBlock .detailList .labelCol{ 
+        width: 25%; 
+    } 
+
+.HideColumn{
+    display:none;
+}
+</style>
+
+        <!-- BEGIN CONTAINER -->
+    <div id="container" class="row-fluid"> 
+      <!-- BEGIN PAGE -->
+      <div id="main-content"> 
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid"> 
+            
+            
+          <!-- Tabs -->
+          <div class="row-fluid">
+              <div class="span12 mtop20 boxB_OL"> 
+                  <apex:form styleClass="form-horizontal">
+                  <apex:pageMessages />
+                  
+                      <!-- Potential Risk -->
+                <div class="BDheading_OL">
+                      <h2>Potential Risk</h2>
+                    </div>
+                    <div>
+                        <div class="alert alert-error span4 pull-left mr30" style="display:none" id="err_msg" />
+                      <form class="form-horizontal">
+                        <div class="control-group">
+                          <label class="control-label">Project ID </label>
+                          <div class="controls"> 
+                              <apex:outputLink value="{!redirectToProject}">{!GetProject}</apex:outputLink> 
+                              <!--<apex:outputText value="{!GetProject}"></apex:outputText>--> 
+                          </div>
+                        </div>
+                        
+                        <div class="control-group">
+                          <label class="control-label">Project Name</label>
+                          <div class="controls"> <apex:outputText value="{!projectName}"></apex:outputText> </div>
+                        </div>
+                        <div class="control-group">
+                          <label class="control-label">Project Status</label>
+                          <div class="controls"> <apex:outputText value="{!projectStatus }"></apex:outputText> </div>
+                        </div>
+                        <div class="control-group">
+                          <label class="control-label">Owner </label>
+                          <div class="controls">
+                                <apex:inputField value="{!Potential_Risk__c.Potential_Risk_Owner__c}"  id="PotentialUserName" required="true"/>
+                          </div>
+                        </div>
+                        <div class="control-group">
+                          <label class="control-label">Potential Risk Description</label>
+                          <div class="controls">
+                             <!-- <textarea rows="3" class="input-xxlarge" ></textarea>
+                               <apex:inputhidden value="{!Potential_Risk__c.Id}" /> -->
+                               <input type="hidden" value="{!hdnPotentailRisk}" id="hdnPotentialID" />
+                               
+                             <apex:inputTextArea styleclass="input-xxlarge" value="{!Potential_Risk__c.Description__c}"  id="txtPotentialDesc"/>
+                          </div>
+                        </div>
+                        <div class="form-actions">
+                          <!--<button class="btnAthena pull-right " type="button"> 
+                          </button>-->
+                          <apex:commandButton value="Cancel" action="{!cancelButton}" styleClass="btnAthena pull-right btn-primary"/>
+                          <input type="hidden" id="hdn
+                          ntentialRisk" value="false"/>
+                          <apex:commandButton value="Save" action="{!SavePotentialRisk}" styleClass="btnAthena pull-right btn-primary"/>
+                          <!--<button class="btnAthena btn-primary pull-right mr5" type="button" id="savePR" onclick="SavePotentialRisk(); return false;" > Save</button>-->
+                        </div>
+                      </form>
+                    </div>
+                      </apex:form>
+                  </div>
+            </div>
+            <div class="row-fluid">
+            <div class="span12 mtop20 "> 
+                <apex:form styleClass="form-horizontal">
+                
+              <!--BEGIN TABS-->
+              <div class="tabbable custom-tab tabs-left" id="tables"> 
+                <!-- Only required for left/right tabs -->
+                <ul class="nav nav-tabs tabs-left">
+                  <li class="active"  id="listtab_3_2"><a href="#tab_3_2"  id ="litab_3_2" data-toggle="tab">Business Impact</a></li>
+                  <li class="disabled" id="listtab_3_3"><a href="#tab_3_3" id ="litab_3_3" data-toggle="tab" class="disabled">Root Cause</a></li>
+                  <li class="disabled" id="listtab_3_4"><a href="#tab_3_4"  id="litab_3_4" data-toggle="tab" class="disabled">Process Control</a></li>
+                   <li class="disabled" id="listtab_3_3"><a href="#tab_3_5" id="litab_3_5" data-toggle="tab" class="disabled">Risks</a></li>
+                </ul>
+                <!-- <apex:outputText value="{!Referer}"/> -->
+                <div class="tab-content">
+                  <div class="tab-pane active" id="tab_3_2">
+                    <div class="BDheading_OL">
+                      <h2>Business Impact </h2>
+                      <a class="btnAthena btn-primary pull-right addNew" id="btnAddBI" onclick="AddNewBusinessImpact()" >Add New</a>
+                      
+                    </div>
+                    <div>
+                      <table class="table table-striped table-bordered" id="tblBusinessImpact">
+                        <thead>
+                          <tr>
+                          <th>Business Impact</th>
+                            <th>Description</th>
+                            <th>Severity</th>
+                              <th>Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        
+                         <apex:repeat value="{!GetBusinessImpact}" var="BusinessImpact"> 
+               <tr class="odd gradeX" >
+               
+                <td >
+                <input type="hidden" value="{!BusinessImpact.Id}" />
+               <apex:InputField value="{!BusinessImpact.Business_Impact_Name__c}"  Styleclass="input-xxlarge width98"></apex:InputField>
+               </td>
+               <td >
+            
+                <apex:InputTextArea value="{!BusinessImpact.Description__c}"  styleClass="input-xxlarge width98" ></apex:InputTextArea>
+               
+               </td>
+               <td >
+               <apex:InputField value="{!BusinessImpact.Severity__c}"  Styleclass="input-xxlarge width98"></apex:InputField>
+               </td>
+               <td >
+               <a onclick="deleteBusinessImpact('{!BusinessImpact.Id}')"><span class="icon-trash"></span></a>
+               </td>
+               </tr>
+               </apex:repeat>
+                        
+                        </tbody>
+                      </table>
+                      <!-- // DATATABLE - DTA -->
+                      <!--<button class="btnAthena pull-right mtop20" type="button"> Cancel</button>-->
+                      <input type="hidden" id="hdnSaveBI" value="false"/>
+                      <button class="btnAthena btn-primary pull-right mr5 mtop20"  onclick="saveBusinessImapct();" type="button"> Save</button>
+                    </div>
+                  </div>
+                  <div class="tab-pane disabled" id="tab_3_3">
+                    <div class="BDheading_OL">
+                      <h2>Root Cause </h2>
+                      
+                      <a class="btnAthena btn-primary pull-right addNew" id="AddRoot" onclick="AddNewRootCause()"> Add New </a>
+                    </div>
+                    <div>
+                      <table class="table table-striped table-bordered" id="tblRootCause">
+                        <thead>
+                          <tr>
+                          <th></th>
+                            <th>Root Cause</th>
+                            <th>Description</th>
+                            <th>Occurance</th>
+                            <th>Business Impact</th>
+                              <th>Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                                          
+                                        
+                                          
+                <apex:repeat value="{!GetRootCauses}" var="varRootCause"> 
+                <apex:outputpanel rendered="{! if(varRootCause.objRootCause.Id!='',true,false)}">
+                
+                <tr class="odd gradeX" >
+                <td>
+                    <apex:inputhidden value="{!varRootCause.objRootCause.Id}" />
+                </td>
+                <td >
+                 <apex:InputField value="{!varRootCause.objRootCause.Root_Cause_Name__c}"  Styleclass="input-xxlarge width98"></apex:InputField> 
+                </td>
+                <td >
+
+                    <apex:InputTextArea value="{!varRootCause.objRootCause.Description__c}"  styleClass="input-xxlarge width98" ></apex:InputTextArea>
+
+                </td>
+                <td >
+                 <apex:InputField value="{!varRootCause.objRootCause.Occurance__c}"  Styleclass="input-xxlarge width98"></apex:InputField> 
+                </td>
+                <td> 
+                 <!--  <apex:outputText rendered="{!AND(NOT(ISNULL(getBIsRoot[varRootCause.objRootCause.Id])),getBIsRoot[varRootCause.objRootCause.Id].size>0)}">   -->
+          
+              <apex:repeat value="{!varRootCause.lstCustBI}"  var="varBI"  >  
+              <li id="{!varBI.BIID}">{!varBI.BIDescription}</li> 
+              </apex:repeat>
+            
+                <a class="" data-toggle="modal" onclick="populateBusinessImpact(this)" data-iRowCount="{!varRootCause.iRowCount}" >Add</a>
+                </td>
+                <td >
+                <a onclick="deleteRootCause('{!varRootCause.objRootCause.Id}')"><span class="icon-trash"></span></a>
+                </td>
+                </tr>
+                </apex:outputpanel>
+                </apex:repeat>  
+                                          
+                                        
+                          
+                        </tbody>
+                      </table>
+                      <!-- // DATATABLE - DTA -->
+                      <!--<button class="btnAthena pull-right mtop20" type="button"> Cancel</button>-->
+                      <input type="hidden" id="hdnSaveRC" value="false"/>
+                      <button class="btnAthena btn-primary pull-right mr5 mtop20"  onclick="saveRootCause();" type="button"> Save</button>
+                    </div>
+                  </div>
+                  
+                  <apex:inputhidden id="AvailableBIs" value="{!GetAvailableBusinessImpacts}"/>
+                  
+                  
+                  
+                  <div id="dilogBI" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                                <div class="modal-header">
+                                  <h3>Business Impacts</h3>
+                                </div>
+                                <div class="modal-body">
+                                  <div class="control-group">
+                                    <label class="control-label">Select Business Impact</label>
+                                    <div class="controls ml0 clearB">
+                                      <table class="hpit_BVP_SealectBox BDbg span6">
+                                        <tbody>
+                                          <tr>
+                                            <td class="hpit_BVP_SealectBox_L">Available
+                                             
+                                                                            <select id="HdnBI_Left" multiple="multiple" class="span12" style="display:none;">
+                                                                            </select>
+                                                                            <select id="BI_Left" multiple="multiple" class="span12" style="height:250px">
+                                                                            </select>
+                                              
+                                              </td>
+                                            <td class="hpit_BVP_SealectBox_Btn" style="width:40px; padding:10px;">
+                                              <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="BIMoveRight" value=">" alt="Move Right" />
+                                                                            <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="BIMoveLeft" value="<" alt="Move Left" />
+                                                                            <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="BIMoveAllRight" value=">>" alt="Move Right" />
+                                                                            <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="BIMoveAllLeft" value="<<" alt="Move Left" />
+                                              </td>
+                                            <td class="hpit_BVP_SealectBox_R">Selected
+                                              
+                                                                            
+                                                                            <select id="HdnBI_Right" multiple="multiple" class="span12" style="display:none;"></select>
+                                                                            <select id="BI_Right" multiple="multiple" class="span12" style="height:250px"></select>
+                                              
+                                              </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                                
+                                  <input type="button" class="btnAthena btn-primary"  value="Save" onclick="GetBIs()" />
+                                </div>
+                              </div>
+                  
+                  
+                  
+              <div class="tab-pane disabled" id="tab_3_4">
+                <div class="BDheading_OL">
+                  <h2>Process Control </h2>
+                  <button class="btnAthena btn-primary pull-right addNew" id="AddProcessCntrl" onclick="AddNewProcessControl();return false;"> Add New</button>
+                </div>
+                <div>
+                  <table class="table table-striped table-bordered" id="tblProcessControl">
+                    <thead>
+                      <tr>
+                      <th></th>
+                      <th>Process Control</th>
+                        <th>Description</th>
+                        <th>Detection</th>
+                        <th>Root Cause</th>
+                          <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!GetProcessControl}" var="varProcessControl"> 
+                        <apex:outputpanel rendered="{! if(varProcessControl.objProcessControl.Id!='',true,false)}">
+                        <tr class="odd gradeX" >
+                        <td>
+                        <apex:inputhidden value="{!varProcessControl.objProcessControl.Id}" />
+                        </td>                                                       
+                        <td >
+                        <apex:InputField value="{!varProcessControl.objProcessControl.Process_Control_Name__c}"  Styleclass="input-xxlarge width98"></apex:InputField> 
+                        </td>
+                        <td >
+                        <apex:InputTextArea value="{!varProcessControl.objProcessControl.Description__c}"  styleClass="input-xxlarge width98" ></apex:InputTextArea>
+                        </td>
+                        <td >
+                        <apex:InputField value="{!varProcessControl.objProcessControl.Detection__c}"  Styleclass="input-xxlarge width98"></apex:InputField> 
+                        </td>
+                        <td> 
+                        <apex:repeat value="{!varProcessControl.lstCustRC}"  var="varBI"  >  
+                        <li id="{!varBI.RCID}">{!varBI.RCDescription}</li> 
+                        </apex:repeat>
+                        <a class="" data-toggle="modal" onclick="populateRootCause(this)" data-iRowCount="{!varProcessControl.iRowCount}">Add</a>
+                        </td>
+                        <td >
+                        <a onclick="deleteProcessControl('{!varProcessControl.objProcessControl.Id}')"><span class="icon-trash"></span></a>
+                        </td>
+                        </tr>
+                        </apex:outputpanel>
+                        </apex:repeat>
+                        <!-----
+                        <tr>
+                        <td><input type="hidden" class="input-xxlarge width10" /></td>
+                        <td><input type="text" placeholder="Name" class="input-xxlarge width98" /></td>
+                        <td><textarea rows="2" placeholder="Description" class="input-xxlarge width98"></textarea></td>                       
+                        <td><select tabindex="1" class="input-large m-wrap width98 ">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">5</option>
+                            <option value="4">4</option>
+                          </select></td>
+                          <td>
+                            <li></li><a class="" data-toggle="modal" onclick="populateRootCause()" >Add</a>
+                          </td>
+                          <td><a><span class="icon-trash"></span></a></td>
+                      </tr>
+                      --->
+                    </tbody>
+                  </table>
+                  <!-- // DATATABLE - DTA -->
+                  
+                  <!--<button class="btnAthena pull-right mtop20" type="button"> Cancel</button>-->
+                  <input type="hidden" id="hdnSavePC" value="false"/>
+                  <button class="btnAthena btn-primary pull-right mr5 mtop20" onclick="saveProcessControl();return false;" type="submit"> Save</button>
+                </div>
+                
+                <apex:inputhidden id="AvailableRCs" value="{!GetAvailableRootCause}"/>
+                
+                <div id="dilogRC" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                    <div class="modal-header">
+                        <h3>Root Cause</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label class="control-label">Select Root Cause</label>
+                            <div class="controls ml0 clearB">
+                                <table class="hpit_BVP_SealectBox BDbg span6">
+                                    <tbody>
+                                    <tr>
+                                        <td class="hpit_BVP_SealectBox_L">Available
+                                            
+                                            <select id="HdnRC_Left" multiple="multiple" class="span12" style="display:none;"></select>
+                                            <select id="RC_Left" multiple="multiple" class="span12" style="height:250px"></select>
+                                        </td>
+                                        <td class="hpit_BVP_SealectBox_Btn" style="width:40px; padding:10px;">
+                                            <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="RCMoveRight" value=">" alt="Move Right" />
+                                            <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="RCMoveLeft" value="<" alt="Move Left" />
+                                            <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="RCMoveAllRight" value=">>" alt="Move Right" />
+                                            <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="RCMoveAllLeft" value="<<" alt="Move Left" />
+                                        </td>
+                                        <td class="hpit_BVP_SealectBox_R">Selected
+                                            
+                                            <select id="HdnRC_Right" multiple="multiple" class="span12" style="display:none;"></select>
+                                            <select id="RC_Right" multiple="multiple" class="span12" style="height:250px"></select>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <input type="button" class="btnAthena btn-primary"  value="Save" onclick="GetRCs()" />
+                    </div>
+                </div>
+                
+                
+                
+                
+              </div>
+                  
+                  
+                    <div class="tab-pane" id="tab_3_5">
+                    <div class="BDheading_OL">
+                      <h2>Creating Risks </h2>
+                      <!--<button class="btnAthena btn-primary pull-right addNew" id="btnAddRisk" type="button"> Add New</button>-->
+                    </div>
+                    <div>
+
+
+
+ <!-- hunter begin -->
+                    <table class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                          <th>Business Impact</th>
+                          <th>Root Cause</th>
+                          <th>Process Control</th>
+                          <th>RPN Number</th>
+                          <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <apex:repeat value="{!BusinessImpactList}" var="d">
+                    <apex:repeat value="{!d.RootCouseList}" var="dr">
+                    <apex:repeat value="{!dr.ProcessControlList}" var="drp">
+                      <tr>
+                        <apex:outputText escape="false" rendered="{!drp.ShowBusinessImpact}">
+                            <td rowSpan="{!d.size}">{!d.ThisBusinessImpact.Business_Impact_Name__c}(Severity:{!d.ThisBusinessImpact.Severity__c})</td>
+                        </apex:outputText>
+                        <apex:outputText escape="false" rendered="{!drp.ShowRootCouse}">
+                            <td rowSpan="{!dr.size}">{!dr.ThisRootCause.Root_Cause_Name__c}(Occurance:{!dr.ThisRootCause.Occurance__c})</td>
+                        </apex:outputText>
+                        <td>
+                            {!drp.ThisProcessControl.Process_Control_Name__c}(Detection:{!drp.ThisProcessControl.Detection__c})
+                        </td>
+                        <td>
+                            {!value(drp.ThisProcessControl.Detection__c) * value(dr.ThisRootCause.Occurance__c) * value(d.ThisBusinessImpact.Severity__c)}
+                        </td>
+                        <td>
+                            <a href="/apex/ODP_Page_MitigationPlan?id={!drp.ThisRisk.Id}" target="_blank" style="display:{!IF(drp.RiskIsExists,'','none')}">View</a>
+                            <input type="button" value="Create" style="display:{!IF(drp.RiskIsExists,'none','')}" class="btnAthena btn-primary pull-right mr5" 
+                                   onclick="CreateRisk('{!d.ThisBusinessImpact.Id}','{!dr.ThisRootCause.Id}','{!drp.ThisProcessControl.Id}')" />
+                        </td>
+                      </tr>
+                    </apex:repeat>
+                    </apex:repeat>
+                    </apex:repeat>
+                    </tbody>
+                  </table>
+ <!-- hunter end -->
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--END TABS-->
+                    </apex:form>
+            </div>
+          </div>
+          
+          <!-- END PAGE CONTENT--> 
+        </div>
+        <!-- END PAGE CONTAINER--> 
+      </div>
+      <!-- END PAGE --> 
+    </div>
+    <!-- END CONTAINER --> 
+
+
+     <!-- Hunter Begin -->
+    <div id="DivCreateRisk" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+        <apex:pageBlock >
+        
+        <apex:form >
+            <apex:actionFunction name="loadNewRisk" action="{!LoadNewRisk}" reRender="newRiskSection" status="RPNStatus">
+                <apex:param name="paramBI" assignTo="{!NewRisk.Business_Impact_ID__c}" value=""/>
+                <apex:param name="paramRC" assignTo="{!NewRisk.Root_Cause_ID__C}" value=""/>
+                <apex:param name="paramPC" assignTo="{!NewRisk.Process_Control_ID__C}" value=""/>
+            </apex:actionFunction>
+        </apex:form>
+        <apex:form >
+        <div class="modal-header">
+            <h3>Create Risk</h3>
+        </div>
+        <div class="modal-body">
+            <apex:pageBlockSection id="newRiskSection" columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Business Impact:</apex:outputLabel>
+                    <apex:actionStatus startText="loading..." id="BIStatus" >
+                        <apex:facet name="stop">{!selectedBI}</apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Root Cause:</apex:outputLabel>
+                    <apex:actionStatus startText="loading..." id="RCStatus" >
+                        <apex:facet name="stop">{!selectedRC}</apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Process Control:</apex:outputLabel>
+                    <apex:actionStatus startText="loading..." id="PCStatus" >
+                        <apex:facet name="stop">{!selectedPC}</apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >RPN Number:</apex:outputLabel>
+                    <apex:actionStatus startText="loading..." id="RPNStatus" >
+                        <apex:facet name="stop">{!SelectedRPN}</apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!NewRisk.Name__c}"/>
+                <apex:inputTextarea value="{!NewRisk.Description__c}" cols="30" rows="5"/>
+                <apex:inputField label="Resolution" value="{!NewRisk.Planned_Resolution_Date__c}"/>
+            </apex:pageBlockSection>           
+        </div>
+        <div class="modal-footer">
+            <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>   
+            <apex:commandButton value="Create" action="{!CreateRisk}"/>
+        </div>
+        </apex:form>
+        </apex:pageBlock>
+    </div>
+    <!-- Hunter End -->
+    
+    
+    
+
+       <!-- BEGIN JAVASCRIPTS --> 
+    <!-- Load javascripts at bottom, this will reduce page load time
+             --> 
+        <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DataTableColumnFilter.js')}"/>
+        <!-- ie8 fixes -->
+        <!--[if lt IE 9]>
+       <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+       <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+       <![endif]-->
+
+    <!-- END JAVASCRIPTS --> 
+    <script>
+    var AvaialableBusinessImpacts;
+    var tabID;  
+        $(document).ready(function () {
+        
+        $("#tables").hide();
+  $("#savePR").click (function() {
+ $("#tables").show();
+         });
+
+ var potenRiskId= $.urlParam('id');
+if(potenRiskId!='' || potenRiskId!=undefined)
+{
+    $("#tables").show();
+    $('#hdnSavePontentialRisk').val("true");
+    
+ }
+              //add by june
+              $("div[class$=datePicker]").css("z-index","99999");
+             //--end--
+             
+
+            // DATATABLE SLP_1
+            // -------------------------------------------------------------------------------- * -->
+         
+          $('#tblBusinessImpact').dataTable({
+                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                "bFilter": false,
+                "bPaginate": false
+
+            });
+          
+
+         $('#tblRootCause').dataTable({
+                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                "bFilter": false,
+                "bPaginate": false
+
+            });
+        
+        
+          $('#tblProcessControl').dataTable({
+                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                "bFilter": false,
+                "bPaginate": false
+
+
+            });
+        
+        
+            $('#SLP_4').dataTable({
+                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                "bFilter": false,
+                "bPaginate": false,
+
+            });
+            
+            // --------------Imran------------
+            debugger;
+            var tabReset = "";            
+            var currentTab=localStorage.getItem('tabID');
+            var OFID=$.urlParam('OFID');
+            console.log('OFID-------'+OFID);
+            if(OFID =='' || OFID == undefined){
+                if(localStorage.getItem('tabID') != '' && localStorage.getItem('tabID') !=undefined){
+                     $('#'+currentTab).removeClass('disabled');
+                     $('#'+currentTab).addClass('active');                     
+                     $('#li'+currentTab).removeClass('disabled');
+                     $('#li'+currentTab).addClass('active');
+                     $('#list'+currentTab).removeClass('disabled');
+                     $('#list'+currentTab).addClass('active');
+                     
+                    if(currentTab != 'tab_3_2'){  
+                        $('#tab_3_2').removeClass('active')
+                        $('#tab_3_2').addClass('disabled')                        
+                        $('#listtab_3_2').removeClass('active')
+                        $('#listtab_3_2').addClass('disabled')
+                    }
+                }   
+            } 
+            else{
+                //alert('inside else');
+                //var setLocalStroage = localStorage.setItem('tabReset',tabReset)
+                localStorage.clear();
+            }           
+            
+            // ----------End Imran ----------
+            
+          //  if(currentTab =='' && currentTab ==undefined)
+            //{
+     var ShowBITab=$.urlParam('id');
+                if(ShowBITab!='' && ShowBITab!=undefined)
+                {
+                  $('#litab_3_2').removeClass('disabled');
+                  $('#litab_3_2').addClass('active');
+                    $('#btnAddBI').removeAttr('disabled');   
+                    $('#btnAddBI').show();                  
+                }    
+                else
+                {
+                 $('#btnAddBI').attr('disabled','disabled');
+                 $('#btnAddBI').hide();
+                }
+          //  }
+            
+});//added
+
+$('#litab_3_2').click(function(){
+
+    
+
+        
+    
+});
+
+    $('#litab_3_3').click(function(){
+    debugger;
+    var ShowRootCauseTab='{!IsBusinessExistRootTab}';
+                if(ShowRootCauseTab=='true')
+                {
+                 var RiskId=$.urlParam('id');
+                  $('#litab_3_3').removeClass('disabled');
+                  $('#litab_3_3').addClass('active');
+                    $('#AddRoot').removeAttr('disabled');   
+                    $('#AddRoot').show();
+                                Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.ReturnLatestBIs}',
+                            RiskId,
+                            PopulateBICallBack);
+                }    
+                else
+                {
+                 $('#AddRoot').attr('disabled','disabled');
+                 $('#AddRoot').hide();
+                }
+    });
+
+    $('#litab_3_4').click(function(){
+    debugger;
+        var ShowPCTab= '{!IsRootExistProcessTab}';
+          if(ShowPCTab=='true')
+                {
+                  $('#litab_3_4').removeClass('disabled');
+                  $('#litab_3_4').addClass('active');
+                  $('#AddProcessCntrl').removeAttr('disabled'); 
+                  $('#AddProcessCntrl').show();
+                }
+                else
+                {
+                 $('#AddProcessCntrl').attr('disabled','disabled');
+                 $('#AddProcessCntrl').hide();
+                }
+         
+    });
+
+$('#litab_3_5').click(function(){
+debugger;
+     var ShowRiskTab= '{!IsProcessExistRiskTab}';
+          if(ShowRiskTab=='true')
+                {
+                  $('#litab_3_5').removeClass('disabled');
+                  $('#litab_3_5').addClass('active');
+                  $('#btnAddRisk').removeAttr('disabled'); 
+                  $('#btnAddRisk').show();
+                }
+                else
+                {
+                 $('#btnAddRisk').attr('disabled','disabled');
+                 $('#btnAddRisk').hide();
+                }
+});
+    //Hunter begin
+    function CreateRisk(myBI,myRC,myPC){
+        $('#DivCreateRisk').modal('show');
+        loadNewRisk(myBI,myRC,myPC);
+    }
+    //Hunter end
+
+        // Utility; parse out parameter by name from URL query string
+        $.urlParam = function (name) {
+            var resultData = '';
+            var results = new RegExp('[\\?&]' + name + '=([^&#]*)')
+                .exec(window.location.href);
+            if (results == null) {
+                resultData = '';
+            }
+            else {
+                resultData = results[1] || 0;
+            }
+            return resultData;
+        }
+
+
+
+        function SavePotentialRisk() {
+            debugger;
+            var ProjectId = $.urlParam('OFID');
+            var PotentialDesc = $('[id$=txtPotentialDesc]').val();
+            var potentialUserId = $('[id$=PotentialUserName_lkid]').val().trim();      
+            
+            var RiskId = $.urlParam('id');
+            if(RiskId =='')
+            {
+              RiskId=$('[id$=hdnPotentialID]').val();
+            }
+            
+            Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.CreateProjectRisk}',
+                  ProjectId,
+                  PotentialDesc,
+                  potentialUserId,
+                  RiskId,
+                  RedirectToBusinessImpact
+              );
+        }
+        function RedirectToBusinessImpact(result, event) {  
+        debugger;
+            if (result.Status == true)
+            {
+               alert('Saved Sucessfully');
+               $('[id$=hdnPotentialID]').val(result.id);
+               $('#hdnSavePontentialRisk').val("true");//added TS
+             }
+            window.location.href='https://hp--esit--c.cs11.visual.force.com/apex/ODP_PotentialRisk?id='+result;
+        }
+        
+        function deleteBusinessImpact(businessImpactId ) {
+            
+            if(businessImpactId ==undefined)
+            {
+                businessImpactId =0;
+            }
+            var objConfirmMessage = confirm("Are You Sure Want to delete?");
+            if(objConfirmMessage) {
+            
+                    Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.deleteBusinessImpact}',
+                            businessImpactId,
+                            deleteCallBackBI
+                    );
+             }       
+            
+        }
+        
+        function deleteCallBackBI(result,event) {
+        
+        if(result!=null && result.errorMessage=='')
+        {
+        
+            var oTable = $('#tblBusinessImpact').dataTable();
+            
+             for(var icount=1; icount<oTable[0].rows.length;icount++){
+             if ($(oTable[0].rows[icount].cells[0].children).val()==result.id)
+             {
+                 oTable.fnDeleteRow(icount-1);
+                  alert('Business impact deleted sucessfully');  
+             }
+             }
+             
+            }
+            else
+            {
+               alert(result.errorMessage);
+            }
+        }   
+        
+        function deleteRootCause(rootCauseId) {
+debugger;
+if(rootCauseId!=-1)
+{
+            var objConfirmMessage = confirm("Are you sure want to delete?");
+            if(objConfirmMessage) {
+            
+                    Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.deleteRootCause}',
+                            rootCauseId,
+                            deleteCallBackRC
+                    );
+             } 
+            }
+            else
+            {
+                       // var oTable = $('#tblRootCause').dataTable();
+            // var target_row = $(this).closest("tr").get(0); // this line did the trick
+            //var aPos = oTable.fnGetPosition(target_row); 
+            //oTable.fnDeleteRow(aPos);
+           // alert(aPos); 
+            }      
+            
+        }
+        
+        function deleteCallBackRC(result,event) {
+        debugger;
+        if(result!=null && result.errorMessage=='')
+        {
+        var deleteRowId;
+            var oTable = $('#tblRootCause').dataTable();
+             for(var icount=1; icount<oTable[0].rows.length;icount++){
+             if ($(oTable[0].rows[icount].cells[0].children).val()==result.id)
+             {
+                 oTable.fnDeleteRow(icount-1);
+                 alert('Root Cause deleted sucessfully');  
+             }
+             }
+            
+            }
+            else
+            {
+               alert(result.errorMessage);
+            }
+        }
+        
+        function deleteProcessControl(processControlId ) {
+            
+            var objConfirmMessage = confirm("Are You Sure Want to delete?");
+            if(objConfirmMessage) {
+            
+                    Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.deleteProcessControl}',
+                            processControlId,
+                            deleteCallBackPC
+                    );
+             }       
+            
+        }
+        
+        function deleteCallBackPC(result,event) {
+        debugger;
+        if(result!=null && result.errorMessage=='')
+        {
+        var deleteRowId;
+            var oTable = $('#tblProcessControl').dataTable();
+             for(var icount=1; icount<oTable[0].rows.length;icount++){
+             if ($(oTable[0].rows[icount].cells[0].children).val()==result.id)
+             {
+                 oTable.fnDeleteRow(icount-1);
+                 alert('Process Control deleted sucessfully');  
+             }
+             }
+            
+            }
+            else
+            {
+               alert(result.errorMessage);
+            }
+        }
+        function AddNewBusinessImpact() {
+        debugger;
+        var Found=false;
+        var oTable = $('#tblBusinessImpact').dataTable();
+        var BIName='';
+        var iCnt=0;
+          for (var icount = 1; icount < oTable[0].rows.length; icount++)
+           {
+            if(oTable[0].rows[icount].cells[icount]!=undefined)
+            {
+                 if (($(oTable[0].rows[icount].cells[1].children).val() == undefined) || ($(oTable[0].rows[icount].cells[1].children).val() == "")) {
+                    BIName = $($(oTable[0].rows[icount].cells[1].children)[0].children[1]).val();
+                }
+                else {
+                    BIName = $(oTable[0].rows[icount].cells[1].children).val();
+                }
+                    if(BIName=='' || BIName==undefined )
+                    {
+                       Found=true;
+                    }
+             }
+             else if(oTable[0].rows.length>2)
+             {
+                   // Found=true;
+             }
+            }
+            if(!Found)
+                {
+                    var dropSev = ("<select>" +
+                  "<option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option>" +
+                  "<option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option>" +
+                  "</select>");
+            
+                    
+                    var BIName = "<input type='hidden' value='{!BusinessImpact.Id}' /> <input type='text' value='' Class='input-xxlarge width98'/>";
+                    var BIDesc = "<textarea rows='3' Class='input-xxlarge width98' />";
+                    var BISev = "<input type='text' value='' Class='input-xxlarge width98'/>";
+                    var Delete = '<a onclick="deleteBusinessImpact({!BusinessImpact.Id})"><span class="icon-trash"></span></a>';
+                    oTable.fnAddData([BIName, BIDesc, dropSev, Delete]);
+                }
+        }
+
+        function saveBusinessImapct() {
+       //  $('#hdnSaveBI').val(true);//added TS
+            debugger;
+            var validate = "Allow";
+            var lstData = new Array();
+            var oTable = $('#tblBusinessImpact').dataTable();
+            for (var icount = 1; icount < oTable[0].rows.length; icount++) {
+                var BI = $(oTable[0].rows[icount].cells[0].children).val();
+                var BIName = '';
+                if (($(oTable[0].rows[icount].cells[1].children).val() == undefined) || ($(oTable[0].rows[icount].cells[1].children).val() == "")) {
+                    BIName = $($(oTable[0].rows[icount].cells[1].children)[0].children[1]).val();
+                }
+                else {
+                    BIName = $(oTable[0].rows[icount].cells[1].children).val();
+                }
+                
+                var Description = $(oTable[0].rows[icount].cells[1].children).val();
+                var Severity = $(oTable[0].rows[icount].cells[2].children).val();
+                
+                if(BIName != "" && BIName != undefined){
+                    lstData.push({ "BIID": BI, "BIName": BIName, "BIDescription": Description, "BISeverity": Severity });
+                }                
+                else{
+                    validate = "dontAllow"; 
+                }               
+            }
+            
+            var ProjectId = $.urlParam('OFID');
+            
+            
+            
+            var RiskId = $.urlParam('id');
+
+            if(RiskId =='')
+            {
+              RiskId =$('[id$=hdnPotentialID]').val();
+            }
+            
+            if(validate == "Allow"){
+                Visualforce.remoting.Manager.invokeAction(
+                     '{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.CreateBusinessImpact}',
+                     lstData,
+                     ProjectId,
+                     RiskId,
+                     DisplayRootCause
+                 );
+            } 
+            else{
+                alert('Required fileds are mandatory');
+            }
+        }
+        function DisplayRootCause(result, event) 
+        {
+             if(result.warningMessage!='')
+             {
+             alert(result.warningMessage);
+             }
+             if (result.Status == true)
+             {
+              tabID = 'tab_3_2';
+              localStorage.setItem('tabID', tabID);
+              $('#hdnSaveBI').val(true);//added TS
+                alert('Saved Sucessfully');
+                
+                $('#tblBusinessImpact').dataTable().fnDestroy();
+                
+                   $('#tblBusinessImpact').dataTable({
+                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                "bFilter": false,
+                "bPaginate": false
+
+            });
+            
+             $("#tblBusinessImpact").dataTable().fnDraw();
+             
+             
+             var oTable = $('#tblBusinessImpact').dataTable();
+            for (var icount = 1; icount < oTable[0].rows.length; icount++) {
+                var BIName = '';
+                if (($(oTable[0].rows[icount].cells[1].children).val() == undefined) || ($(oTable[0].rows[icount].cells[1].children).val() == "")) {
+                    BIName = $($(oTable[0].rows[icount].cells[1].children)[0].children[1]).val();
+                }
+                else {
+                    BIName = $(oTable[0].rows[icount].cells[1].children).val();
+                }
+                 for (var icnt = 0; icnt < result.lstBusinessImpacts.length; icnt++) {
+                    if(result.lstBusinessImpacts[icnt].Business_Impact_Name__c==BIName)
+                        {
+                            $(oTable[0].rows[icount].cells[0].children).val(result.lstBusinessImpacts[icnt].Id);
+                         }
+                   }
+               
+            }
+             
+             
+                }               
+                window.location.href=window.location.href;
+        }
+
+        /* Function to save RootCause */
+    function saveRootCause() {
+
+            debugger;
+            var lstRootCause = new Array();
+            var bFound=false;
+            var rootNames='';
+            var oTable = $('#tblRootCause').dataTable();
+            for (var icount = 1; icount < oTable[0].rows.length; icount++) {
+                var RC = $(oTable[0].rows[icount].cells[0].children).val();
+                var Name = '';
+                //var Name = $(oTable[0].rows[icount].cells[1].children).val();
+                if (($(oTable[0].rows[icount].cells[1].children).val() == undefined) || ($(oTable[0].rows[icount].cells[1].children).val() == "")) {
+                Name=$($(oTable[0].rows[icount].cells[1].children)[0].children[1]).val();
+                }
+                else{
+                Name=$(oTable[0].rows[icount].cells[1].children).val();
+                
+                }
+
+                var Description = $(oTable[0].rows[icount].cells[2].children).val();
+                var Occurance = $(oTable[0].rows[icount].cells[3].children).val();
+                
+                var ListBIs= $(oTable[0].rows[icount].cells[4].children);
+                var ListOfBIRsk=new Array();
+                
+                
+                
+                for(var iCnt=0;iCnt<ListBIs.length-1;iCnt++){
+                
+                var BId= $($(oTable[0].rows[icount].cells[4].children)[iCnt]).attr('id');
+                if(BId!=undefined)
+                {
+                ListOfBIRsk.push(BId);
+
+                }               
+                }  
+                
+                var RootCause={
+                RCID:RC,
+                RCDescription:Description,
+                RCOccurance:Occurance,
+                RCName:Name,
+                lstBIIds:ListOfBIRsk
+                };
+                if(ListOfBIRsk.length<1)
+                {
+                   bFound=true;
+                   rootNames+=Name +' ';
+                 }
+            lstRootCause.push(RootCause);
+           
+            }
+                    
+            var ProjectId = $.urlParam('OFID');
+            var RiskId = $.urlParam('id');
+            
+            if(RiskId =='')
+            {
+              RiskId =$('[id$=hdnPotentialID]').val();
+            }
+            
+            
+           if(!bFound)
+           {
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.createRootCause}', lstRootCause,ProjectId,RiskId, function (result, event) {
+                //window.location.href = 'ODP_PotentialRisk?OFID='+ProjectId;               
+                debugger;      
+                if(result==true)
+                {
+                tabID = 'tab_3_3';
+                localStorage.setItem('tabID', tabID);
+                $('#hdnSaveRC').val(true);//added TS
+                    alert('Saved Sucessfully');
+                    window.location.href= window.location.href;
+                }
+            }, { escape: true }
+            );   
+                            
+            }
+             else 
+             {
+             alert('please associate business impact for listed root cause '+rootNames);
+             
+             }      
+            
+        }
+
+        
+       function populateBusinessImpact(data) {
+            debugger;
+
+            $('#dilogBI').modal('show');
+            $('#BI_Left').empty();
+            $('#BI_Right').empty();
+            iPos=$(data).attr('data-iRowCount');
+            console.log('iPos---------'+iPos);
+            var rowData= $('#tblRootCause').dataTable().fnGetData(parseInt(iPos));
+            console.log('rowData---------'+rowData);
+            
+            var ListB=new Array();
+            
+            for(var iL=0;iL<$(rowData[4]).length-1;iL++)
+            {
+                var RowDataText=$($(rowData[4])[iL]).text();
+                var RowValue=$($(rowData[4])[iL]).attr('id');
+                if(RowValue!=undefined && (RowValue!=''))
+                {
+                ListB.push({"Id":RowValue,"Name":RowDataText});
+                }
+            }
+            debugger;
+            console.log('ListB----------------'+ListB);
+            //$($(rowData[4])[0]).attr('id');
+                       
+            var result =$('[id$=AvailableBIs]').val();
+            var LeftListBox=new Array();
+            if (result != "[]"){ 
+            var data = JSON.parse(result); 
+            if(ListB.length>0)
+            {
+            for(var iLp=0;iLp<data.length;iLp++)
+            {
+
+                if(ListB.length>0)
+                {
+                    if (!in_array(ListB, data[iLp]['Id']))
+                     {      
+                                var txtDesc=data[iLp]['Business_Impact_Name__c'];
+                                var txtId=data[iLp]['Id'];
+                                LeftListBox.push({"Id":txtId,"Business_Impact_Name__c":txtDesc});
+                     
+                     }  
+            }       
+               
+            }
+            }
+            else
+            {
+            LeftListBox=data;
+            }
+            
+            }
+            console.log('LeftListBox----------------'+LeftListBox);
+            
+            var output = [];            
+            if (LeftListBox != "") {
+                //var data = JSON.parse(LeftListBox);
+                for (var index = 0; index < LeftListBox.length; index++) {
+                    if (LeftListBox[index]['Business_Impact_Name__c'] != undefined && LeftListBox[index]['Business_Impact_Name__c'] != "") {
+                        output.push('<option value="' + LeftListBox[index]['Id'] + '" title="' + LeftListBox[index]['Business_Impact_Name__c'] + '">' + LeftListBox[index]['Business_Impact_Name__c'] + '</option>');
+                    }
+                    
+                }
+                $('#BI_Left').append(output.join(""));
+            }
+            var Routput = [];
+            if(ListB!="")
+            {
+              for (var inx = 0; inx < ListB.length; inx++) {
+                    if ((ListB[inx]['Name'] != undefined) && (ListB[inx]['Name'] != "")) {
+                        Routput.push('<option value="' + ListB[inx]['Id'] + '" title="' + ListB[inx]['Name'] + '">' + ListB[inx]['Name'] + '</option>');
+                    }
+                    
+                }
+                $('#BI_Right').append(Routput.join(""));
+            }
+            
+            
+
+            $("#BIMoveRight,#BIMoveLeft").unbind().bind("click", function (event) {
+                var id = $(event.target).attr("id");
+                var selectFrom = id == "BIMoveRight" ? "#BI_Left" : "#BI_Right";
+                var moveTo = id == "BIMoveRight" ? "#BI_Right" : "#BI_Left";
+                MoveListBox(selectFrom, moveTo);
+                if (selectFrom == "#BI_Left") {
+                    $("#searchtext_Bileft").val("");
+                    $("#searchtext_Bileft").trigger("keyup");
+                }
+                else {
+                    $("#searchtext_Biright").val("");
+                    $("#searchtext_Biright").trigger("keyup");
+                }
+            });
+
+            $("#BIMoveAllRight,#BIMoveAllLeft").unbind().bind("click", function (event) {
+                var id = $(event.target).attr("id");
+                var selectFrom = id == "BIMoveAllRight" ? "#BI_Left" : "#BI_Right";
+                var moveTo = id == "BIMoveAllRight" ? "#BI_Right" : "#BI_Left";
+                MoveAllListBox(selectFrom, moveTo);
+            });
+
+        }
+
+function PopulateBICallBack(result,event)
+{
+debugger;
+AvaialableBusinessImpacts=result;
+//$('[id$=AvailableBIs]').val(result);
+}
+        function AddNewRootCause() {
+            debugger;
+
+            var dropSev = ("<select>" +
+          "<option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option>" +
+          "<option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option>" +
+          "</select>");
+            var oTable = $('#tblRootCause').dataTable();
+            
+            var TblLength=0;
+            if($($('#tblRootCause').dataTable()[0].children[1].rows).text()!='No data available in table')
+            {
+                 TblLength=$('#tblRootCause').dataTable()[0].children[1].rows.length;
+            }
+            else
+            {
+             TblLength=$('#tblRootCause').dataTable()[0].children[1].rows.length-1;
+            }
+            
+            var BID = "<input type='hidden' value='' />";
+            var BIName = "<input type='text' value='' Class='input-xxlarge width98'/>";
+            var BIDesc = "<textarea rows='3' Class='input-xxlarge width98' />";
+            var BISev = "<input type='text' value='' Class='input-xxlarge width98'/>";
+            var Delete = '<a onclick="deleteRootCause(-1)"><span class="icon-trash"></span></a>';
+            var BusinessImpactItems = "<li></li>  <a class='' data-toggle='modal' onclick='populateBusinessImpact(this)' data-iRowCount='"+TblLength+"' >Add</a>";
+            oTable.fnAddData([BID, BIName, BIDesc, dropSev, BusinessImpactItems, Delete]);
+            
+            
+            var RiskId = $.urlParam('id');
+
+            if(RiskId =='')
+            {
+              RiskId =$('[id$=hdnPotentialID]').val();
+            }
+            
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.ReturnLatestBIs}',
+                            RiskId,
+                            PopulateBICallBack);
+        }
+
+        function SearchListBox(TextBox, MainListBox, HdnListBox, SecondListBox) {
+            $("#" + TextBox).css({ "background-image": "url(../Content/img/loader.gif)", "background-position": "right", "background-repeat": "no-repeat", "background-size": "contain" });
+            var textbox = $("#" + TextBox).val();
+            var listbox = $('#' + MainListBox).find("option");
+            var hdnlist = $('#' + HdnListBox).find("option");
+            if (textbox == "") {
+                $("#" + TextBox).css({ "background-image": "none" });
+            }
+            var resultMarkup = "";
+            if (listbox.length != hdnlist.length) {
+
+                $.each(hdnlist, function (indexA, valueA) {
+                    $.each($('#' + SecondListBox).find("option"), function (indexB, valueB) {
+
+                        if (valueA.value == valueB.value) {
+                            valueA.selected = "selected";
+                        }
+                    });
+                });
+                $('#' + HdnListBox).find("option:selected").remove();
+            }
+
+            if (listbox.length > hdnlist.length || (listbox.length < hdnlist.length && $('#' + HdnListBox).find("option").length == 0)) {
+                $('#' + HdnListBox).empty();
+                $.each($('#' + MainListBox).find("option"), function (index, e) {
+                    resultMarkup += '<option value="' + e.value + '">' + e.text + '</option>';
+                });
+                $('#' + HdnListBox).html(resultMarkup);
+            }
+
+            resultMarkup = "";
+            var Items = $('#' + HdnListBox).find("option");
+            for (var childIndex = 0; childIndex < Items.length; childIndex++) {
+
+                if (Items[childIndex].text.toLowerCase().indexOf(textbox.toLowerCase()) == 0) {
+                    resultMarkup += '<option value="' + Items[childIndex].value + '">' + Items[childIndex].text + '</option>';
+
+                }
+            }
+            $('#' + MainListBox).empty();
+            $('#' + MainListBox).html(resultMarkup);
+            if (resultMarkup == "") {
+                $("#" + TextBox).css({ "background-image": "none" });
+            }
+            setTimeout(function () { $("#" + TextBox).css({ "background-image": "none" }); }, 300);
+        }
+
+        function MoveListBox(selectFrom, moveTo) {
+            debugger;
+            var selectedItems = $(selectFrom).find("option:selected").clone();
+            if (selectedItems.length > 0) {
+                $('span.error-keyup-2').remove();
+                $(moveTo).append(selectedItems);
+                $(selectFrom).find("option:selected").remove();
+                //Sort(moveTo);
+                //Sort(selectFrom);
+            }
+            else {
+                $('span.error-keyup-2').remove();
+                $(selectFrom).after("<span class='error error-keyup-2' style='color:red;'>Select atleast one Business Impact</span>");
+            }
+        }
+
+      
+        function GetBIs()
+        {
+        debugger;
+         var selectedBI = $("#BI_Right")[0]; 
+         var SelectedBIS=new Array();    
+        for(var icount=0;icount<selectedBI.length;icount++){
+             var BIValue= $(selectedBI.children[icount]).val();
+             var BIText= $(selectedBI.children[icount]).text();
+             SelectedBIS.push({"ID":BIValue,"Name":BIText});
+        }    
+        
+        if(iPos!=null){
+        debugger;
+        
+        var userTable =$('#tblRootCause').dataTable();
+        var aData = userTable.fnGetData( iPos );
+        var GenerateBI="";
+        for(var iLoop=0;iLoop<SelectedBIS.length;iLoop++){
+         GenerateBI += "<li id="+ SelectedBIS[iLoop].ID +"> "+ SelectedBIS[iLoop].Name +"</li>";
+        
+        }
+        var GenerateBIS='';
+        if(aData !=null){
+           GenerateBIS =GenerateBI +aData[4];    
+        }        
+        GenerateBIS=GenerateBI;
+        //aData[4]=GenerateBIS;
+        var TblLength=iPos;
+        var AddBtn= "<a class='' data-toggle='modal' onclick='populateBusinessImpact(this)' data-iRowCount='"+TblLength+"' >Add</a>";
+        GenerateBIS+=AddBtn;
+        $('#tblRootCause').dataTable().fnUpdate(GenerateBIS, parseInt(iPos), 4);
+        
+        //$('#dilogBI').modal('data-dismiss');
+        $('#dilogBI').modal('hide');
+        
+        }
+         
+        }
+        var iPos='';
+        
+        
+        //$("#tblRootCause tbody").delegate("tr", "click", function() {
+        //debugger;
+        //var userTable =$('#tblRootCause').dataTable();
+        //iPos = userTable.fnGetPosition( this );
+        //populateBusinessImpact(this);
+        
+        
+        //});
+        document.getElementById('j_id0:j_id9:PotentialUserName_mlktp').style.display = 'none';
+        
+        function saveProcessControl(){
+
+        $('#hdnSavePC').val(true);//added TS
+        debugger;
+        var lstProcessControl = new Array();
+        var oTable = $('#tblProcessControl').dataTable();       
+        for(var icount = 1; icount<oTable[0].rows.length; icount++){
+            var PC = $(oTable[0].rows[icount].cells[0].children).val();
+            var PCName = '';
+            if (($(oTable[0].rows[icount].cells[1].children).val() == undefined) || ($(oTable[0].rows[icount].cells[1].children).val() == "")) {
+                PCName = $($(oTable[0].rows[icount].cells[1].children)[0].children[1]).val();
+            }
+            else {
+                PCName = $(oTable[0].rows[icount].cells[1].children).val();
+            } 
+            var Description = $(oTable[0].rows[icount].cells[2].children).val();
+            var Detection = $(oTable[0].rows[icount].cells[3].children).val();
+            //var RootCause = $(oTable[0].rows[icount].cells[4].children).val();
+            
+            var ListBIs= $(oTable[0].rows[icount].cells[4].children);
+                var ListOfBIRsk=new Array();
+                
+                
+                
+                for(var iCnt=0;iCnt<ListBIs.length-1;iCnt++){
+                
+                var BId= $($(oTable[0].rows[icount].cells[4].children)[iCnt]).attr('id');
+                if(BId!=undefined)
+                {
+                    var BusinessImapacttest={
+                            BIID:BId
+                    };
+                }
+                //ListOfBIRsk.push({"BusinessImapact": BusinessImapacttest});
+                ListOfBIRsk.push(BId);
+                }
+                
+                var ProcessControl={
+                PCID:PC,
+                PCDescription:Description,
+                PCDetection:Detection,
+                PCName:PCName,
+                lstRCIds:ListOfBIRsk
+                };
+            
+            
+            lstProcessControl.push(ProcessControl);         
+        }
+        
+        var ProjectId = $.urlParam('OFID');                        
+        var RiskId = $.urlParam('id');
+      //  if( ListOfBIRsk.length>1)
+       // {
+        Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.ODP_Extension_PotentialRisk_Rahul.CreateProcessControl}', lstProcessControl, ProjectId,RiskId, function (result, event) {
+            tabID = 'tab_3_4';
+            localStorage.setItem('tabID', tabID);       
+            window.location.href= window.location.href; 
+            debugger;
+        }, { escape: true }
+        );   
+        //}
+        
+       // else
+       // {
+        //alert('Rootcause value is mandatory so please select one value');
+        //}   
+    }
+    
+    function AddNewProcessControl(){
+        debugger;
+        var TblLength=0;
+        var oTable = $('#tblProcessControl').dataTable();
+            if($($('#tblProcessControl').dataTable()[0].children[1].rows).text()!='No data available in table')
+            {
+                 TblLength=$('#tblProcessControl').dataTable()[0].children[1].rows.length;
+            }
+        
+        
+        //var TblLength=$('#tblProcessControl').dataTable()[0].children[1].rows.length+1;
+        var PCID = "<input type='hidden' value='' Class='input-xxlarge width98'/>";
+        var PCName = "<input type='text' value='' Class='input-xxlarge width98'/>";
+        var PCDesc = "<textarea rows='3' Class='input-xxlarge width98' />";
+        var dropSev = ("<select>" +
+            "<option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option>" +
+            "<option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option>" +
+            "</select>");
+        var Delete = "<a><span class='icon-trash'></span></a>";
+        var RootCauseItems = "<li></li>  <a class='' data-toggle='modal' onclick='populateRootCause(this)' data-iRowCount='"+TblLength+"' >Add</a>";
+        oTable.fnAddData([PCID, PCName, PCDesc, dropSev,RootCauseItems,Delete]);        
+    }
+
+    
+    var iposRoot='';
+    
+    function populateRootCause(data){
+        debugger;
+        $('#dilogRC').modal('show');
+        $('#RC_Left').empty();      
+        $('#RC_Right').empty();
+        iposRoot= $(data).attr('data-iRowCount');
+        var rowData= $('#tblProcessControl').dataTable().fnGetData(parseInt(iposRoot));
+        console.log('row-----------'+rowData);        
+    var ListA = new Array();
+    
+    for(var iR=0; iR<$(rowData[4]).length-1; iR++){
+        var RCDataText = $($(rowData[4])[iR]).text();   
+        var RCValue = $($(rowData[4])[iR]).attr('id');
+        if(RCValue != undefined && (RCValue != '')){
+            ListA.push({"Id":RCValue, "Name":RCDataText});
+        }
+    }
+    debugger;       
+       // $('[id$=AvailableRCs]').val({!GetAvailableRootCause});
+        var result = $('[id$=AvailableRCs]').val();
+    var LeftRcBox = new Array();
+    if(result != "[]"){
+        var RcData = JSON.parse(result);
+        if(ListA.length>0){
+            for(var iRC = 0; iRC<RcData.length; iRC++){
+                    if(!in_array(ListA,RcData[iRC]['Id'])){
+                        var txtDesc = RcData[iRC]['Root_Cause_Name__c'];
+                        var txtId = RcData[iRC]['Id'];
+                        LeftRcBox.push({"Id":txtId, "Root_Cause_Name__c":txtDesc});
+                    }
+            }
+        }
+        else{
+        LeftRcBox = RcData;     
+    }
+    }
+    else{
+        LeftRcBox = RcData;     
+    }
+        console.log('result-----------------'+result);
+        var output = [];       
+        if (LeftRcBox != "[]") {
+                //var data = JSON.parse(result);
+                
+                for (var index = 0; index < LeftRcBox.length; index++) {
+                    if (LeftRcBox[index]['Root_Cause_Name__c'] != undefined && LeftRcBox[index]['Root_Cause_Name__c'] != "") {
+                        output.push('<option value="' + LeftRcBox[index]['Id'] + '" title="' + LeftRcBox[index]['Root_Cause_Name__c'] + '">' + LeftRcBox[index]['Root_Cause_Name__c'] + '</option>');
+                    }
+                }
+                $('#RC_Left').append(output.join(""));
+            }
+    var RcoutPut = [];
+    if(ListA != ""){
+        for(var inx = 0; inx < ListA.length; inx++){
+            if((ListA[inx]['Name'] != undefined) && (ListA[inx]['Name'] != "")){
+                RcoutPut.push('<option value="' + ListA[inx]['Id'] + '" title="' + ListA[inx]['Name'] + '">' + ListA[inx]['Name'] + '</option>')    
+            }
+        }
+        $('#RC_Right').append(RcoutPut.join(""));
+    }       
+
+            $("#RCMoveRight,#RCMoveLeft").unbind().bind("click", function (event) {
+                var id = $(event.target).attr("id");
+                var selectFrom = id == "RCMoveRight" ? "#RC_Left" : "#RC_Right";
+                var moveTo = id == "RCMoveRight" ? "#RC_Right" : "#RC_Left";
+                MoveListBox(selectFrom, moveTo);
+                if (selectFrom == "#RC_Left") {
+                    $("#searchtext_left").val("");
+                    $("#searchtext_RCleft").trigger("keyup");
+                }
+                else {
+                    $("#searchtext_Biright").val("");
+                    $("#searchtext_Biright").trigger("keyup");
+                }
+            });
+
+            $("#RCMoveAllRight,#RCMoveAllLeft").unbind().bind("click", function (event) {
+                var id = $(event.target).attr("id");
+                var selectFrom = id == "RCMoveAllRight" ? "#RC_Left" : "#RC_Right";
+                var moveTo = id == "RCMoveAllRight" ? "#RC_Right" : "#RC_Left";
+                MoveAllListBox(selectFrom, moveTo);
+            });
+                           
+    }
+
+    function GetRCs()
+        {
+        debugger;
+         var selectedBI = $("#RC_Right")[0]; 
+         var SelectedBIS=new Array();    
+        for(var icount=0;icount<selectedBI.length;icount++){
+             var BIValue= $(selectedBI.children[icount]).val();
+             var BIText= $(selectedBI.children[icount]).text();
+             SelectedBIS.push({"ID":BIValue,"Name":BIText});
+        }    
+        
+        if(iposRoot!=null){
+        debugger;
+        
+        var userTable =$('#tblProcessControl').dataTable();
+        var aData = userTable.fnGetData( parseInt(iposRoot) );
+        var GenerateBI="";
+        for(var iLoop=0;iLoop<SelectedBIS.length;iLoop++){
+         GenerateBI += "<li id="+ SelectedBIS[iLoop].ID +"> "+ SelectedBIS[iLoop].Name +"</li>";
+        
+        }
+        
+        var GenerateBIS='';
+    if(aData !=null){
+        GenerateBIS = GenerateBI +aData[4];
+    }
+    GenerateBIS=GenerateBI;
+        aData[4]=GenerateBIS;
+    var TblLength=iposRoot
+    var AddBtn = "<a class='' data-toggle='modal' onclick='populateRootCause(this)' data-iRowCount='"+TblLength+"'>Add</a>";
+         
+        GenerateBIS+=AddBtn;
+        $('#tblProcessControl').dataTable().fnUpdate(GenerateBIS, parseInt(iposRoot), 4);
+        
+        //$('#dilogBI').modal('data-dismiss');
+        $('#dilogRC').modal('hide');
+        
+        }
+         
+        }
+    
+     
+        
+            function in_array(array, id) {
+
+                for (var i = 0; i < array.length; i++) {
+                    if (array[i].Id == id) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+    
+
+    
+        </script>
+
+</apex:page>

@@ -1,0 +1,40 @@
+<!--
+/************************************
+Name : AddRequestortoSalesTeam
+Author: Abrar
+Date: 29/07/2013
+Desc : Page for Add to Sales Team Request
+*************************************/
+-->
+
+
+<apex:page standardController="Opportunity" extensions="AddRequestortoSalesTeamController" sidebar="False" showHeader="false">
+  <apex:form >
+      <apex:pagemessages ></apex:pagemessages>
+      
+      {!STMessage}<apex:outputPanel rendered="true">
+          <apex:outputText >{!STMessage}</apex:outputText>
+      </apex:outputPanel>
+      <apex:pageblock >
+      
+      <apex:pageBlockButtons location="bottom" >
+        <apex:commandButton Value="Save" action="{!save}" />
+        <apex:commandButton Onclick="cancel();" Value="Close Window" />
+      </apex:pageBlockButtons>
+      <apex:actionFunction action="{!save}" name="ActionSaveOnClose">
+      <apex:param name="TeamRole" assignTo="{!SalesTeam}" value="{!SalesTeam}" />
+      </apex:actionFunction>
+        <apex:pageBlockSection columns="1">
+           <apex:inputField value="{!SalesTeam.Opportunity_Team_role__c}" />
+           <apex:inputField value="{!SalesTeam.Permission__c}" />
+           <apex:inputField value="{!SalesTeam.Comments__c}" />
+        </apex:pageBlockSection>
+        
+      </apex:pageblock>
+      <script>
+        function cancel(){
+         window.close();
+         }
+      </script>
+  </apex:form>  
+</apex:page>

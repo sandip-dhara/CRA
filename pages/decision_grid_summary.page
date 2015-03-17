@@ -1,0 +1,59 @@
+<apex:page standardController="Opportunity_Plan__c" extensions="customRelatedDecision" showHeader="false" sidebar="false" title="Decision Grid">
+<style>
+body{
+padding:10px;
+
+}
+
+
+</style>
+
+ <script language="javascript">          
+              function validate(){
+    var del = confirm("Are you sure?");
+    if (del == true) {
+    return true;
+    }else {
+    return false;  
+    }        
+} 
+ 
+               
+     </script>
+
+
+<body>
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px">Customer Decision Grid Summary</h1>
+<hr size="1"></hr> 
+<br />
+<apex:form > <apex:pageBlock tabStyle="Decision__c" mode="maindetail">
+
+
+<div style="margin-left:auto;margin-right:auto;width:200px;">
+<apex:commandButton action="{!save}" value="Save" id="save_button" style="display:none"/>
+<apex:commandButton action="{!cancel}" value="Cancel" id="cancel_button" style="display:none"/>
+<input type="button" id="add_button" class="btn"  value="Add Decision" onclick="location.href='/apex/decision_grid_input?oppPlanId={!Opportunity_Plan__c.id}&oppPlanName={!Opportunity_Plan__c.name}&oppId={!Opportunity_Plan__c.Opportunity__c}&retURL=/apex/decision_grid_summary?id={!Opportunity_Plan__c.id}'"/>
+<input type="button" id="print_button" class="btn" value="Print" onclick="window.open('/apex/decision_grid_print?id={!Opportunity_Plan__c.id}','decision_grid_print','width=780,height=925')" />
+</div>
+<br />
+  <apex:pageblocktable value="{!relatedDecisions}" var="table">
+  
+    <apex:column headerValue="Action" style="width:69px;">
+     <a href="/apex/decision_grid_input?id={!table.id}&oppPlanId={!Opportunity_Plan__c.id}&oppPlanName={!Opportunity_Plan__c.name}&oppId={!Opportunity_Plan__c.Opportunity__c}&retURL=/apex/decision_grid_summary?id={!Opportunity_Plan__c.id}">Edit</a> |&nbsp; 
+     <a href="{!URLFOR($Action.Decision__c.Delete,table.id,[retURL='/apex/decision_grid_summary?id='+Opportunity_Plan__c.id])}" onclick="return validate()" style="">Del</a>
+    </apex:column>
+    <apex:column value="{!table.Step__c}"/>
+    <apex:column value="{!table.Decision__c}"/>
+    <apex:column value="{!table.When__c}"/>
+    <apex:column headerValue="Who">
+        {!table.Who__c}
+    </apex:column>
+    <apex:column value="{!table.Criteria__c}"/>
+    <apex:column value="{!table.Status__c}"/>
+  </apex:pageblocktable>
+
+ </apex:pageBlock>
+</apex:form>
+</body><br/>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

@@ -1,0 +1,46 @@
+<!-- 
+/**********************************************************
+* Page Name: LeadManualAssigment
+* Author: Accenture  
+* Date: 19-JUL-2012 
+* Requirement # Request Id: 1184
+* Description: VF page to assign the lead manually
+**********************************************************/
+-->
+
+<apex:page standardController="Lead" extensions="LeadManualAssignmentController" id="page">
+    <body>
+        <!-- Form to manually assign owner to lead -->
+        <apex:form id="form">
+            <apex:sectionHeader title="{!$ObjectType.Lead.label}"/>
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:pageBlock title="{!$Label.Select_New_Owner}" id="pageBlock" mode="edit" rendered="{!isSave}">
+                <!-- Command buttons to perform actions -->             
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="Save" action="{!save}"/>
+                    <apex:commandButton value="Cancel" action="{!cancel}"/>
+                </apex:pageBlockButtons>
+            
+                <apex:pageBlockSection collapsible="false" columns="1" id="pageBlockSection">
+                    <apex:pageBlockSectionItem id="pageBlockSectionItem">
+                        <apex:outputLabel value="{!$ObjectType.Lead.fields.Name.label}"/>
+                        <apex:outputField value="{!lead.Name}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pageBlockSectionItem1">
+                        <apex:outputLabel value="{!$Label.Transfer_Lead_To}"/>
+                        <apex:inputField value="{!lead.OwnerId}" required="true"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>  
+                <apex:panelGroup >
+                <apex:inputCheckbox id="EmialNotify" selected="{!sendEmailNotificationFlag}" > </apex:inputCheckbox> 
+                <apex:outputText value="Send Notification Email"></apex:outputText>
+                </apex:panelGroup>  
+            </apex:pageBlock>
+            <apex:pageBlock rendered="{!isOwnerChanged}" >
+            <apex:pageMessage escape="false" summary="Lead owner has been changed" severity="Info" strength="3" rendered="{!isOwnerChanged}"/>
+            <apex:pageMessages />
+        </apex:pageBlock> 
+
+    </apex:form>  
+    </body>     
+</apex:page>

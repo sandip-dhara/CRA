@@ -1,0 +1,815 @@
+<apex:page controller="AthenaSocialLearning" extensions="mobileUserData" cache="false" docType="html-5.0"
+           sidebar="false" showheader="false" standardStylesheets="false">
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.slideshow, 'responsiveslides.css')}" />
+        <apex:includeScript value="{!URLFOR($Resource.slideshow, 'responsiveslides.js')}" />
+        
+        <style type="text/css" rel="stylesheet">
+            @font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            body{
+                font-family:"HP Simplified",sans-serif;
+                color:#fff;
+            }
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif; 
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                    .infoFld .menu_button{
+                    position:absolute;
+                    top:14px;
+                    right:6px;
+                    width:24px;
+                    height:24px;
+                    z-index:3;
+                }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:20px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:29px;
+            }
+            
+            .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+        </style>
+    
+    <body>
+        <div data-role="page" id="startpage">
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">                
+                <li data-icon="false"><a href="#pnl" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+          <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+    </div>
+
+        <div data-role="content" class="ui-content">
+            <div class="ui-grid-a">
+                <style type="text/css">
+                    .ui-block-a > a{
+                        display:block;
+                    }
+                    .ui-block-b > a{
+                        display:block;
+                    }
+                    .ui-block-c > a{
+                        display:block;
+                    }
+                    .ui-block-d > a{
+                        display:block;
+                    }
+                    .ui-block-e > a{
+                        display:block;
+                    }
+                    .ui-block-f > a{
+                        display:block;
+                    }
+                    .rslides{
+                        /*transform-style: preserve-3d;
+                        backface-visibility: hidden;*/
+                        height:150px;
+                        
+                    }
+                        .rslides li{
+                            height:240px !important;
+                        }
+                        .rslides li .picFld{
+                            position:relative;
+                            width: 100%;
+                            height: 150px;
+                        }
+                           .rslides li h2{
+                               position:absolute;
+                               top:0;
+                               left:0;
+                               margin:0;
+                               padding:12px 0;
+                               width:100%;
+                               font-size:15px;
+                               font-weight:normal;
+                               color:#fff;
+                               z-index:3;
+                               text-shadow:none;
+                           }
+                           .rslides li h2[data-hpa-icon=featured]{
+                               background-color:rgb(6,202,177);
+                           }
+                           .rslides li h2[data-hpa-icon=trending]{
+                               background-color:rgb(23,85,117);
+                           }
+                           [data-hpa-icon=featured]:before{
+                               margin:0 6px 0 10px;
+                               vertical-align:middle;
+                               content:'\E012';
+                           }
+                           [data-hpa-icon=trending]:before{
+                               margin:0 6px 0 10px;
+                               vertical-align:middle;
+                               content:'\E0EC';
+                           }
+                           .rslides li p{
+                               position:absolute;
+                               bottom:0;
+                               left:0;
+                               margin:0;
+                               top:15;
+                               padding:12px 0;
+                               width:290px;
+                               font-size:15px;
+                               font-weight:lighter;
+                               color:#fff;
+                               text-align:center;
+                               background-color:rgba(0,0,0,0.4);
+                               z-index:3;
+                               white-space: nowrap;
+                               text-overflow: ellipsis;
+                               white-space: nowrap !important;
+                               overflow: hidden !important;
+                           }
+                           /*.rslides li .picFld{
+                               -webkit-perspective: 1200px;
+                               -webkit-transform: rotateY(90deg);
+                               transform: rotateY(90deg);
+                               transition-duration: 0.4s;
+                           }
+
+                           .rslides .rslides1_on .picFld,
+                           .rslides .rslides2_on .picFld{
+                                -webkit-perspective: 1200px;
+                                -webkit-transform: rotateY(0deg);
+                                transform: rotateY(0deg);
+                                transition-duration: 0.4s;
+                            }*/
+                           .rslides li img{
+                               position:absolute;
+                               top:0;
+                               left:0;
+                               vertical-align:top;
+                               margin-top:5px !important;
+                           }
+                           .expertsImage{
+                           
+                               width:100%;
+                               height:44px;
+                           
+                           }
+                           
+                           .tile {
+                               margin:0 auto;
+                               padding-top:10px;
+                               height: 60px;    
+                           }
+                           
+                           .tileText {
+                               text-align: center;
+                               color: #FFFFFF;
+                               font-size: 14px;
+                               font-weight: 100;
+                               text-shadow:none;
+                               position:relative;
+                               top:20%;
+                               -webkit-transform: translateY(-30%);
+                           }
+                           
+                           .tile-background {
+                               height: 110px; 
+                               display：inline-block;
+                               text-decoration: none;
+                           }
+                           
+                           .activityTile{
+                               background: url({!URLFOR($Resource.tiles, 'Icon_Activity.png')}) 0 16px no-repeat;
+                               background-repeat:no-repeat;
+                               width: 52px;      
+                               position: relative;
+                               top: 40%;
+                               -webkit-transform: translateY(-50%);            
+                           }
+                           
+                           .communityTile{
+                               background: url({!URLFOR($Resource.tiles, 'Icon_Communities.png')}) 0 16px no-repeat;
+                               width: 49px;   
+                               position: relative;
+                               top: 40%;
+                               -webkit-transform: translateY(-50%);                              
+                           }
+                           
+                           .boardTile{
+                               background: url({!URLFOR($Resource.tiles, 'Icon_Boards.png')}) 0 16px no-repeat;
+                               width: 59px;   
+                               position: relative;
+                               top: 40%;
+                               -webkit-transform: translateY(-50%);                              
+                           }
+                           
+                           .expertTile{
+                               background: url({!URLFOR($Resource.tiles, 'Icon_Experts.png')}) 0 16px no-repeat; 
+                               width: 46px;            
+                               position: relative;
+                               top: 40%;
+                               -webkit-transform: translateY(-50%);                                      
+                           }
+                           
+                           .featuredTile{
+                               background: url({!URLFOR($Resource.tiles, 'Icon_Featured.png')}) 0 16px no-repeat;
+                               width: 38px;  
+                               position: relative;
+                               top: 40%;
+                               -webkit-transform: translateY(-50%);                                                  
+                           }
+                           
+                           .trendingTile{
+                               background: url({!URLFOR($Resource.tiles, 'Icon_Trending.png')}) 0 16px no-repeat;
+                               width: 52px;   
+                               position: relative;
+                               top: 40%;
+                               -webkit-transform: translateY(-50%);                                                
+                           }
+                           
+                          
+                           
+                           @media all and (min-width: 321px) {
+                               .expertsImage{
+                                   width:100%;
+                                   height:200px;
+                               }
+                               .tile-background {
+                                   height: 110px; 
+                                   display：inline-block;
+                                   text-decoration: none;
+                               }
+                               .rslides li p{
+                                   width:100%;
+                               }
+                               .tileText {
+                                  top:10%;
+                                  font-size:8;
+                               }
+                               /*.rslides {
+                                   height:155px;
+                               }
+                               .rslides li .picFld{
+                                   height:155px;
+                               }*/
+                           }
+                           @media all and (min-width: 480px) {
+                               .expertsImage{
+                                   width:100%;
+                                   height:260px;
+                               }
+                               .tile-background {
+                                   height: 130px; 
+                                   display：inline-block;
+                                   text-decoration: none;
+                               }
+                               .rslides li p{
+                                   width:100%;
+                               }
+                              .tileText {
+                                  top:20%;
+                               }
+                               .rslides {
+                                   height:220px;
+                               }
+                               .rslides li .picFld{
+                                   height:220px;
+                               }
+
+                           }
+                           
+                           @media all and (min-width: 768px) {
+                               .expertsImage{
+                                   width:100%;
+                                   height:650px;
+                               }
+                               .tile-background {
+                                   height: 190px; 
+                                   display：inline-block;
+                                   text-decoration: none;
+                               }
+                               .rslides li p{
+                                   width:100%;
+                               }
+                              .tileText {
+                                  top:25%;
+                               }
+                               .rslides {
+                                   height:280px;
+                               }
+                               .rslides li .picFld{
+                                   height:280px;
+                               }
+
+                           }
+                           @media all and (min-width: 992px) {
+                               .expertsImage{
+                                   width:100%;
+                                   height:350px;
+                               }
+                               .tile-background {
+                                   height: 170px; 
+                                   display：inline-block;
+                                   text-decoration: none;
+                               }
+                               .rslides li p{
+                                   width:100%;
+                               }
+                               .tileText {
+                                   top:25%;
+                               }
+                               .rslides {
+                                   height:350px;
+                               }
+                               .rslides li .picFld{
+                                   height:350px;
+                               }
+
+                           }
+                          
+                           @media all and (min-width: 1200px) {
+                               .expertsImage{
+                                   width:100%;
+                                   height:350px;
+                               }
+                               .tile-background {
+                                   height: 190px; 
+                                   display：inline-block;
+                                   text-decoration: none;
+                               }
+                               .rslides {
+                                   height:450px;
+                               }
+                               .rslides li .picFld{
+                                   height:450px;
+                               }
+                               .rslides li p{
+                                   width:100%;
+                               }                               
+                               .tileText {
+                                   top:30%;
+                               }
+                           }
+                </style>
+                <div class="ui-grid-b">
+                <div class="ui-block-a">
+                    <a class="tile-background" style="background: rgba(140,197,32,0.5);display：inline-block;text-decoration: none;" data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage">
+                      <div class="tile activityTile"></div>
+                      <div class="tileText">Activity</div>
+                    </a>
+                </div>
+    <div class="ui-block-b">
+        <a  class="tile-background" style="background: rgba(249,160,6,0.5);display：inline-block;text-decoration: none;" data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities">
+                      <div class="tile communityTile"></div>
+                      <div class="tileText">My Communities</div>
+                    </a>
+    </div>
+    <div class="ui-block-c">
+         <a  class="tile-background" style="background: rgba(252,221,77,0.5);display：inline-block;text-decoration: none;" data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards">
+                      <div class="tile boardTile"></div>
+                      <div class="tileText">My Boards</div>
+                    </a>
+    </div>
+    <div class="ui-block-a">
+        <a class="tile-background" style="background: rgba(103,56,130,0.5);" data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew">
+                      <div class="tile expertTile"></div>
+                      <div class="tileText">Experts</div>
+                    </a>
+    </div>
+    <div class="ui-block-b">
+        <a class="tile-background" style="background: rgba(6,202,177,0.5);" data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin">
+                      <div class="tile featuredTile"></div>
+                      <div class="tileText">Featured</div>
+                    </a>
+    </div>
+    <div class="ui-block-c">
+        <a class="tile-background" style="background: rgba(22,86,118,0.5);" data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2">
+                      <div class="tile trendingTile"></div>
+                      <div class="tileText">Trending</div>
+                    </a>
+    </div>
+</div><!-- /grid-b -->
+                <div>
+                    <!--<a data-ajax="false" href="/apex/mLandingPageNewSkin2" style="text-decoration:none;"> -->
+                        <ul id="slider1" class="rslides" style="max-width:none !important;"></ul>
+                   <!-- </a> -->
+                </div>
+                <!--div class="ui-block-b">
+                    <div style="margin: 5px 5px 5px 5px; border: solid 1px #ccc">
+                        <img style="width: 100%; height: 100%" src="{!URLFOR($Resource.mslp_pic, 'pic/4.png')}" />
+                    </div>
+                </div-->
+            </div><!--grid-->
+        </div> <!--content-->
+        
+      </div><!-- page-->
+    </body>
+    
+    <style>
+        .ui-panel-inner{padding: 0}
+    </style>
+    <script type="text/javascript">
+        //adjust pic content height
+        var _li_height;
+        function adjust_height(){
+            var width,
+                height,
+                tmp1;
+            tmp1 = $('.rslides li');
+            width = tmp1.eq(0).width();
+            tmp1.height(width);
+            _li_height = width;
+        }
+        var _slideshow_state = {
+            'featured':false,
+            'trending':false
+        };
+        function set_slideshow(name){
+            var opt = {
+                maxwidth:800,
+                speed:800
+            };
+            if(name==='featured'){
+                $("#slider1").responsiveSlides(opt);
+                
+            }
+            if(name==='trending'){
+                $("#slider2").responsiveSlides(opt);
+            }
+            _slideshow_state[name] = true;
+            if(_slideshow_state .featured && _slideshow_state.trending){
+                adjust_height();
+                $('.rslides li img').on('load', function(){
+                    var width,
+                        height,
+                        tmp1,
+                        _this,
+                        cssObj;
+                    _this = $(this);
+                    width = _this.width();
+                    height = _this.height();
+                    if(!width || !height){
+                        //cannot get width/height or image cannot been seen
+                        return;
+                    }
+                    if(width>=height){
+                        tmp1 = Math.round((_li_height*(width/height))/2);
+                        cssObj = {
+
+                            'height':'100%',
+                            'width':'100%'
+                        }
+                    }else{
+                        cssObj = {
+                            'top':'50%',
+                            'margin-top':'-'+Math.round(height/2)+'px'
+                        }
+                    }
+                    _this.css(cssObj);
+                });
+            }
+        }
+        $(function () {
+        
+            LoadCommunities(1);
+            LoadCommunities(4);
+            
+            $(window).on('resize', adjust_height);
+            
+            $('#buttonSearch').on('ontap click', function(e){
+                setTimeout(function(){
+                    $('#search-basic').focus();
+                }, 200);
+            });
+        });
+        
+        function LoadCommunities(category) {
+           /*  0: All
+            *  1: Featured
+            *  2: My Communities
+            *  3: My Boardsgory
+            *  4: Trending
+            */
+            CallAthenaSLFeatured(category, "8", 0, "-1");
+        }
+            
+        function CallAthenaSLFeatured(category, DisplayNoOfRecords, strNext, strPrev) {
+            if ( category === 0 ) {
+                // All
+                for (var r = 4; r > 0; r--) {
+                    CallAthenaSLFeatured(r, "8", 0, "-1");
+                }
+            }
+            else if ( category === 1 ) {
+                // Featured
+                Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.AthenaSocialLearning.GetFeaturedLB}',
+                  DisplayNoOfRecords,
+                  strNext,
+                  strPrev,
+                  DisplayFeaturedLB
+                );
+            }
+            else if ( category === 2 ) {
+                // My communities
+                Visualforce.remoting.Manager.invokeAction(
+                   '{!$RemoteAction.AthenaSocialLearning.GetMyCommunities}',
+                    DisplayNoOfRecords,
+                    strNext,
+                    strPrev,
+                    DisplayCommunity
+                );
+            }
+            else if ( category === 3 ) {
+                // My Boards
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.AthenaSocialLearning.GetMyBoards}',
+                    DisplayNoOfRecords,
+                    strNext,
+                    strPrev,
+                    DisplayPersonalizedLB
+                );
+            }
+            else if ( category === 4 ) {
+                // Trending
+                Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.AthenaSocialLearning.GetMostCommentedTrends}',
+                  DisplayNoOfRecords,
+                  strNext,
+                  strPrev,
+                  DisplayTrending
+              );
+            }
+        }
+        
+        function DisplayFeaturedLB(result, event) {
+            var target;
+            var tileColor;
+            var tmp1;
+            for (var i = 0; i < result.length; i++) {
+             console.log("Data = " + JSON.stringify(result[i]));
+                tmp1 = '<li>';
+                if(result[i].IsCommunity){
+                    tmp1 += '<a data-ajax="false" href="/apex/mobileCommunityMockup?id=' + result[i].LBid + '" style="text-decoration:none;">';
+                }
+                else{
+                    tmp1 += '<a data-ajax="false" href="/apex/mobileLearningBoardMockup?id=' + result[i].LBid + '" style="text-decoration:none;">';
+                }
+                tmp1 += '<div class="picFld">';
+                /*tmp1 += '<h2 data-hpa-icon="featured">Featured</h2>';*/
+                tmp1 += '<img src='+ result[i].LBImgURL +' alt="" />';
+                tmp1 += '<p>' + result[i].LBName + '</p>';
+                tmp1 += '</a>';
+                $( '#slider1' ).append(tmp1);
+            }
+            set_slideshow('featured');
+        }
+        function DisplayTrending(result, event) {
+            var target;
+            var tileColor;
+            var tmp1;
+            for (var i = 0; i < result.length; i++) {
+           
+                tmp1 = '<li>';
+                tmp1 += '<div class="picFld">';
+                /*tmp1 += '<h2 data-hpa-icon="trending">Trending</h2>';*/
+                tmp1 += '<img src='+ result[i].LBImgURL +' alt="" />';
+                tmp1 += '<p>' + result[i].LBName + '</p>';
+                $( '#slider2' ).append(tmp1);
+            }
+            set_slideshow('trending');
+        }
+        
+        $('#search-basic').live("keypress", function(e) {
+            
+            /* ENTER PRESSED*/
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                var searchTerm= $('#search-basic').val();
+                
+                if (searchTerm.length <=2) {
+                    alert('A minimum of 3 characters should be entered');
+                    return;
+                }
+                
+                if (searchTerm.length >=3998) {
+                    alert('A maximum of 3997 characters should be entered');
+                    return;
+                }
+                
+                window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+searchTerm;
+                $.mobile.loading( "show", {
+                      text: "Loading...",
+                      textVisible: true,
+                      textOnly: false
+                } ); // Displays load spinner while loading
+            }
+        })
+        
+         function highlightRow(elem){
+            $(elem).css({background: '#FF8800'});
+            setTimeout(function(){
+                 $(elem).css({background: 'transparent'});
+            }, 800);
+        }  
+        
+        $('#listviewmenu').on('click tap mousedown', 'li', function() {
+            highlightRow($(this));
+        });
+        
+        $('#menuImage').on('click tap mousedown touchstart', '', function() {
+            $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });
+        
+        $('#menuImageList').on('click tap mousedown touchstart', '', function() {
+            $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });    
+        
+        $('#searchImage').on('click tap mousedown touchstart', '', function() {
+            $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+            setTimeout(function(){
+                 $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+            }, 300);
+        });                        
+                     
+    </script>
+    <style type="text/css">
+        .starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+        .ui-grid-c>.ui-block-a, .ui-grid-c>.ui-block-b, .ui-grid-c>.ui-block-c, .ui-grid-c>.ui-block-d {
+            width: 25%;
+        }
+    </style>
+
+</apex:page>

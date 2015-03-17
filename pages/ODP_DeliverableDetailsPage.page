@@ -1,0 +1,50 @@
+<apex:page standardController="Stage_Work_Element__c" extensions="ODP_DeliverableDetailsController">
+    <!--<apex:detail subject="{!Stage_Work_Element__c.Release_Deliverable_ID__c}" relatedList="false" title="false"/>-->
+    <apex:form >
+        <apex:pageBlock title="Deliverable Detail" mode="inlineEdit">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Edit" rendered="{!IF(Stage_Work_Element__c.Release_Deliverable_ID__r.Include__c =TRUE, true,false)}" action="/apex/ODP_Page_Deliverable?retURL=%2F{!Stage_Work_Element__c.Release_Deliverable_ID__c}&scontrolCaching=1&sfdc.override=1&id={!Stage_Work_Element__c.Release_Deliverable_ID__c}"/>
+                <apex:commandButton action="{!delete}" value="Delete" rendered="{!IF(Stage_Work_Element__c.Release_Deliverable_ID__r.Include__c =TRUE, true,false)}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1">
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.name}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Release_Deliverable_Name__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Offering_Release__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Release_Name__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Deliverable_ID__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Deliverable_Name__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Conditional__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Conditional_Text__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Tailoring_Justification__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Review_Criteria__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Stage_Material__c}"/>
+                <apex:outputField value="{!Stage_Work_Element__c.Release_Deliverable_ID__r.Include__c}"/>
+
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:form >
+        <apex:pageBlock title="Work Element">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="New Work Element" action="/apex/ODP_Page_WorkElement?new={!Stage_Work_Element__c.Release_Deliverable_ID__c}&new_lkid={!Stage_Work_Element__c.Release_Deliverable_ID__r.id}&scontrolCaching=1&retURL=%2F{!Stage_Work_Element__c.Release_Deliverable_ID__r.id}&sfdc.override=1" id="new" rendered="{!IF(Stage_Work_Element__c.Release_Deliverable_ID__r.Include__c =TRUE,true,false)}" />
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockTable value="{!Stage_Work_Element__c}" var="child">
+            <apex:column headervalue="Action">
+               <apex:outputLink title="" value="/apex/ODP_Page_WorkElement?id={!child.Id}&retURL=%2F{!Stage_Work_Element__c.Release_Deliverable_ID__r.id}&sfdc.override=1" style="font-weight:bold" rendered="{!IF(Stage_Work_Element__c.Release_Deliverable_ID__r.Include__c =TRUE,true,false)}">Edit</apex:outputLink>&nbsp;|&nbsp;
+               <!--<a href="javascript:if (window.confirm('Are you sure?')) DeleteAccount('{!child.Id}');" style="font-weight:bold">Del</a>-->
+               <!--<apex:outputLink title="" value="/apex/ODP_Page_WorkElement?id={!child.Id}&retURL=%2F{!Stage_Work_Element__c.Release_Deliverable_ID__r.id}&sfdc.override=1" style="font-weight:bold" rendered="{!IF(Stage_Work_Element__c.Release_Deliverable_ID__r.Include__c =TRUE,true,false)}">Del</apex:outputLink>-->
+               <apex:commandLink value="Del" action="{!delete}" style="font-weight:bold" hreflang="javascript:if (window.confirm('Are you sure?'))"/>
+            </apex:column>
+               <apex:column headervalue="Name"><apex:outputLink value="/{!Stage_Work_Element__c.id}">{!Stage_Work_Element__c.name}</apex:outputLink></apex:column>
+               <apex:column value="{!child.Stage_Name__c}"/>
+               <apex:column value="{!child.Name__c}"/>
+               <apex:column value="{!child.Status__c}"/>
+               <apex:column value="{!child.Include__c}"/>
+               
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+        
+    </apex:form>    
+    
+</apex:page>

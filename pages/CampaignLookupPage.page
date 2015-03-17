@@ -1,0 +1,108 @@
+<!-- 
+/**********************************************************
+* Page Name: CampaignLookupPage
+* Author: HP
+* Date: 13-SEP-2012 
+* Requirement # Request Id: 
+* Description: VF page for Campaign Lookup
+**********************************************************/
+-->
+
+<apex:page standardController="Campaign" extensions="CampaignLookupController" showHeader="false" sidebar="false" id="page" action="{!initialize}">    
+    <!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}"/>
+    <body class="lookupTab  LookupSearchFrame, marginCls">
+    
+        <apex:form id="form">
+        
+            <apex:sectionHeader title="Lookup"/>
+            <apex:actionRegion >  
+                    <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">                     
+                        <apex:outputLabel value="Search Within" styleClass="searchLabelCls"/>
+                        <apex:selectList value="{!CampListView}" multiselect="false" size="1">
+                           <apex:actionSupport event="onchange"  action="{!searchSpecificCampaigns}" status="showStatus1"  rerender="searchResults, Panel"/>
+                            <apex:actionStatus id="showStatus1">
+                            <apex:facet name="start">
+                                <img src="{!$Resource.AjaxAnimation}" />
+                            </apex:facet>
+                           </apex:actionStatus>  
+                            <apex:selectOptions value="{!CampaignView}"/>
+                        </apex:selectList> 
+                         
+                         <apex:outputLabel value="Campaign Record Type" styleClass="searchLabelCls"/>
+                        <apex:selectList value="{!CampaignRecordType}" multiselect="false" size="1">
+                        <apex:actionSupport event="onchange"  action="{!searchSpecificCampaigns}" status="showStatus4"  rerender="searchResults, Panel"/>                                                    
+                           <apex:actionStatus id="showStatus4">
+                            <apex:facet name="start">
+                                <img src="{!$Resource.AjaxAnimation}" />
+                            </apex:facet>
+                           </apex:actionStatus>  
+                            <apex:selectOptions value="{!CampRecType}"/> 
+                        </apex:selectList>
+                                   
+                        <apex:outputLabel value="Search" styleClass="searchLabelCls" /> 
+                        <apex:inputText id="txtSearch" value="{!searchText}" onkeypress="return searchProductsOnEnter(event,this);"/> 
+                        <apex:commandButton id="srch1" value="Go" action="{!searchSpecificCampaigns}" status="showStatus2" rerender="searchResults, Panel"></apex:commandButton>
+                       <apex:actionStatus id="showStatus2">
+                            <apex:facet name="start">
+                                <img src="{!$Resource.AjaxAnimation}" />
+                            </apex:facet>
+                           </apex:actionStatus>
+                        <br/>You can use "*" as a wildcard next to other characters to improve your search results.
+                    </apex:outputPanel>
+                    
+                    <br/><br/><br/><b>Queried Campaigns</b>
+                    <apex:pageBlock id="searchResults">
+                        <apex:outputpanel styleClass="resultPanelCls" layout="block"> 
+                            
+                            <apex:pageBlockTable var="camp" value="{!campaigns}" id="pageBlockTable">
+                                <apex:column >
+                                    <apex:facet name="header"> 
+                                    <apex:outputPanel >Campaign Name</apex:outputPanel></apex:facet>
+                                    <!-- <apex:outputLink value="javascript:top.window.opener.lookupPick('{!FormTag}','{!TextBox}_lkid','{!TextBox}','','{!camp.camp.Id}','{!camp.name}','null','')">{!camp.name}</apex:outputLink> -->
+                                    <a href='javascript:top.window.opener.lookupPick("{!FormTag}","{!TextBox}_lkid","{!TextBox}","","{!camp.camp.Id}","{!camp.name}","null","") '>{!camp.camp.name}</a>
+                                </apex:column> 
+                                 <apex:column >
+                                    <apex:facet name="header"> 
+                                    <apex:outputPanel >Parent Campaign</apex:outputPanel></apex:facet>
+                                  <!--  <apex:outputLink value="javascript:top.window.opener.lookupPick('{!FormTag}','{!TextBox}_lkid','{!TextBox}','','{!camp.ParentId}','{!camp.Name}','null','')">{!camp.Parent.Name}</apex:outputLink>             -->
+                                    {!camp.camp.Parent.Name}                  
+                                 </apex:column>
+                                
+                                <apex:column >
+                                    <apex:facet name="header"> 
+                                    <apex:outputPanel >Campaign Record Type</apex:outputPanel></apex:facet>
+                                       {!camp.camp.RecordType.Name}
+                                </apex:column>    
+                            </apex:pageBlockTable> 
+                            
+                            
+                                <apex:outputPanel rendered="{!IF(campaigns == null, true, false)}" >                    
+                                    <p>No records found due to one of the following:
+                                    <br/>•There are no records of this type
+                                    <br/>•You don't have permission to see any of the records </p>
+                                </apex:outputpanel>                    
+                        </apex:outputPanel>
+                    </apex:pageBlock>
+            </apex:actionRegion>
+            <center>
+            <apex:panelGrid columns="4" id="Panel">
+                <apex:commandLink action="{!first}" styleclass="btn" rendered="{!hasPrevious}">First</apex:commandlink>
+                <apex:commandLink action="{!previous}" styleclass="btn" rendered="{!hasPrevious}">Previous</apex:commandlink>
+                <apex:commandLink action="{!next}" styleclass="btn" rendered="{!hasNext}">Next</apex:commandlink>
+                <apex:commandLink action="{!last}" styleclass="btn" rendered="{!hasNext}">Last</apex:commandlink>
+            </apex:panelGrid>
+        </center>
+        </apex:form> 
+    </body> 
+    
+    <script>
+    function searchProductsOnEnter(ev,searchTextObj)  {
+    var searchTextValue=searchTextObj.value;
+    if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+    searchProductsOnEnterKey(searchTextValue);  
+    return false;           
+    } 
+    }
+    </script>
+</apex:page>

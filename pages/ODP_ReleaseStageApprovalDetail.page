@@ -1,0 +1,967 @@
+<apex:page standardController="Release_Stage__c" extensions="ODP_StageApprovalControllerClass">
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+
+<!-- athena style -->
+<apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" /> 
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+<!--Tovid -alertfiy plugin -->
+<apex:includeScript value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.default.css')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.core.css')}"/>
+<script>
+    $j = jQuery.noConflict();
+    $j(document).ready(function() {
+        $j('#PACDecisionContinueBtn').click(function(){
+            $j('#PACDecisionContinueBtn').prop('disabled',true);
+            $j('#PACDecisionCancelBtn').prop('disabled',true);
+            $('[id$=SubmitPACDecision]').click();
+            
+        });
+        //var feedList = $j("ul[class$=publisherFeedItemTypeChoices]").children("li");
+        //feedList[1].style.display="none";
+        //feedList[2].style.display="none";
+        //feedList[3].style.display="none";
+        $j("div[class$=datePicker]").css("position","fixed");
+        if({!ActionShow}){                     
+        }else{
+            $j("#ActionDiv input").each(function(index){
+                 $j(this).attr('disabled','disabled');
+                }
+            );
+            
+            $j("#ActionDiv select").each(function(index){
+                 $j(this).attr('disabled','disabled');
+                }
+            );
+        }
+        if($j("select[id$=myDecision").val() == ''){
+            $j("select[id$=myDecision").find("option").attr("SELECTED","Absent");
+        }
+        /*        
+        $j('#button_AddActionItem').click(function(){
+            var url = window.location.toString();
+            var pos = url.split('#')[1];
+            if(pos == undefined)
+            {
+                newActionItem();
+                document.location = url + '#AddActionItem';
+                                
+            }
+            else
+            {
+                newActionItem().
+                document.location = url.split('#')[0] + '#AddActionItem';
+            }
+        });
+        */
+        
+    });
+    function showRiskDetail(name,owner,description,resolution,status,prn,miti){  
+        $j("td[id$=riskDetailName]").text(name);
+        $j("td[id$=riskDetailOwner]").text(owner);
+        $j("td[id$=riskDetailDescrip]").text(description);
+        $j("td[id$=riskDetailResolution]").text(resolution);
+        $j("td[id$=riskDetailStatus]").text(status);
+        $j("td[id$=riskDetailPrn]").text(prn); 
+        $j("td[id$=riskDetailMiti]").text(miti);     
+    }
+    
+    function CallPACDecision()
+    {
+        $('#MyAlterOKBtn').prop('disabled',true);
+        $('#DivMyAlter').modal('show');
+        ValidatePacDecision();
+    }
+    function validatePACDecisionHandle()
+    {
+        if($('input[id$=PacDecisionError]').val() == 'success'){
+            if($j("select[id$=pacDecision]").val() != 'Redirect'){
+                $('[id$=SubmitPACDecision]').click();
+            }
+            else{
+                $('#DivMyAlter').modal('hide');
+                $('#DivPACRedirect').modal('show');
+            }
+        }
+        else{
+            $('#MyAlterOKBtn').prop('disabled',false);
+        }
+    }
+    function JsReworkSWE(sweId)
+    {
+        $('#MyAlterOKBtn').prop('disabled',true);
+        $('#DivMyAlter').modal('show');
+        reworkSWE(sweId);
+    }
+    function JsReworkSWEHandle()
+    {
+        $('#MyAlterOKBtn').prop('disabled',false);
+    }
+</script>    
+<style>
+    .pbSubheader {
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px; 
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+        body .bPageBlock .pbBody .pbSubheader img {
+            height: 15px;
+            width: 15px;
+        }
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody 
+
+.pbSubheader h3 {
+            font-weight: 300;
+            color: #fff;
+            font-family: 'Voces', sans-serif; !important;
+            font-size:16px !important; /* this controls the 
+
+blue bar font-sizes */
+        }
+    
+   .myButtons{
+        background: none  !important;
+        border: 0px  !important;
+        background-color: #007DBA  !important;
+        color: #fff !important;
+        font-size: 13px  !important;
+        border-radius: 0px  !important;
+        padding: 6px 6px 6px 6px  !important;
+        border-bottom-left-radius: 6px  !important;
+        border-top-right-radius: 6px  !important;
+      }
+   .myButtons:hover{
+       background-color: #D7410B !important;
+     }
+   .myDisabledButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: gray !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+   .parentDisable{
+       width:100%;
+       float:left;
+       overflow:hidden;
+   }
+   #chatterDisplay{
+        position:relative;
+        width: 38%;
+        top:20px;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+   }
+   #chatterWrapper{
+       height:350px;
+       overflow-y: auto;
+       border: 1px solid #ccc;
+       padding:10px !important;
+   }
+    
+   #ContriReviewerList{
+        position:relative;
+        width: 40%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+    #ActionDiv{
+        position:relative;
+
+        width: 38%;
+        float: left;
+        overflow-y: auto;
+        margin-left: 16px;
+    }
+
+   /* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:'Voces', sans-serif; !important;
+            border-top:0px;
+        }
+    .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+        border-top: 0px solid #3044b5;
+     }
+     
+   <!--  .apexp .bPageBlock .detailList .list{
+     } -->
+    
+    .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+    .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+        padding: 2px 8px;
+        color: #333;
+        border-bottom: 1px solid #e3deb8;
+        font-family: 'Voces', sans-serif; !important;
+        font-size:13px !important;
+     }
+    /* table row highlight */     
+    body .pbBody table.list tr.dataRow.highlight td{
+    background-color:#ecf4f8;
+    }
+    body .pbBody table.list tr.headerRow th{
+        background:#fff !important;
+        color:#007DBA !important;
+        border:1px solid #ccc;
+    }
+    /* for Header */
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 300 !important;
+    }
+    #actions{
+        padding: 15px 8px;
+    }
+
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: 'Voces', sans-serif; !important;
+        font-size:14px !important; /* this controls the blue bar font-sizes */
+    }
+    /* done header */
+    .bPageBlock .detailList .data2Col{
+    padding-left:0px;
+    }
+    body .pbBody table.list tr.headerRow th{
+        padding: 4px 8px;
+    }
+    
+    /* Detail Table Style */
+    
+    .detailList td{
+        line-height:20px;
+    }
+    body .bPageBlock .pbBody .labelCol {
+        color: #4a4a56;
+        line-height: 20px;
+    }
+    .Custom64Tab .secondaryPalette, .individualPalette .Custom64Block .secondaryPalette{
+    border:0px;
+    }
+    
+    /* Textboxes, Textareas sytle */
+    
+    input,textarea{
+        border: 2px solid #CCCCCC;
+        background:#f2f2f2;
+    }
+   
+   /* Other review / Contribute */
+   
+   #otherReview{
+       width:49%;
+       float:left;
+       margin-left:10px;
+   }
+   #contrib{
+       width:49%;
+       float:left;
+   }
+   
+   /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 14px;
+        border-radius: 0px;
+        padding: 8px 8px 8px 8px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    
+    .linkBtn {
+        background: none !important;
+        border: 0px !important;
+        background-color: #007DBA !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        border-radius: 0px !important;
+        padding: 8px 8px 8px 8px !important;
+        border-bottom-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .clear{clear:both}
+    #positionToggle{position:absolute; top:9px; left:9px; }
+    #showHideList{display:none; position:absolute; top:10px; left:10px; border-radius: 5px; border:1px solid #cccccc; background-color:#eeeeee; }
+    #ListInner{padding:10px 10px 10px 10px; }
+    .datePicker{postion:fixed}
+</style>
+<div class="parentDisable">    
+<apex:form id="myform" >
+    <apex:pagemessages /> 
+    <apex:pageBlock > 
+        <apex:pageBlockSection >
+            <apex:outputPanel style="float:left;margin-left: -8px;width:125%;">          
+
+                        <apex:pageBlockSection columns="1" collapsible="false" title="Stage Review" > 
+                            <apex:outputPanel > 
+                                <table style="width:98%;">    
+                                    <tr><td style="white-space:nowrap;font-weight:bold;">Opportunity Name:</td><td><apex:outputField value="{!relstg.Release_Name__c}" /></td></tr>                    
+                                    <tr><td style="white-space:nowrap;font-weight:bold;">Stage Name:</td><td><apex:outputField value="{!relstg.Stage_Name__c}" /></td></tr>
+                                    <tr><td style="white-space:nowrap;font-weight:bold;">Stage Status:</td><td><apex:outputField value="{!relstg.Status__c}" /></td></tr>
+                                    <tr><td style="white-space:nowrap;font-weight:bold;">Review Date:</td><td><apex:outputField value="{!relstg.Current_Baseline_End_Date__c}" /></td></tr>
+                                    <tr><td style="white-space:nowrap;font-weight:bold;"></td><td></td></tr> 
+                                    <tr><td style="white-space:nowrap;font-weight:bold;">Stage Owner:</td>
+                                        <td>
+                                            <a href="sip:{!relstg.Offering_Release_ID__r.Facilitator__r.email}"  title="Lync Me">
+                                                    <apex:image style="width:20px;height:20px;" url="https://hp--esit--c.cs11.content.force.com/servlet/servlet.ImageServer?id=015Z00000006ynN&oid=00DZ000000N9IbI"/>
+                                            </a>
+                                            <apex:outputField value="{!relstg.Offering_Release_ID__r.Facilitator__c}"/>
+                                        </td>
+                                    </tr>
+                                    <tr><td style="white-space:nowrap;font-weight:bold;"><a href="#TeamOverView">Team Members</a></td><td></td></tr>                     
+                                    <tr><td style="white-space:nowrap;font-weight:bold;">Assumptions:</td><td><apex:inputTextarea value="{!relstg.Offering_Release_ID__r.Assumptions__c}" style="width:99%;" disabled="true" readonly="true" richtext="true" id="projAssump"/></td></tr>
+                                </table> 
+                            </apex:outputPanel> 
+                        </apex:pageBlockSection>
+             </apex:outputPanel>  
+             <apex:outputPanel style="float:right;width:75%;">       
+                    <apex:pageBlockSection columns="1" collapsible="false"  id="approvalPanel"> 
+                        <div class="pbSubheader" style="margin-top:10px;background-color: #D7410B !important;">
+                            <h3>Approval</h3>
+                     <!--       <div style="float:right;font-weight: 300;font-family: 'Voces', sans-serif; !important;font-size:16px !important;">{!stgrew.PAC_Member_ID__r.User__r.Name}</div> -->
+                        </div>
+                        <apex:outputPanel >
+                            <table style="width:100%;">
+                                <tr><td style="white-space:nowrap;font-weight:bold;">PAC Approver:</td>
+                                    <td width="100%">
+                                        <apex:selectList multiselect="false" size="1"  value="{!StgViewId}" required="true">
+                                            <apex:selectOptions value="{!ApproverList}"></apex:selectOptions>
+                                            <apex:actionSupport event="onchange" reRender="approvalPanel" action="{!changeApproval}"/>
+                                        </apex:selectList>
+                                    </td></tr>
+                                <tr><td style="white-space:nowrap;font-weight:bold;">Comments:</td>
+                                    <td width="100%">
+                                        <apex:inputField style="width:95%;height: 60px;" value="{!stgrew.Comment__c}" id="myComments"/>
+                                        <script>document.getElementById('{!$Component.myComments}').disabled = {!ActionDisabled}; </script>
+                                    </td></tr>    
+                                <tr><td style="white-space:nowrap;font-weight:bold;">PAC Decision:</td>
+                                    <td width="100%">
+                                        <apex:inputField value="{!stgrew.Decision__c}" id="myDecision" />
+                                        <script>document.getElementById('{!$Component.myDecision}').disabled = {!ActionDisabled}; </script>
+                                    </td>
+                                </tr>
+                                <tr><td style="white-space:nowrap;font-weight:bold;">I'm Done:</td>
+                                    <td width="100%" >
+                                        <apex:inputcheckbox value="{!stgrew.Complete__c}" disabled="{!ActionDisabled}" />
+                                       
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> <apex:commandButton action="{!ApprovalSave}" styleclass="{!IF(ActionDisabled,'myDisabledButtons','myButtons')}" value="Submit Decision" id="btn_approvalsave" disabled="{!ActionDisabled}" onclick="javascript:return window.confirm('Please make sure Stage Materials have been reviewed before feedback. Confirm to continue?');"/></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                         </apex:outputPanel>                        
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="1" collapsible="false"  id="pacDecisionPanel" rendered="{!IsFacilitator}"> 
+                        <div class="pbSubheader" style="margin-top:10px;background-color: #D7410B !important;">
+                            <h3>Stage Review Decision</h3>
+                        </div>
+                        <apex:outputPanel >              
+                            <table style="width:100%;">   
+                                <tr><td style="white-space:nowrap;font-weight:bold;">Stage Review Result:</td>
+                                    <td width="100%">
+                                        <apex:inputField value="{!relstg.PAC_Decision__c}" id="pacDecision" />
+                                        <script>document.getElementById('{!$Component.pacDecision}').disabled = {!PacDecisionDisabled }; </script>
+                                        <!-- Hunter Define the ajax call controller function PACDecisionValidate-->
+                                        <apex:actionFunction name="ValidatePacDecision" action="{!PACDecisionValidate}" rerender="out,PacDecisionError" status="myStatus" oncomplete="validatePACDecisionHandle();" />
+                                    </td>
+                                    <td><apex:inputHidden id="PacDecisionError" value="{!PacDecisionError}"/></td>
+                                </tr>
+                                <tr>
+                                    <td> 
+                                        <apex:commandButton value="Submit Stage Decision" disabled="{!PacDecisionDisabled}" styleclass="{!IF(PacDecisionDisabled,'myDisabledButtons','myButtons')}" onclick="javascript:CallPACDecision(); return false;"/>
+                                        <apex:commandLink style="display:none" action="{!PACDecisionSave}" value="Send" id="SubmitPACDecision"></apex:commandLink>
+                                     </td>
+                                     <td></td>
+                                </tr>
+                            </table>
+                         </apex:outputPanel>                        
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+         </apex:pageBlockSection>        
+        <apex:pageBlockSection title="Stage Approval Team" columns="1" collapsible="true">
+            <apex:outputPanel >
+            <div >
+                <apex:pageBlockTable value="{!stgrewList}" var="sr" style="white-space:nowrap;" >
+                    <apex:column headerValue="Approver" >
+                            <a href="sip:{!sr.PAC_Member_ID__r.User__r.email}"  title="Lync Me">
+                                    <apex:image style="width:30px;height:30px;" url="https://hp--esit--c.cs11.content.force.com/servlet/servlet.ImageServer?id=015Z00000006ynN&oid=00DZ000000N9IbI"/>
+                            </a>
+                            <span class="label hpit_athenaListPersonImg"><apex:image url="{!sr.PAC_Member_ID__r.User__r.smallphotourl}" /></span>
+                            <span>{!sr.PAC_Member_Name__c}</span>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Decision" value="{!sr.Decision__c}"/>
+                    <apex:column headerValue="Approver Comment" value="{!sr.Comment__c}"/>
+                    <apex:column headerValue="I'm done" value="{!sr.Complete__c}"/>
+                </apex:pageBlockTable>                
+            </div>
+            </apex:outputPanel>
+        </apex:pageBlockSection>     
+    
+        <apex:pageBlockSection title="Risks" columns="1" collapsible="true" >
+            <apex:actionFunction action="{!findMitiActionsById}" name="findMitiActionsById" reRender="MitiActionItemPanel">
+                <apex:param id="MitiActionRiskId" name="MitiActionRiskId" value="" /> 
+            </apex:actionFunction>
+            <apex:pageBlockTable value="{!riskAndOwnerList}" var="ro" >                           
+                <apex:column headerValue="Name" style="text-decoration:underline;"><span  id="{!ro.risk.id}"  onblur="LookupHoverDetail.getHover('{!ro.risk.id}').hide();" onfocus="LookupHoverDetail.getHover('{!ro.risk.id}', '/{!ro.risk.id}/m?retURL=%2F{!ro.risk.id}&isAjaxRequest=1').show();" onmouseout="LookupHoverDetail.getHover('{!ro.risk.id}').hide();" onmouseover="LookupHoverDetail.getHover('{!ro.risk.id}', '/{!ro.risk.id}/m?retURL=%2F{!ro.risk.id}&isAjaxRequest=1').show();" >{!ro.risk.Name__c}</span></apex:column>                                                               
+                <apex:column headerValue="Owner" value="{!ro.risk.Owner.Name}" />
+                <apex:column headerValue="Description" value="{!ro.risk.Description__c}" />
+                <apex:column headerValue="Resolution Date" value="{!ro.risk.Planned_Resolution_Date__c}" />
+                <apex:column headerValue="Status" value="{!ro.risk.Status__c}" />
+                <apex:column headerValue="PRN" value="{!ro.risk.Risk_Priority_Number__c}" />
+                <apex:column headerValue="Mitigation Actions"><a href="#MitiActionItem" onclick="clearMitiActionItemsList();findMitiActionsById('{!ro.risk.id}');" class="delivLink" >details</a></apex:column>
+                
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>        
+        
+<!--
+       <apex:pageBlockSection title="Finances" columns="1" collapsible="true">
+            <apex:outputpanel >
+                <div>
+                    <table align="center" border="1" class="list" cellpadding="0" cellspacing="0" style="background-color: #fff;">
+                        <tr>
+                            <td nowrap="nowrap" class="bold" style="color: #007DBA !important;font-weight:700;">Name</td>
+                            <td class="bold" style="color: #007DBA !important;font-weight:700;" align="center">Baseline</td>
+                            <td class="bold" style="color: #007DBA !important;font-weight:700;" align="center">Proposed</td>
+                            <td class="bold" style="color: #007DBA !important;font-weight:700;" align="center">%Change</td>
+                            <td class="bold" style="color: #007DBA !important;font-weight:700;" align="center">Actual</td>
+                            <td class="bold" style="color: #007DBA !important;font-weight:700;" align="center">%Change from Baseline</td>
+                            <td class="bold" style="color: #007DBA !important;font-weight:700;" align="center">%Change from Proposed</td>
+                        </tr> 
+                        <tr>
+                            <td>Budget</td>
+                            <td>{!relstg.Budget_Baseline__c}</td>
+                            <td>{!relstg.Budget_Proposed__c}</td>
+                            <td>{!relstg.Budget_Baseline_To_Proposed__c}%</td>
+                            <td>{!relstg.Budget_Actual__c}</td>
+                            <td>{!relstg.Budget_Baseline_To_Actual__c}%</td>
+                            <td>{!relstg.Budget_Proposed_To_Actual__c}%</td>
+                        </tr>
+                        <tr>
+                            <td>Revenue</td>
+                            <td>{!relstg.Revenue_Baseline__c}</td>
+                            <td>{!relstg.Revenue_Proposed__c}</td>
+                            <td>{!relstg.Revenue_Baseline_To_Proposed__c}%</td>
+                            <td>{!relstg.Revenue_Actual__c}</td>
+                            <td>{!relstg.Revenue_Baseline_To_Actual__c}%</td>
+                            <td>{!relstg.Revenue_Proposed_To_Actual__c}%</td>
+                        </tr>
+                    </table>
+                </div>
+            </apex:outputpanel>
+       </apex:pageBlockSection>
+-->       
+        <script>
+            function gotoAnchor(name)
+            {
+                var url = window.location.toString();
+                var pos = url.split('#')[1];
+                if(pos == undefined)
+                {
+                    document.location = url + '#' + name;
+                }
+                else
+                {
+                    document.location = url.split('#')[0] + '#' + name;
+                }
+            }
+            
+            function clearReviewList(){
+                document.getElementById("ReviewTitle").innerHTML = 'Loading...';
+                gotoAnchor('reviewSummary');
+            }
+            function showDocumentsSection(rowId){
+                var rowObj = document.getElementById(rowId);
+                    if ( rowObj.style.display == "table-row" ) 
+                        rowObj.style.display = "none";
+                    else {
+                        rowObj.style.display = "table-row";
+                        
+                    }
+            }
+            function deleteActionItemConfirm(tmid){
+                alertify.confirm("Confirm to delete this Action Item ?", function (e) {
+                    if (e) { 
+                         deleteActionItemByID(tmid);
+                    } 
+                }); 
+                return false;    
+            }
+            function clearActionUpstatus(){
+                document.getElementById("ActionUpstatus").innerHTML = 'Loading...';
+            }
+            function clearMitiActionItemsList(){
+                document.getElementById("MitiActionItemsList").innerHTML = 'Loading...';
+            }          
+        </script>
+        <style>
+                        .delivLink{color:#0000CD !important; text-decoration:none; font-weight:bold; cursor:pointer; }
+                        .delivLink:hover{color:red !important}
+                        .riskCell{background-color:red}
+                        .normalCell{background-color:white}
+                        .dmDetail{color:#aaaaaa !important; font-size:10px; text-decoration:none;}
+                        .dmDetail:hover{color:red !important;}
+                        .scoreValues{text-decoration:none !important; }
+                        .scoreValues:hover{color:blue !important; text-decoration:underline !important;}
+                        .cke_top {display: none;}
+                    </style>
+        
+                   
+        <apex:pageBlockSection title="Reviews" columns="1" collapsible="true" Id="SWETableSection">
+            <apex:outputPanel >
+                <div style="padding-bottom: 5px; padding-top: 0px;">
+                <table align="center" border="1" class="list" cellpadding="0" cellspacing="0" style="background-color: #fff;">
+                    <tr>
+                        <td nowrap="nowrap" class="bold" style="color: #007DBA !important;font-weight:700;width:65%;">Name</td>
+                        <!-- <td class="bold" style="color: #007DBA !important;font-weight:700;width:15%;" align="center">Rating</td> -->
+                        <td class="bold" style="color: #007DBA !important;font-weight:700;width:20%" align="center">Reviews</td>
+                    </tr>
+                    <apex:actionFunction name="reworkSWE" action="{!Rework}" rerender="out" status="myStatus" oncomplete="JsReworkSWEHandle();">
+                        <apex:param name="reworkSWEId" assignTo="{!ReworkSWEId}" value=""/>
+                    </apex:actionFunction>
+                    <apex:repeat value="{!sweAndRatingList}" var="swerating">
+                        <tr>
+                            <td nowrap="nowrap">
+                                <a href="javascript:void(0);" onclick="clearReviewList();findStageWorkElementById('{!swerating.swe.id}');" class="delivLink" >{!swerating.swe.Name__c}</a>
+                                <a class="dmDetail" href="javascript:showDocumentsSection('Row{!swerating.swe.id}');" >content</a>
+                                    
+                                <a class="dmDetail" href="/{!swerating.swe.id}" target="_blank">details</a>
+                                <a class="dmDetail" href="javascript: JsReworkSWE('{!swerating.swe.id}');" style="display:{!IF(IsOwner,'','none')};">rework</a>
+                                    
+                            </td>
+                            <!-- 
+                            <td>
+                                <div style="background-color:{!swerating.ratingColor}; text-align:center;" >
+                                    {!swerating.RatingCalculate}
+                                </div>
+                            </td>
+                            -->
+                            <td>
+                                <div style="text-align:center;" >
+                                    {!swerating.reviewCalculate}
+                                </div>
+                            </td>    
+                         </tr>                       
+                         <apex:outputText value="{!swerating.documentHTML}" escape="false" />
+                         <tr id="rowtext{!swerating.swe.id}" style="display:none;">
+                             <td colspan="3"> 
+                                 <div>
+                                     <apex:inputTextarea id="swetext" richText="true" disabled="true" value="{!swerating.swe.Text__c}" style="width:100%"/>
+                                 </div>
+                             </td>
+                         </tr>                                      
+                    </apex:repeat>
+                </table>
+                </div>
+             </apex:outputPanel> 
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="Stage Material" columns="1" collapsible="true">
+            <apex:outputPanel >
+                <div style="padding-bottom: 5px; padding-top: 0px;">
+                <table align="center" border="1" class="list" cellpadding="0" cellspacing="0" style="background-color: #fff;">
+                    <tr>
+                        <td nowrap="nowrap" class="bold" style="color: #007DBA !important;font-weight:700;width:65%;">Name</td>
+                        <td class="bold" style="color: #007DBA !important;font-weight:700;width:15%;" align="center">Last Modified</td>
+                        <td class="bold" style="color: #007DBA !important;font-weight:700;width:20%" align="center">Status</td>
+                    </tr>
+                    <apex:repeat value="{!sweMaterialsList}" var="sweMaterials">
+                        <tr>
+                            <td nowrap="nowrap">
+                                <a href="#reviewSummary" onclick="clearReviewList();findStageWorkElementById('{!sweMaterials.swe.id}');" class="delivLink" >{!sweMaterials.swe.Name__c}</a>
+                                <a class="dmDetail" href="javascript:showDocumentsSection('Rowmaterials{!sweMaterials.swe.id}');" >content</a>
+                                    
+                                <a class="dmDetail" href="/{!sweMaterials.swe.id}" target="_blank">details</a>
+                            </td>
+                            <td>
+                                <div  style="text-align:center;" >
+                                    <apex:inputField value="{!sweMaterials.swe.lastmodifiedDate}" /> 
+                                </div>
+                            </td>
+                            <td>
+                                <div  style="text-align:center;" >
+                                    {!sweMaterials.swe.Status__c}
+                                </div>
+                            </td>
+                            <!--
+                            <td>
+                                <div style="background-color:{!sweMaterials.ratingColor}; text-align:center;" >
+                                    {!sweMaterials.RatingCalculate}
+                                </div>
+                            </td>
+                            <td>
+                                <div style="text-align:center;" >
+                                    {!sweMaterials.reviewCalculate}
+                                </div>
+                            </td>
+                            -->    
+                         </tr>                       
+                         <apex:outputText value="{!sweMaterials.documentHTML}" escape="false" />
+                         <tr id="rowtextmaterials{!sweMaterials.swe.id}" style="display:none;">
+                             <td colspan="3"> 
+                                 <div>
+                                     <apex:inputTextarea id="swetextRowmaterials" richText="true" disabled="true" value="{!sweMaterials.swe.Text__c}" style="width:100%"/>
+                                 </div>
+                             </td>
+                         </tr>                                      
+                    </apex:repeat>
+                </table>
+                </div>
+             </apex:outputPanel> 
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="Opportunity Dates" columns="1" collapsible="true">    
+            <apex:pageBlockTable value="{!releaseStageList}" var="relstageVar" >
+                <apex:column headerValue="" value="{!relstageVar.Stage_Name__c}"/>                           
+                <apex:column headerValue="Initial Baseline End Date" value="{!relstageVar.Initial_Baseline_End_Date__c}"/>                                                    
+                <apex:column headerValue="Current Baseline End Date" value="{!relstageVar.Current_Baseline_End_Date__c}" />
+                <apex:column headerValue="Actual Start Date" value="{!relstageVar.Actual_Start_Date__c}" />
+                <apex:column headerValue="Actual End Date" value="{!relstageVar.Actual_End_Date__c}" />
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Customer Commitments" columns="1" collapsible="true">    
+            <apex:pageBlockTable value="{!commitmentList}" var="commitmentVar" >
+                <apex:column headerValue="Customer Name" value="{!commitmentVar.Customer_Name__c}"/>                                                    
+                <apex:column headerValue="Owner" value="{!commitmentVar.Owner__c}" />
+                <apex:column headerValue="Due Date" value="{!commitmentVar.Due_Date__c}" />
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+        <script>
+            function onCompleteHandler() {               
+              /*
+              if('{!errorMsg}' != ''){
+                  
+                  return false; 
+              }else{
+                  return false;
+              }
+              */
+
+            }
+        </script>   
+        <apex:actionFunction name="newActionItem" action="{!newActionItem}" reRender="actionPanel"/>
+        <apex:actionFunction action="{!findActionItemById}" name="findActionItemById" reRender="actionPanel">
+                <apex:param id="actionItemIdPra" name="actionItemIdPra" value="" /> 
+        </apex:actionFunction> 
+        <apex:actionFunction name="deleteActionItemByID" action="{!deleteActionItem}"  reRender="actionItemTab" oncomplete="onCompleteHandler()"> 
+            <apex:param name="firstParam" assignTo="{!delActionItemIdPra}" value="" />
+        </apex:actionFunction>
+        <apex:pageBlockSection columns="1" collapsible="true"  title="Action Items">                               
+            <a href="#AddActionItem" id="button_AddActionItem" class="myButtons" onclick="clearActionUpstatus();newActionItem();">Add Action Item</a>                        
+            <apex:pageBlockTable value="{!actionList}" var="actionVar" id="actionItemTab" >
+                <apex:column headerValue="Action">
+                    <a href="#AddActionItem" onclick="clearActionUpstatus();findActionItemById('{!actionVar.Id}');">Edit</a>
+                    <apex:outputText value="  "></apex:outputText>               
+                    <apex:commandLink value="Delete"  onclick="javascript:return deleteActionItemConfirm('{!actionVar.Id}');">                                                     
+                    </apex:commandLink>           
+                </apex:column>
+                <apex:column headerValue="Name" value="{!actionVar.Name__c}"/>                                                    
+                <apex:column headerValue="Owner" value="{!actionVar.Action_Owner__r.User__c}" />
+                <apex:column headerValue="Status" value="{!actionVar.Status__c}" />
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+        
+
+    </apex:pageBlock>
+    
+
+    <!-- MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL MODAL -->
+    <style>
+    .modalDialog {
+        display:none;
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.6); /*background: rgba(0,0,0,0.8);*/
+        z-index: 100;
+        opacity:0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        pointer-events: none;
+    }
+
+    .modalDialog:target {
+        display:block;
+        opacity:1;
+        pointer-events: auto;
+    }
+
+    .modalDialog > div {
+        width: 600px;
+        position: relative;
+        margin: 1% auto;
+        padding: 5px 20px 13px 20px;
+        border-radius: 10px;
+        background: #fff;
+        background: -moz-linear-gradient(#fff, #bbb);
+        background: -webkit-linear-gradient(#fff, #bbb);
+        background: -o-linear-gradient(#fff, #bbb);
+    }
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+    .close:hover { background: #00d9ff; text-decoration: none; }
+    .myLabels{font-weight:bold;}
+    .myData{font-size:14px; width:330px;}
+    .divTitle{padding-top:8px;padding-left:8px; color:black; font-size:24px; font-weight:bold}
+    #ReviewTitle{padding-top:8px; color:blue; font-size:24px; font-weight:bold}
+    #sweContextText{padding-top:8px; color:blue; font-size:24px; font-weight:bold}
+    .ReviewHeader{font-weight:bold; border-bottom:1px #888888 solid;}
+    .ReviewRow{ border-bottom:1px white solid; }
+    </style>
+    
+    <div id="reviewSummary" class="modalDialog">
+        <div>
+            <a href="javascript:gotoAnchor('close');" Xtitle="Close" class="close">X</a>
+            <apex:outputPanel id="reviewData">
+                <apex:pagemessages /> 
+                <div id="ReviewTitle">{!stageWorkElementName}</div>
+                <table cellspacing="0" cellpadding="5">
+                    <tr>
+                        <td class="ReviewHeader">Reviewer</td>
+                        <!-- <td class="ReviewHeader" align="center">Rating</td> -->
+                        <td class="ReviewHeader">Comments</td>
+                    </tr>
+                    <apex:repeat value="{!reviewListToSwe}" var="reviewPar">
+                        <tr>
+                            <td class="ReviewRow" style="white-space:nowrap">{!reviewPar.Team_Member_Name__c} ({!reviewPar.Role_Name__c})</td>
+                            <!-- <td class="ReviewRow" align="center">{!reviewPar.Rating__c}</td> -->
+                            <td class="ReviewRow">{!reviewPar.Comment__c}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel>
+            <!-- reviewListToSwe = [select Team_Member_Name__c ,Rating__c,Complete__c from Review__c  where Stage_Work_Element__c =: sweTemp.id ];    -->
+        </div>
+    </div>
+
+    <div id="TeamOverView" class="modalDialog">
+        <div>
+            <a href="#close" Xtitle="Close" class="close">X</a>
+            <div  style="padding-top:8px;">
+                <h2>Team Members</h2>
+            </div>
+            <p></p>
+            <apex:outputPanel id="tmm">
+                <table cellspacing="0" cellpadding="5">   
+                    <apex:repeat value="{!tmmList}" var="t">
+                        <tr>
+                            <td class="ReviewRow" align="center">{!t.User__r.Name}</td>
+                            <td class="ReviewRow" style="white-space:nowrap">{!t.Role_Name__c}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel>          
+            <p></p>
+        </div>
+    </div>
+    <div id="AddActionItem" class="modalDialog">
+        <div>
+            <a href="#close" Xtitle="Close" class="close">X</a>
+            <p></p>                      
+            <apex:outputPanel id="actionPanel">
+                <div id="ActionUpstatus" class="divTitle">{!myEditStates} Action Item</div>  
+                <apex:pageBlock id="actionTitle">                                            
+                    <apex:pageBlockSection title="Information" columns="1" collapsible="false">
+                        <apex:inputField value="{!NewActionItem.Name__c}" required="false" />
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Action Owner" style="white-space:nowrap;" />                       
+                                <apex:outputPanel style="display:inline;white-space:nowrap;" >
+                                            <apex:selectList multiselect="false" size="1"  value="{!NewActionItem.Action_Owner__c}" required="true">
+                                                <apex:selectOptions value="{!CTMName}"></apex:selectOptions>
+                                            </apex:selectList>
+                                    <!-- <a href="/apex/ODP_CustomizedTeamMemberOverView?OffRelID={!CurOffRelID}" style="display:inline;">Team Overview</a> -->
+                                </apex:outputPanel>                               
+                        </apex:pageBlockSectionItem>                                                                             
+                        <apex:inputField value="{!NewActionItem.Due_Date__c}" required="false"/>
+                        <apex:inputField value="{!NewActionItem.Stage_ID__c}"/>
+                        <apex:inputField value="{!NewActionItem.Status__c}" rendered="{!myEditStates == 'Update'}"/>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="PAC Requestor"/>
+                            <apex:outputPanel style="display:inline;white-space:nowrap;">
+                                <apex:selectList multiselect="false" size="1"  value="{!NewActionItem.PAC_Requestor__c}" required="true">
+                                    <apex:selectOptions value="{!PACRequestor}"></apex:selectOptions>
+                                </apex:selectList>
+                                <!--
+                                <a href="/apex/ODP_Page_Stage?retURL=%2{!NewActionItem.Stage_ID__c}&scontrolCaching=1&sfdc.override=1&id={!NewActionItem.Stage_ID__c}" style="display:inline;">Set PAC For Stage</a>
+                                -->
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>                                                                           
+                        <apex:inputTextarea value="{!NewActionItem.Description__c}" style="width:100%;height:60px;" label="Description"/>
+                        <apex:inputTextarea value="{!NewActionItem.Notes__c}" style="width:100%;height:60px;" label="Notes"/>                                                                                         
+                    </apex:pageBlockSection>                                                                    
+                    <apex:pageBlockSection >
+                        <apex:commandButton value="Save" action="{!SaveActionItem}" styleclass="myButtons" />         
+                    </apex:pageBlockSection>
+                 </apex:pageBlock>
+                                      
+            </apex:outputPanel>          
+            <p></p>
+        </div>
+    </div>
+    <div id="MitiActionItem" class="modalDialog">
+        <div>
+            <a href="#close" Xtitle="Close" class="close">X</a>
+            <p></p>                      
+            <apex:outputPanel id="MitiActionItemPanel">
+                <div id="MitiActionItemsList" class="divTitle">{!mitiAcitonRiskName}</div>  
+                <apex:pageBlock >                                            
+                    <apex:pageBlockSection title="Mitigation Actions" columns="1" collapsible="false">
+                        <apex:pageBlockTable value="{!mitigationList}" var="mitiAction">
+                            <apex:column headerValue="Name" value="{!mitiAction.Name__c}"/>
+                            <apex:column headerValue="Owner" value="{!mitiAction.Owner_Team_Member_ID__r.User__c}"/>                                                    
+                            <apex:column headerValue="Status" value="{!mitiAction.Status__c}"/> 
+                            <apex:column headerValue="Due Date" value="{!mitiAction.Due_Date__c}"/> 
+                        </apex:pageBlockTable>
+                                    
+                    </apex:pageBlockSection>
+                 </apex:pageBlock>                                        
+            </apex:outputPanel>          
+            <p></p>
+        </div>
+    </div>    
+</apex:form>
+<apex:form >
+<apex:actionFunction action="{!findStageWorkElementById}" name="findStageWorkElementById" reRender="reviewData">
+    <apex:param id="stageworkelmentIdPra" name="stageworkelmentIdPra" assignTo="{!stageworkelmentIdPra}" value="" /> 
+</apex:actionFunction>
+</apex:form>
+</div>                           
+<apex:form >
+    <apex:pageblock >
+           <apex:pageBlockSection columns="1" collapsible="true" showHeader="false">
+               <apex:outputPanel >
+                <div >
+                    <div class="pbSubheader">
+                        <h3>Additional Information</h3>
+                    </div>
+                    <div>
+                        <table style="width:100%;">
+                            <tr><td style="white-space:nowrap;font-weight:bold;"><apex:commandButton value="Save Meeting Notes" action="{!MeetingNotesSave}" styleClass="myButtons" rendered="{!IsFacilitator}"/></td><td width="100%" style="text-align:center;"><b>Meeting Notes</b></td></tr>
+                            <tr><td></td><td width="100%"><apex:inputTextarea style="width:98%;height: 65px;" value="{!relstg.Meeting_Notes__c}" readonly="{!!IsFacilitator}" richText="true"/></td></tr> 
+                        </table> 
+                    </div>
+                </div>
+                </apex:outputPanel>
+           </apex:pageBlockSection> 
+    </apex:pageblock>
+</apex:form>
+<div id="DivMyAlter" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Message</h3>
+      </div>
+      <div class="modal-body">
+        <div class="span5 ml0" id="myAlterMessage">
+            <apex:outputPanel id="out">
+                <apex:actionStatus startText="requesting..." id="myStatus">
+                    <apex:facet name="stop">{!PacDecisionError}</apex:facet>
+                </apex:actionStatus>
+            </apex:outputPanel>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true" disabled="disabled" id="MyAlterOKBtn">OK</button>
+      </div>
+</div>
+<div id="DivPACRedirect" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" style="width:90%;left:25%">
+      <div class="modal-header">
+        <h3>Quality Reviews</h3>
+      </div>
+      <div class="modal-body">
+            <table align="center" border="1" class="list" cellpadding="0" cellspacing="0" style="background-color: #fff;width:100%;">
+                <tr>
+                    <td nowrap="nowrap" class="bold" style="color: #007DBA !important;font-weight:700;width:55%;">Name</td>
+                    <td class="bold" style="color: #007DBA !important;font-weight:700;width:15%;" align="center">Rating</td>
+                    <td class="bold" style="color: #007DBA !important;font-weight:700;width:15%" align="center">Reviews</td>
+                    <td class="bold" style="color: #007DBA !important;font-weight:700;width:15%" align="center">Status</td>
+                </tr>
+                <apex:repeat value="{!sweAndRatingList}" var="swerating" id="sweReworkTable">
+                    <tr>
+                        <td nowrap="nowrap">
+                            {!swerating.swe.Name__c}&nbsp;
+                            <a class="dmDetail" href="/{!swerating.swe.id}" target="_blank">details</a>
+                        </td>
+                        <td>
+                            <div style="background-color:{!swerating.ratingColor}; text-align:center;" >
+                                {!swerating.RatingCalculate}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="text-align:center;" >
+                                {!swerating.reviewCalculate}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="text-align:center;" >
+                                {!swerating.swe.Status__c}
+                            </div>
+                        </td>    
+                     </tr>                                                      
+                </apex:repeat>
+            </table>
+      </div>
+      <div class="modal-footer">
+          <button class="btnAthena EbtnLess" id="PACDecisionContinueBtn">Continue</button>
+          <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true" id="PACDecisionCancelBtn">Cancel</button>
+      </div>
+</div>
+</apex:page>

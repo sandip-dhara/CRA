@@ -1,0 +1,35 @@
+<apex:page controller="Athenautil" sidebar="false">
+    <apex:form >
+    <apex:outputPanel layout="block">
+        <apex:sectionHeader title="Search Learnings"/>        
+    </apex:outputPanel>
+    <apex:pageBlock >
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="Add" action="{!processSelected}"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel for="searchText">Search Learning Name</apex:outputLabel>
+                <apex:panelGroup >
+                    <apex:inputText id="searchText" value="{!searchText}"/>               
+                    <apex:commandButton value="Search" action="{!search}" rerender="block"/>
+                </apex:panelGroup>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        <!-- In our table we are displaying the cContact records -->
+        <apex:pageBlockTable value="{!Learnings}" var="c" id="table">
+            <apex:column >
+                <!-- This is our selected Boolean property in our wrapper class -->
+                <apex:inputCheckbox value="{!c.selected}"/>
+            </apex:column>
+            <!-- This is how we access the contact values within our cContact container/wrapper -->
+            <apex:column value="{!c.learning.Name}" />
+            <apex:column value="{!c.learning.Name__c}" />
+            
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+    </apex:form>
+
+
+
+</apex:page>

@@ -1,0 +1,169 @@
+<apex:page standardController="Account" cache="true" contenttype="application/vnd.ms-excel" extensions="OpptySummAMID2Ctrller">
+<!--
+<style>
+        .tbBorderColor {
+            border:1px solid grey !important;
+        }
+        .headerRow th {
+            background-color: skyblue !important;
+            border-bottom: 1px solid grey !important;
+            border-left: 1px solid grey !important;
+            border-right: 1px solid grey !important;
+            border-top: 1px solid grey !important;
+        }
+    </style>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+</head> 
+<apex:pageBlock >
+<b>Opportunity Summary for Account (AMID 2)</b><br/>
+<apex:pageBlockTable value="{!amid2ResultsListHd}" border="1" var="res" title="Opportunity Summary for Account (AMID 2)">
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Identifier</font></center></apex:facet>
+                                  {!res.OPPORTUNITYIDENTIFIER}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Customer Profile Name</font></center></apex:facet>
+                                  {!res.CUSTOMERPROFILENAME}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Name</font></center></apex:facet>
+                                  {!res.OPPORTUNITYNAME}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Sales Stage</font></center></apex:facet>
+                                  {!res.CURRENTSALESSTAGECODE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Primary Global<br/>Business Unit Name</font></center></apex:facet>
+                                  {!res.PRIMARYGBU}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Primary Global<br/>Business Unit Value<br/>USD Amount</font></center></apex:facet>
+                                  {!res.PRIMARYGBUUSDVALUE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Total Opportunity<br/>Value USD</font></center></apex:facet>
+                                  {!res.TOTALOPPORTUNITYVALUEUSD}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Close <br/>Calendar Date<br/>DD MON YYYY Code</font></center></apex:facet>
+                                  {!res.CLOSEDATE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Close<br/>Fiscal Year Quarter<br/>Display Code</font></center></apex:facet>
+                                  {!res.CLOSEFISCALQUARTER}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Type</font></center></apex:facet>
+                                  {!res.OPPORTUNITYTYPECODE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Forecast<br/>Category</font></center></apex:facet>
+                                  {!res.FORECASTEDINDICATOR}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Owner Sales <br/>Team Member Email Address</font></center></apex:facet>
+                                  {!res.PRIMARYSALESREP}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Route</font></center></apex:facet>
+                                  {!res.FULFILLMENTCHANNEL}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Primary Competitor <br/>Customer Name</font></center></apex:facet>
+                                  {!res.PRIMARYCOMPETITOR}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Primary Channel Partner Name</font></center></apex:facet>
+                                  {!res.PRIMARYCHANNELPARTNER}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Status</font></center></apex:facet>
+                                  {!res.OPPORTUNITYSTATUSCODE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Reason Won or Lost</font></center></apex:facet>
+                                  {!res.REASONWONORLOSTCODE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Opportunity Description</font></center></apex:facet>
+                                  {!res.OPPORTUNITYDESCRIPTION}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:facet name="header"><center><font size='2'>Customer Account<br/>Management Identifier<br/>
+                                 Level2 Name</font></center></apex:facet>
+                                  {!res.AMIDL2NAME}
+    </apex:column>
+</apex:pageBlockTable>
+
+
+
+<apex:repeat value="{!amid2ResultsListRep}" var="list">
+
+<apex:pageBlockTable value="{!list}" border="1" var="res" title="Opportunity Summary AMID2 HPFS Report">
+    <apex:column styleClass="tbBorderColor">
+        {!res.OPPORTUNITYIDENTIFIER}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.CUSTOMERPROFILENAME}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.OPPORTUNITYNAME}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.CURRENTSALESSTAGECODE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.PRIMARYGBU}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!res.PRIMARYGBUUSDVALUE}"/></apex:outputText>
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        <apex:outputText value="{0, number, ###,###,###,##0}">$<apex:param value="{!res.TOTALOPPORTUNITYVALUEUSD}"/></apex:outputText>
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.CLOSEDATE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.CLOSEFISCALQUARTER}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.OPPORTUNITYTYPECODE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.FORECASTEDINDICATOR}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.PRIMARYSALESREP}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.FULFILLMENTCHANNEL}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.PRIMARYCOMPETITOR}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.PRIMARYCHANNELPARTNER}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.OPPORTUNITYSTATUSCODE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.REASONWONORLOSTCODE}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.OPPORTUNITYDESCRIPTION}
+    </apex:column>
+    <apex:column styleClass="tbBorderColor">
+        {!res.AMIDL2NAME}
+    </apex:column>
+</apex:pageBlockTable>
+</apex:repeat>
+
+<br/><b>Only 3000 records will be exported in the excel sheet. To view the entire set of records please use the yotta links</b>
+
+</apex:pageBlock>
+-->
+</apex:page>

@@ -1,0 +1,2367 @@
+<apex:page standardcontroller="Community__c" showheader="false" action="{!InserSession}" extensions="SLP_ViewCommunity" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+  <html lang="en">
+  <!--<![endif]-->
+  <!-- BEGIN HEAD -->
+  <head>
+  <meta charset="utf-8" />
+  <title>View Community</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta content="" name="description" />
+  <meta content="" name="hp" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/icomoon/iconMoon.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.OpenFile)}"/>
+  <script type="text/javascript">
+
+
+      function getCookie(cname) {
+
+          var name = cname + "=";
+          var ca = document.cookie.split(';');
+          for (var i = 0; i < ca.length; i++) {
+              var c = ca[i].trim();
+              if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+          }
+          return "";
+      }
+
+      var listBoardIds = new Array();
+
+      function SubmitSearchForm(event) {
+          if (event.keyCode == 13) {
+              var txtSearch = document.getElementById('{!$Component.UPForm.searchText}');
+              if (txtSearch.value.length == 0) {
+                  document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                  document.getElementById('err_msg').style.display = 'block';
+                  event.preventDefault();
+                  event.stopPropagation();
+                  return false;
+              }
+              else {
+                  document.getElementById('err_msg').style.display = 'none';
+                  var button = document.getElementById("{!$Component.UPForm.searchButton}");
+                  button.click();
+              }
+              return true;
+          }
+      }
+        </script>
+  <style>
+.feedcontainer {
+    max-height: 100% !important;
+}
+</style>
+  </head>
+  <!-- END HEAD -->
+  <!-- BEGIN BODY -->
+  <body>
+  
+  <!-- BEGIN HEADER -->
+  <header>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+        <!-- <a class="HpLogo"> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/insight_web_logo.png')}" style="width:220px" alt="HP Logo"/></a>    --> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo" styleclass="HpLogo"/>
+         <!-- </a>-->
+          <div class="nav mtop20">
+            <h1 class="h1fontS">insight</h1>
+            <h3>Information - on your terms</h3>
+          </div>
+          <ul class="nav pull-right top-menu">
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedInUserDetails.Name}</span> <span><img class="userImage" src="{!LoggedInUserDetails.FullPhotoUrl}" /></span> 
+              <!--<b class="caret"></b>--> 
+              </a>
+              <ul class="dropdown-menu extended logout">
+                <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedInUserDetails.id}">My Profile</a></li>
+                <li><a href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!LoggedInUserDetails.id}">Edit Profile</a></li>
+                <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+              </ul>
+            </li>
+            <!-- END USER LOGIN DROPDOWN -->
+          </ul>
+          <c:SLP_SearchCustomComponent InputString="View Community Page"/>
+          <div class="alert alert-error topSearchEr" style="display:none;" id="err_msg"> </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-fluid menunavBar"> <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/slp_activity" title="Home"></a> <a class="icon-book topNavIcon"  href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Library"></a> <a class="icon-book topNavIcon" style="display:none;"></a>
+          <apex:OutputPanel rendered="{!IsProducerOrModerator}"> <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus" ></span></a> <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/SLP_CreateCommunity" title="Create Community"><span class="icon-plus NaviconPlus" ></span></a> </apex:OutputPanel>
+          <apex:outputPanel rendered="{!IsUserRoleMappingVisible}"> <a class="topNavRoll topNavIconCom" href="https://{!getSfInstance}/apex/SLP_UserRoleAndExpertiseMapping" title="User Role & Expert Mapping"><span class="NaviconPlus"></span></a> </apex:outputPanel>
+          <!-- <a class="icon-question-sign topNavIcon pull-right" href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank" title="Help"></a> --> 
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- END HEADER --> 
+  <!-- BEGIN CONTAINER -->
+  <div id="container" class="row-fluid"> 
+    <!-- BEGIN PAGE -->
+    <div id="main-content"> 
+      <!-- BEGIN PAGE CONTAINER-->
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="BDheadingCom">
+            <div class="span8">
+              <div class="BDheadingCom_S">
+                <div id="divCommunityName" class="span8" style="width:822px !important" title='{!CommunityName}'>
+                  <h2>{!CommunityShortName}</h2>
+                </div>
+              </div>
+            </div>
+            <div class="span4">
+              <apex:form > <a class="btnAthena btn-primary pull-right m5 ml0" id="lrngBoardInvite" target="_top" onclick="CommunityInvite()">Invite</a> 
+                <apex:inputText id="hdncontentId" style="display:none" />
+                <apex:inputText id="hdnContentCtgyName" style="display:none" />
+                <!--<apex:inputText id="hdnContentFlag" style="display:none"  value="{!ContentFlag}"/>-->
+                <apex:inputText id="hdnTopicName" style="display:none" />
+                <!--<apex:inputText id="hdnTopicDesc" style="display:none" />-->
+
+                <!--<a class="btnAthena btn-primary pull-right m5" data-communityId ="{!CommunityId}" id="aInviteCommunity" target="_top" onClick="InviteCommunity(this)">Invite</a>-->
+                <apex:outputPanel rendered="{!!IsOwnerOrContributor}">
+                  <apex:outputPanel rendered="{!IsMember}"> 
+                    <!--<apex:commandlink styleClass="btnAthena btn-primary pull-right m5" value="Leave" action="{!LeaveCommunity}" id="Commandlink1" target="_top"></apex:commandlink>--> 
+                    <a class="btnAthena btn-primary pull-right m5 ml0" id="" onClick="functionCommunityLeave(this)" target="_top">Leave</a> </apex:outputPanel>
+                  <apex:outputPanel rendered="{!!IsMember}">
+                    <apex:outputPanel rendered="{!!IsRequested}">
+                       
+                           <apex:inputText id="jhdnShareOperatingSystem" style="display:none"  value="{!ShareOperatingSystem}"/>
+                           <apex:inputText id="jhdnShareBrowser" style="display:none"  value="{!ShareBrowser}"/>
+                           <apex:inputText id="jhdnShareDeviceType" style="display:none"  value="{!ShareDeviceType}"/>
+                           <!-- <input type="button" styleClass="btnAthena btn-primary pull-right m5" value="Join"  id="joinBrd"  onclick="SetBrowserInfo(this);" target="_top"/> -->
+                           <apex:commandlink styleClass="btnAthena btn-primary pull-right m5 ml0" value="Join" action="{!JoinCommunity}" id="btnJoin" target="_top" onClick="SetBrowserInfo(this);"></apex:commandlink>
+                       
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IsRequested}"> <span class="btnAthena btn-primary pull-right m5 ml0" target="_top" style="cursor:default">Requested</span> </apex:outputPanel>
+                  </apex:outputPanel>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!IF(or(IsOwnerOrContributor, IsModeratorAccess), true, false)}"> <a class="btnAthena btn-primary pull-right m5 ml0" href="https://{!getSfInstance}/apex/SLP_EditCommunity?id={!CommunityId}" id="A2" target="_top">Edit</a> </apex:outputPanel>
+                <span class="mr10 pull-right p05 mtop10">
+                <apex:outputPanel rendered="{!CommunityPublic}"> 
+                  <!--<apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Public.png')}" alt="Public" title="Public"/>--> 
+                  <span style="font-weight:bold;">Public</span> </apex:outputPanel>
+                <apex:outputPanel rendered="{!!CommunityPublic}"> 
+                  <!--<apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Private.png')}" alt="Private" title="Private"/>--> 
+                  <span style="font-weight:bold;">Private</span> </apex:outputPanel>
+                </span> </apex:form>
+            </div>
+            <div id="dvModalLeave" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+              <apex:form >
+                <div id="Div1" style="Display:none"> 
+                  <!--<apex:inputText id="txtContributorId" value="{!ContributorId}" />--> 
+                </div>
+                <div class="modal-header">
+                  <h3>Are you sure you want to leave community?</h3>
+                </div>
+                <div class="modal-body">
+                  <p> </p>
+                </div>
+                <div class="modal-footer">
+                  <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="No" />
+                  <apex:commandButton styleclass="btnAthena btn-primary"  action="{!LeaveCommunity}" value="Yes" id="CommandButton1"/>
+                </div>
+              </apex:form>
+            </div>
+            <div id="DivShareModelPopup" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+              <apex:form id="formInviteHeader">
+                <div class="modal-header">
+                  <h3>Invite</h3>
+                </div>
+                <div class="modal-body">
+                  <div class="span5 ml0">
+                    <label>User Email</label>
+                  </div>
+                  <div class="span5"> <span>
+                    <apex:inputText id="txtEmailinputUser" value="{!InviteUserEmail}" />
+                    </span> </div>
+                  <div class="alert alert-error span4 pull-right mr30" style="display:none" id="EmailValidate"> </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true"  onclick="funcClearInviteEamil()" >Cancel</button>
+                  <input type="button" class="btnAthena btn-primary btnAthenaPopP"  value="Send"  id="SendEmail"  onclick="ValidateEmail(this)"/>
+                  <apex:commandLink Styleclass="btnAthena btn-primary btnAthenaPopP"  style="display:none" action="{!InviteToCommunity}" value="Send" id="btnSendEmail"  ></apex:commandLink>
+                </div>
+              </apex:form>
+            </div>
+          </div>
+        </div>
+        <div class="row-fluid mtop10">
+          <div class="span12">
+            <div class="span9">
+              <div class="row-fluid">
+                <div class="hpit_athena_rightDiv bgGrayLight clearB">
+                  <div class="ComBoardImage"> 
+                    <!--<img src="img_athena/BoardImage1.png" />-->
+                    <apex:outputPanel rendered="{!!CommunityStaticImage}">
+                      <apex:image url="{!URLFOR($Action.Attachment.Download, AttachmentId)}" styleClass="ComBoardImage_img" />
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!CommunityStaticImage}"> <img src='{!CommunityDefaultImageName}' class="ComBoardImage_img" /> </apex:outputPanel>
+                  </div>
+                  <!--<div class="ComBoardP">-->
+                  <div class="ComDescription">
+                    <apex:outputPanel >
+                      <apex:OutputText value="{!CommunityShortDescription}" escape="false"></apex:OutputText>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IsReadMore}"> <a class="" data-toggle="modal" href="#LBreadmore"> Read more </a> </apex:outputPanel>
+                  </div>
+                </div>
+                
+                <!-- <div class="controls mtop10 mbot10 clearfix">
+                      <apex:form id="formPublic">
+                      <span class="mr10">
+                        <!--<apex:inputCheckbox value="{!CommunityPublic}" id="chkFeatured">
+                        </apex:inputCheckbox>
+                        Public --> 
+                <!--<apex:outputPanel rendered="{!CommunityPublic}">
+                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Public.png')}" alt="Public" title="Public"/>
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!!CommunityPublic}"> 
+                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Private.png')}" alt="Private" title="Private"/>
+                          </apex:outputPanel>
+                      </span>
+                      </apex:form>
+                  </div>-->
+                
+                <div id="LBreadmore" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                  <div class="modal-header">
+                    <h3>Community Description</h3>
+                  </div>
+                  <div class="modal-body readmoreHpop" style="white-space: pre-line;">
+                    <p>{!CommunityDescription}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                  </div>
+                </div>
+              </div>
+              <div class="row-fluid">
+                <div class="TABclass">
+                  <ul class="nav nav-tabs" id="myTab">
+                    <li class="active" id="liCollateral"><a data-toggle="tab" href="#Collateral">Content</a></li>
+                    <li id="liActivity"><a data-toggle="tab" href="#Activity">Chat</a></li>
+                    <!--   <li id="liMembers"><a data-toggle="tab" href="#Members">Members</a></li> -->
+                    <li id="liBoard"><a data-toggle="tab" href="#Board">Related Boards</a></li>
+                  </ul>
+                  <div class="tab-content" id="myTabContent">
+                    <div id="Activity" class="tab-pane fade">
+                      <div>
+                        <chatter:feed entityid="{!CommunityId}" />
+                      </div>
+                    </div>
+                    <div id="Board" class="tab-pane fade">
+                      <div id="Boards" class="tab-pane fade active in">
+                        <p class="searchResult">
+                        <h2></h2>
+                        </p>
+                        <div>
+                          <apex:repeat value="{!RelatedLearningBoards}" var="brdRslt"> 
+                            <script>
+                                var Id = '{!brdRslt.LBid}';
+                                var RatingNbr = '{!brdRslt.AvgRating}';
+                                listBoardIds.push({ "ID": Id, "RatingNbr": RatingNbr });
+                           </script>
+                            <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                              <div class="hpit_athena_ca-item-main">
+                                <div class="hpit_athena_ca-item-firstHalf">
+                                  <div class="hpit_athena_ca-item-topBar">
+                                    <div class="hpit_athena_ca-item-topBarDate">
+                                      <apex:OutputText value="{0,date,MMM dd}">
+                                        <apex:param value="{!brdRslt.LBCrtDate}"/>
+                                      </apex:outputtext>
+                                    </div>
+                                    <div class='ratingDispalyL' id='ratingBoard_{!brdRslt.LBid}' style="display:none;"></div>
+                                    <div class="hpit_athena_ca-item-topBarChat">
+                                      <div class="hpit_athena_ca-item-topBarChatImg">
+                                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-topBarChatValue"> {!brdRslt.LBNoOfComments} </div>
+                                    </div>
+                                  </div>
+                                  <div class="ca-icon"> <!-- <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/AthenaLearningBoardDtls?id={!brdRslt.LBid}&CommunityId={!CommunityId}" id= "anchorBoard_{!brdRslt.LBid}" data-boardLBid = 'ratingBoard_{!brdRslt.LBid}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                    <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick='communityLogMetrics(this)' data-FullName="{!brdRslt.LBName}" data-actionTyp='Board Image Click' data-section='Related Boards Tab' data-ObjNm='User Profile' data-CMID= "{!brdRslt.LBid}" data-CMName="{!brdRslt.LBName}" data-url="/apex/AthenaLearningBoardDtls?id={!brdRslt.LBid}&CommunityId={!CommunityId}" onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                    <apex:outputPanel rendered="{!!brdRslt.StaticImage}">
+                                      <apex:image url="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" />
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!brdRslt.StaticImage}"> <img src='{!brdRslt.DefaultImageName}'/> </apex:outputPanel>
+                                    </a> </div>
+                                </div>
+                                <a class="a_underNone">
+                                <div class="hpit_athena_ca-item-BottomBar"> <!-- <a class="hpit_athena_ca_itemA" href="/apex/AthenaLearningBoardDtls?id={!brdRslt.LBid}&CommunityId={!CommunityId}"> -->
+                                  <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick='communityLogMetrics(this)' data-FullName="{!brdRslt.LBName}" data-actionTyp='Board Name Click' data-section='Related Boards Tab' data-ObjNm='User Profile' data-CMID= "{!brdRslt.LBid}" data-CMName="{!brdRslt.LBName}" data-url="/apex/AthenaLearningBoardDtls?id={!brdRslt.LBid}&CommunityId={!CommunityId}" onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                  <h3>{!brdRslt.LBName}</h3>
+                                  </a> </div>
+                                </a>
+                                <div class="hpit_athena_ca-item-SecondHalf">
+                                  <div class="hpit_athena_ca-item-person cf">
+                                    <div class="hpit_athena_ca-item-personPhoto">
+                                      <apex:image value="{!brdRslt.OwnerPhotoUrl}" width="35" height="35" alt="no_username_small"/>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <div class="hpit_athena_ca-item-personName"> <!-- <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!brdRslt.LBOwnerID}"> {!brdRslt.LBOwnerName} </a> </div> -->
+                                    <a class="hpit_athena_ca_itemLink" onclick='communityLogMetrics(this)' data-FullName="{!brdRslt.LBName}" data-actionTyp='User Click' data-section='Related Boards Tab' data-ObjNm='User Profile' data-CMID= "{!brdRslt.LBid}" data-CMName="{!brdRslt.LBOwnerName}" data-url="/apex/AthenaUserProfile?id={!brdRslt.LBOwnerID}"> {!brdRslt.LBOwnerName} </a> </div>
+                                    </a>
+                                    <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'>{!IF((brdRslt.LBOwnerTitle==null),'',brdRslt.LBOwnerTitle)}</div>
+                                  </div>
+                                  <div class="hpit_athena_ca-item-PersonPost">
+                                    <p>{!brdRslt.LBDescription}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </apex:repeat>
+                        </div>
+                      </div>
+                    </div>
+                    <input type="hidden" id="hdnHost" value="{!getSfInstance}"/>
+                    <apex:form >
+                        <apex:inputhidden id="hdnRedirectUrl" value="{!RedirectUrl}" />
+                        <apex:commandButton action="{!RedirectToPage}" id="btnRedirectUrl" style="display:none;"/>
+                    </apex:form>
+
+                    <!--  <div id="Members" class="tab-pane fade ">
+
+                        <apex:repeat value="{!CommunityMembers}" var="peopleRslt">
+                            <div class="span4 PFspace">
+                                <div class="span2 PFimg">
+                                    <img src='{!peopleRslt.SmallPhotoUrl}' />
+                                </div>
+                                <div class="span9">
+                                    <li class="mtop10"><a href="/apex/AthenaUserProfile?id={!peopleRslt.id}" target="_top">{!peopleRslt.Name}</a></li>
+                                    <li>{!peopleRslt.Title}</li>
+                                </div>
+                            </div>
+                        </apex:repeat>
+                      </div> -->
+                    
+                    <div id="Collateral" class="tab-pane fade active in">
+                      <div id="divCategory"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="span3">
+              <div class="row-fluid">
+                <div class="hpit_athena_rightDiv span12"> About Community Owner
+                  <hr />
+                  <div class="PFspace">
+                    <div style="min-width:50px" class="span2 PFimg">
+                      <apex:image styleClass="mtop5" width="35" height="35" url="{!CommunityOwnerDetails.SmallPhotoUrl}"  />
+                    </div>
+                    <div class="span9">
+                      <li class="mtop10"><a target="_top" href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!CommunityOwnerDetails.Id}">{!CommunityOwnerDetails.Name}</a></li>
+                      <li>{!CommunityOwnerDetails.Title}</li>
+                    </div>
+                  </div>
+                  
+                    
+                  <apex:outputPanel rendered="{!!isloggedUser}">
+                    <apex:form >
+                    <apex:inputhidden id="hdnOperatingSystem" value="{!OperatingSystem}"/>
+                    <apex:inputhidden id="hdnBrowser" value="{!Browser}"/>
+                    <apex:inputhidden id="hdnDeviceType" value="{!DeviceType}"/>
+                      <apex:commandButton id="btnfollow" value="Follow" styleclass="btn btnAthena followBtn pull-right"  action="{!followOwner}" rendered="{!!IsFollowOwner}"/>
+                      <apex:commandButton id="btnUnfollow" value="Unfollow" styleclass="btn btnAthena followBtn pull-right"  action="{!unfollowOwner}" rendered="{!IsFollowOwner}"/>
+                    </apex:form>
+                  </apex:outputPanel>
+                </div>
+              </div>
+              <!-- <div class="row-fluid">
+                  <div class="hpit_athena_rightDiv span12">
+                       Contributors
+                    <hr />
+                    
+                    <apex:repeat value="{!Contributors}" var="cont" >
+                        <div class="removeFdiv">
+                            <li class="dropdown" id="Li2"> 
+                                <a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!cont.id}" title="{!cont.Name}" class="hpit_athena_ca-item-personPhoto" data-toggle="dropdown"> 
+                                    <apex:image width="35" height="35" url="{!cont.FullPhotoUrl}"  />
+                                 </a>
+                            </li>
+                        </div>
+                     </apex:repeat>
+                  </div>
+                </div> -->
+              
+              <div class="row-fluid">
+                <div class="hpit_athena_rightDiv span12">
+                  <div>
+                    <p><span ><a class="aActive" id="aContriMembers" onClick="CommunityContMember()"> Members<span id="ConMemCnt"></span></a></span></p>
+                  </div>
+                  <div class="row-fluid colorGrey"> <span class="span3 text-center"><a class="aActive" id="aAToZ" onClick="AToZSort(this)"> A-Z </a><span class="BorderR">&nbsp;</span></span> <span class="span3 text-center"><a class="colorGrey" id="aRoleName" onClick="RoleSort(this)"> Role </a><span class="BorderR">&nbsp;</span></span> <span class="span3 text-center"><a class="colorGrey" id="aRegion" onClick="RegionSort()"> Region </a><span class="BorderR">&nbsp;</span></span> <span class="span3 text-center"><a class="colorGrey" id="aBusinessGrp" onClick="BusinessGroupSort()"> Business Group </a></span> </div>
+                  <div style="overflow: auto; width: auto; max-height:442px;">
+                    <ul class="item-list scroller padding" data-always-visible="1">
+                      <div id="divContMember"> </div>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Start Rating-->
+        <div>
+          <apex:form id="form2">
+            <div style="display:none">
+              <apex:inputText id="txtUserTopicRating" value="{!UserTopicRating}" />
+            </div>
+            <div style="display:none">
+              <apex:inputText id="txtOwnerContributor" value="{!IsOwnerOrContributor}" />
+            </div>
+          </apex:form>
+        </div>
+        <div id="dvModalTopic" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+          <apex:form id="form3">
+            <div class="modal-header">
+              <h3  id="TopicRating">Rating</h3>
+              <div id="OwnerOrContributorTopicRating"> <a class="icon-remove-sign removeFbtn" data-dismiss="modal" aria-hidden="true"></a> </div>
+            </div>
+            <div class="modal-body" id="NotOwnerOrContributorTopicRating"  style="display:none">
+              <div style="display:none">
+                <apex:inputText id="txtModalTopicUserRating" value="{!UserTopicRating}" />
+                <apex:inputText id="txtCommunityTopicID" value="{!CommunityTopicID}" />
+                <apex:inputText id="txtTopicDivRating" />
+                <apex:inputText id="txtTopicScore" />
+                <apex:inputText id="txtCategoryName" value="{!hdnTopicCatName}" />
+              </div>
+              <div class="ratingpopL ml0">
+                <label>User Rating</label>
+              </div>
+              <div class="ratingpopR"> <span>
+                <div id="divModalTopicUserRating"></div>
+                </span> </div>
+              <div class="span5 ml0">
+                <label>User Comment <span class="colorGrey">(Optional)</span></label>
+              </div>
+              <div>
+                <apex:inputTextarea id="txtUserTopicRatingComment"  rows="3"  styleclass="span12" style="height: 110px; width: 97%;" value="{!userTopicRatingComment}" title="User Rating Comment"  onkeyup="RestrictTopicCharacters(this)"/>
+              </div>
+              <span id="topicCounter"></span>
+              <div>
+              
+                <apex:inputhidden id="hdnCommuRateOperatingSystem" value="{!OperatingSystem}"/> 
+                        <apex:inputhidden id="hdnCommuRateBrowser" value="{!Browser}"/>
+                        <apex:inputhidden id="hdnCommuRateDeviceType" value="{!DeviceType}"/>
+                <apex:commandLink Styleclass="btnAthena btn-primary btnAthenaPopP pull-right" action="{!SaveTopicUserRating}" value="Rate It!" > </apex:commandLink>
+                <button class="btnAthena pull-right" data-dismiss="modal" aria-hidden="true" onClick="functionTopicCancelRating()">Cancel</button>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div id="dvTopicFooter" style="height:300px; overflow:auto;"> </div>
+            </div>
+            <div id="persistDiv" style="display:none">
+              <apex:inputText id="txtPersist" value="{!PersistTab}" ></apex:inputText>
+            </div>
+          </apex:form>
+        </div>
+        <!--End Rating-->
+        
+        <div id="modalPreviewRequired" class="modal hide fade modalUploadView" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+          <div class="modal-header">
+            <h3 id="previewDocs" style="display:none">Preview: If you are experiencing problems with this preview <a id="previewLink" href="#" target="_blank">click here</a> to download </h3>
+            <h3 id="preivewHeading" style="display:none">Preview: If you are experiencing problems with this preview <a id="previewHeading" href="#" target="_blank">click here</a> to open in new tab</h3>
+          </div>
+          <div class="modal-body" >
+            <iframe id="frameFileUrl" class='EBaddTopicLF' frameborder='0' style="display:none;" scrolling='yes'></iframe>
+            <div id="cappPDF" style="display:none;"> </div>
+            <div id="cappHTML" style="display:none;">
+              <iframe id="cappHTMLFrame" style="display:none;" ></iframe>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btnAthena" data-dismiss="modal" aria-hidden="true" onClick="functionCancelPreview()">Cancel</button>
+          </div>
+        </div>
+        <div id="VideoPopUp" class="modal hide fade modalUploadView" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+          <div class="modal-header">
+            <h3 id="videoPopupHeading">Preview: If you are experiencing problems with this preview <a id="previewVideo" href="#" target="_blank">click here</a> to open in new tab</h3>
+          </div>
+          <div class="modal-body">
+            <iframe id="frameVideo" class='EBaddTopicLF' frameborder='0'   scrolling='no'></iframe>
+          </div>
+          <div class="modal-footer">
+            <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true">Cancel</button>
+          </div>
+        </div>
+        <div id="shareToUsers" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static" style="width:650px; left:46.5%; top:0">
+          <div class="modal-header">
+            <h3>Select Users From Your Network</h3>
+          </div>
+          <div class="modal-body">
+            <div  id="divShareFeedItem"> </div>
+          </div>
+          <apex:form id="SlpActv">
+            <div class="modal-footer">
+              <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+              <input type="button" class="btnAthena btn-primary btnAthenaPopP" data-FeedItmId="123"  value="Share"  id="CategorySave"  onclick="SaveUsers(this)" />
+              <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  style="display:none"   action="{!SaveNetworkUsers}"  value="Share" id="SActivityShare"/>
+            </div>
+            <apex:inputText id="hdnShareOperatingSystem" style="display:none"  value="{!ShareOperatingSystem}"/>
+            <apex:inputText id="hdnShareBrowser" style="display:none"  value="{!ShareBrowser}"/>
+            <apex:inputText id="hdnShareDeviceType" style="display:none"  value="{!ShareDeviceType}"/>
+            <apex:inputText id="hdnSelectedUsrsId" style="display:none"  value="{!SelectedUsrs}"/>
+            <apex:inputText id="hdnShareComment" style="display:none"  value="{!hdnSharecmt}"/>
+            <apex:inputText id="hdnShareTopicID" style="display:none"  value="{!ShareTopicId}"/>
+            <apex:inputText id="hdnShareContentFlag" style="display:none"  value="{!hdnShareContentFlag}"/>
+            <apex:inputText id="hdnShareTopicName" style="display:none"  value="{!ShareTopicName}"/>
+            <!--<apex:inputText id="hdnShareTopicDesc" style="display:none"  value="{!ShareTopicDesc}"/>-->
+          </apex:form>
+        </div>
+        <div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="width:150px;margin:0 auto;margin-top:10%;">
+          <div class="modal-dialog" style="width:150px;">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div style="height:20px;"> <img src="/img/loading32.gif" width="16" height="16"/><span> Loading...</span> </div>
+              </div>
+            </div>
+          </div>
+        </div>
+                 
+
+        <!-- END PAGE CONTENT--> 
+      </div>
+      <!-- END PAGE CONTAINER--> 
+    </div>
+    <!-- END PAGE --> 
+  </div>
+  <!-- END CONTAINER --> 
+   <form>
+    <a id="lnkDownloadFile" target="_blank"></a>
+  </form>
+  <!-- BEGIN FOOTER -->
+  <div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+  <!-- END FOOTER --> 
+  
+  <!-- BEGIN JAVASCRIPTS --> 
+  <!-- Load javascripts at bottom, this will reduce page load time
+             --> 
+  
+  <!--<apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>-->
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery.feedback_me.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+  <apex:includeScript value="{!$Resource.athena_canvas_controller}"/>
+  
+  <!-- ie8 fixes --> 
+  <!--[if lt IE 9]>
+       <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+       <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+       <![endif]--> 
+  
+  <!--common script for all pages-->
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+  
+  <!-- END JAVASCRIPTS --> 
+  <script>
+
+      $(document).ready(function () {
+          $('[id$=hdnDeviceType]').val("Desktop");
+          var operatingSystem=navigator.appVersion;
+          operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+         
+          var OperatingSys=GetOSName(operatingSystem);
+         
+          $('[id$=hdnOperatingSystem]').val(OperatingSys);
+          var browserVersion=FindBrowserVersion();
+          $('[id$=hdnBrowser]').val(browserVersion);
+          
+          $('[id$=hdnCommuRateOperatingSystem]').val(OperatingSys);
+          $('[id$=hdnCommuRateDeviceType]').val('Desktop');
+          $('[id$=hdnCommuRateBrowser]').val(browserVersion);
+          
+         
+          $('input.typeahead-devs').typeahead({
+              name: 'accounts',
+              local: ['']
+          });
+
+          for (var i = 0; i < listBoardIds.length; i++) {
+              $('#ratingBoard_' + listBoardIds[i].ID).raty({
+                  cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                  cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                  starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                  starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                  starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                  readOnly: true,
+                  score: listBoardIds[i].RatingNbr,
+              });
+          }
+
+          $('#publisherAttachRypplePost').hide();
+          $('#publisherDropdown').hide();
+          $('#publishersharebutton').val('Post');
+          $('#publishersharebutton').attr('title', 'Post');
+
+          //document.getElementById('{!$Component.formPublic.chkFeatured}').disabled = true;
+
+          // Script to show or hide the tab's based on the permission set.
+          var IsTabNeeded = false;
+
+          if ('{!IsOwnerOrContrOrMember}' == 'true') {
+              IsTabNeeded = true;
+          }
+          else if ('{!IsOwnerOrContrOrMember}' == 'false') {
+              IsTabNeeded = false;
+          }
+
+          if (IsTabNeeded == false) {
+              $('#liMembers').show();
+              $('#liMembers').addClass('active');
+              $('#Members').removeClass('tab-pane fade');
+              $('#Members').addClass('tab-pane fade active in');
+
+              $('#liActivity').removeClass('active');
+              $('#Activity').removeClass('tab-pane fade active in');
+              $('#Activity').addClass('tab-pane fade');
+
+              $('#liCollateral').removeClass('active');
+              $('#Collateral').removeClass('tab-pane fade active in');
+              $('#Collateral').addClass('tab-pane fade');
+
+              $('#liActivity, #liCollateral, #liBoard').hide();
+          }
+          else if (IsTabNeeded == true) {
+              $('#liActivity, #liCollateral, #liMembers').show();
+
+              var IsBoardCountEmpty = false;
+
+              if ('{!IsBoardExist}' == 'true') {
+                  IsBoardCountEmpty = true;
+              }
+              else if ('{!IsBoardExist}' == 'false') {
+                  IsBoardCountEmpty = false;
+              }
+
+              if (IsBoardCountEmpty == true) {
+                  $('#liBoard').show();
+              }
+              else {
+                  $('#liBoard').hide();
+              }
+          }
+
+
+
+          // Load community for collateral tab.
+          LoadCommunity();
+          var collateral = 'liCollateral';
+          var Activity = 'liActivity';
+          var Board = 'liBoard';
+          var Members = 'liMembers';
+          var PrivateMembers = 'liPrivateMembers';
+          var coll = 'Collateral';
+          var Act = 'Activity';
+          var Brd = 'Board';
+          var Mem = 'Members';
+          var PMember = 'PMemAccess';
+
+          var Persist = $('[id$=txtPersist]').val();
+          if (Persist == 'Collateral') {
+              getPersistTabs(collateral, Activity, Board, Members, PrivateMembers, coll, Act, Brd, Mem, PMember);
+              //$("html, body").animate({ scrollTop: $('#Collateral').offset().top }, 1000);
+
+              ScrollToRelativePosition('Collateral');
+          }
+
+          CommunityContMember();
+
+      });
+
+
+      function BusinessGroupSort(data) {
+
+          var listCommContMem = '{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          var BGList = BusinessGroupFilter(parseCommContM);
+          // Call Sort By Name
+          //RegionList.sort(SortByBusinessGroup);
+          DisplayContributorMembers(BGList);
+          $('#aAToZ,#aContriMembers,#aRegion,#aRoleName').removeClass('aActive').addClass('colorGrey');
+          $('#aBusinessGrp').removeClass('colorGrey').addClass('aActive');
+      }
+
+      function SortByBusinessGroup(x, y) {
+
+          return ((x.BusinessGroup.toUpperCase() == y.BusinessGroup.toUpperCase()) ? 0 : ((x.BusinessGroup.toUpperCase() > y.BusinessGroup.toUpperCase()) ? 1 : -1));
+      }
+      function BusinessGroupFilter(data) {
+          var RegionArr = [];
+          var RegionArrLength = 0;
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].BusinessGroup != null && data[iCount].BusinessGroup != '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          RegionArr.sort(SortByBusinessGroup);
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].BusinessGroup == null || data[iCount].BusinessGroup == '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          return RegionArr;
+      }
+
+
+      function SortByRole(x, y) {
+
+          return (((x.RoleName || "").toUpperCase() == (y.RoleName || "").toUpperCase()) ? 0 : (((x.RoleName || "").toUpperCase() > (y.RoleName || "").toUpperCase()) ? 1 : -1));
+      }
+      function RoleFilter(data) {
+          var RegionArr = [];
+          var RegionArrLength = 0;
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].RoleName != null && data[iCount].RoleName != '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          RegionArr.sort(SortByRole);
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].RoleName == null || data[iCount].RoleName == '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          return RegionArr;
+      }
+
+      function RoleSort(data) {
+
+          var listCommContMem = '{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          var RegionList = RoleFilter(parseCommContM);
+          // Call Sort By Name
+          //RegionList.sort(SortByRole);
+          DisplayContributorMembers(RegionList);
+          $('#aAToZ,#aContriMembers,#aBusinessGrp,#aRegion').removeClass('aActive').addClass('colorGrey');
+          $('#aRoleName').removeClass('colorGrey').addClass('aActive');
+
+      }
+
+
+
+      function SortByRegion(x, y) {
+
+          return ((x.Region.toUpperCase() == y.Region.toUpperCase()) ? 0 : ((x.Region.toUpperCase() > y.Region.toUpperCase()) ? 1 : -1));
+      }
+      function RegionFilter(data) {
+          var RegionArr = [];
+          var RegionArrLength = 0;
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].Region != null && data[iCount].Region != '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          RegionArr.sort(SortByRegion);
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].Region == null || data[iCount].Region == '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          return RegionArr;
+      }
+
+      function RegionSort(data) {
+          var listCommContMem = '{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          var Cnt = '(' + parseCommContM.length + ')';
+
+
+          //var listCommContMem = JSON.stringify('{!ContributorMember}').replace(/'/g, "\\'");
+          //var parseCommContM = listCommContMem;
+          //var parseCommContM = $.parseJSON(listCommContMem);
+          //var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          var RegionList = RegionFilter(parseCommContM);
+          // Call Sort By Name
+          //RegionList.sort(SortByRegion);
+          DisplayContributorMembers(RegionList);
+          $('#aAToZ,#aContriMembers,#aBusinessGrp,#aRoleName').removeClass('aActive').addClass('colorGrey');
+          $('#aRegion').removeClass('colorGrey').addClass('aActive');
+
+      }
+
+      function SortByName(x, y) {
+
+          return ((x.UserName.toUpperCase() == y.UserName.toUpperCase()) ? 0 : ((x.UserName.toUpperCase() > y.UserName.toUpperCase()) ? 1 : -1));
+      }
+
+
+      function AToZSort(data) {
+
+          var listCommContMem = '{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          // Call Sort By Name
+          parseCommContM.sort(SortByName);
+          DisplayContributorMembers(parseCommContM);
+          $('#aRegion,#aContriMembers,#aBusinessGrp,#aRoleName').removeClass('aActive').addClass('colorGrey');
+          $('#aAToZ').removeClass('colorGrey').addClass('aActive');
+
+
+      }
+
+      function DisplayContributorMembers(parseCommContM) {
+          $('#divContMember').empty();
+          
+          for (var iCount = 0; iCount < parseCommContM.length; iCount++) {
+              var DisplayContributorMem = (" <li>");
+              DisplayContributorMem += ("<span class='label hpit_athenaListPersonImg'>  <img src=" + parseCommContM[iCount].Userphoto + "  /> </span>");
+
+              DisplayContributorMem += ("<span class='itemLMdes itemLMCom'> ");
+
+              var UserDtls = "/apex/AthenaUserProfile?id=" + parseCommContM[iCount].UserId;
+              DisplayContributorMem += (" <span class='bold'><a href=" + UserDtls + "  target='_top'>" + parseCommContM[iCount].UserName + "</a></span>");
+
+              if (parseCommContM[iCount].RoleName != null) {
+
+                  DisplayContributorMem += ("<span> " + parseCommContM[iCount].RoleName + "</span> ");
+              }
+              if (parseCommContM[iCount].IsExperts) {
+                  DisplayContributorMem += (" <span class='DivEx'>Expert</span> ");
+              }
+              if (parseCommContM[iCount].IsContributor) {
+                  DisplayContributorMem += (" <span class='DivEx DivCon'>Contributor</span> ");
+              }
+              DisplayContributorMem += (" </span>");
+              DisplayContributorMem += ("<div class='itemLMCom colorGrey'> ");
+              if (parseCommContM[iCount].Region != '' && parseCommContM[iCount].Region != null) {
+                  DisplayContributorMem += ("<span>" + parseCommContM[iCount].Region + "</span> ");
+              }
+              else {
+                  DisplayContributorMem += ("<span> &nbsp; </span> ");
+              }
+              if ((parseCommContM[iCount].Region != '' && parseCommContM[iCount].Region != null) && (parseCommContM[iCount].BusinessGroup != "" && parseCommContM[iCount].BusinessGroup != null)) {
+                  DisplayContributorMem += (" | ");
+              }
+              if (parseCommContM[iCount].BusinessGroup != "" && parseCommContM[iCount].BusinessGroup != null) {
+                  DisplayContributorMem += ("<span>" + parseCommContM[iCount].BusinessGroup + "</span> ");
+              }
+              else {
+                  DisplayContributorMem += ("<span> &nbsp; </span> ");
+              }
+
+              DisplayContributorMem += ("</div>");
+              DisplayContributorMem += ("</li>");
+              $('#divContMember').append(DisplayContributorMem);
+
+          }
+      }
+
+
+      function generateRandom(min, max) {
+          var arr = [];
+          while (arr.length < max) {
+              var randNum = Math.floor(Math.random() * (max - min + 1)) + min,
+                  found = false;
+              for (var i = 0; i < arr.length; i++) {
+                  if (arr[i] == randNum) {
+                      found = true;
+                      break;
+                  }
+              }
+              if (!found) arr[arr.length] = randNum;
+          }
+          return arr;
+      }
+
+      function CommunityContMember() {
+          $('#aRegion,#aAToZ,#aBusinessGrp,#aRoleName').removeClass('aActive').addClass('colorGrey');
+          $('#aContriMembers').removeClass('colorGrey').addClass('aActive');
+
+          var listCommContMem = '{!ContributorMember}';
+
+          var parseCommContM = $.parseJSON(listCommContMem);
+          //$('#ConMemCnt').val(parseCommContM.length);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          DisplayContributorMembers(parseCommContM);
+          var $x = $("#divContMember li");
+
+          var orders = generateRandom(0, $x.length - 1);
+          // Array.prototype.sort.call($x, function () { 
+          //return Math.random() <0.5; 
+          //});
+
+          for (var ic = 0; ic < orders.length; ic++) {
+
+              $("#divContMember").append($x[orders[ic]]);
+          }
+          // orders.each(function (i, $x) {
+          //
+          //$("#divContMember").append($x[i]); });
+      }
+
+      function ScrollToRelativePosition(positionId) {
+          
+          $("html, body").animate({ scrollTop: $('#' + positionId).offset().top }, 1000);
+      }
+
+      function getPersistTabs(ActiveTab, InactiveTab1, InactiveTab2, InactiveTab3, InactiveTab4, ActiveIn, InActiveIn1, InActiveIn2, InActiveIn3, InActiveIn4) {
+          $('#' + ActiveTab).addClass('active');
+          $('#' + InactiveTab1).removeClass('active');
+          $('#' + InactiveTab2).removeClass('active');
+          $('#' + InactiveTab3).removeClass('active');
+          $('#' + InactiveTab4).removeClass('active');
+
+          $('#' + ActiveIn).removeClass('tab-pane fade');
+          $('#' + ActiveIn).addClass('tab-pane fade active in');
+
+          $('#' + InActiveIn1).removeClass('tab-pane fade active in');
+          $('#' + InActiveIn1).addClass('tab-pane fade');
+          $('#' + InActiveIn2).removeClass('tab-pane fade active in');
+          $('#' + InActiveIn2).addClass('tab-pane fade');
+          $('#' + InActiveIn3).removeClass('tab-pane fade active in');
+          $('#' + InActiveIn3).addClass('tab-pane fade');
+          $('#' + InActiveIn4).removeClass('tab-pane fade active in');
+          $('#' + InActiveIn4).addClass('tab-pane fade');
+
+      }
+
+
+
+      // Utility; parse out parameter by name from URL query string
+      $.urlParam = function (name) {
+
+          var resultData = '';
+          var results = new RegExp('[\\?&]' + name + '=([^&#]*)')
+              .exec(window.location.href);
+          if (results == null) {
+              resultData = '';
+          }
+          else {
+              resultData = results[1] || 0;
+          }
+          return resultData;
+      }
+
+      function CommunityInvite() {
+
+          $('[id$=txtEmailinputUser]').val('');
+
+          $('#DivShareModelPopup').modal('show');
+      }
+
+      function funcClearInviteEamil() {
+          document.getElementById('{!$Component.formInviteHeader.txtEmailinputUser}').value = "";
+      }
+
+      function getQueryString(sParam) {
+
+          var sPageURL = window.location.search.substring(1);
+          var sURLVariables = sPageURL.split('&');
+
+          for (var i = 0; i < sURLVariables.length; i++) {
+              var sParameterName = sURLVariables[i].split('=');
+              if (sParameterName[0].toUpperCase() == sParam.toUpperCase()) {
+                  return sParameterName[1];
+              }
+          }
+      }
+
+      function LoadCommunity() {
+          var CommunityId = $.urlParam('id');
+
+          Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.SLP_ViewCommunity.getCommunityWithCat}',
+              CommunityId,
+              DisplayTopicsWithCategory
+          );
+      }
+
+
+      function DisplayTopicsWithCategory(result, event) {
+          debugger
+          var lstTopicIds = new Array();
+          for (var icount = 0; icount < result.length; icount++) {
+
+              if (result[icount].lstlrngs.length > 0) {
+                    var spacehref = result[icount].CategoryName.replace(/([~!@#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, '-').replace(/^(-)+|(-)+$/g, '');
+                  var hrefurl = '#' + spacehref;
+                  var CategoryName = result[icount].CategoryName;
+                  var CategoryId = result[icount].CategoryId;
+
+                  var generateCategory = ("<div class='panel panel-default'> <div class='panel-heading'>" +
+                    "<h4 class='panel-title'> <a   onclick='ShowHideCategory(this)'  class='accordion-toggle a_underNone' data-toggle='collapse' data-parent='#accordion' href='" + hrefurl + "'> <span class='icon-plus-sign-alt'></span> " + result[icount].CategoryName + " </a>  </h4>" +
+                          "</div>");
+
+                  $('#divCategory').append(generateCategory);
+                  var generateL = ("<div id='" + spacehref + "' class='panel-collapse collapse'>" +
+                         "<div>  " +
+
+                         //"<a class='icon-sort-by-order btnAthena btn-primary pull-right' data_sortctgryNm='" + CategoryName + "'  data-sortctgry=" + CategoryId + " onclick='ShowChangeOrder(this)'></a> <a class='btnAthena btn-primary pull-right' data-toggle='modal'  data_ctgryNm='" + CategoryName + "'  data-ctgry=" + CategoryId + "  onclick='ShowTopicDtls(this)' ><span class='icon-plus'></span> Add Topics</a>" +
+                                                  "</div> " +
+                                                  "<div></div>");
+                  var GenerateUrl = '';
+                  var generateLText = '';
+                  var IntegrateContent = '';
+                  var generateVideo = '';
+                  var LinkRelatedPDF = '';
+                  //var clientFacing = '';
+                  var NextDviToComplete = '';
+                  IntegrateContent = generateL;
+                  for (var icnt = 0; icnt < result[icount].lstlrngs.length; icnt++) {
+
+                      var tID = 'ratingFeatured_' + result[icount].lstlrngs[icnt].Lid;
+                      var AverageRating = result[icount].lstlrngs[icnt].AvgRating;
+                      var RatersCount = result[icount].lstlrngs[icnt].RatersCount;
+                      var IsReadOnly = result[icount].lstlrngs[icnt].BtnshowHideEdit;
+                      var CtgryNm = result[icount].CategoryName;
+                      lstTopicIds.push({ "Id": tID, "Rating": AverageRating, "RateCount": RatersCount, "IsReadOnly": IsReadOnly });
+
+                      //var spacehrefLearning = $.trim(result[icount].lstlrngs[icnt].LName).replace(/([~!@#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, '-').replace(/^(-)+|(-)+$/g, '');
+                      var spacehrefLearning = $.trim(result[icount].lstlrngs[icnt].Lid);
+                      var hrefurlLearning = '#' + spacehrefLearning;
+                      if (result[icount].lstlrngs[icnt].LType == 'Text') {
+
+                          var maindivStart= "<div class='panel-body topicEdit clearB clearfix PositionR'>";
+
+                          var Header= ("<div class='leftDisplayCon span9 pull-left'>"+
+                              "<div class='span12'>"+
+                                "<div class='m10 pr20'>");
+                                var IsReadMore ='';
+                    if (result[icount].lstlrngs[icnt].StrDescLength > 0) {
+                              IsReadMore= ("<a class='' data-toggle='modal' href=" + hrefurlLearning + "> Read more </a>");
+                             
+                          }
+      
+                          var imageHTML = ("<a id = linkDoc_" + result[icount].lstlrngs[icnt].Lid + " class='' data-toggle='modal' href='" + hrefurlLearning + "' > <h4>" + result[icount].lstlrngs[icnt].LName + " </h4></a>" +
+                                               "<p style='white-space: pre-line;'> " + result[icount].lstlrngs[icnt].LShortDescription + " " + IsReadMore +" </p>");
+
+                          Header += imageHTML;
+                          Header+="</div>";
+      
+                          Header+= "</div>";
+                          Header+="</div>";
+  
+  
+                          var TopIcons= ("<div class='iconRightTop span3 pull-left'>"+
+                         "<div class='clearfix clearB'>");
+  
+                          if (result[icount].lstlrngs[icnt].ClientFacing) {
+                      
+                              var clientFacing = ("<div class='iconDisplayBG'> <span class='icon-clientfacing_new iconPublish' title='Client-Facing' ></span> </div>");
+                              TopIcons += clientFacing;
+                          }
+                          //if (result[icount].lstlrngs[icnt].IsActive) {
+                      
+                          //  var HPPublish =("<div class='iconDisplayBG mr5'> <span class='icon-globe iconPublish' title='Publish'></span> </div>");
+                          //TopIcons += HPPublish;
+                          //}
+                          if (result[icount].lstlrngs[icnt].PracticeApprv) {
+                              var HPCrt = ( "<div class='iconDisplayBG'> <span class='icon-certified iconPublish ml_1' title='Practice Approved' ></span> </div>");
+                              TopIcons += HPCrt;
+                          }
+                              TopIcons+= "</div>";
+                              TopIcons+="</div>";
+    
+                          var ReadMoreRating= "<div class='leftDisplayCon span9 pull-left ml0 p10'>";
+                          
+                          var AfterTags = ("<div  data-categoryName='" + CtgryNm + "' data-score=" + AverageRating + " id='ratingFeatured_" + result[icount].lstlrngs[icnt].Lid + "'></div>");
+
+                          if (IsReadOnly) {
+                              var ReadonlyHistory = "<div class='icon-external-link p05 a_pointer' title='Rating History' data-topicId=" + result[icount].lstlrngs[icnt].Lid + " onclick='ShowHideRatingForOwner(this)'></div>";
+                              AfterTags += ReadonlyHistory;
+                          }
+                        var afterRating = ("<div class='ratingDes clearB'>" + RatersCount + " People Rated and Avg Rating " + AverageRating + "</div>" +
+                              "<div id='" + spacehrefLearning + "' class='modal hide fade PositionF' tabindex='-1' role='dialog' aria-labelledby='myModalLabel1' aria-hidden='true' data-backdrop='static'>" +
+                                                "<div class='modal-header'>" +
+                                                 " <h3>Content Description</h3>" +
+                                                "</div>" +
+                                                "<div class='modal-body readmoreHpop'  style='white-space: pre-line;'>" +
+                                                 " <p> " +
+                                                        "" + result[icount].lstlrngs[icnt].LDescription + "" +
+                                                  "</p>" +
+                                                "</div>" +
+                                                "<div class='modal-footer'>" +
+                                              "<button class='btnAthena' data-dismiss='modal' aria-hidden='true'>Cancel</button>" +
+                                              "</div>" +
+                                              "</div>" +
+                                              "<div><img class='Br20' src=" + result[icount].lstlrngs[icnt].OwnerPhoto + "  height='35' width='35'/> <a id= aTopicName_" + result[icount].lstlrngs[icnt].Lid + " class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[icount].lstlrngs[icnt].TopicOwnerId + "'> " + result[icount].lstlrngs[icnt].LOwnerName + " </a></div></div>");
+                          ReadMoreRating+=AfterTags;
+                          ReadMoreRating+=afterRating;
+      
+
+                          var belowIcons=  ("<div class='iconRight span3 pull-left p5'>"+
+                                  "<div class='clearB clearfix mtop20'>"); 
+        
+      
+                          var sharebtn="<button title = 'Share' id = TopicID_" + result[icount].lstlrngs[icnt].Lid + " data-UniqueTopicId =" + result[icount].lstlrngs[icnt].Lid + "  class='icon-share conBottomBtn conBottomBtn_B pull-right' data-TopicDesc = " + result[icount].lstlrngs[icnt].LDescription + " data-TopicName = " + escape(result[icount].lstlrngs[icnt].LName) + " data-categoryName='" + escape(CtgryNm) + "' data-TopicId='" + result[icount].lstlrngs[icnt].Lid + "' onclick='ShareTopicLearningBoard(this)'></button>";
+                          belowIcons+= sharebtn;
+                          belowIconsEnd= "</div>";
+                          belowIcons+= belowIconsEnd;
+                          belowIconsEnd2="</div>";      
+                          belowIcons+=belowIconsEnd2;
+                          var MainDivEnd= "</div>";
+
+                          IntegrateContentfinal =maindivStart+Header+TopIcons+ReadMoreRating+belowIcons+MainDivEnd;
+                          IntegrateContent+=IntegrateContentfinal;
+                        }
+
+                      else if ((result[icount].lstlrngs[icnt].LType == 'Link or Document') || (result[icount].lstlrngs[icnt].LType == 'Upload Document')) {
+
+                          var IsURLExist = result[icount].lstlrngs[icnt].LURL;
+                          var LinkTopicID = result[icount].lstlrngs[icnt].Lid;
+                          var maindivStart= "<div class='panel-body topicEdit clearB clearfix PositionR'>";
+
+                          var Header= ("<div class='leftDisplayCon span9 pull-left'>"+
+                              "<div class='span12'>"+
+                                "<div class='m10 pr20'>");
+      
+                        var IsReadMore='';
+                                   if (result[icount].lstlrngs[icnt].StrDescLength > 0) {
+                               IsReadMore= ("<a class='' data-toggle='modal' href=" + hrefurlLearning + "> Read more </a>");
+                              
+                            }
+                          if (IsURLExist != undefined)
+                          {
+                          
+                                   LinkNameURL = result[icount].lstlrngs[icnt].LURL;
+                                  
+                      if(result[icount].lstlrngs[icnt].LURL!=null)
+                          {    
+                              if (result[icount].lstlrngs[icnt].LURL.indexOf("prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads") != -1)
+                              {
+                                  LinkNameURL = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=RAW&IgnoreCache=true&reference=" + result[icount].lstlrngs[icnt].LURL;
+                              }
+                              else if (result[icount].lstlrngs[icnt].LURL.indexOf("intranet.hp.com/enterpriseservices/ww") != -1)
+                              {
+                                  LinkNameURL = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=RAW&IgnoreCache=true&reference=" + result[icount].lstlrngs[icnt].LURL;
+                              }
+                              else
+                              {
+                                  //LinkNameURL = result[icount].lstlrngs[icnt].LURL;
+                              }
+                        }
+                              if (result[icount].lstlrngs[icnt].PreviewRequired == 'YES')
+                              {
+                                  var imageHTML = ("<a id = linkDoc_" + LinkTopicID + " data-ID = " + LinkTopicID + " data-URL = " + escape(result[icount].lstlrngs[icnt].LURL) + " Data-DocType = " + result[icount].lstlrngs[icnt].DocType + " onclick='OpenAssociatedModalPopUp(this)'><h4>" + result[icount].lstlrngs[icnt].LName + " </h4></a>" +
+                                                   "<p style='white-space: pre-line;'> " + result[icount].lstlrngs[icnt].LShortDescription + " " + IsReadMore +" </p>");
+                                                   
+                                                   
+
+                                  Header += imageHTML;
+                                  //Header +=IsReadMore;
+                              }
+                              else
+                              {
+                              
+                                  var imageHTML = ("<a Data-Url = " + LinkNameURL + " id = linkDoc_" + LinkTopicID + "  data-ContentNm='"+result[icount].lstlrngs[icnt].LName+"'  data-ID = " + LinkTopicID + " target='_blank'  Data-DocType = " + result[icount].lstlrngs[icnt].DocType + " onclick = 'NavigateUrl(this)'><h4>" + result[icount].lstlrngs[icnt].LName + " </h4></a>" +
+                                               "<p style='white-space: pre-line;'> " + result[icount].lstlrngs[icnt].LShortDescription + " " + IsReadMore +" </p>");
+                                Header += imageHTML;
+                                
+                              }
+
+                          }
+                          else
+                          {
+                              var imageHTML = ("<a href='#' id = linkDoc_" + result[icount].lstlrngs[icnt].Lid + "><h4>" + result[icount].lstlrngs[icnt].LName + " </h4></a>" +
+                                               "<p style='white-space: pre-line;'> " + result[icount].lstlrngs[icnt].LShortDescription + " " + IsReadMore +" </p>");
+
+                              Header += imageHTML;
+                            
+                          }
+                          Header+="</div>";
+                          Header+= "</div>";
+                          Header+="</div>";
+                    var TopIcons= ("<div class='iconRightTop span3 pull-left'>"+
+                         "<div class='clearfix clearB'>");
+  
+                          if (result[icount].lstlrngs[icnt].ClientFacing) {
+                      
+                              var clientFacing = ("<div class='iconDisplayBG'> <span class='icon-clientfacing_new iconPublish' title='Client-Facing' ></span> </div>");
+                              TopIcons += clientFacing;
+                          }
+                          //if (result[icount].lstlrngs[icnt].IsActive) {
+                      
+                          //  var HPPublish =("<div class='iconDisplayBG mr5'> <span class='icon-globe iconPublish' title='Publish'></span> </div>");
+                          //TopIcons += HPPublish;
+                          //}
+                          if (result[icount].lstlrngs[icnt].PracticeApprv) {
+                              var HPCrt = ( "<div class='iconDisplayBG'> <span class='icon-certified iconPublish ml_1' title='Practice-Approved' ></span> </div>");
+                              TopIcons += HPCrt;
+                          }
+                        TopIcons+= "</div>";
+                        TopIcons+="</div>";
+    
+                          var ReadMoreRating= "<div class='leftDisplayCon span9 pull-left ml0 p10'>";
+                          
+                          var AfterTags = ("<div  data-categoryName='" + CtgryNm + "' data-score=" + AverageRating + " id='ratingFeatured_" + result[icount].lstlrngs[icnt].Lid + "'></div>");
+
+                          if (IsReadOnly) {
+                              var ReadonlyHistory = "<div class='icon-external-link p05 a_pointer' title='Rating History' data-topicId=" + result[icount].lstlrngs[icnt].Lid + " onclick='ShowHideRatingForOwner(this)'></div>";
+                              AfterTags += ReadonlyHistory;
+                          }
+                        var afterRating = ("<div class='ratingDes clearB'>" + RatersCount + " People Rated and Avg Rating " + AverageRating + "</div>" +
+                              "<div id='" + spacehrefLearning + "' class='modal hide fade PositionF' tabindex='-1' role='dialog' aria-labelledby='myModalLabel1' aria-hidden='true' data-backdrop='static'>" +
+                                                "<div class='modal-header'>" +
+                                                 " <h3>Content Description</h3>" +
+                                                "</div>" +
+                                                "<div class='modal-body readmoreHpop'  style='white-space: pre-line;'>" +
+                                                 " <p> " +
+                                                        "" + result[icount].lstlrngs[icnt].LDescription + "" +
+                                                  "</p>" +
+                                                "</div>" +
+                                                "<div class='modal-footer'>" +
+                                              "<button class='btnAthena' data-dismiss='modal' aria-hidden='true'>Cancel</button>" +
+                                              "</div>" +
+                                              "</div>" +
+                                              "<div><img class='Br20' src=" + result[icount].lstlrngs[icnt].OwnerPhoto + "  height='35' width='35'/> <a id= aTopicName_" + result[icount].lstlrngs[icnt].Lid + " class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[icount].lstlrngs[icnt].TopicOwnerId + "'> " + result[icount].lstlrngs[icnt].LOwnerName + " </a></div></div>");
+                          ReadMoreRating+=AfterTags;
+                          ReadMoreRating+= afterRating;
+
+                          var belowIcons=  ("<div class='iconRight span3 pull-left p5'>"+
+                                  "<div class='clearB clearfix mtop20'>"); 
+                          var sharebtn="<button title = 'Share' id = TopicID_" + result[icount].lstlrngs[icnt].Lid + " data-UniqueTopicId =" + result[icount].lstlrngs[icnt].Lid + "  class='icon-share conBottomBtn conBottomBtn_B pull-right' data-TopicDesc = " + result[icount].lstlrngs[icnt].LDescription + " data-TopicName = " + escape(result[icount].lstlrngs[icnt].LName) + " data-categoryName='" + escape(CtgryNm) + "' data-TopicId='" + result[icount].lstlrngs[icnt].Lid + "' onclick='ShareTopicLearningBoard(this)'></button>";
+                          belowIcons+= sharebtn;
+                          
+                          if(result[icount].lstlrngs[icnt].LURL!=null)
+                          {    
+                            if (result[icount].lstlrngs[icnt].LURL.indexOf("prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads") != -1) {
+
+                                 result[icount].lstlrngs[icnt].LURL = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=RAW&IgnoreCache=true&reference=" + result[icount].lstlrngs[icnt].LURL;
+                              }
+                              else if (result[icount].lstlrngs[icnt].LURL.indexOf("intranet.hp.com/enterpriseservices/ww") != -1)
+                              {
+                                  result[icount].lstlrngs[icnt].LURL = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=RAW&IgnoreCache=true&reference=" + result[icount].lstlrngs[icnt].LURL;
+                              }
+                              }
+                          
+                          
+                          if (result[icount].lstlrngs[icnt].DocType == 'PDF') {
+                              var ShareTopicID = result[icount].lstlrngs[icnt].Lid;
+                        
+                              if (result[icount].lstlrngs[icnt].PreviewRequired == 'YES') {
+                             
+                                  var DisplayHTML = ("<span class='detailDoc'><a id= anchor_" + ShareTopicID + " data-ID = " + ShareTopicID + " data-URL= " + escape(result[icount].lstlrngs[icnt].LURL) + " onclick='ShowPDF(" + "\"" + result[icount].lstlrngs[icnt].LURL + "\"" + ")'> <span class='icon-dload-pdf conBottomBtn pull-right' title='Download File'  /> </a></span> </span>");
+                                  belowIcons += DisplayHTML;
+                              }
+                              else {
+                             
+                                  var DisplayHTML = ("<span class='detailDoc'><a href='javascript:void(0);' id= anchor_" + ShareTopicID + " target='_blank' data-ID = " + ShareTopicID + " data-URL= " + escape(result[icount].lstlrngs[icnt].LURL) + " onclick='functionTargetUrl(this)'> <span class='icon-dload-pdf conBottomBtn pull-right'  title='Download File' /> </a></span></span> ");
+                                  belowIcons += DisplayHTML;
+                              }
+
+                          }
+
+                          else if (result[icount].lstlrngs[icnt].DocType == 'PPT') {
+                              var ShareTopicID = result[icount].lstlrngs[icnt].Lid;
+                              var  DisplayIcon = ("<span class='detailDoc'> " +
+                               "<a href='javascript:void(0);' id= anchor_" + ShareTopicID + " target='_blank' data-ID = " + ShareTopicID + " data-URL= " + escape(result[icount].lstlrngs[icnt].LURL) + " onclick='functionTargetUrl(this)'> <span class='icon-dload-powerpoint conBottomBtn pull-right' title='Download File' /> </a> " +
+                               "</span> ");
+                              belowIcons+=DisplayIcon;
+                              
+
+                          }
+
+                          else if (result[icount].lstlrngs[icnt].DocType == 'DOC') {
+                          
+                           var ShareTopicID = result[icount].lstlrngs[icnt].Lid;
+
+                              var DisplayIcondoc = ("<span class='detailDoc'> " +
+                              
+                              "<a href='javascript:void(0);' id= anchor_" + ShareTopicID + " target='_blank' data-ID = " + ShareTopicID + " data-URL= " + escape(result[icount].lstlrngs[icnt].LURL) + " onclick='functionTargetUrl(this)'> <span class='icon-dload-word conBottomBtn pull-right' title='Download File' /> </a> " +
+                              "</span> ");
+                              belowIcons+=DisplayIcondoc;
+                              
+                          }
+                          else if (result[icount].lstlrngs[icnt].DocType == 'XLS') {
+                          var ShareTopicID = result[icount].lstlrngs[icnt].Lid;
+
+                              var DisplayIconXls = ("<span class='detailDoc'> " +
+                                  "<a href='javascript:void(0);' id= anchor_" + ShareTopicID + " target='_blank' data-ID = " + ShareTopicID + " data-URL= " + escape(result[icount].lstlrngs[icnt].LURL) + " onclick='functionTargetUrl(this)'> <span class='icon-dload-excel conBottomBtn pull-right' title='Download File' /> </a> " +
+                                  "</span> ");
+                                  belowIcons+=DisplayIconXls;
+                                  
+                          }
+                          else if (result[icount].lstlrngs[icnt].DocType == 'TXT') {
+                          
+                              var ShareTopicID = result[icount].lstlrngs[icnt].Lid;
+
+                              var  DisplayIconTxt = ("<span class='detailDoc'> ");
+                              belowIcons +=DisplayIconTxt;
+                              if (result[icount].lstlrngs[icnt].PreviewRequired == 'YES') {
+                                  
+                                  var DisplayHTML = ("<a id= anchor_" + ShareTopicID + " data-ID = " + ShareTopicID + " data-URL= " + escape(result[icount].lstlrngs[icnt].LURL) + " onclick='ShowTXT(" + "\"" + result[icount].lstlrngs[icnt].LURL + "\"" + ")'> <span class='icon-dload-text conBottomBtn pull-right' title='Download File' /> </a> </span>");
+                                  belowIcons += DisplayHTML;
+                              }
+                              else {
+                                  var DisplayHTML = ("<a  href='javascript:void(0);' id= anchor_" + ShareTopicID + " target='_blank' data-ID = " + ShareTopicID + " data-URL= " + escape(result[icount].lstlrngs[icnt].LURL) + " onclick='functionTargetUrl(this)'> <span class='icon-dload-text conBottomBtn pull-right' title='Download File' /> </a> </span>");
+                                  belowIcons += DisplayHTML;
+                              }
+                        
+                          }
+
+                          else if (result[icount].lstlrngs[icnt].DocType == 'OTHER') {
+                             var ShareTopicID = result[icount].lstlrngs[icnt].Lid;
+                             var DisplayIconOther = ("<span class='detailDoc'> ");
+                              belowIcons+=DisplayIconOther;
+                              if (result[icount].lstlrngs[icnt].PreviewRequired == 'YES') {
+                                var DisplayIco = ("<a id= anchor_" + ShareTopicID + "  data-ID = " + ShareTopicID + " data-URL= " + (result[icount].lstlrngs[icnt].LURL) + " onclick='ShowHTML(" + "\"" + result[icount].lstlrngs[icnt].LURL + "\"" + ")'> <span class='icon-link conBottomBtn conBottomBtn_B pull-right' title='Visit Page' /> </a></span> ");
+                                  belowIcons+=DisplayIco;
+                              }
+                              else {
+                              
+                                  var DisplayIcoc = ("<a id= anchor_" + ShareTopicID + " target='_blank' data-ID = " + ShareTopicID + " data-URL= " + (result[icount].lstlrngs[icnt].LURL) + " onclick='functionTargetUrl(this)'> <span class='icon-link conBottomBtn conBottomBtn_B pull-right' title='Visit Page' /> </a></span> ");
+                              
+                                  belowIcons+=DisplayIcoc;
+                              }
+
+
+                          }
+                      
+                          belowIconsEnd= "</div>";
+                          belowIcons+= belowIconsEnd;
+                          belowIconsEnd2="</div>";      
+                          belowIcons+=belowIconsEnd2;
+                          var MainDivEnd= "</div>";
+
+                          IntegrateContentfinal =maindivStart+Header+TopIcons+ReadMoreRating+belowIcons+MainDivEnd;
+                          IntegrateContent+=IntegrateContentfinal;
+
+  
+                      }
+                      else if (result[icount].lstlrngs[icnt].LType == 'Video') {
+                          var someText = "<a>" + result[icount].lstlrngs[icnt].LName + "</a>";
+                          var maindivStart= "<div class='panel-body topicEdit clearB clearfix PositionR'>";
+
+                          var Header= ("<div class='leftDisplayCon span9 pull-left'>"+
+                              "<div class='span12'>"+
+                                "<div class='m10 pr20'>");
+      
+                            var IsReadMore ='';
+                             if (result[icount].lstlrngs[icnt].StrDescLength > 0) {
+                               IsReadMore = ("<a class='' data-toggle='modal' href=" + hrefurlLearning + "> Read more </a>");
+                             
+                          }
+      
+                          if (IsURLExist != undefined)
+                          {
+                             LinkNameURL = result[icount].lstlrngs[icnt].LURL;
+                             
+                             
+                          //  if(result[icount].lstlrngs[icnt].LURL!=null)
+                         // {    
+                              //if (result[icount].lstlrngs[icnt].LURL.indexOf("prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads") != -1)
+                              //{
+                               //   LinkNameURL = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=RAW&IgnoreCache=true&reference=" + result[icount].lstlrngs[icnt].LURL;
+                              //}
+                              //else
+                              //{
+                                //  LinkNameURL = result[icount].lstlrngs[icnt].LURL;
+                              //}
+                             // }
+
+                              if (result[icount].lstlrngs[icnt].PreviewRequired == 'YES')
+                              {
+                                  var imageHTML = ("<a id = linkDoc_" + LinkTopicID + " data-ID = " + LinkTopicID + " data-URL = " + escape(result[icount].lstlrngs[icnt].LURL) + " Data-DocType = " + result[icount].lstlrngs[icnt].DocType + " onclick='OpenAssociatedModalPopUp(this)'><h4>" + result[icount].lstlrngs[icnt].LName + " </h4></a>" +
+                                                   "<p style='white-space: pre-line;'> " + result[icount].lstlrngs[icnt].LShortDescription + " " + IsReadMore +" </p>");
+
+                                  Header += imageHTML;
+                              }
+                              else
+                              {
+                              
+                                  var imageHTML = ("<a  Data-Url = " + escape(LinkNameURL) + " id = linkDoc_" + LinkTopicID + "  data-ContentNm='"+result[icount].lstlrngs[icnt].LName+"'  data-ID = " + LinkTopicID + " target='_blank'  Data-DocType = " + result[icount].lstlrngs[icnt].DocType + " onclick = 'NavigateUrl(this)'><h4>" + result[icount].lstlrngs[icnt].LName + " </h4></a>" +
+                                               "<p style='white-space: pre-line;'> " + result[icount].lstlrngs[icnt].LShortDescription + " " + IsReadMore +" </p>");
+
+                                  Header += imageHTML;
+                              }
+
+                          }
+                          else
+                          {
+                              var imageHTML = ("<a href='#' id = linkDoc_" + result[icount].lstlrngs[icnt].Lid + "><h4>" + result[icount].lstlrngs[icnt].LName + " </h4></a>" +
+                                               "<p style='white-space: pre-line;'> " + result[icount].lstlrngs[icnt].LShortDescription + " " + IsReadMore +" </p>");
+
+                              Header += imageHTML;
+                          }
+
+        
+        
+                          Header+="</div>";
+                        Header+= "</div>";
+                          Header+="</div>";
+                            var TopIcons= ("<div class='iconRightTop span3 pull-left'>"+
+                         "<div class='clearfix clearB'>");
+  
+                          if (result[icount].lstlrngs[icnt].ClientFacing) {
+                      
+                              var clientFacing = ("<div class='iconDisplayBG'> <span class='icon-clientfacing_new iconPublish' title='Client-Facing' ></span> </div>");
+                              TopIcons += clientFacing;
+                          }
+                          
+                          if (result[icount].lstlrngs[icnt].PracticeApprv) {
+                              var HPCrt = ( "<div class='iconDisplayBG'> <span class='icon-certified iconPublish ml_1' title='Practice Approved' ></span> </div>");
+                              TopIcons += HPCrt;
+                          }
+                        TopIcons+= "</div>";
+                        TopIcons+="</div>";
+    
+                          var ReadMoreRating= "<div class='leftDisplayCon span9 pull-left ml0 p10'>";
+                          
+                          var AfterTags = ("<div  data-categoryName='" + CtgryNm + "' data-score=" + AverageRating + " id='ratingFeatured_" + result[icount].lstlrngs[icnt].Lid + "'></div>");
+
+                          if (IsReadOnly) {
+                              var ReadonlyHistory = "<div class='icon-external-link p05 a_pointer' title='Rating History' data-topicId=" + result[icount].lstlrngs[icnt].Lid + " onclick='ShowHideRatingForOwner(this)'></div>";
+                              AfterTags += ReadonlyHistory;
+                          }
+                        var afterRating = ("<div class='ratingDes clearB'>" + RatersCount + " People Rated and Avg Rating " + AverageRating + "</div>" +
+                              "<div id='" + spacehrefLearning + "' class='modal hide fade PositionF' tabindex='-1' role='dialog' aria-labelledby='myModalLabel1' aria-hidden='true' data-backdrop='static'>" +
+                                                "<div class='modal-header'>" +
+                                                 " <h3>Content Description</h3>" +
+                                                "</div>" +
+                                                "<div class='modal-body readmoreHpop'  style='white-space: pre-line;'>" +
+                                                 " <p> " +
+                                                        "" + result[icount].lstlrngs[icnt].LDescription + "" +
+                                                  "</p>" +
+                                                "</div>" +
+                                                "<div class='modal-footer'>" +
+                                              "<button class='btnAthena' data-dismiss='modal' aria-hidden='true'>Cancel</button>" +
+                                              "</div>" +
+                                              "</div>" +
+                                              "<div><img class='Br20' src=" + result[icount].lstlrngs[icnt].OwnerPhoto + "  height='35' width='35'/> <a id= aTopicName_" + result[icount].lstlrngs[icnt].Lid + " class='hpit_athena_ca_itemLink' href='/apex/AthenaUserProfile?id=" + result[icount].lstlrngs[icnt].TopicOwnerId + "'> " + result[icount].lstlrngs[icnt].LOwnerName + " </a></div></div>");
+                          ReadMoreRating+=AfterTags;
+                          ReadMoreRating+=afterRating;
+      
+
+                          var belowIcons=  ("<div class='iconRight span3 pull-left p5'>"+
+                                  "<div class='clearB clearfix mtop20'>"); 
+                          var sharebtn="<button title = 'Share' id = TopicID_" + result[icount].lstlrngs[icnt].Lid + " data-UniqueTopicId =" + result[icount].lstlrngs[icnt].Lid + "  class='icon-share conBottomBtn conBottomBtn_B pull-right' data-TopicDesc = " + result[icount].lstlrngs[icnt].LDescription + " data-TopicName = " + escape(result[icount].lstlrngs[icnt].LName) + " data-categoryName='" + escape(CtgryNm) + "' data-TopicId='" + result[icount].lstlrngs[icnt].Lid + "' onclick='ShareTopicLearningBoard(this)' ></button>";
+                          belowIcons+= sharebtn;
+                          var videoIcon = ("<a src='" + result[icount].lstlrngs[icnt].LURL + "'  href='" + result[icount].lstlrngs[icnt].LURL + "' target='_blank' ><span  class='icon-video-camera conBottomBtn_B conBottomBtn pull-right'  title='Play Video' /></a>");
+                          belowIcons+=videoIcon;
+                      
+                          belowIconsEnd= "</div>";
+                          belowIcons+= belowIconsEnd;
+                          belowIconsEnd2="</div>";      
+                          belowIcons+=belowIconsEnd2;
+                          var MainDivEnd= "</div>";
+
+                          IntegrateContentfinal =maindivStart+Header+TopIcons+ReadMoreRating+belowIcons+MainDivEnd;
+                          IntegrateContent+=IntegrateContentfinal;  
+                      }
+
+                  }
+
+                  var LastDiv = "</div>";
+                  IntegrateContent += LastDiv;
+
+                  $('#divCategory').append(IntegrateContent);
+
+              }
+        }
+
+          // Initliazing Ratings to Topics on view Board
+          // Looping through the Topic Ids and assigning the assocaited average count to the same.
+          for (var iL = 0; iL < lstTopicIds.length; iL++) {
+
+              $('#' + lstTopicIds[iL].Id).raty({
+                  cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                  cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                  starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                  starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                  starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                  readOnly: lstTopicIds[iL].IsReadOnly,
+                  score: lstTopicIds[iL].Rating,
+                  click: function (score, evt) {
+                      //alert('ID: ' + $(this).attr('id') + "\nscore: " + score + "\nevent: " + evt);
+
+                      var BoardOrTopicId = $(this).attr('id');
+                      var BoardOrTopicScore = score;
+
+                      var TopicValue = BoardOrTopicId.split('_')
+                      var BoardTopicId = TopicValue[1];
+                      $('[id$=txtUserTopicRatingComment]').val('');
+                      $('[id$=txtUserTopicRating]').val(BoardOrTopicScore);
+                      $('[id$=txtModalTopicUserRating]').val(BoardOrTopicScore);
+
+                      $('#divModalTopicUserRating').raty({
+                          cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                          cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                          starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                          starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                          starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                          score: $('[id$=txtModalTopicUserRating]').val(),
+                          click: function (score, evt) {
+                              var BoardOrTopicId = $(this).attr('id');
+                              var BoardOrTopicScore = score;
+
+                              var TopicValue = BoardOrTopicId.split('_')
+                              var BoardTopicId = TopicValue[1];
+
+                              $('[id$=txtUserTopicRating]').val(BoardOrTopicScore);
+                              $('[id$=txtModalTopicUserRating]').val(BoardOrTopicScore);
+
+
+                          }
+                      });
+
+                      $('[id$=txtCommunityTopicID]').val(TopicValue[1]);
+
+                      $('[id$=txtTopicDivRating]').val(BoardOrTopicId);
+                      $('[id$=txtTopicScore]').val($(this).attr('data-score'));
+                      $('[id$=txtCategoryName]').val($(this).attr('data-categoryName'));
+                      Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.SLP_ViewCommunity.GetTopicRatingHistory}',
+                          BoardTopicId,
+                          GenerateTopicHistory
+                      );
+                      $('#NotOwnerOrContributorTopicRating').show();
+                      $('#OwnerOrContributorTopicRating').hide();
+
+
+                      $('#dvModalTopic').modal('show');
+                  }
+              });
+          }
+
+          var TopicId = getQueryString('topicId');
+          debugger
+          if (TopicId != undefined) {
+              var ContentName = '';
+
+              for (var iLoop = 0; iLoop < result.length; iLoop++) {
+                  if (in_array(result[iLoop].lstlrngs, TopicId)) {
+                      var spacehref = result[iLoop].CategoryName.replace(/([~!@#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, '-').replace(/^(-)+|(-)+$/g, '');
+                      var hrefurl = '#' + spacehref;
+                      $(hrefurl).addClass('in');
+                      var ahref = $('a[href="#' + spacehref + '"]')
+                      ShowHideCategory(ahref);
+                      ContentName = 'linkDoc_' + TopicId;
+                      break;
+                  }
+              }
+
+              //suman Added
+
+              //ScrollToRelativePosition(ContentName);
+
+              var collateral = 'liCollateral';
+              var Activity = 'liActivity';
+              var Board = 'liBoard';
+              var Members = 'liMembers';
+              var PrivateMembers = 'liPrivateMembers';
+              var coll = 'Collateral';
+              var Act = 'Activity';
+              var Brd = 'Board';
+              var Mem = 'Members';
+              var PMember = 'PMemAccess';
+
+              var Persist = $('[id$=txtPersist]').val();
+
+              getPersistTabs(collateral, Activity, Board, Members, PrivateMembers, coll, Act, Brd, Mem, PMember);
+
+              if (TopicId == undefined) {
+                  ScrollToRelativePosition('Collateral');
+              }
+              else {
+                  ScrollToRelativePosition(ContentName);
+              }
+
+          }
+          else {
+              debugger
+
+              var TopicCategoryName = '';
+              if (getCookie('TopicCatName') != '') {
+                  TopicCategoryName = getCookie('TopicCatName');
+              }
+
+              //var test = $('[id$=hdnShareTopicName]').val();
+
+              var CategoryHidden = $('[id$=txtCategoryName]').val();
+
+              if (CategoryHidden != "") {
+                  var spacehref = CategoryHidden.replace(/([~!@#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, '-').replace(/^(-)+|(-)+$/g, '');
+                  var hrefurl = '#' + spacehref;
+                  $(hrefurl).addClass('in');
+                  var ahref = $('a[href="#' + spacehref + '"]')
+                  ShowHideCategory(ahref);
+                  ScrollToRelativePosition($('[id$=hdnShareTopicName]').val());
+              }
+              else if (TopicCategoryName != '' && $('[id$=hdnShareContentFlag]').val() == 'Y') {
+                  var spacehref = TopicCategoryName.replace(/([~!@#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, '-').replace(/^(-)+|(-)+$/g, '');
+                  var hrefurl = '#' + spacehref;
+                  $(hrefurl).addClass('in');
+                  var ahref = $('a[href="#' + spacehref + '"]')
+                  ShowHideCategory(ahref);
+                  ScrollToRelativePosition($('[id$=hdnShareTopicName]').val());
+              }
+          }
+      }
+
+      function in_array(array, id) {
+
+          for (var i = 0; i < array.length; i++) {
+              if (array[i].Lid == id) {
+                  return true;
+              }
+          }
+          return false;
+      }
+
+      function ShowHideRatingForOwner(data) {
+          var BoardTopicId = $(data).attr('data-topicId');
+          Visualforce.remoting.Manager.invokeAction(
+                             '{!$RemoteAction.SLP_ViewCommunity.GetTopicRatingHistory}',
+                             BoardTopicId,
+                             GenerateTopicHistory
+                         );
+          $('#NotOwnerOrContributorTopicRating').hide();
+          $('#OwnerOrContributorTopicRating').show();
+          $('#TopicRating').text('Rating History');
+          $('#dvModalTopic').modal('show');
+      }
+
+      function ShowHideCategory(data) {
+
+          if ($(data).parent().find(".icon-plus-sign-alt").hasClass("icon-plus-sign-alt")) {
+              $(data).parent().find(".icon-plus-sign-alt").removeClass("icon-plus-sign-alt").addClass("icon-check-minus");
+          }
+          else {
+              $(data).parent().find(".icon-check-minus").removeClass("icon-check-minus").addClass("icon-plus-sign-alt");
+          }
+
+      }
+
+      function functionCommunityLeave(data) {
+
+          $('#dvModalLeave').modal('show');
+      }
+
+
+      function functionTopicCancelRating() {
+
+          var id = $('[id$=txtTopicDivRating]').val();
+          var score = $('[id$=txtTopicScore]').val();
+          $('[id$=txtUserTopicRatingComment]').val('');
+          //$('#' + id).raty({ score: score });
+          $('#divModalTopicUserRating').raty({
+              cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+              cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+              starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+              starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+              starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+              score: score,
+              click: function (score, evt) {
+
+                  var BoardOrTopicId = $(this).attr('id');
+                  var BoardOrTopicScore = score;
+
+                  var TopicValue = BoardOrTopicId.split('_')
+                  var BoardTopicId = TopicValue[1];
+
+                  $('[id$=txtUserTopicRating]').val(BoardOrTopicScore);
+                  $('[id$=txtModalTopicUserRating]').val(BoardOrTopicScore);
+              }
+          });
+
+
+          $('#' + id).raty({
+              cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+              cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+              starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+              starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+              starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+              score: score,
+              click: function (score, evt) {
+
+                  var BoardOrTopicId = $(this).attr('id');
+                  var BoardOrTopicScore = score;
+
+                  var TopicValue = BoardOrTopicId.split('_')
+                  var BoardTopicId = TopicValue[1];
+
+                  $('[id$=txtUserTopicRating]').val(BoardOrTopicScore);
+                  $('[id$=txtModalTopicUserRating]').val(BoardOrTopicScore);
+
+                  $('#divModalTopicUserRating').raty({
+                      cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                      cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                      starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                      starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                      starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                      score: $('[id$=txtModalTopicUserRating]').val(),
+                      click: function (score, evt) {
+
+                          var BoardOrTopicId = $(this).attr('id');
+                          var BoardOrTopicScore = score;
+
+                          var TopicValue = BoardOrTopicId.split('_')
+                          var BoardTopicId = TopicValue[1];
+
+                          $('[id$=txtUserTopicRating]').val(BoardOrTopicScore);
+                          $('[id$=txtModalTopicUserRating]').val(BoardOrTopicScore);
+                      }
+                  });
+
+                  $('[id$=txtCommunityTopicID]').val(TopicValue[1]);
+
+                  $('[id$=txtTopicDivRating]').val(BoardOrTopicId);
+                  $('[id$=txtTopicScore]').val($(this).attr('data-score'));
+
+                  Visualforce.remoting.Manager.invokeAction(
+                      '{!$RemoteAction.SLP_ViewCommunity.GetTopicRatingHistory}',
+                      BoardTopicId,
+                      GenerateTopicHistory
+                  );
+
+                  $('#dvModalTopic').modal('show');
+              }
+          });
+      }
+
+      function GenerateTopicHistory(result, event) {
+
+          var ListTopicId = new Array();
+
+          $('#dvTopicFooter').empty();
+
+          for (var i = 0; i < result.length; i++) {
+
+              var LearningTopicID = result[i].UserHistoryId;
+              var LearningTopicScore = result[i].UserHistoryRating;
+              var comment = '';
+
+              if (result[i].UserHistoryComment == '' || result[i].UserHistoryComment == null) {
+                  comment = '';
+              }
+              else {
+                  comment = result[i].UserHistoryComment;
+              }
+
+              ListTopicId.push({ "Id": LearningTopicID, "Rating": LearningTopicScore });
+
+              var generateLText = ("<div class='clearB ptop10 clearfix' style='border-bottom:1px solid #eee'>" +
+                                  "<div class='ratingPopHist' style='float:left; width:10%;'>" +
+                                  "<img src=" + result[i].UserHistoryPhotoUrl + " width='35' height='35' class='hpit_athena_ca-item-personPhoto'/></div>" +
+                                  "<div style='float:left; width:88%; margin-left:2%; text-align:left'>" +
+                                  "<div>" + result[i].UserHistoryName + "</div>" +
+                                  "<div>" + comment + "</div>" +
+                                  "<div> <span class='colorGrey'>" + result[i].UserDate + "</span><span id='Span1' style='width:100% !important; margin-left:10px'></span><span id=" + result[i].UserHistoryId + " style='width:100% !important; margin-left:10px'></span></div></div></div>");
+
+              $('#dvTopicFooter').append(generateLText);
+          }
+
+
+          for (var iL = 0; iL < ListTopicId.length; iL++) {
+
+              $('#' + ListTopicId[iL].Id).raty({
+                  cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                  cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                  starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                  starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                  starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                  readOnly: true,
+                  score: ListTopicId[iL].Rating
+              });
+
+
+          }
+
+
+          //for (var iL = 0; iL < ListTopicId.length; iL++) {
+
+          //    $('#' + ListTopicId[iL].Id).raty({ score: ListTopicId[iL].Rating });
+
+
+
+          //}
+      }
+      function RestrictTopicCharacters(data) {
+          var characters = 100;
+
+          if ($(data).val().length > characters) {
+              $(data).val($(data).val().substr(0, characters));
+          }
+
+          var remaining = characters - $(data).val().length;
+          $('[id$=topicCounter]').html("You have <strong>" + remaining + "</strong> characters remaining");
+          if (remaining <= 10) {
+              $('[id$=topicCounter]').show();
+              $('[id$=topicCounter]').css("color", "red");
+          }
+          else {
+              $('[id$=topicCounter]').hide();
+              $('[id$=topicCounter]').css("color", "black");
+          }
+      }
+
+      function ValidateEmail(data) {
+
+          $('#EmailValidate').empty();
+          var RegularExpression = new RegExp(/^[0-9A-Za-z\.\-\_]*[@][Hh][Pp][.][Cc][Oo][Mm]$/);
+          var userEmailId = $('[id$=txtEmailinputUser]').val();
+          if (userEmailId.search(RegularExpression) == -1) {
+              var ErrorMessage = "Please enter User Email in the format - john.doe@hp.com";
+              $('#EmailValidate').append(ErrorMessage);
+              $('#EmailValidate').append('<br/>');
+              $('#EmailValidate').show();
+          }
+          else {
+              $('#EmailValidate').hide();
+              $('[id$=btnSendEmail]').click();
+          }
+      }
+
+      function ShowBoardRating(data) {
+
+          var BoardID = $(data).attr('data-boardLBid');
+
+          //$('#' + data.id).css("cursor", "default");
+
+          $('#' + BoardID).show();
+      }
+
+      function HideBoardRating(data) {
+          var BoardID = $(data).attr('data-boardLBid');
+
+          $('#' + BoardID).hide();
+      }
+
+      function FindBrowserVersion()
+      {
+          debugger
+          var nVer = navigator.appVersion;
+          var nAgt = navigator.userAgent;
+          var browserName  = navigator.appName;
+          var fullVersion  = ''+parseFloat(navigator.appVersion); 
+          var majorVersion = parseInt(navigator.appVersion,10);
+          var nameOffset,verOffset,ix;
+          if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+              browserName = "Opera";
+              fullVersion = nAgt.substring(verOffset+6);
+              if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                  fullVersion = nAgt.substring(verOffset+8);
+          }
+              // In MSIE, the true version is after "MSIE" in userAgent
+          else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+              browserName = "Microsoft Internet Explorer";
+              fullVersion = nAgt.substring(verOffset+5);
+          }
+              // In Chrome, the true version is after "Chrome" 
+          else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+              browserName = "Chrome";
+              fullVersion = nAgt.substring(verOffset+7);
+          }
+              // In Safari, the true version is after "Safari" or after "Version" 
+          else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+              browserName = "Safari";
+              fullVersion = nAgt.substring(verOffset+7);
+              if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                  fullVersion = nAgt.substring(verOffset+8);
+          }
+              // In Firefox, the true version is after "Firefox" 
+          else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+              browserName = "Firefox";
+              fullVersion = nAgt.substring(verOffset+8);
+          }
+              // In most other browsers, "name/version" is at the end of userAgent 
+          else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+              browserName = nAgt.substring(nameOffset,verOffset);
+              fullVersion = nAgt.substring(verOffset+1);
+              if (browserName.toLowerCase()==browserName.toUpperCase()) {
+                  browserName = navigator.appName;
+              }
+          }
+          else
+          {
+              browserName= nAgt;
+              fullVersion="None";
+          }
+          // trim the fullVersion string at semicolon/space if present
+          if ((ix=fullVersion.indexOf(";"))!=-1)
+              fullVersion=fullVersion.substring(0,ix);
+          if ((ix=fullVersion.indexOf(" "))!=-1)
+              fullVersion=fullVersion.substring(0,ix);
+
+          majorVersion = parseInt(''+fullVersion,10);
+          if (isNaN(majorVersion)) {
+              fullVersion  = ''+parseFloat(navigator.appVersion); 
+              majorVersion = parseInt(navigator.appVersion,10);
+          }
+          var BrowserVer='';
+          if(fullVersion=='None')
+          {
+              BrowserVer=browserName;
+          }
+          else
+          {
+              BrowserVer=browserName+' '+fullVersion;
+          }
+          return BrowserVer;
+      }
+      
+      function functionTargetUrl(data) {
+          debugger
+          var ContentId=$(data).attr('data-ID');
+          var CommunityName=$('#divCommunityName').attr('title');
+          var ContentNm=$(data).attr('data-ContentNm');
+          var TopicID = "anchor_" + $(data).attr('data-ID');
+          var TopicURL = $(data).attr('data-URL');
+        
+          var PPTTopicURL = unescape(TopicURL);
+
+          //$("#lnkDownloadFile").removeAttr('href');
+            OpenPopUp(PPTTopicURL);
+          //$('[id$=' + TopicID + ']').attr('href', PPTTopicURL);
+          var link =TopicURL;
+          
+          var fileType=$(data).attr('data-docType')+' '+ 'Document Click';
+          var operatingSystem=navigator.appVersion;
+          operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+          var OperatingSys=GetOSName(operatingSystem);
+          var browserVersion=FindBrowserVersion();
+          var DeviceType='Desktop';
+          Visualforce.remoting.Manager.invokeAction(
+             '{!$RemoteAction.SLP_ViewCommunity.MetricForViewCommunity}',                      
+                   link,
+                   fileType,
+                   OperatingSys,
+                   browserVersion,
+                   ContentId,
+                   CommunityName,
+                   ContentNm,
+                   DeviceType,
+                   //GetOSName(operatingSystem),  
+                   //navigator.appName+' '+$.browser.version,                                
+                   DoNothing
+               ); 
+          
+      }
+      
+      function DoNothing(result,event)
+      {
+          debugger
+          return true;
+      }
+
+      function GetOSName(data)
+      {
+          
+          if(data.indexOf('Windows 95')!=-1) return 'Windows 95';
+                                     
+          else if(data.indexOf('Windows 98')!=-1) return 'Windows 98';
+
+          else if(data.indexOf('Windows NT 5.0')!=-1 || data.indexOf('Windows 2000')!=-1) return 'Windows 2000';
+
+          else if(data.indexOf('Windows NT 5.1')!=-1 || data.indexOf('Windows XP')!=-1) return 'Windows XP';
+
+          else if(data.indexOf('Windows NT 5.2')!=-1) return 'Windows Server 2003';
+  
+          else if(data.indexOf('Windows NT 6.0')!=-1) return 'Windows Vista';
+
+          else if(data.indexOf('Windows NT 6.1')!=-1) return 'Windows 7';
+          else if(data.indexOf('Windows NT 6.2')!=-1) return 'Windows 8';
+
+          else if(data.indexOf('Windows NT 4.0')!=-1 || data.indexOf('WinNT4.0')!=-1 || data.indexOf('WinNT')!=-1) return 'Windows NT 4.0';
+
+          else if(data.indexOf('Windows ME')!=-1) return 'Windows ME';
+  
+          else if(data.indexOf('OpenBSD')!=-1) return 'Open BSD';
+  
+          else if(data.indexOf('SunOS')!=-1) return 'Sun OS';
+  
+          else if(data.indexOf('Linux')!=-1 || data.indexOf('X11')!=-1) return 'Linux';
+  
+          else if(data.indexOf('Mac_PowerPC')!=-1 || data.indexOf('Macintosh')!=-1) return 'Mac OS';
+  
+          else if(data.indexOf('QNX')!=-1) return 'QNX';
+  
+          else if(data.indexOf('BeOS')!=-1) return 'BeOS';
+  
+          else if(data.indexOf('OS/2')!=-1) return 'OS/2';
+          else return navigator.userAgent;
+  
+      }
+      
+      function NavigateUrl(data) {    
+      
+          debugger
+          var TopicID = "linkDoc_" + $(data).attr('data-ID');
+          var TopicURL = $(data).attr('Data-Url');
+          var ContentId=$(data).attr('data-ID');
+          var ContentNm=$(data).attr('data-ContentNm');
+          var CommunityName=$('#divCommunityName').attr('title');
+          // Commented By Komala var PPTTopicURL = escape(TopicURL);
+          var PPTTopicURL = decodeURIComponent(TopicURL);
+            $("#lnkDownloadFile").removeAttr('href');
+          //$("#lnkDownloadFile").removeAttr('href');
+            OpenPopUp(PPTTopicURL);
+          //$('[id$=' + TopicID + ']').attr('href', PPTTopicURL);
+          var link =TopicURL;
+          var fileType='Content Name Click-'+$(data).attr('data-docType');
+          var operatingSystem=navigator.appVersion;
+          operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+          var OperatingSys=GetOSName(operatingSystem);
+          var browserVersion=FindBrowserVersion();
+          var DeviceType='Desktop';
+          Visualforce.remoting.Manager.invokeAction(
+             '{!$RemoteAction.SLP_ViewCommunity.MetricForViewCommunity}',                      
+                   link,
+                   fileType,
+                   OperatingSys,
+                   browserVersion,
+                   ContentId,
+                   CommunityName,
+                   ContentNm,
+                   DeviceType,
+                   DoNothing
+               ); 
+      }
+
+      function OpenAssociatedModalPopUp(data) {
+          debugger
+          var DocType = $(data).attr('Data-DocType');
+          var Url = $(data).attr('data-URL');
+
+          var FileURL = unescape(Url);
+$("#lnkDownloadFile").removeAttr('href');
+          if (DocType == 'OTHER') {
+              $('#previewDocs').hide();
+              $('#preivewHeading').show();
+              $('#previewHeading').attr('href', FileURL);
+
+              ShowHTML(FileURL);
+          }
+          else {
+              $('#previewLink').attr('href', FileURL);
+              $('#previewDocs').hide();
+              $('#preivewHeading').show();
+
+              OpenPopUp(FileURL);
+          }
+      }
+
+      function ShowHTML(data) {
+          debugger
+
+          document.getElementById('frameFileUrl').setAttribute('src', '');
+
+          document.getElementById('modalPreviewRequired').style.display = 'block';
+          document.getElementById('cappHTML').style.display = 'block';
+          document.getElementById('cappHTMLFrame').style.display = 'block';
+          document.getElementById('frameFileUrl').style.display = 'none';
+
+          var urlText = data;
+          if (data.indexOf("https") == -1) {
+              urlText = data.replace("http:", "https:");
+              if (data.indexOf("www.") == 0) {
+                  urlText = data.replace("www.", "https:");
+              }
+          }
+
+          if (urlText.indexOf("https://www8.hp.com") != -1) {
+              urlText = urlText.replace("https://www8.hp.com", "https://ssl.www8.hp.com:");
+          }
+
+          $('#cappHTMLFrame').attr('src', urlText);
+          $('#modalPreviewRequired').modal('show');
+      }
+
+      function functionOpenVideo(data) {
+          debugger
+          var videoURL = $(data).attr('Data-Url');
+          var ContentNm= $(data).attr('data-ContentNm');
+          var urlText = videoURL;
+          if (videoURL.indexOf("https") == -1) {
+              urlText = videoURL.replace("http:", "https:");
+          }
+          var ContentId=$(data).attr('id').split('_')[1];
+          var CommunityName=$('#divCommunityName').attr('title');
+          $('#frameVideo').attr('src', urlText);
+          $('#previewVideo').attr('href', videoURL);
+          $('#VideoPopUp').modal('show');
+          var link =videoURL;
+          var fileType=$(data).attr('data-docType')+' '+ 'Document Click';
+          var operatingSystem=navigator.appVersion;
+          operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+          var OperatingSys=GetOSName(operatingSystem);
+          var browserVersion=FindBrowserVersion();
+          var DeviceType='Desktop';
+          Visualforce.remoting.Manager.invokeAction(
+             '{!$RemoteAction.SLP_ViewCommunity.MetricForViewCommunity}',                      
+                   link,
+                   fileType,
+                   OperatingSys,
+                   browserVersion,
+                   ContentId,
+                   CommunityName,
+                   ContentNm,
+                   DeviceType,
+                   DoNothing
+               ); 
+      }
+
+      function functionCancelPreview() {
+          debugger
+          $('[id$=frameFileUrl]').empty();
+
+          document.getElementById('frameFileUrl').setAttribute('src', '');
+
+      }
+
+      //function InviteCommunity(data) {
+      //    debugger
+
+      //    var CommunityId = $(data).attr('data-communityId');
+
+      //    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.SLP_ViewCommunity.GetNetworkUsersList}', CommunityId, ShowNetworkUsers);
+      //}
+
+      function ShowNetworkUsers(result, event) {
+          debugger
+          $('#shareToUsers').modal('show');
+
+          var tblShare = ("<div class='alert-error' id='dvShareContentErrorMessage' style='display:none'></div><table class='table table-striped table-bordered' id='selectUsers'>" +
+                                "<thead>" +
+                                  "<tr>" +
+                                    "<th style='width:8px;'><input type='checkbox' id='selectAll' class='group-checkable' data-set='#selectUsers .checkboxes' onclick = 'ToggleDataTableCheckbox(this)'/></th>" +
+                                    "<th>Image</th>" +
+                                    "<th>Username</th>" +
+                                    "<th class='hidden-phone'>Email Id</th>" +
+                                  "</tr>" +
+                                "</thead>" +
+                                "<tbody>");
+          var tbodyShare = '';
+          var SFInstance = '{!getSfInstance}';
+          for (var iCount = 0; iCount < result.length; iCount++) {
+              var ShareBody = ("<tr>" +
+                                "<td><input type='checkbox' name='chkShare'  value=" + result[iCount].Id + " id='chk_'+result[iCount].Id /></td>" +
+                                "<td><div class='hpit_athena_ca-item-personPhoto'><img width='35' height='35' alt='no_username_small' src='" + result[iCount].SmallPhotoUrl + "' /> </div></td>" +
+                                 "<td><a target=_blank href= https://" + SFInstance + "/apex/AthenaUserProfile?id=" + result[iCount].Id + ">" + result[iCount].Name + "</a></td>" +
+                                 "<td>" + result[iCount].Email + "</td>" +
+                                 "</tr>");
+              tbodyShare += ShareBody;
+          }
+          tblShare += tbodyShare;
+          var shareEndBody = ("</tbody>" +
+          "</table>");
+          tblShare += shareEndBody;
+
+          var Comment = ("<div class='control-group bgGrayLight mtop10 activityOption'>" +
+                        "<label class='control-label'>Comments <span style='color: #B8B6B6;'>- (optional)</span></label>" +
+            "<div class='controls'>" +
+             " <textarea rows='3' class='modelTextW' id='txtShareComment'></textarea>" +
+              "</div>" +
+          "</div>");
+          tblShare += Comment;
+          $('#divShareFeedItem').empty();
+          $('#divShareFeedItem').append(tblShare);
+
+          $('#selectUsers').dataTable({
+              "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+              "sPaginationType": "bootstrap",
+              "bSortable": true,
+              "aLengthMenu": [[5, 8, 10], [5, 8, 10]],
+              "iDisplayLength": 5,
+              "oLanguage": {
+                  "sLengthMenu": "_MENU_ records per page",
+                  "oPaginate": {
+                      "sPrevious": "Prev",
+                      "sNext": "Next"
+                  }
+              },
+
+              aoColumnDefs: [
+                       { "aTargets": [0], "bSortable": false },
+                       { "aTargets": [1], "bSortable": false },
+                       { "aTargets": [2], "bSortable": true },
+                       { "aTargets": [3], "bSortable": true }]
+          });
+
+          jQuery('#selectUsers.group-checkable').change(function () {
+              var set = jQuery(this).attr("data-set");
+              var checked = jQuery(this).is(":checked");
+              jQuery(set).each(function () {
+                  if (checked) {
+                      $(this).attr("checked", true);
+                  } else {
+                      $(this).attr("checked", false);
+                  }
+              });
+              jQuery.uniform.update(set);
+          });
+
+          jQuery('#selectUsers_wrapper .dataTables_filter input').addClass("input-medium"); // modify table search input
+          jQuery('#selectUsers_wrapper .dataTables_length select').addClass("input-mini"); // modify table per page dropdown
+          //$('#loading_Modal').modal('hide');
+      }
+
+      function ToggleDataTableCheckbox(event) {
+
+          var oTable = $('#selectUsers').dataTable();
+
+          // Get the nodes from the table
+          var nNodes = oTable.fnGetNodes();
+
+          if ($('#selectAll').is(':checked')) {
+              $('input[type=checkbox]', oTable.fnGetNodes()).attr('checked', true);
+          }
+          else {
+              $('input[type=checkbox]', oTable.fnGetNodes()).attr('checked', false);
+          }
+      }
+
+      function SaveUsers(data) {
+          debugger
+          //$('#loading_Modal').modal('show');
+          var strRel = '';
+          
+          var oTable = $('#selectUsers').dataTable();
+          var rowcollection =  oTable.$('input[name="chkShare"]:checked', {"page": "all"});
+          rowcollection.each(function(index,elem){
+              
+              if (strRel == '') {
+                  strRel = $(elem).val();
+              }
+              else {
+                  strRel = strRel + ',' + $(elem).val();
+              }
+
+          });          
+         
+          //$('input[name="chkShare"]:checked').each(function (index, option) {
+          //  if (strRel == '') {
+          //    strRel = $(this).val();
+          //}
+          //else {
+          //  strRel = strRel + ',' + $(this).val();
+          //}
+
+          //});
+
+          if (strRel == '') {
+              $('[id$=dvShareContentErrorMessage]').empty();
+              $('[id$=dvShareContentErrorMessage]').text('Select atleast one user');
+              $('[id$=dvShareContentErrorMessage]').show();
+          }
+          else {
+              $('[id$=dvShareContentErrorMessage]').empty();
+              $('[id$=dvShareContentErrorMessage]').hide();
+
+              document.cookie = "TopicCatName=" + $('[id$=hdnContentCtgyName]').val();
+
+              $('[id$=hdnShareContentFlag]').val('Y');
+
+              var TopicId = $('[id$=hdncontentId]').val();
+              var ShareCmt = $('#txtShareComment').val();
+              document.getElementById("{!$Component.SlpActv.hdnSelectedUsrsId}").value = strRel;
+              document.getElementById("{!$Component.SlpActv.hdnShareComment}").value = ShareCmt;
+              document.getElementById("{!$Component.SlpActv.hdnShareTopicID}").value = TopicId;
+              document.getElementById("{!$Component.SlpActv.hdnShareTopicName}").value = $('[id$=hdnTopicName]').val();
+              //document.getElementById("{!$Component.SlpActv.hdnShareTopicDesc}").value = $('[id$=hdnTopicDesc]').val();
+              
+              var operatingSystem=navigator.appVersion;
+              operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+              $('[id$=hdnShareOperatingSystem]').val(operatingSystem);
+              $('[id$=hdnShareBrowser]').val(FindBrowserVersion());
+              $('[id$=hdnShareDeviceType]').val('Desktop');          
+              
+              var button = document.getElementById("{!$Component.SlpActv.SActivityShare}");
+              button.click();
+          }
+      }
+
+      function ShareTopicLearningBoard(data) {
+          debugger
+
+          var TopicID = $(data).attr('data-TopicId');
+          var UniqueShareTopicId = 'linkDoc_' + TopicID;
+          var TopicCategoryName = unescape($(data).attr('data-categoryName'));
+
+          var CommunityId = '{!CommunityId }';
+          $('[id$=hdnContentCtgyName]').val(TopicCategoryName);
+          $('[id$=hdncontentId]').val(TopicID);
+          $('[id$=hdnTopicName]').val(UniqueShareTopicId);
+          //$('[id$=hdnTopicDesc]').val($(data).attr('data-TopicDesc'));
+          Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.SLP_ViewCommunity.GetNetworkUsersList}', CommunityId, ShowNetworkUsers);
+
+      }
+      function ShowTextType(data)
+      {
+          debugger
+          var TextContentId= $(data).attr('data-href');
+          $('#'+TextContentId).modal('show');
+      }
+      function SetBrowserInfo()
+      {
+          debugger
+          var operatingSystem=navigator.appVersion;
+          operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+          console.log('operatingSystem-------------'+operatingSystem);
+        
+          $('[id$=jhdnShareOperatingSystem]').val(operatingSystem);
+          $('[id$=jhdnShareBrowser]').val(FindBrowserVersion());
+          $('[id$=jhdnShareDeviceType]').val('Desktop');
+          return true;
+          <!-- $('[id$=btnJoin]').click(); -->
+          }
+      function communityLogMetrics(data){
+          var operatingSystem=navigator.appVersion;
+          operatingSystem=operatingSystem.substring(0,operatingSystem.indexOf("\)")+1);
+          var communityId=$(data).attr('data-CMID');
+          var communityName= $(data).attr('data-CMName');
+          var ObjNm=$(data).attr('data-ObjNm');
+          var GenerateUrl=$('#hdnHost').val()+$(data).attr('data-url');
+          var redirectUrl=$(data).attr('data-url');
+          $('[id$=hdnRedirectUrl]').val(redirectUrl);
+          var browserVersion=FindBrowserVersion();
+          var section=$(data).attr('data-section');
+          var actionTyp=$(data).attr('data-actionTyp');
+          Visualforce.remoting.Manager.invokeAction(
+          '{!$RemoteAction.SLP_ViewCommunity.communityLogMetrics}',
+              communityId,
+              communityName, 
+              GetOSName(operatingSystem),
+              browserVersion, 
+              'Desktop',
+              section,
+              GenerateUrl,
+              ObjNm,
+              actionTyp,
+              redirectUrl,
+              DoNothingWithResult
+          );
+      }
+      function DoNothingWithResult(result,event)
+      {
+          debugger;
+          if(result!=null)
+          {
+          $('[id$=hdnRedirectUrl]').val(result);
+          }
+          $('[id$=btnRedirectUrl]').click();
+    
+      }
+        </script>
+  </body>
+  <!-- END BODY -->
+  </html>
+</apex:page>

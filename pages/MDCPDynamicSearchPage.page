@@ -1,0 +1,349 @@
+<apex:page standardController="Account" tabStyle="account" showheader="false" extensions="MDCPController" recordSetvar="accts" sidebar="false"   id="PageID" >
+<apex:sectionHeader id="TitleSection" title="Search Master Data"/>
+<body class="lookupTab">
+<apex:form id="FormId" onkeypress="return  noenter(event)">
+<apex:pageBlock id="searchsection" mode="maindetail" >
+<!-----------------------------------------Search Panel--------------------------------------------------->
+<br/>
+<apex:pageBlockSection columns="1" title="Search Conditions" id="searchblocksection">
+   <apex:pageBlock mode="maindetail" id="searchpageblock">
+        <apex:commandButton value="Search" onclick="hideprevious();" id="search" style="background:#356FB6;color:white;border:1px;border-color:white;font-size: 1.05em;font-weight: normal;padding-right:10px;padding-left:10px;" rerender="blankoutput"/>
+        <apex:actionFunction name="searchaction"  action="{!search}" rerender="OnlySearchResultPanel" status="SearchLoadingstatus" />
+        <apex:commandButton id="clearForm" style="font-size: 1.05em;font-weight: normal;padding-right:5px;padding-left:5px;" onclick="return false" value="Clear"/>
+        <body>
+            <ul id="sForm" class="sForm pageDescription"></ul>
+            <button id="plus" type="button" style="margin:-12px 0px 0px 71px;font-size: 1.05em;font-weight: normal;padding-right:6px;padding-left:6px;" >Add</button>
+            <br/><br/>
+            <apex:outputPanel id="alert" style="font-weight: bold;color: red;" ></apex:outputPanel>
+            <apex:inputHidden id="query" value="{!MDCPQuery}"  />
+            <br/>
+        </body>    
+    </apex:pageBlock>        
+</apex:pageBlockSection>
+<apex:outputPanel id="blankoutput"></apex:outputPanel>  
+<!----------------------------------------end Search Panel------------------------------------------------->
+<!---------------------------------------- Search Result Panel--------------------------------------------->
+<apex:pageBlockSection columns="1" title="Search Results" id="searchresultsection">
+  <apex:outputPanel id="SearchResultPanel"> 
+  <apex:pageBlock id="searchSection" mode="maindetail" >
+  <apex:actionStatus id="SearchLoadingstatus" style="align:center" >
+        <apex:facet name="start" >
+            <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPSearchStatus}</i></FONT>
+            <br/><br/>                       
+        </apex:facet>
+    </apex:actionStatus>
+    <apex:actionStatus id="SortingStatus" style="align:center" >
+        <apex:facet name="start" >
+            <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPSortStatus}</i></FONT>
+                <br/><br/>  
+        </apex:facet>
+    </apex:actionStatus>
+    <apex:actionStatus id="LoadPrevioussearch" style="align:center" >
+            <apex:facet name="start" >
+                <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPPrevioussearch}</i></FONT>
+                <br/><br/>                       
+            </apex:facet>
+    </apex:actionStatus>
+
+    <apex:actionStatus id="PaginationStatus" style="align:center" >
+        <apex:facet name="start" >
+            <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPPagination}</i></FONT>
+                <br/><br/>       
+        </apex:facet>
+    </apex:actionStatus>
+<apex:outputPanel id="OnlySearchResultPanel">
+<apex:outputText id="PopupInfo" value="{!PopupInfo_Rows}" style="display:none;"/>
+    <apex:pageBlock mode="maindetail" rendered="{!NOT(ISNULL(currentPageListSize))}" id="SearchResultBlock">
+
+     <!-------------------------------------Result title section----------------------------------------->   
+    <apex:outputPanel id="resulTitletheader">
+        <apex:outputText id="resultheader" value="Found {!totalRecords} records " style="color:#2E172D;font-size:13px;" rendered="{!AND(IF(totalRecords>0, true, false),totalRecords<200)}"/>
+        <apex:outputPanel id="MaxResult" rendered="{!totalRecords=200}" style="color:#2E172D;font-size:13px;">Your results exceed the maximum display of 200 records.  Please refine your query.</apex:outputPanel>
+        <apex:outputPanel id="NoResult" rendered="{!currentPageListSize=0}" style="color:#2E172D;font-size:13px;">No Matched Record Found</apex:outputPanel>
+    </apex:outputPanel>
+     <!-----------------------------------End result title------------------------------------------------>
+
+<TABLE class="styleMiddle" align="left" border="0" width="100%" bgcolor="#36A5C7" >
+    <TR>
+    <td>
+        <table class="tableClass" id="thePage:theTable" align="left" border="0" cellpadding="3" >
+            <tr><td><font color="white" fontsize="13"></font></td></tr>
+        </table>    
+    </td>
+    <td>
+        <table class="tableClass" id="thePage:theTable" align="Right" border="0" cellpadding="2"  >
+            <tr><td>
+            <font color="white" align="center" fontsize="10">You are looking at {!CurrentPageDisplayed } out of {!totalPages } available pages
+            </font></td></tr>
+        </table> 
+    </td>
+    <td>
+        <table class="tableClass" id="thePagetheTable" align="right" border="0" cellpadding="-1">
+            <tr><td><font align="center" >
+            <apex:selectList value="{!selectedPage}" id="nameEqualsStartWithConstains" size="1" onchange="showpage();" >
+            <apex:selectOptions value="{!optionsList }"/>
+            </apex:selectList>  
+            </font></td>
+            <td><font >
+            <apex:actionFunction name="showpagehashtop" action="{!showpagehashtop}" status="PaginationStatus" rerender="SearchResultPanel" />
+            </font></td></tr> 
+        </table>
+    </td>
+    </TR>
+</TABLE> 
+  <apex:variable value="{!0}" var="numfield"/>
+    <apex:PageBlockTable rendered="{!currentPageListSize!=0}"  columns="14" value="{!searchResultByPage}" var="rowItem" >
+        <apex:repeat value="{!listFieldToShow}" var="flds">
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink onclick="HideTitle();" action="{!SortByFieldName}" value="{!$ObjectType.MDCPResult__c.Fields[flds].Label}" reRender="SearchResultPanel"  status="SortingStatus">
+                    <apex:param name="sortBy" value="{!flds}" assignTo="{!sortBy}"/>
+                    </apex:commandLink>
+                </apex:facet> 
+                <apex:outputText value="{!rowItem[mapFieldToShow[flds]]}" rendered="{!( flds == 'MDCP_Id__c' ||  flds == 'DUNS__c' )}"/>
+                <span  onmouseover="CreateTooltipTail('{!rowItem[mapFieldToShow[flds]]}');"  onmouseout="tooltip.hide();">
+                    <apex:outputText styleClass="nonlatinName" value="{!rowItem[mapFieldToShow[flds]]}" rendered="{!(flds == 'Address__c' ||flds == 'Non_LatinName__c')}"/>
+                </span>
+                <span  onmouseover="CreateTooltipTail('{!rowItem[mapFieldToShow[flds]]}');"  onmouseout="tooltip.hide();">
+                    <apex:outputText styleClass="fitToRow" value="{!rowItem[mapFieldToShow[flds]]}" rendered="{!(flds == 'Country__c' ||flds == 'State__c'||flds == 'City__c' || flds == 'CityRegion__c'||flds == 'Tax_ID__c')}"/>
+                </span>
+                    <apex:commandLink action="{!GetDetails}" onclick="hidepreviousdetail('{!flds}','{!numfield}');" value="{!rowItem[mapFieldToShow[flds]]}" rendered="{!(flds == 'Global_DUNS__c'||flds == 'Domestic_DUNS__c')}" reRender="onlydetailresult,DetailStatus,DetailStatusSection" status="DetailLoading">
+                        <apex:param name="DetailFieldName" value="{!flds}" assignTo="{!DetailFieldName}"/>
+                        <apex:param name="DetailRowValue" value="{!numfield}" assignTo="{!DetailRowValue}"/>
+                    </apex:commandLink>
+                <span  onmouseover="Mesgbulder({!numfield});" onmouseout="tooltip.hide();" >
+                    <apex:commandLink styleclass="hotspot" action="{!GetDetails}"  onclick="hidepreviousdetail('{!flds}','{!numfield}');"  value="{!rowItem[mapFieldToShow[flds]]}" rendered="{!(flds == 'Name' )}" reRender="onlydetailresult,DetailStatus,DetailStatusSection" status="DetailLoading">
+                        <apex:param name="DetailFieldName" value="{!flds}" assignTo="{!DetailFieldName}"/>
+                        <apex:param name="DetailRowValue" value="{!numfield}" assignTo="{!DetailRowValue}"/>
+                    </apex:commandLink>
+                </span>
+                    <apex:inputCheckbox disabled="true" value="{!rowItem[mapFieldToShow[flds]]}"  rendered="{!(flds == 'isOutOfBusiness__c'||flds == 'Is_Competitor__c')}"/>
+                <apex:variable var="numfield" value="{!numfield+1}"/>  
+                </apex:column>
+  
+        </apex:repeat>
+    </apex:PageBlockTable> 
+ <apex:outputPanel id="NonVerifiedPanelsuccess">
+        <apex:outputText id="firstSection" rendered="{!permissionCreateAccount}"><i><font color="#958D8D" size="2">Select a record from the list.  If you do not find a suitable account you may&nbsp;&nbsp;</font></i></apex:outputText>
+        <apex:CommandLink rendered="{!permissionCreateAccount}" onclick="openpopup('apex/MDCPUnverifiedAccountPage');"  id="accountcreate" rerender="blankoutput" ><i><font  size="2" color="#BAB3B3">create an unverified account manually.</font></i></apex:CommandLink>
+        <apex:outputText id="caseSection" rendered="{!NOT(permissionCreateAccount)}" ><i><font  size="2" color="#958D8D">Select a record from the list.If you do not find a suitable account you may close this window and open a case for SFDC account subscription.</font></i></apex:outputText>
+ </apex:outputPanel>
+</apex:pageBlock>
+
+<!-----------------------------------End NonVerifiedPanel------------------------------------------------> 
+<!-------------------------------------Result title section----------------------------------------->  
+
+ <apex:outputPanel id="NonVerifiedPanelfailure" rendered="{!IsMDCPDown}">
+         <apex:outputText id="faultmessage" rendered="{!IsMDCPDown}" style="color:#FF0000;font-size:12px;"><font color="#FF0000"><H2>{!errorMessage}<br></br></H2></font></apex:outputText> 
+        <apex:outputText id="firstSection" rendered="{!permissionCreateAccount}"><i><font color="#958D8D" size="2">Select a record from the list.  If you do not find a suitable account you may&nbsp;&nbsp;</font></i></apex:outputText>
+        <apex:CommandLink rendered="{!permissionCreateAccount}" onclick="openpopup('apex/MDCPUnverifiedAccountPage');"  id="accountcreate" rerender="blankoutput" ><i><font  size="2" color="#BAB3B3">create an unverified account manually.</font></i></apex:CommandLink>
+        <apex:outputText id="caseSection" rendered="{!NOT(permissionCreateAccount)}" ><i><font  size="2" color="#958D8D">Select a record from the list.If you do not find a suitable account you may close this window and open a case for SFDC account subscription.</font></i></apex:outputText>
+ </apex:outputPanel>
+</apex:outputPanel>  
+</apex:pageBlock>
+</apex:outputPanel>
+</apex:pageBlockSection> 
+<!---------------------------------------- Search Result Panel end------------------------------------------------->
+<!---------------------------------------------Detail Result Panel------------------------------------------------->
+<apex:pageBlockSection columns="1" title="Selected Record" id="Detailresultsection">
+<apex:pageBlock mode="maindetail" id="detailpageclock">
+<!----------------------------------Detail Status ------------------------------------>
+   <apex:actionStatus id="DetailLoading" style="align:center" layout="block" >
+            <apex:facet name="start">
+                <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPDetailStatus}</i></FONT>
+                <br/><br/>                       
+            </apex:facet>
+    </apex:actionStatus>
+    <apex:actionStatus id="CreatingCase" style="align:center" layout="block" >
+            <apex:facet name="start">
+                <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPCaseCreationStatus}</i></FONT>
+                <br/><br/>                       
+            </apex:facet>
+    </apex:actionStatus> 
+    <apex:actionStatus id="CreatingAccount" style="align:center" layout="block" >
+            <apex:facet name="start">
+                <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPCreatingAccount}</i></FONT>
+                <br/><br/>                       
+            </apex:facet>
+    </apex:actionStatus>  
+<!----------------------------------End Detail Status ------------------------------------> 
+<apex:outputPanel id="DetailStatusSection">
+
+<!-------case/Account creation Message----------------------------------->
+<apex:outputPanel id="Case-Account-CreationMessage">
+    <apex:outputPanel id="DMLStatus" rendered="{!AND(isCaseCreated,NOT(isCompetitorSearch))}"  styleClass="successMessage">
+        <apex:outputText value="Your SFDC account has been created " styleClass="successMessage"/>&nbsp;
+         <apex:outputLink target="_blank"  value="/{!newUnverifiedAccountID}" ><apex:outputText value="here" styleClass="successMessage"/></apex:outputLink>
+         .&nbsp;<apex:outputText value="Case {!caseRecordRet.CaseNumber} also has been created for Master Data team to follow up."/>&nbsp;<br/><br/>
+        </apex:outputPanel>
+</apex:outputPanel>
+<apex:outputPanel id="CaseonlyMessage">
+    <apex:outputPanel id="opppppcustomer" rendered="{!AND(isCaseCreated,NOT(isCompetitorSearch))}"  styleClass="successMessage">
+        <apex:outputText value="{!$Label.MDCPCaseMessage1} {!caseRecordRet.CaseNumber} {!$Label.MDCPCaseMessage2}"/>&nbsp;
+        <apex:outputLink target="_blank"  value="/{!caseRecord.Id}" ><apex:outputText value="here" styleClass="successMessage"/></apex:outputLink><br/><br/> 
+    </apex:outputPanel>
+    <apex:outputPanel id="opppppcompetitor" rendered="{!AND(isCaseCreated,isCompetitorSearch)}"  styleClass="successMessage">
+        <apex:outputText value="Case"/>&nbsp;
+        <apex:outputLink target="_blank" value="/{!caseRecord.Id}" > <apex:outputText value="{!caseRecordRet.CaseNumber}" styleClass="successMessage"/></apex:outputLink>   
+        &nbsp;<apex:outputText value="is created."/>
+        &nbsp;<apex:outputText value="{!$Label.MDCPCompetitorCaseSuccessMessage}"/>
+        &nbsp;<apex:outputText value="Note:"/>
+        &nbsp;<apex:outputText value="{!caseRecordRet.CaseNumber}"/>
+        &nbsp;<apex:outputText value=" above is a hyperlink to created case."/><br/><br/>     
+    </apex:outputPanel> 
+</apex:outputPanel>
+</apex:outputPanel>
+<!-----------End case/Accountcrreation Message------------------------------------>
+<!---------------------------------- Detail Status Action------------------------------------>    
+<apex:outputPanel id="DetailStatus">
+<apex:outputText id="faultmessage" rendered="{!IsMDCPDown}" style="color:#FF0000;font-size:12px;"><font color="#FF0000"><H2>{!errorMessage}</H2></font></apex:outputText>   
+<apex:outputPanel rendered="{!NOT(IsMDCPDown)}">
+<apex:outputText id="MDCPRecordStatus" rendered="{!showRecordStatus}" style="color:#FF0000;font-size: 1.05em;font-weight: normal;"><font size="2" color="#958D8D"><i>&nbsp;&nbsp;Selected record does not exist in SFDC</i></font><br/></apex:outputText>   
+<apex:outputText id="MDCPAvailableStatus" rendered="{!showAvailabilyStatus}" style="color:#FF0000;font-size: 1.05em;font-weight: normal;"><font size="2" color="#958D8D"><i>&nbsp;&nbsp;The account exists in  SFDC. Click View in SFDC button to see account details.</i></font><br/></apex:outputText>   
+<apex:commandButton value="View In SFDC"  rendered="{!AND(isSFDCAccount,detailSection)}"  onclick="popupcase('{!accountID}');"  onmouseover="CreateTooltipTail('View the account site that already exists in SFDC');" onmouseout="tooltip.hide();"  rerender="DetailStatus"  style="{!IF(NOT(isSFDCAccount), 'background:#356FB6;color:#D8D4D4;border:1px;border-color:white;font-size: 1.05em;font-weight: normal;padding-right:5px;padding-left:5px;', 'background:#356FB6;color:white;border:1px;border-color:white;font-size: 1.05em;font-weight: normal;padding-right:5px;padding-left:5px;')}"  status="SearchSalesforcestatus">&nbsp;&nbsp;&nbsp;</apex:commandButton>
+<apex:commandButton id="createSubscriptionCase" value="Create Case" onclick="confirmUnverifiedCase();" disabled="{!isCaseCreated}"   reRender="blankdetailoutput"   rendered="{!AND(NOT(isSFDCAccount),detailSection)}" onmouseover="CreateTooltipTail('Create account subscription case in SFDC.');" onmouseout="tooltip.hide();"    style="{!IF(isCaseCreated, 'background:#81A3CC;color:#D6D6D6;font-size: 1.05em;font-weight: normal;border:1px;border-color:white;padding-right:5px;padding-left:5px;', 'background:#356FB6;color:white;border:1px;border-color:white;font-size: 1.05em;font-weight: normal;padding-right:5px;padding-left:5px;')}">&nbsp;&nbsp;&nbsp;</apex:commandButton>
+<apex:actionFunction name="CUnveriedCase"   action="{!createNewCase}"  rerender="CaseonlyMessage,DetailStatus" status="CreatingCase"  />
+<apex:commandButton id="createUnverifiedAccount" value="Create Account" onclick="confirmUnverifiedAccount();"  disabled="{!OR(isSFDCAccount,IsNewAccountCreated)}" rendered="{!AND(permissionCreateAccount,detailSection)}" onmouseover="CreateTooltipTail('Create SFDC account using the details below.');" onmouseout="tooltip.hide();"     style="{!IF(OR(isSFDCAccount,IsNewAccountCreated), 'background:#81A3CC;color:#D6D6D6;border:1px;border-color:white;font-size: 1.05em;font-weight: normal;padding-right:5px;padding-left:5px;', 'background:#356FB6;color:white;border:1px;border-color:white;font-size: 1.05em;font-weight: normal;padding-right:5px;padding-left:5px;')}" reRender="blankdetailoutput" >&nbsp;&nbsp;&nbsp;&nbsp;</apex:commandButton>
+<apex:actionFunction name="CUnveriedAccount" action="{!createNewUnverifiedAccount}" status="CreatingAccount" rerender="Case-Account-CreationMessage,DetailStatus" />
+<apex:outputPanel id="blankdetailoutput"></apex:outputPanel> 
+<br/><br/>
+</apex:outputPanel>
+</apex:outputPanel>  
+<!----------------------------------End Detail Status Action------------------------------------> 
+<!----------------------------------Detail Result------------------------------------------------> 
+<apex:outputPanel id="onlydetailresult">
+<apex:outputPanel rendered="{!AND(NOT(IsMDCPDown),detailSection)}">
+    <apex:pageBlockSection id="DetailResultBlocksection" >
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Name</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.Name}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >MDCP Id</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.MDCPOrgId}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Street</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.Street}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Site Duns</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.DUNS}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >City</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.City}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Global Duns</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.GlobalDUNS}"/>
+        </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel >City Region</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.CityRegion}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Legal Name</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.LegalName}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Reporting Name</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.ReportingName}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >NonLatin Name</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.NonLatinName}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >State</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.State}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Domestic Duns</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.DomesticDUNS}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Country</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.Country}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Annual Revenue</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.AnnualRevenue}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Postal Code</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.PostalCode}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Out Of Business</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.OutofBusinessIndicator}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Trade Style Name 1</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.tradeStyleName1}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Number Of Employees</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.NumberOfEmployees}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Trade Style Name 2</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.tradeStyleName2}"/>
+       </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Industry Segment Name</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.IndustrySegmentName}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Trade Style Name 3</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.tradeStyleName3}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Industry Vertical Name</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.IndustryVerticalName}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Trade Style Name 4</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.tradeStyleName4}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >SIC Code</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.SICCode}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Trade Style Name 5</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.tradeStyleName5}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >SIC Name</apex:outputLabel>
+            <apex:outputText value="{!CAccDisplay.SICName}"/>
+        </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+</apex:outputPanel>
+</apex:outputPanel>
+<!---------------------------------- End Detail Result--------------------------------------------> 
+</apex:pageBlock>
+</apex:pageBlockSection>
+<apex:pageBlockButtons location="bottom">
+<apex:commandButton value="Close" style="font-size: 1.05em;font-weight: normal;" onclick="window.close()"  /> 
+</apex:pageBlockButtons> 
+<!---------------------------------------------End Detail Result Panel------------------------------------------------->
+<a name="DetailAnchor" id="DetailAnchor"></a> 
+</apex:pageBlock> 
+</apex:form>
+</body>
+<apex:stylesheet value="{!$Resource.CSSMDCP}"/>
+<apex:includeScript value="{!$Resource.Json}"/>
+<apex:includeScript value="{!$Resource.searchcommon}"/>
+<apex:includeScript value="{!$Resource.searchvalidation}"/>
+<apex:includeScript value="{!$Resource.MDCPSearchConfig}"/>
+<apex:includeScript value="{!$Resource.searchapp}"/>
+<apex:includeScript value="{!$Resource.MDCPGeneralScript}"/>
+</apex:page>

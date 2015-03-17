@@ -1,0 +1,462 @@
+<apex:page controller="TS_ODP_ReleaseSatgeApprovalController" sidebar="false">
+
+ <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">   
+<!--<![endif]-->
+    <!-- BEGIN HEAD -->
+<head>
+<meta charset="utf-8" />
+<title>ODP</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<meta content="" name="description" />
+<meta content="" name="fernando anto" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+
+</head>
+<!-- END HEAD -->
+
+    <body>
+
+<apex:form >
+
+    <style>
+        .pbSubheader {
+            border-top: 0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px !important;
+            border-bottom-left-radius: 6px !important;
+            border-top-right-radius: 6px !important;
+        }
+
+        body .bPageBlock .pbBody .pbSubheader img {
+            height: 15px;
+            width: 15px;
+        }
+
+        .hotLink {
+            color: blue !important;
+            text-decoration: none;
+        }
+
+            .hotLink:hover {
+                color: red !important;
+            }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family: 'Voces', sans-serif;
+            !important;
+            border-top: 0px;
+        }
+
+        .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+            border-top: 0px solid #3044b5;
+        }
+
+        .list table {
+            border-collapse: collapse;
+            text-align: left;
+            width: 100%;
+        }
+
+        .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+            padding: 2px 8px;
+            color: #333;
+            border-bottom: 1px solid #e3deb8;
+            font-family: 'Voces', sans-serif;
+            !important;
+            font-size: 13px !important;
+        }
+        /* table row highlight */
+        body .pbBody table.list tr.dataRow.highlight td {
+            background-color: #ecf4f8;
+        }
+
+        body .pbBody table.list tr.headerRow th {
+            background: #0093d2 !important;
+            color: #fff !important;
+        }
+        
+      
+        /* for Header */
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+            border-top: 0;
+            color: white;
+            background: #0093d2;
+            padding: 15px 8px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 20px;
+            font-weight: 300 !important;
+        }
+
+            .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+                font-weight: 300;
+            }
+        /* done header */
+        .bPageBlock .detailList .data2Col {
+            padding-left: 0px;
+        }
+
+        body .pbBody table.list tr.headerRow th {
+            padding: 8px 8px;
+        }
+      
+
+        #buttons {
+            position: absolute;
+            top: 34px;
+            left: 200px;
+        }
+
+        #searchFilterDiv {
+            position: absolute;
+            top: 34px;
+            right: 30px;
+        }
+
+        .CurBtn {
+            color: #D7410B !important;
+            background-image: none !important;
+            border: none !important;
+            font-size: 13px !important;
+            background-color: #fff !important;
+            -moz-border-radius: 0 4px 0 4px !important;
+            -webkit-border-radius: 0 4px 0 4px !important;
+            border-radius: 0 4px 0 4px !important;
+        }
+
+            .CurBtn:hover {
+                background-color: #0096d6 !important;
+            }
+
+    
+       .btn-primary {
+            background-image: none !important;
+            border: none !important;
+            font-weight: bold !important;
+            font-size: 13px !important;
+            background-color: #fff !important;
+            -moz-border-radius: 0 4px 0 4px !important;
+            -webkit-border-radius: 0 4px 0 4px !important;
+            border-radius: 0 4px 0 4px !important;
+        }
+        .btn-primary:hover {
+            background-color: #0096d6 !important;
+        }
+
+        .icon-filter{
+        color: hsl(0, 100%, 100%);
+        font-size: 20px;
+        }
+        
+        .auto-filter:hover {
+            text-decoration: none;
+        }
+        .auto-filter-span{
+            border: 1px solid hsl(180, 8%, 43%);
+            width: 170px;
+            display: inline;
+            position: absolute;
+            display:none;
+            margin: 30px 0px 0px -16px;
+            color: hsl(0, 0%, 0%);
+            background-color: hsl(0, 100%, 100%);
+        }
+        .search-filter-btn{
+            width: 80px;
+            font-size: 13px;
+            background-color: hsl(198, 100%, 41%)!important;
+            border: none;
+            color: hsl(0, 100%, 100%);
+        }
+        .icon-search {
+            position: absolute;
+            margin: 8px 0px 0px 4px;
+            color: hsl(0, 100%, 100%);
+        }       
+    </style>
+     
+    <apex:pageBlock >
+    
+    <apex:messages />
+
+    <div id="buttons">
+        <apex:commandButton value="In Progress"  action="{!FilterInProgress}" styleClass="{!IF(FilterStatus == 'InProgress','CurBtn ','btn-primary')}" />
+        <apex:outputText value=" "/>
+        <apex:commandButton value="Upcoming" action="{!FilterUpcoming}" styleClass="{!IF(FilterStatus == 'Upcoming','CurBtn ','btn-primary')}"/>
+        <apex:outputText value=" "/>
+        <apex:commandButton value="History" action="{!FilterHistory}" styleClass="{!IF(FilterStatus == 'History','CurBtn','btn-primary')}"/>
+        
+         <apex:inputCheckbox >
+          <apex:actionSupport event="onchange" action="{!doQuery}" rerender="RecordsList"/>
+        </apex:inputCheckbox>Show Completed
+        
+        <!--
+        <apex:inputCheckbox label="Show Completed" value="{!ShowCompleted}" >
+            <apex:actionSupport event="onchange" action="{!doQuery}"/>
+        </apex:inputcheckbox>
+        <apex:outputLabel value="Show Completed" style="color:white;"></apex:outputLabel> -->
+    </div>
+    
+    
+ 
+    <apex:pageBlockSection title="Stage Reviews" collapsible="false" columns="1" id="RecordsList">
+    
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+<!--
+<apex:pageBlock >   
+
+    <div id="buttons">
+        <apex:commandButton value="In Progress" action="{!InProgress}" styleClass="{!IF(FilterStatus == 'In Progress','CurBtn','btn-primary')}"/>
+        <apex:commandButton value="Upcoming" action="{!upcoming}" styleClass="{!IF(FilterStatus == 'Upcoming','CurBtn','btn-primary')}"/>
+        <apex:commandButton value="History" action="{!history}" styleClass="{!IF(FilterStatus == 'History','CurBtn','btn-primary')}"/>
+        
+        <apex:inputCheckbox value="{!showComplete}">
+            <apex:actionSupport event="onchange" action="{!showCompleted}"/>
+        </apex:inputCheckbox>
+        <apex:outputLabel value="Show Done" style="color:black;"></apex:outputLabel>
+        
+    </div>
+   
+    
+    <apex:pageBlockSection collapsible="false" columns="1" id="RecordsList">
+        <div class="pbSubheader" style="margin-top:-5px;">
+            <h3>Contributions</h3>
+        </div>
+   </apex:pageBlockSection>
+   </apex:pageBlock>   -->           
+</apex:form>
+
+
+            <!-- BEGIN CONTAINER -->
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+  <div id="main-content"> 
+    <!-- BEGIN PAGE CONTAINER-->
+    <div class="container-fluid"> 
+      <!-- SEARCH BTN -->
+      
+        <div class="row-fluid">
+        <div class="span12 mtop20">
+          <table class="table table-striped table-bordered" id="OLC_1">
+                            <thead>
+                            
+                            <tr>
+                                 <th>Action</th>
+                                <th>Project</th>
+                                <th>Stage</th>
+                                <th>Stage Status</th>
+                                <th>Review Date</th>
+                               
+                            </tr>
+                        
+                            
+                          
+                            </thead>
+                             <tfoot>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </tfoot>
+                            <tbody>
+                            <apex:repeat value="{!ConList}" var="dr" id="ConListID">
+                             
+                            <tr class="odd gradeX">
+                               <td> <a href="/apex/ODP_ReleaseStageApprovalDetail?id={!dr.Id}&mode=Open" target="_blank" class="hotLink">Open</a>
+                   </td>
+                                 <td><apex:outputText >{!dr.Release_Name__c}</apex:outputText></td>
+                                 <td> <apex:outputText >{!dr.Stage_Name__c}</apex:outputText></td>
+                                 <td> <apex:outputText >{!dr.Status__c}</apex:outputText></td>
+                                 <td><apex:outputText >{!dr.Current_Baseline_End_Date__c}</apex:outputText></td>
+                            </tr>
+                            </apex:repeat>
+                            </tbody>
+                           
+                        </table>
+          <!-- // DATATABLE - DTA --> 
+          
+        </div>
+      </div>
+      <!-- END PAGE CONTENT--> 
+    </div>
+    <!-- END PAGE CONTAINER--> 
+  </div>
+  <!-- END PAGE --> 
+</div>
+<!-- END CONTAINER --> 
+
+
+
+        <!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DataTableColumnFilter.js')}"/>
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!-- END JAVASCRIPTS -->   
+    <script>
+    
+    
+     
+        
+        // DATATABLE OLC_1
+        // -------------------------------------------------------------------------------- * -->
+
+        $('#OLC_1').dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ records per page",
+                "oPaginate": {
+                    "sPrevious": "Prev",
+                    "sNext": "Next"
+                }
+            },
+            "aoColumnDefs": [{
+                'bSortable': false,
+                 "bJQueryUI": true,
+        "bFilter" : true,
+                'aTargets': [0]
+            }]
+        });
+
+        jQuery('#OLC_1 .group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                } else {
+                    $(this).attr("checked", false);
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+
+        jQuery('#OLC_1_wrapper .dataTables_filter input').addClass("input-medium"); // modify table search input
+        jQuery('#OLC_1_wrapper .dataTables_length select').addClass("input-mini"); // modify table per page dropdown
+
+        
+            //added TS
+       
+       (function($) {
+
+$.fn.dataTableExt.oApi.fnGetColumnData = function ( oSettings, iColumn, bUnique, bFiltered, bIgnoreEmpty ) {
+    // check that we have a column id
+   
+    if ( typeof iColumn == "undefined" ) return new Array();
+     
+    // by default we only want unique data
+    if ( typeof bUnique == "undefined" ) bUnique = true;
+     
+    // by default we do want to only look at filtered data
+    if ( typeof bFiltered == "undefined" ) bFiltered = true;
+     
+    // by default we do not want to include empty values
+    if ( typeof bIgnoreEmpty == "undefined" ) bIgnoreEmpty = true;
+     
+    // list of rows which we're going to loop through
+    var aiRows;
+     
+    // use only filtered rows
+    if (bFiltered == true) aiRows = oSettings.aiDisplay;
+    // use all rows
+    else aiRows = oSettings.aiDisplayMaster; // all row numbers
+ 
+    // set up data array   
+    var asResultData = new Array();
+     
+    for (var i=0,c=aiRows.length; i<c; i++) {
+        iRow = aiRows[i];
+        var aData = this.fnGetData(iRow);
+      
+        var sValue = aData[iColumn];
+         
+        // ignore empty values?
+        if (bIgnoreEmpty == true && sValue.length == 0) continue;
+ 
+        // ignore unique values?
+        else if (bUnique == true && jQuery.inArray(sValue, asResultData) > -1) continue;
+         
+        // else push the value onto the result data array
+        else asResultData.push(sValue);
+    }
+     
+    return asResultData;
+}}(jQuery));
+ 
+ 
+function fnCreateSelect( aData )
+{
+    var r='<select><option value=""></option>', i, iLen=aData.length;
+    for ( i=0 ; i<iLen ; i++ )
+    {
+        r += '<option value="'+aData[i]+'">'+aData[i]+'</option>';
+    }
+    return r+'</select>';
+}
+ 
+ 
+$(document).ready(function() {
+    /* Initialise the DataTable */
+    var oTable = $('#OLC_1').dataTable();
+     
+    /* Add a select menu for each TH element in the table header */
+    $("tfoot th").each( function ( i ) {
+    if(i!=0)
+    
+        this.innerHTML = fnCreateSelect( oTable.fnGetColumnData(i) );
+        $('select', this).change( function () {
+            oTable.fnFilter( $(this).val(), i );
+        } );
+    } );
+} );
+//ended TS
+
+    </script>
+
+        </body>
+</html>
+</apex:page>

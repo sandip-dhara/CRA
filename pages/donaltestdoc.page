@@ -1,0 +1,1804 @@
+<apex:page controller="AthenaLearningBoardDtls" extensions="mobileUserData,mobileActivityController" action="{!InserSession}" showheader="false" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    <!--<apex:includeScript value="{!URLFOR($Resource.SessionTkGwLoginMinJs)}"/>    
+        <script type="text/javascript">
+            GWSessionTk.login();
+            if (GWSessionTk.errorStatus) {
+                alert(GWSessionTk.errorStatus + ' Please refresh your page and try again.');
+            }
+        </script>  -->      
+    <head>
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mslp_res, 'fonts/icomoon/style.css')}" />
+        
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+        
+    </head>
+    
+    <script type="text/javascript">
+         var membersList = new Array();
+         var chatterList= new Array();
+    </script>
+            
+    <div data-role="page" id="learningBoardDefault" style="background-color:#5A5A5A">
+    
+         
+  
+    <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+    </div>
+  
+          <apex:outputPanel rendered="{!!LearningBoardDtls.StaticImage}"> 
+            <div style="height:13em; overflow:hidden;">
+                <img src="{!URLFOR($Action.Attachment.Download, LearningBoardDtls.AttachmentId)}" style="display: block; min-width: 100%; max-width:100%; min-height:200px;" />
+            </div>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!LearningBoardDtls.StaticImage}">
+            <img src="{!LearningBoardDtls.DefaultImageName}" style="display: block; min-width: 100%;max-height:200px; min-width: 100%; min-height:200px; max-width:100%;"/>
+        </apex:outputPanel>  
+    
+        <div id="myLabel"><p>{!LearningBoardDtls.LBName}</p></div>        
+        <div id="myLabel2">
+            <div class="column1">
+                <img src="{!LearningBoardOwnerDtls.FullPhotoUrl}" class="communityOwnerImg"/>
+            </div>
+            <div class="column2">
+                {!LearningBoardOwnerDtls.Name}
+            </div>
+            <div class="column3">
+             <apex:outputPanel rendered="{!!isloggedUser}">
+                 <apex:outputPanel rendered="{!!IsFollowOwner}">
+                    <span onclick="performFollowAction()" class="icon-follow" style="font-size:26pt;text-align:center;color:#ffffff;line-height:50px;margin-right:5px;"></span>
+                  </apex:outputPanel>
+                  <apex:outputPanel rendered="{!IsFollowOwner}">
+                    <span onclick="performUnfollowAction()" class="icon-unfollow" style="font-size:26pt;text-align:center;color:#ffffff;line-height:50px;margin-right:5px;"></span>
+                  </apex:outputPanel>
+              </apex:outputPanel>
+                <span id="icoShareButton" data-BoardId ="{!LearningBoardDtls.LbId}" onclick="shareBoard(this)" class="icon-share" style="font-size:26pt;text-align:center;color:#ffffff;line-height:50px;"></span>
+            </div>
+       </div>
+
+  
+    <div data-role="content" style="margin-top:-17px;">   
+            <div data-role="collapsible" id="contentHeader" data-inset="false" data-collapsed-icon="false" data-expanded-icon="false">
+                <h3 style="color:white;">Content<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Topic.png')}"/></span></h3>
+                <!-- The tab content (list of collaterals) will go here -->
+                <ul data-role="listview" id="collateralList" class="listviewTopic">
+                <!--<li id="description" style="color:#ffffff;border-bottom:1px solid white;" onclick="showBoardDesc()"><p id="boardDesc">{!LearningBoardDtls.LBShortDescription}</p></li> -->
+                <li id="description" style="color:#ffffff;border-bottom:2px solid #a7a8a9;">
+                
+                <div id="boardDesc" class="less" style="whitespace:normal !important;color:#ffffff;font-family:HP Simplified,sans-serif;text-shadow:none;">
+                 {!LearningBoardDtls.LBShortDescription}
+                </div>
+                <div class="text-size">more <span class="icon-caret-down"></span></div>
+                
+                </li>
+                
+                </ul> <!-- collapsibleset -->
+            </div>
+            <div data-role="collapsible" id="contentChatter" data-inset="false" data-collapsed-icon="false" data-expanded-icon="false">
+                <h3 style="color:white;">What's on your mind?<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Chat.png')}"/></span></h3>
+                <!-- Code for chatter feed - Begin -->
+        <div align="center" style="background-color:transparent !important;white-space:wrap !important;border:none !important;">
+                <fieldset class="ui-grid-a" align="center">
+          <div class="ui-block-a" style="width:70%"><input type="text" placeholder="Enter your comment..." name="fnameComment" id="fnameComment2" data-clear-btn="true" data-mini="false" data-corners="false"/></div>
+           <div class="ui-block-b" style="width:30%;" align="center"><a href="#" id="commentButton" data-role="button" style="background: #F9A006; color:#ffffff;margin-top:9px; text-shadow:none; border:none;" data-mini="true" onclick="postComment()">Post</a></div>
+           </fieldset> 
+         <div style="visibility:hidden; height:0px">
+        <apex:form id="frmPostInputComment2" onsubmit="return isPopulated('fnameComment2');">
+            <fieldset class="ui-grid-a">
+            <div class="ui-block-a" style="width:70%"><apex:inputText id="txtPostInputComment2" value="{!feedItemInputText}" html-placeholder="Enter your reply here..." style="min-height: 2.8em"/></div>
+            <div class="ui-block-b" style="width:30%"><apex:commandButton id="cmdBtnPostComment2" rerender="feedOutputPanel" action="{!postNewFeedItemLB}" value="Post"/></div>
+            </fieldset> 
+            <div style="visibility:hidden; height:0px">
+                <apex:inputTextarea id="txtUserTopicCommentC" value="{!feedCommentID}" title="Comment"/>
+            </div>
+        </apex:form>
+        </div>
+        </div>
+        <div id="spacer" style="height:20px;">
+        </div>
+          <ul id="chatterList" data-role="listview" data-inset="false" style="transparent !important;white-space:wrap !important;border:none !important;">
+        <apex:repeat value="{!feedItemPage.items}" var="feedItem">
+              
+                    <li data-icon="false" class="actvitylist" style="background:transparent !important;" id="foo">
+                        
+                        <img src="{!feedItem.photoUrl}" class="circular-image-container-chatter"/>
+                        <h2 class="hpFont" style="background:transparent;text-align:left;color:#38c;text-shadow:none;">{!feedItem.actor.name}</h2>         
+                        <p id="postedText" class="hpFont" style="background:transparent;text-align:left;color:black;text-shadow:none;white-space:normal!important;word-wrap: break-word!important;word-break: break-word!important;">{!feedItem.body.text}</p>
+                        <span class="ctrl hpFont" style="text-align:left;"><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" style="padding-right:15px;">
+                            <apex:outputText value="{0, date, dd MMM yy}" rendered="{!NOT(ISNULL(feedItem.createdDate))}">
+                                <apex:param value="{!feedItem.CreatedDate}" />
+                            </apex:outputText>
+                        </fieldset></span>
+                        
+                         <span>
+                         <ul data-role="listview" data-inset="true" style="box-shadow: 0 0px 0px rgba(0,0,0,0) !Important; background:transparent !important;border:none !important;">
+                         <apex:repeat value="{!feedItem.comments.comments}" var="comment">
+                         <li style="margin-left:-15px; margin-right:15px; background:transparent !important; border:none !important;">
+                             <img src="{!comment.user.photo.smallPhotoUrl}" class="circular-image-container-chatter"/>
+                             <h2 class="hpFont" style="background:transparent;text-align:left;color:#38c;text-shadow:none;">{!comment.user.firstname} {!comment.user.lastname}</h2>
+                             <p id="postedText"  class="hpFont" style="background:transparent;text-align:left;color:black;text-shadow:none;white-space:normal!important;">
+                             <apex:repeat value="{!comment.body.messageSegments}" var="segment">
+                                            <apex:outputPanel layout="none" rendered="{!segment.type == TextSegmentType}">
+                                                {!segment.text}
+                                            </apex:outputPanel>
+                                            <apex:outputPanel layout="none" rendered="{!segment.type == MentionSegmentType}">
+                                                <a href="/{!segment['record'].id}">@{!segment['record'].name}</a>
+                                            </apex:outputPanel>
+                                        </apex:repeat>
+                             </p>
+                             <span class="ctrl hpFont" style="text-align:left"><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" >
+                            <apex:outputText value=" {0, date, dd MMM yy}" rendered="{!NOT(ISNULL(comment.createdDate))}">
+                                <apex:param value="{!comment.CreatedDate}" />
+                            </apex:outputText>
+                        </fieldset></span>
+                        </li>
+                         </apex:repeat>
+                         
+                         </ul>
+                        
+                          <script>chatterList.push({'id':'{!feedItem.id}'});</script>
+                            </span>
+                    </li>
+                
+               
+        </apex:repeat>
+        </ul>
+        
+    <!-- Code for chatter feed - End -->
+           </div>
+            <div data-role="collapsible" id="contentMembers" data-inset="false" data-collapsed-icon="false" data-expanded-icon="false">
+                <h3 style="color:white;">Members<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Members.png')}"/></span></h3>
+                <ul id="membersList" data-role="listview" data-inset="false">
+            <!--<apex:repeat value="{!Followers}" var="peopleRslt">
+               <li id="member_{!peopleRslt.Id}" data-icon="false">
+                   <img src='{!peopleRslt.SmallPhotoUrl}'  class="circular-image-container" style="margin-left:5px;"/>
+                   <p class="blue-font"><b>{!peopleRslt.Name}</b></p>
+                   <!-- <p style="background:transparent !important;"><b>{!peopleRslt.Title}</b></p> Not available on Learning Boards 
+                   <script>membersList.push({'id':'{!peopleRslt.Id}'});</script>
+                </li>
+            </apex:repeat> -->
+             </ul> 
+           </div>
+           <div data-role="collapsible" id="contentMore" data-inset="false" data-collapsed-icon="false" data-expanded-icon="false">
+                <h3 style="color:white;">More<span style="float:right;"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_More.png')}"/></span></h3>
+      <div id="custom-collapsible" class="my-page" style="margin-top:7px;">          
+      <ul id="featuredList" data-role="listview" data-inset="false">
+      <apex:repeat id="featuredList" value="{!GetRelatedCommunities}" var="brdRslt">
+       <li>
+       <a href="/apex/mobileCommunityMockup?id={!brdRslt.CommunityId}" data-ajax="false">
+       <!--<img src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" class="ui-li-thumb"/> -->
+        <img>
+       <apex:outputPanel rendered="{!!brdRslt.StaticImage}"> 
+                <img src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" class="ui-li-thumb"/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!brdRslt.StaticImage}">
+                <img src="{!brdRslt.DefaultImageName}"  class="ui-li-thumb"/>
+              </apex:outputPanel>
+              </img>
+       <h2>{!brdRslt.CommunityName}</h2>
+       </a>
+       </li>
+      </apex:repeat>
+    </ul>
+    </div>
+    
+     <div id="custom-collapsible" class="my-page">
+        <ul id="featuredList" data-role="listview" data-inset="false">
+      <apex:repeat id="featuredListLB" value="{!RelatedLearningBoards}" var="brdRslt">
+       <li>
+       <a href="/apex/mobileLearningBoardMockup?id={!brdRslt.Lbid}" data-ajax="false">
+       <!--<img src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" class="ui-li-thumb"/>-->
+       <img>
+       <apex:outputPanel rendered="{!!brdRslt.StaticImage}"> 
+              <img src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" class="ui-li-thumb"/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!brdRslt.StaticImage}">
+                <img src="{!brdRslt.DefaultImageName}"  class="ui-li-thumb"/>
+              </apex:outputPanel>
+              </img>
+       <h2>{!brdRslt.LBName}</h2>
+       </a>
+       </li>
+      </apex:repeat>
+    </ul>
+    </div>
+    
+    </div>
+    
+    <div id="outter"><div id="emptyResultMsg"><h3 style="color:white; text-shadow:none;">You must be a member to view the content of this private board.</h3></div></div>
+    
+    </div>
+
+<!-- START SHARE PANEL -->
+    <style>
+        #sharePanel {
+            background-color:#F3F3F3;
+        }
+        #sharePanel .ui-panel-inner {
+            padding: 10px !important;
+        }
+        #sharePanel h1 {
+            display:block;
+            width:230px;
+        }
+        #sharePanel h2 {
+            display:block;
+            font-size: 13px;
+            padding-bottom: 20px;
+        }
+    </style>
+    <script>
+    
+      function shareLearningBoard(topicName, topicId) {       
+        $('#topicTitle').text(topicName);
+        window.tId = topicId;
+        
+        $('#contacts').controlgroup("container").html('');
+        Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.AthenaLearningBoardDtls.GetNetworkUsersList}', "{!LearningBoardDtls.LbId}", ShowNetworkUsers);    
+      }
+      
+      function ShareLB(data)
+      {
+          var LearningBoardID = $(data).attr('data-BoardId');
+          window.tId = LearningBoardID;
+          Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.AthenaLearningBoardDtls.GetNetworkUsersList}', LearningBoardID, ShowNetworkUsers);
+      }
+
+      
+      function ShowNetworkUsers(result, event) {
+            for(var i = 0; i < result.length; i++) {
+                $('#contacts')
+                .controlgroup("container")
+                .append('<input type="checkbox" name="itemIds" id="'+ result[i].Id +'"/> <label for="'+ result[i].Id +'">'+ result[i].Name +'</label>');           
+            }
+            
+            $("#contacts")
+            .enhanceWithin()
+            .controlgroup("refresh");
+      }
+      
+      function SaveUsers()
+      {
+            var strRel = '';
+            var lst = $('#contacts').closest('fieldset').find(':checkbox');
+            
+            for (var i=0; i<lst.length; i++) {
+                if ($("#" + lst[i].id).prop("checked")) {
+                    if (strRel == '') {
+                        strRel = lst[i].id;
+                    }
+                    else {
+                        strRel = strRel + ',' + lst[i].id;
+                    }
+                }
+            }
+            console.log('SaveUsers: ' + strRel );
+
+          if (strRel == '')
+          {
+              alert('Select at least one user');
+          }
+          else
+          {
+              document.cookie = "TopicCatName=" + $('[id$=hdnContentCtgyName]').val();
+
+              $('[id$=hdnShareContentFlag]').val('Y');
+
+              var ShareCmt = $('#commentArea').val();
+              var TopicId = window.tId; //'a6wZ00000008rlSIAQ'; //$('#commentArea').val();
+              var topName = $('#topicTitle').text();
+              
+              document.getElementById("{!$Component.SlpActv.hdnSelectedUsrsId}").value = strRel;
+              document.getElementById("{!$Component.SlpActv.hdnShareComment}").value = ShareCmt;
+              document.getElementById("{!$Component.SlpActv.hdnContentShareId}").value = TopicId;
+              document.getElementById("{!$Component.SlpActv.hdnShareTopicName}").value = topName;
+              
+              console.log(strRel + ", " + ShareCmt + ", " + TopicId + ", " + topName);
+              var button = document.getElementById("{!$Component.SlpActv.SActivityShare}");
+              //button.click();
+          }
+      }
+
+      
+    </script>
+    <div data-role="panel" id="sharePanel" data-position="right" data-display="overlay">
+        <h2>Select users from your network</h2>
+        <h1 id="topicTitle">HP Helion: Built for the Future, but Ready Today</h1>
+        <hr/>
+
+        <fieldset data-role="controlgroup" id="contacts" data-filter="true" data-icon="false">                
+        </fieldset>
+        
+        <textarea name="commentArea" id="commentArea"></textarea>
+        <div id="btnPnl">
+            <a href="#" class="ui-btn" style="float:left;" onclick="closePanel();">Cancel</a><a href="#" class="ui-btn" style="float:right;" onclick="SaveUsers()">Share</a>
+        </div>
+            <apex:form style="display:none !important;" id="SlpActv">
+                <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  style="display:none !important" action="{!SaveNetworkUsers}" value="hide" id="SActivityShare"/>
+                <apex:inputText id="hdnSelectedUsrsId" style="display:none"  value="{!SelectedUsrs}"/>
+                <apex:inputText id="hdnShareComment" style="display:none"  value="{!hdnSharecmt}"/>
+                <apex:inputText id="hdnContentShareId" style="display:none"  value="{!ContentShareId}"/>
+                <apex:inputText id="hdnShareContentFlag" style="display:none"  value="{!hdnShareContentFlag}"/>
+                <apex:inputText id="hdnShareTopicName" style="display:none"  value="{!ShareTopicName}"/>
+            </apex:form>
+
+    </div><!-- /panel -->
+
+<!-- END SHARE PANEL --> 
+
+
+<!-- START RATE DOCUMENT PANEL -->
+
+    <div data-role="panel" id="ratePanel" data-position="right" data-display="overlay" style="background:#f3f3f3;">
+        <div data-role="content" >
+            <p>Rate this topic</p>
+            <h1 id="popupDocLName">Optimize Oil Production</h1>
+            <div class="hr" style="margin-bottom:20px;"><hr /></div>
+            <span>
+            <div style="display:table-cell;margin-top:20px;">Average rating:</div>
+            <span id="popupRatingimages" style="display:table-cell;">******</span>
+            </span>
+            <span >
+            <div style="display:table-cell;margin-top:20px;">Rated by&nbsp;</div>
+            <span id="popupRatingUsers" style="display:table-cell;"> 14 users</span>
+            </span>
+            <div class="hr" style="margin:20px;"><hr /></div>
+            <label for="ratingSlider">My rating:</label>
+           <input name="ratingSlider" id="ratingSlider" type="range" min="1" max="5" value="3" data-show-value="true" style="clear:left"/>
+            <div class="hr" style="margin:20px;"><hr /></div>
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><a href="#ratePanel" data-role="button" style="background:#767676;color:#ffffff;text-shadow:none;">Not now</a></div>
+                <div class="ui-block-b"><a href="#" id="rateButton" data-role="button" style="background:#F9A006;color:#ffffff;text-shadow:none;" data-mini="false" onclick="rateDocument()">Rate it</a></div>
+            </div><!-- /grid-a -->
+            <!-- Document information
+            <div style="float: left"><img id="popupDocOwnerPhoto" src="{!CommunityOwnerDetails.FullPhotoUrl}" class="communityOwnerImg"/></div>
+            <div id="popupDocLName">Unknown name</div>
+            <div id="popupDocLOwnerName" style="font-weight:bold;">Unknown owner</div>
+            <div style="clear:both"></div>
+            <div id="popupDocLDescription" style="white-space: normal;">No description</div> -->
+            <!-- Create SF form as hidden as a proxy to interact with SF when submitting rating -->
+                    <div style="visibility:hidden; height:0px">
+                        <apex:form id="SFRatingForm">
+                            <apex:inputHidden id="txtCommunityTopicID" value="{!LearningBoardTopicID}" />
+                            <apex:inputHidden id="txtOwnerContributor" value="{!IsOwnerOrContributor}" />
+                            <apex:outputLabel value="Your Rating" for="txtTopicScore"/>                 
+                            <apex:selectList id="txtTopicScore" value="{!UserTopicRating}" size="1">
+                                <apex:selectOption itemValue="1" itemLabel="1"/>
+                                <apex:selectOption itemValue="2" itemLabel="2"/>
+                                <apex:selectOption itemValue="3" itemLabel="3"/>
+                                <apex:selectOption itemValue="4" itemLabel="4"/>
+                                <apex:selectOption itemValue="5" itemLabel="5"/>
+                            </apex:selectList>
+                            <apex:outputLabel value="Rating comment (optional)" for="txtUserTopicRatingComment"/>                   
+                            <apex:inputTextarea id="txtUserTopicRatingComment"  rows="3" value="{!userTopicRatingComment}" title="Rating Comment"/>
+                            <apex:commandButton id="btnUserRating" action="{!SaveTopicUserRating}" value="Rate It!" >
+                            </apex:commandButton>
+                        </apex:form>
+                    </div>
+
+    </div><!-- /panel -->
+
+<!-- END RATE DOCUMENT PANEL --> 
+     
+    
+        <div data-role="popup" id="popupDesc" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <h1> Description </h1>
+        <p>{!LearningBoardDtls.LBShortDescription}</p>
+        </div>
+    
+    <div data-role="popup" id="popupError" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <p style="margin:20px;">There is no data available for your selection at this time</p>
+        </div>
+        
+        <div data-role="popup" id="popupDownloadErr" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <p style="margin:20px;">Preview and Downloading of documents is only supported on Chrome for Android.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.android.chrome" class="ui-btn" style="margin:15px;background:#F9A006;color:#ffffff;">Get Chrome</a>
+        </div>
+        
+        <div data-role="popup" id="popupDownloadErrIOS" data-overlay-theme="a" data-dismissible="false">
+        <p style="margin:20px;">Downloading of documents is currently not supported on iOS devices.</p>
+        <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+        
+         <div data-role="popup" id="popupDownloadBlock" data-overlay-theme="a" data-dismissible="false">
+        <p style="margin:20px;">Downloading of documents is currently not supported on mobile devices.</p>
+        <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+        
+        <div data-role="popup" id="popupDownloadMissing" data-overlay-theme="a" data-dismissible="false">
+        <p style="margin:20px;">Unfortunately we are not able to display this preview</p>
+        <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+   
+        
+        <div data-role="popup" id="rateMyCollateralPop" data-overlay-theme="a" data-dismissible="false" >
+            <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        </div>
+        
+<div data-role="popup" id="form" data-theme="a" data-overlay-theme="a" style="box-shadow:none !important;" data-corners="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <div id="popContent"><ul id="popList" data-role="listview" data-inset="false" style="transparent !important;white-space:wrap !important;border:none !important;"></ul></div>
+        <fieldset class="ui-grid-a" align="center">
+          <div class="ui-block-a" style="width:70%"><input type="text" placeholder="Enter your reply..." name="fname" id="fname2" data-clear-btn="true" data-mini="false" data-corners="false"/></div>
+           <div class="ui-block-b" style="width:30%;" align="center"><a href="#" id="replyButton" data-role="button" style="background: #F9A006; color:#ffffff;margin-top:9px; text-shadow:none; border:none;" data-mini="true" onclick="postReply()">Post</a></div>
+           </fieldset> 
+         <div style="visibility:hidden; height:0px">
+        <apex:form id="frmPostInput2" onsubmit="return isPopulated('txtPostInput2');">
+            <fieldset class="ui-grid-a">
+            <div class="ui-block-a" style="width:70%"><apex:inputText id="txtPostInput2" value="{!feedItemInputText}" html-placeholder="Enter your reply here..." style="min-height: 2.8em"/></div>
+            <div class="ui-block-b" style="width:30%"><apex:commandButton id="cmdBtnPost2" rerender="feedOutputPanel" action="{!postNewCommentLB}" value="Post"/></div>
+            </fieldset> 
+            <div style="visibility:hidden; height:0px">
+                <apex:inputTextarea id="txtUserTopicComment" value="{!feedCommentID}" title="Comment"/>
+            </div>
+        </apex:form>
+        </div>
+        </div>
+        
+         
+      
+    </div> <!-- mobileCommunityCollateralsDetails -->
+    
+    <!-- START PEOPLE PANEL -->
+
+    <div data-role="panel" id="peoplePanel" data-position="right" data-display="overlay" style="background:#f3f3f3;">
+        <div id="peoplePanelContent">
+         <a href="#peoplePanel" style="text-decoration:none;text-shadow:none;"><span id="icoCloseButton"  class="icon-caret-right" style="font-size:32pt;text-align:center;color:rgb(135, 136, 138);margin-left:10px;"></span></a>
+        </div>
+
+    </div><!-- /panel -->
+
+<!-- END PEOPLE PANEL --> 
+
+<div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+            <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">
+                <li data-icon="false"><a data-ajax="false" href="/apex/mSLPLanding0" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+
+</div> 
+
+<div style="visibility:invisible;width:0px;height:0px;">
+                <apex:form styleClass="EfollowForm" >
+                      <apex:outputPanel rendered="{!!isloggedUser}">
+                        <apex:commandButton id="CommandButton1" value="Follow" styleclass="btnAthena btn-primary shareBtn m14 followBtn"  action="{!followOwner}" rendered="{!!IsFollowOwner}"/>
+                        <apex:commandButton id="CommandButton2" value="Unfollow" styleclass="btnAthena btn-primary shareBtn m14 followBtn"  action="{!unfollowOwner}" rendered="{!IsFollowOwner}"/>
+                      </apex:outputPanel>
+                    </apex:form>
+                    </div>
+
+<script>
+
+$( "#form" ).bind({
+       popupafterclose: function(event, ui) { 
+           $(this).find('#lvPop').remove();
+       
+        }
+    });
+    
+    $("#chatterList").on("click", "li", function() {
+                var index = $(this).index();
+                var index = $(this).index();
+                var viewportHeight = $(window).width() - 50;
+                if(viewportHeight > 400)
+                    viewportHeight = 400;
+                    
+                $("#form").css("width", viewportHeight);
+                $("#form").popup('open');
+                $('#form').popup('reposition', 'positionTo: window');
+                $("#popList").append('<li id ="lvPop" data-icon="false" class="actvitylist ui-li-static ui-body-inherit ui-li-has-thumb" style="background:transparent !important;">'+$(this).closest('li').html());
+                //$("#form-popup").css("top",$(window).height());
+                $("[id$=txtUserTopicComment]").text(chatterList[index].id);
+         });
+
+        $(document).ready( function () {
+        
+        $('#membersList').delegate('li', 'click', function () {
+            var index = $(this).index();
+            $("#peoplePanelContent #memberFrame").remove();
+            var viewportHeight = $(window).height() - 50;
+            //if(viewportHeight > 400)
+           //     viewportHeight = 400;
+            $("#peoplePanelContent").append( '<iframe src="/apex/mobileProfileNew?id=' + membersList[index].id + '" height="' + viewportHeight + '" width="100%;" style="border:0px;" id="memberFrame"></iframe>' );
+            $( "#peoplePanel" ).panel( "open" , "");
+        });
+        
+            window.domainSP = 'prime31.sharepoint.hp.com';
+            window.domainWWS = 'ensv.hp.com';
+            window.domainSP2013 = 'ea2013.sharepoint.hp.com';
+            window.domainEXO = 'it-services-gw-itg.external.hp.com';
+
+            //Get community id from query string and use it to load community data
+            var LearningBoardId = getParameterByName('id'); // Id of current community
+            var docId = getParameterByName('docId'); // Id of topic (document) to set display focus on
+            LoadCommunity(LearningBoardId, docId); 
+            
+            $(".text-size").click(function(){
+            $("#boardDesc").toggleClass("less");
+            $("#boardDesc").toggleClass("lessnormalwrap");
+            
+            
+            if($(".text-size").html() == 'more <span class="icon-caret-down"></span>')
+            {
+            $(".text-size").html('less <span class="icon-caret-up"></span>');
+            }
+            else
+            {
+                $(".text-size").html('more <span class="icon-caret-down"></span>');
+            }
+            });
+            
+            var isBoardPulic = false;
+            var isOwnerOrContributor = false;
+            var isMember = false;
+
+            if ('{!IsBoardPublic}' == 'true') {
+                isBoardPulic = true;
+            }
+            else if ('{!IsBoardPublic}' == 'false') {
+                isBoardPulic = false;
+            }
+
+            if ('{!IsOwnerOrContributor}' == 'true') {
+                isOwnerOrContributor = true;
+            }
+            else if ('{!IsOwnerOrContributor}' == 'false') {
+                isOwnerOrContributor = false;
+            }
+
+            if ('{!IsMember}' == 'true') {
+                isMember = true;
+            }
+            else if ('{!IsMember}' == 'false') {
+                isMember = false;
+            }
+
+            if (isBoardPulic == true || isOwnerOrContributor == true || isMember == true) {
+                $('#outter').hide();
+                $('#contentHeader').show();
+                $('#contentMembers').show();
+                $('#contentMore').show();
+                $('#contentChatter').show();
+                $('#icoShareButton').show();
+                
+            }
+            else if (isBoardPulic == false || isOwnerOrContributor == false || isMember == false) { 
+                $('#contentHeader').hide();
+                $('#contentMembers').hide();
+                $('#contentMore').hide();
+                $('#contentChatter').hide();
+                $('#icoShareButton').hide();
+                $('#outter').show();
+                
+            }
+            
+            if($('#contentMore ul li').length === 0){
+                $('#contentMore').hide();
+            }
+            
+            $('#buttonSearch').on('ontap click', function(e){
+            setTimeout(function(){
+                $('#search-basic').focus();
+            }, 200);
+        }); 
+        
+            buildMembersList();
+        
+        });
+        
+        function isEllipsisActive(e) {
+         return (e.offsetWidth < e.scrollWidth);
+        }
+        
+        /*$('#collateralList').delegate('li #imgRateContainer', 'tap', function () {
+            alert("hello");
+        });*/
+        
+         function LoadCommunity(LearningBoardId, docId) {
+            
+            $.mobile.loading( "show", {
+                text: "",
+                textVisible: false,
+                textOnly: false
+            } ); // Displays load spinner while loading
+            
+            var APEXAction = '{!$RemoteAction.AthenaLearningBoardDtls.getLrngWithCat}';
+           // Call existing APEX controller action to get data about community
+            Visualforce.remoting.Manager.invokeAction(
+                APEXAction,
+                LearningBoardId,
+                function(result, event) { // callback function receiving result of call with list of category and collaterals
+                    $.mobile.loading( "hide"); // Hide load spinner after load is complete
+                    
+                    // Iterate through the list of all categories returned
+                    for (var catCount = 0; catCount < result.length; catCount++) {
+                        var currentCat = result[catCount];
+                        if (currentCat) {
+                            // Prepare display of content of each category as a list of collapsible content
+                            var catContent = "";
+                            var focusOnCat = false; // Will set to true in category contains a document we need to focus on
+                            if (currentCat.lstlrngs && currentCat.lstlrngs.length > 0) {
+                                for (var docCount = 0; docCount < currentCat.lstlrngs.length; docCount++) {
+                                    // For each collateral, add it to the list
+                                    var currentDoc = result[catCount].lstlrngs[docCount];
+                                    if (currentDoc) {
+                                        catContent += renderDoc(currentDoc);
+                                        // If this is a document we have to focus on, remember it
+                                        if (currentDoc.Lid === docId) {
+                                            focusOnCat = true;
+                                        }
+                                    }
+                                }
+                                // Display Category
+                               
+                                $("#collateralList").append(catContent);
+                            }
+                        }
+                    }
+                    $("#collateralList").collapsibleset().trigger("create");
+                    
+                    if (docId) { // If we need to focus on a specific collateral
+                        // Scroll by the number of pixels required to display focused document (document position - beginning of scroll area)
+                        $.mobile.silentScroll($('#docID_'+docId).offset().top - $('#mobileCommunityCollateralsContent').offset().top);
+//                            $('#docLink_'+docId).click(); // call click to display popup with details
+                    }
+                }
+            );
+        };
+        
+       ///////////////////////////////////////////////////////
+        // Render a listview line item on a specific collateral
+        //
+        function renderDoc(currentDoc) {
+            // href to linked document, if any
+            var docHRef = "";
+            // Direct URL to document, if any
+            var docURL = "";
+            
+            // List of icons to display (document classification...)
+            var iconSet = "";
+            var isDoc = false;
+            
+            // Replaces backslashes, single quotes and end of lines
+            var escapedLDescription = currentDoc.LDescription.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+            var escapedLOwnerName = currentDoc.LOwnerName.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+            var escapedLName = currentDoc.LName/*.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ')*/;
+
+            // Prepare icons displaying the type of document (client facing, practice approved, publish)
+            if (currentDoc.ClientFacing) {
+                iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_Approved.png')}", 'Client Facing');
+            }
+            if (currentDoc.PracticeApprv) {
+                iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_PracticeApproved.png')}", 'Practice Approved');
+            }
+            
+            // Depending on the type of collateral, prepare its display
+            if (currentDoc.LType == 'Text') {
+                // Nothing else to do
+                isDoc = false;
+            } else if (currentDoc.LType == 'Link or Document' || currentDoc.LType === 'Upload Document') {
+                docURL = currentDoc.LURL;
+                if (currentDoc.DocType == 'PDF') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Acrobat.png')}", 'PDF');
+                } else if (currentDoc.DocType == 'PPT') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Powerpoint.png')}", 'PowerPoint');
+                } else if (currentDoc.DocType == 'DOC') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Word.png')}", 'Word');
+                } else if (currentDoc.DocType == 'XLS') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Excel.png')}", 'Excel');
+                } else if (currentDoc.DocType == 'TXT') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_TXT.png')}", 'Text');
+                } else if (currentDoc.DocType == 'OTHER') {
+                    isDoc = false;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Web.png')}", 'Link');
+                };
+            } else if (currentDoc.LType == 'Video') {
+                isDoc = false;
+                iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_Video.png')}",'Video');
+                docURL = currentDoc.LURL;
+                if (currentDoc.LURL.indexOf('http') != 0) {
+                    docURL = 'http://'+docURL; // Video links don't seem to have a protocol (http://) defined, so add it if needed
+                }
+            };
+            
+            //if(isDoc){
+                //iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/download.png')}", 'Doc');
+                if(docURL!=undefined)
+                    var escapedDocURL = docURL.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+                if(escapedLName!=undefined)
+                    var escapedDocTitle = escapedLName.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+            //}
+            
+            //console.log("In list - ave = " + docURL + " count = " + escapedDocURL ); 
+            var avgRatingImg = renderRating(currentDoc.AvgRating);
+            
+            //var content = '<li style=\"background-color: #5A5A5A;height:150px;border-bottom:1px solid white;\"><a href="'+ docURL +'" style=\"text-decoration:none\"><div id=\"mContainer\"><div id=\"imgHeaderContainer\" align=\"left\"><img id=\"docImg\"  src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/9.png')}\'\;\"  align=\"left\" style=\"width:100px;height:80px;margin:7px;\"/></div><h3 style=\"color:white;margin:0px;padding-top:7px;\">'+escapedLName+'</h3><p style=\"white-space: normal !important;height:60px;color:white;\">'+currentDoc.LShortDescription+'</p><div class=\"hr\" style=\"margin-left:15px;margin-right:15px;\"><hr /></div><div id=\"imgDescContatiner\"  style=\"float:left;margin-left:15px;\">'+iconSet +'</div><div id=\"imgDescContatiner\" style=\"float:right;margin-right:15px;\"><a href="#" id="docLink_'+currentDoc.Lid+'" onclick="displayDocDetails(\''+currentDoc.Lid+'\',\''+currentDoc.LType+'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\',\''+escapedLOwnerName+'\',\''+currentDoc.OwnerPhoto+'\',\''+docURL+'\',\''+currentDoc.AvgRating+'\',\''+currentDoc.RatersCount+'\')";>'+avgRatingImg+'</a></div></div></a></li>';
+            //var content = '<li style=\"background-color: #5A5A5A;height:150px;border-bottom:1px solid white;\" onclick="sendMyRequest(\''+docURL+'\');\"><div id=\"mContainer\"><div id=\"imgHeaderContainer\" align=\"left\"><img id=\"docImg\"  src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/9.png')}\'\;\"  align=\"left\" style=\"width:100px;height:80px;margin:7px;\"/></div><h3 style=\"color:white;margin:0px;padding-top:7px;\">'+escapedLName+'</h3><p style=\"white-space: normal !important;height:60px;color:white;\">'+currentDoc.LShortDescription+'</p><div class=\"hr\" style=\"margin-left:15px;margin-right:15px;\"><hr /></div><div id=\"imgDescContatiner\"  style=\"float:left;margin-left:15px;\">'+iconSet +'</div><div id=\"imgDescContatiner\" style=\"float:right;margin-right:15px;\"><a href="#" id="docLink_'+currentDoc.Lid+'" onclick="displayDocDetails(\''+currentDoc.Lid+'\',\''+currentDoc.LType+'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\',\''+escapedLOwnerName+'\',\''+currentDoc.OwnerPhoto+'\',\''+docURL+'\',\''+currentDoc.AvgRating+'\',\''+currentDoc.RatersCount+'\')";>'+avgRatingImg+'</a></div></div></li>';
+            var content = '<li style=\"background-color: #5A5A5A;height:150px;border-bottom:2px solid #a7a8a9;\"><div id=\"mContainer\"><div id="selection_check" onclick="sendMyRequest(\''+escapedDocURL+'\',\''+currentDoc.DocType+'\',\''+escapedDocTitle+'\');\"><div id=\"imgHeaderContainer\" align=\"left\"><img id=\"docImg\"  src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/tree.png')}\'\;\"  align=\"left\" style=\"width:100px;height:80px;margin:7px;\"/></div><h3 style=\"color:white;margin:0px;padding-top:7px;\">'+escapedLName+'</h3><p style=\"white-space: normal !important;height:60px;color:white;\">'+currentDoc.LShortDescription+'</p></div><div class=\"hr\" style=\"margin-left:15px;margin-right:15px;\"><hr /></div><div onclick="sendMyRequestDownload(\''+escapedDocURL+'\',\''+currentDoc.DocType+'\');\" id=\"imgDescContatiner\"  style=\"float:left;margin-left:15px;\">'+iconSet +'</div><span onclick="shareContent(\''+currentDoc.Lid+'\', \''+escapedLName+'\')" class="icon-share" style="color:#ffffff;font-size:24pt;text-shadow:none;margin-left:3px;"></span><div id=\"imgDescContatiner\" style=\"float:right;margin-right:15px;line-height: 40px;\"><a href="#" style="text-decoration:none;" id="docLink_'+currentDoc.Lid+'" onclick="displayDocDetails(\''+currentDoc.Lid+'\',\''+currentDoc.LType+'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\',\''+escapedLOwnerName+'\',\''+currentDoc.OwnerPhoto+'\',\''+docURL+'\',\''+currentDoc.AvgRating+'\',\''+currentDoc.RatersCount+'\')";>'+avgRatingImg+'</a></div></div></li>';
+
+            
+            
+            
+            
+            // Create list entry. If there is no URL to a collateral, don't display data icon on the right
+           // var content = "";
+            /*content += '<li style="background-color: #404040;">'; 
+            content += '<div id="mContainer"><div id="imgHeaderContainer">' + 
+             '<img id="docImg" align="left" style="width:100px;height:80px;margin-right:7px;" src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/9.png')}\'\;\"></img>' + 
+             '</div>'
+            //content += '</div>';
+            content +='<h3 style="color:white;">'+escapedLName+'</h3>'+
+                        '<p style="white-space: normal !important;height:50px;color:white;">'+currentDoc.LShortDescription+'</p>' +
+                        '<div class="hr"><hr /></div>' +  
+                        '<div id="imgDescContatiner"  style="float:left;">'+
+                                iconSet + 
+                            '</div>' +  
+                        '<div id="imgRateContainer" style="float:right;">';         
+           
+            // Display current rating as stars ("on" or "off" to display the current rating)
+            
+            content += avgRatingImg;
+            
+            content +='</div>';
+            content += '</li>';*/
+            
+            return content;
+        };
+        
+         function shareBoard(data){
+            $( "#sharePanel" ).panel( "open" , "");
+            var LearningBoardID = $(data).attr('data-BoardId');
+            window.tId = LearningBoardID;
+            console.log("BID : " + LearningBoardID);
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.AthenaLearningBoardDtls.GetNetworkUsersList}', LearningBoardID, ShowNetworkUsers);
+        }
+        
+        function shareContent(contentId, contentName){
+            console.log('Title: ' + contentName+ ', docId: ' + contentId);
+            shareLearningBoard(contentName, contentId);
+            $( "#sharePanel" ).panel( "open" , "");
+        }
+        
+        function closePanel() {
+            $( "#sharePanel" ).panel( "close" , "");
+        }
+        
+        // 
+        function renderIcon(iconURL, description) {
+            if (description == 'PDF') {
+                    return '<span class="icon-dload-pdf" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                } else if (description == 'PowerPoint') {
+                     return '<span class="icon-dload-powerpoint" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                } else if (description == 'Word') {
+                     return '<span class="icon-dload-word" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                } else if (description == 'Excel') {
+                     return '<span class="icon-dload-excel" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                } else if (description == 'Link') {
+                     return '<span class="icon-web-link" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                } else if (description == 'Text') {
+                     return '<span class="icon-dload-text" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                }else if (description == 'Video') {
+                      return '<span class="icon-video-camera" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                }else if (description == 'Client Facing') {
+                      return '<span class="icon-clientfacing" style="color:#ffffff;font-size:24pt;text-shadow:none;"></span>';
+                };
+                
+            return '<span class="detailDoc"><img src="' + iconURL + '" '+(description?'title="'+description+'" ':' ')+'class="pull-right mrl"/></span>'
+        };
+        
+        // Returns HTML content with star images rendering a given rating
+        function renderRating(avgRating) {
+            // Used to display rating stars
+            var myStarOff = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-UnRated.png')}";
+            var myStarOn = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Rated.png')}";
+            var myStarHalf = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Half.png')}";
+
+            var ratingStarImgs = "";
+            for (var i=1; i<=5; i++) {
+                if (i <= avgRating) {  
+                    ratingStarImgs += '<span class="icon-star" style="color:#ffd31a !important; font-size:18pt;"></span>'; 
+                } else if ((i - avgRating) <= 0.5){
+                    ratingStarImgs += '<span class="icon-star-half" style="color:#ffd31a !important; font-size:18pt;"></span>'; 
+                } else {
+                    ratingStarImgs += '<span class="icon-star" style="color:#cecece !important; font-size:18pt;"></span>'; 
+                }
+            }
+            
+            return ratingStarImgs;
+        }
+        
+        // Display details about a document as a popup
+        function displayDocDetails(id, docLType, docDocType, docLName, docLOwnerName, docOwnerPhoto, docURL, avgRating, ratersCount) {
+            console.log("Rating = " + avgRating + " count = " + ratersCount);
+            var txtCommunityTopicID = $('[id$=txtCommunityTopicID]');
+            txtCommunityTopicID.val(id);
+           
+            $('#popupDocLName').text(docLName);
+            var ratingStarImgs = renderRating(avgRating);
+            $('#popupRatingimages').html(ratingStarImgs);
+             var ratersCountTxt = "";
+            if (ratersCount > 0) {
+                ratersCountTxt = ratersCount + ' user'+((ratersCount > 1)?'s':'');
+            }
+            else{
+                ratersCountTxt = "0 users";
+            }
+            $('#popupRatingUsers').text(ratersCountTxt);
+            
+            $( "#ratePanel" ).panel( "open" , "");
+            
+            //$('#rateMyCollateralPop').popup('open');
+            //$('#rateMyCollateralPop').popup('reposition', 'positionTo: window');
+            /*
+            
+            if (docURL) {
+                $("#popupDownloadButton").attr("href", docURL).css("visibility", "visible");
+             } else {
+                $("#popupDownloadButton").attr("href", "#").css("visibility", "hidden");
+            }
+            
+            $.mobile.pageContainer.pagecontainer('change', '#mobileCommunityCollateralsDetails');*/
+
+            return false;
+        };
+        
+        // Function called when rating a document: copy jQM form values into SF form anf submit SF form
+        function rateDocument() {
+        
+        $("#rateButton").addClass('ui-disabled');
+        
+            // Get values from jQM form
+            var rating = $("#ratingSlider").val();
+            var ratingComments = $("#ratingComments").val();
+            
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtUserTopicRatingComment]").text(ratingComments);
+            $("[id$=txtTopicScore]").val(rating) /*.selectmenu('refresh') */;
+            
+            // Simulate click on SF submit button
+            $("[id$=btnUserRating]").click();
+            return false;
+        }
+        
+        function performFollowAction(){
+            // Simulate click on SF submit button
+            $("[id$=CommandButton1]").click();
+            return false;
+        }
+        
+        function performUnfollowAction(){
+            // Simulate click on SF submit button
+            $("[id$=CommandButton2]").click();
+            return false;
+        }
+        
+        // Read parameter from query string
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        
+       $('#contentHeader').on('collapsibleexpand', '', function () {
+            if (($('#boardDesc')[0].scrollWidth+32) <= $(window).width()) {
+               $(".text-size").hide();
+            }
+            if($('#contentHeader ul li').length === 0){
+                $('#popupError').popup('open');
+                $('#popupError').popup('reposition', 'positionTo: window');
+                $('#contentHeader').collapsible( "collapse" );
+            }else{
+                $('#contentHeader h3').find('a').css('background','rgba(249, 160, 6, 0.701961)');
+                $('#contentMembers').collapsible( "collapse" );
+                $('#contentMore').collapsible( "collapse" );
+                $('#contentChatter').collapsible( "collapse" );
+            }
+        }).on('collapsiblecollapse', '', function () { $('#contentHeader h3').find('a').css('background','#87888a');});
+        
+        $('#contentMembers').on('collapsibleexpand', '', function () {
+         $('#membersList').listview('refresh');
+            if($('#contentMembers ul li').length === 0){
+                $('#popupError').popup('open');
+                $('#popupError').popup('reposition', 'positionTo: window');
+                $('#contentMembers').collapsible( "collapse" );
+            }else{
+                $('#contentMembers h3').find('a').css('background','rgba(249, 160, 6, 0.701961)');
+                $('#contentHeader').collapsible( "collapse" );
+                $('#contentMore').collapsible( "collapse" );
+                $('#contentChatter').collapsible( "collapse" );
+            }
+        }).on('collapsiblecollapse', '', function () { $('#contentMembers h3').find('a').css('background','#87888a');});
+        
+        $('#contentMore').on('collapsibleexpand', '', function () {
+            if($('#contentMore ul li').length === 0){
+                $('#popupError').popup('open');
+                $('#popupError').popup('reposition', 'positionTo: window');
+                $('#contentMore').collapsible( "collapse" );
+            }else{
+                $('#contentMore h3').find('a').css('background','rgba(249, 160, 6, 0.701961)');
+                $('#contentHeader').collapsible( "collapse" );
+                $('#contentMembers').collapsible( "collapse" );
+                $('#contentChatter').collapsible( "collapse" );
+            }
+        }).on('collapsiblecollapse', '', function () { $('#contentMore h3').find('a').css('background','#87888a');});
+        
+        $('#contentChatter').on('collapsibleexpand', '', function () {
+            /*if($('#contentChatter ul li').length === 0){
+                $('#popupError').popup('open');
+                $('#popupError').popup('reposition', 'positionTo: window');
+                $('#contentChatter').collapsible( "collapse" );
+            }else{*/
+                $('#contentChatter h3').find('a').css('background','rgba(249, 160, 6, 0.701961)');
+                $('#contentHeader').collapsible( "collapse" );
+                $('#contentMembers').collapsible( "collapse" );
+                $('#contentMore').collapsible( "collapse" );
+           // }
+        }).on('collapsiblecollapse', '', function () { $('#contentChatter h3').find('a').css('background','#87888a');});
+        
+         
+        function showBoardDesc(){     
+            $('#popupDesc').popup('open');
+            $('#popupDesc').popup('reposition', 'positionTo: window');
+            console.log($('#showBoardDesc').text());
+        }
+        
+        $('#search-basic').live("keypress", function(e) {
+            
+                /* ENTER PRESSED*/
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    var searchTerm= $('#search-basic').val();
+                    if (searchTerm.length <=2) {
+                        alert('A minimum of 3 characters should be entered');
+                        return;
+                    }
+                    
+                    if (searchTerm.length >=3998) {
+                        alert('A maximum of 3997 characters should be entered');
+                        return;
+                    }
+                    
+                    window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+encodeURIComponent(searchTerm);
+                    $.mobile.loading( "show", {
+                          text: "Loading...",
+                          textVisible: true,
+                          textOnly: false
+                    } ); // Displays load spinner while loading
+                }
+            });
+            
+            
+       function buildMembersList(){
+       
+           var listCommContMem = '{!ContributorMember}';
+           var parseCommContM = $.parseJSON(listCommContMem);
+           
+           for (var iCount = 0; iCount < parseCommContM.length; iCount++) {
+            var DisplayContributorMem = ("<li  data-icon=\"false\">");
+
+
+            
+            DisplayContributorMem += ("<img src=" + parseCommContM[iCount].Userphoto + " class=\"circular-image-container\" style=\"margin-left:5px;\"/>");
+            
+            DisplayContributorMem += ("<p class=\"blue-font\"><b>" + parseCommContM[iCount].UserName + "</b></p>");
+            
+            DisplayContributorMem += (" <span class=\"ui-li-aside\" style=\"top:0.2em !important; right:0.5em !important;\">");
+            
+             if (parseCommContM[iCount].IsExperts) {
+                DisplayContributorMem += (" <img class=\"ui-li-icon-right\" src=\"{!URLFOR($Resource.iconassets, 'icons/Expert_Icon.png')}\"> ");
+            }
+            if (parseCommContM[iCount].IsContributor) {
+                DisplayContributorMem += (" <img class=\"ui-li-icon-right\" src=\"{!URLFOR($Resource.iconassets, 'icons/Contributor_Icon.png')}\"> ");
+            }
+            
+            DisplayContributorMem += (" </span>");
+            
+            if (parseCommContM[iCount].RoleName != '' && parseCommContM[iCount].RoleName != null) {
+                DisplayContributorMem += ("<p style=\"background:transparent !important;\"><b>"+parseCommContM[iCount].RoleName+"</b></p>");
+            }
+            
+            if (parseCommContM[iCount].Region != '' && parseCommContM[iCount].Region != null) {
+                DisplayContributorMem += ("<span style=\"font-size:12px;color:#505050\">" + parseCommContM[iCount].Region + "</span> ");
+            }
+            else {
+                DisplayContributorMem += ("<span> &nbsp; </span> ");
+            }
+            if ((parseCommContM[iCount].Region != '' && parseCommContM[iCount].Region != null) && (parseCommContM[iCount].BusinessGroup != "" && parseCommContM[iCount].BusinessGroup != null)) {
+                DisplayContributorMem += (" | ");
+            }
+            if (parseCommContM[iCount].BusinessGroup != "" && parseCommContM[iCount].BusinessGroup != null) {
+                DisplayContributorMem += ("<span style=\"font-size:12px;color:#505050\">" + parseCommContM[iCount].BusinessGroup + "</span> ");
+            }
+            else {
+                DisplayContributorMem += ("<span> &nbsp; </span> ");
+            }
+            
+            membersList.push({'id':parseCommContM[iCount].UserId});
+            
+
+
+            DisplayContributorMem += ("</li>");
+            $('#membersList').append(DisplayContributorMem);
+            
+
+        }
+       
+       } 
+        
+         function highlightRow(elem){
+            $(elem).css({background: '#FF8800'});
+            setTimeout(function(){
+                 $(elem).css({background: 'transparent'});
+            }, 800);
+        }  
+        
+        $('#listviewmenu').on('click tap mousedown', 'li', function() {
+            highlightRow($(this));
+        });    
+        
+        $('#menuImage').on('click tap mousedown touchstart', '', function() {
+            $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });
+        
+        $('#menuImageList').on('click tap mousedown touchstart', '', function() {
+            $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });   
+        
+        $('#searchImage').on('click tap mousedown touchstart', '', function() {
+            $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+            setTimeout(function(){
+                 $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+            }, 300);
+        });              
+        
+        
+function sendMyRequest(url, doctype, docTitle) {
+
+    var sDocType = doctype;
+    
+    if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+        if(url.indexOf('http') != 0)
+        {
+            window.location = "http://" + url;
+        }
+        else{
+            window.location = url;
+        }
+        return;
+    }
+
+    var sDomain = getDomainName(url);
+    console.log(">>>> "+ sDomain);
+    var endpoint = '';
+    
+    
+    if (sDomain == window.domainWWS) {
+        endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&matchreference=" + url;
+    }
+    else if (sDomain == window.domainSP) {
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+        renderMyDoc(url, docTitle);
+        return;
+    }
+    else if(sDomain == window.domainSP2013){
+        endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+    }
+    else if(sDomain == window.domainEXO){
+        endpoint = url;
+        renderMyDoc(endpoint , docTitle);
+        return;
+    }
+    else {
+        // handle unknown case
+        $('#popupDownloadMissing').popup('open');
+        $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+        return;
+    }
+
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    if ($(this).find("numhits").text() == '0'||$(this).find("numhits").text() == '') {
+                     $('#popupDownloadMissing').popup('open');
+                     $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                     return;
+                     }
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            renderMyDoc(link, docTitle);
+                        });
+                    });
+                });
+            });
+        },
+        error: function (xhr, status) {
+        //console.log(thrownError.responseText);
+            //var er = jQuery.parseJSON(thrownError);
+            if(isThisAndroid()&&xhr.status==0){
+                $('#popupDownloadErr').popup('open');
+                $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+            }
+            else{
+                alert('Error: Your security session has expired. Please sign out and sign in again');
+            }  
+        }
+
+    });
+}
+
+function sendMyRequestDownload(url, doctype, docTitle) {
+
+     var sDocType = doctype;
+
+    if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+         if(url.indexOf('http') != 0)
+        {
+            window.location = "http://" + url;
+        }
+        else{
+            window.location = url;
+        }
+        return;
+    }
+
+    var sDomain = getDomainName(url);
+    
+    var endpoint = '';
+    if (sDomain == window.domainWWS) {
+        endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&matchreference=" + url;
+        //window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&reference=" + url;
+        //return;
+    }
+    else if (sDomain == window.domainSP) {
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+        //renderMyDoc(url, docTitle);
+        window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&reference=" + url;
+        return;
+    }
+    else if(sDomain == window.domainSP2013){
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&reference=" + url;
+        return;
+    }
+    else if(sDomain == window.domainEXO){
+        window.location = url;
+        return;
+    }
+    else {
+        // handle unknown case
+        $('#popupDownloadMissing').popup('open');
+        $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+        return;
+    }
+    
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    if ($(this).find("numhits").text() == '0'||$(this).find("numhits").text() == '') {
+                      $('#popupDownloadMissing').popup('open');
+                      $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                     return;
+                     }
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            //renderMyDoc(link, docTitle);
+                            window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&reference=" + link;
+                        });
+                    });
+                });
+            });
+        },
+        error: function (xhr, status) {
+            //var er = jQuery.parseJSON(thrownError);
+            if(isThisAndroid()&&xhr.status==0){
+                $('#popupDownloadErr').popup('open');
+                $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+            }
+            else{
+                alert('Error: Your security session has expired. Please sign out and sign in again');
+            }  
+        }
+    });
+    
+}
+
+function getDomainName(url) {
+    var r = /:\/\/(.[^/]+)/;
+    return url.match(r)[1];
+    //return $('#basic').val().match(r)[1];
+}
+
+function renderMyDoc(url, docTitle) {
+    //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+    window.location.href="/apex/mobileDocViewer?docURL=" + url + "&&docTitle=" + docTitle;
+}
+
+function isPopulated(elementId)
+        {
+            console.log("isPopulated function");
+            var populated = false;    
+            
+            // check if the value of the html element has a truthy value or not.     
+            if ($("[id$=" + elementId + "]").val())
+            {
+                populated = true;
+            }
+            console.log("The text input populated - " +populated ); 
+            return populated;
+        }
+        
+         function postComment() {
+            
+            if($("#fnameComment2").val()){
+                if($("#fnameComment2").val().length > 5000){
+                    alert("There is a limit of 5000 characters, you have entered " + $("#fnameComment2").val().length + " characters.");
+                    return;
+                    
+                }
+                else{
+                    $("#commentButton").addClass('ui-disabled');
+                }
+            }
+            else{
+                alert("Please enter some text");
+            }
+            
+            // Get values from jQM form
+            var comment= $("#fnameComment2").val();
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtPostInputComment2]").val(comment);
+            // Simulate click on SF submit button
+            $("[id$=cmdBtnPostComment2]").click();
+            //return false;
+        }
+        
+        function postReply() {
+            
+            if($("#fname2").val()){
+                if($("#fname2").val().length > 5000){
+                    alert("There is a limit of 5000 characters, you have entered " + $("#fname2").val().length + " characters.");
+                    return;
+                    
+                }
+                else{
+                    $("#replyButton").addClass('ui-disabled');
+                }
+            }
+            else{
+                alert("Please enter some text");
+            }
+            
+            // Get values from jQM form
+            var comment= $("#fname2").val();
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtPostInput2]").val(comment);
+            // Simulate click on SF submit button
+            $("[id$=cmdBtnPost2]").click();
+            //return false;
+        }        
+        
+function isThisChrome(){
+var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+return is_chrome;
+}
+      
+function isThisAndroid(){
+var ua = navigator.userAgent.toLowerCase();
+var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+if(isAndroid) {
+  return true;
+}
+else{
+  return false;
+}
+}               
+        
+        
+</script> 
+
+
+<style>
+
+.ui-li-icon-right {
+    max-height: 40px;
+    max-width: 40px;
+    right: 10px;
+    top: .2em;
+}
+
+.lessnormalwrap{
+    white-space:normal !important;
+}
+
+.less{
+    word-wrap: break-word;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.more{
+    white-space: normal;
+}
+
+.text-size{
+    display: block;
+    text-align: right;
+    padding-top: 10px;
+    color: #a7a8a9!important;
+    cursor: pointer;
+    font-size:12pt;
+    font-family:"HP Simplified",sans-serif;
+    text-shadow:none;
+}
+
+ #outter {
+        padding-top:10px;
+        height:50vh;
+        min-width:160px;
+    }
+
+    #emptyResultMsg {
+        position: relative;
+    }
+
+#contentHeader h3 a {
+    border-color: white;
+    background: transparent;
+    color: white;
+    text-shadow:none;
+    font-family:"HP Simplified",sans-serif;
+    
+}
+
+#contentMembers h3 a {
+    border-color: white;
+    background: transparent;
+    color: white;
+    text-shadow:none;
+    font-family:"HP Simplified",sans-serif;
+    
+}
+
+#contentMore h3 a {
+    border-color: white;
+    background: transparent;
+    color: white;
+    text-shadow:none;
+    font-family:"HP Simplified",sans-serif;
+    
+}
+
+#contentChatter h3 a {
+    border-color: white;
+    background: transparent;
+    color: white;
+    text-shadow:none;
+    font-family:"HP Simplified",sans-serif;
+    
+}
+
+.listviewTopic li h3 {
+   text-shadow: none;
+}
+
+.listviewTopic li p {
+   text-shadow: none;
+}
+
+.hr {
+        background: #a7a8a9  no-repeat scroll center;
+        height:2px;
+        margin:5px;
+}
+
+.hr hr {
+        display: none;
+}
+
+    #myLabel {
+        color: white;
+        background: rgba(0, 0, 0, 0.7);
+        text-shadow: none;
+        position: absolute;
+        height: 44px;
+        width: 100%;
+        line-height: 44px;
+        display: block;
+        top: 54px;
+        /*margin-left:auto;
+        margin-right:auto;
+        padding-left:15px;*/
+    }
+    #myLabel p {
+        margin-top:0px;
+        margin-left:15px;
+    }
+
+    #myLabel2 {
+        color: white;
+        background: rgba(0, 0, 0, 0.7);
+        text-shadow: none;
+        position: absolute;
+        height: 60px;
+        width: 100%;
+        top: 202px;
+        //float:left;
+        display: block;
+    }
+    .column1{
+        float:left;
+        line-height:55px;
+        height:55px;
+        margin-top:5px;
+    }
+    
+    .column2{
+        float:left;
+        margin-top:5px;
+        margin-left:5px;
+        max-width:130px !important;
+    }
+    
+    .column3{
+        float:right;
+        line-height:55px;
+        margin-right:15px;
+        margin-top:5px;
+    }
+    
+    .communityOwnerImg {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        -webkit-border-radius: 20px;
+        -moz-border-radius: 20px;
+        border: 2px solid white;
+    }
+    
+    
+@font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            body{
+                font-family:"HP Simplified",sans-serif;
+                color:#fff;
+            }
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            #pnl .ui-content{
+                padding-top: 30px;
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif;
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+                height: 50px;
+                line-height: 50px;
+                max-height: 50px !important;
+                min-height: 50px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                    .infoFld .menu_button{
+                    position:absolute;
+                    top:14px;
+                    right:6px;
+                    width:24px;
+                    height:24px;
+                    z-index:3;
+                }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:30px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:39px;
+            }
+         .ui-panel-inner{padding: 0}
+         .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .my-page .ui-listview li{
+                height:150px;
+            }
+            
+            @media all and (min-width: 420px) {
+                     .my-page .ui-listview li{
+                          height:200px;
+                     }
+            }
+            @media all and (min-width: 550px) {
+                   .my-page .ui-listview li{
+                          height:260px;
+                   }
+            }
+            @media all and (min-width: 650px) {
+                  .my-page .ui-listview li{
+                         height:350px;
+                 }
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+         starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+    
+    .ui-collapsible-content{
+        background:transparent !important;
+        border:0px solid transparent !important;
+    }
+    
+    .blue-font {
+            color: #0096D6; /* HP blue font */
+            font-size:1.2em;
+            background:transparent !important;
+        }
+    .circular-image-container {
+            width:65px;
+            height:65px;
+            margin: 1px;
+            padding: 1px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #000000;
+        }
+        
+        .circular-image-container-chatter {
+            width:50px;
+            height:50px;
+            margin-top: 15px;
+            margin-left:5px;
+            padding: 3px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #ffffff;
+        }
+        
+        .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li-has-thumb{padding-left:75px !important}
+        
+#description{
+
+/* IE10 Consumer Preview */ 
+background-image: -ms-linear-gradient(top, #5A5A5A 0%, #767676 100%);
+
+/* Mozilla Firefox */ 
+background-image: -moz-linear-gradient(top, #5A5A5A 0%, #767676 100%);
+
+/* Opera  */ 
+background-image: -o-linear-gradient(top, #5A5A5A 0%, #767676 100%);
+
+/* Webkit (Safari/Chrome 10) */ 
+background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #5A5A5A), color-stop(1, #767676));
+
+/* Webkit (Chrome 11+) */ 
+background-image: -webkit-linear-gradient(top, #5A5A5A 0%, #767676 100%);
+
+/* W3C Markup, IE10 Release Preview */ 
+background-image: linear-gradient(to bottom, #5A5A5A 0%, #767676 100%); 
+
+}
+
+.hpFont{
+                font-family:"HP Simplified",sans-serif;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+            }
+            
+            .actvitylist{
+            background-color:transparent !important;
+            border-top:none !important;
+            border-left:none !important;
+            border-right:none !important;
+            border-bottom:solid 1px black !important;
+            margin-left:10px !important;
+            margin-right:10px !important;
+            text-shadow:none !important;
+        }
+        
+        #contentChatter .ui-collapsible-content {
+            background-color:#ededed !important;
+        }
+        
+        .ui-focus {
+ -moz-box-shadow: none !important;
+ -webkit-box-shadow: none !important;
+ box-shadow: none !important;
+}
+
+</style>     
+            
+</apex:page>

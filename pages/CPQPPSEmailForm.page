@@ -1,0 +1,488 @@
+<!-- 
+/**********************************************************
+* Page Name: CPQPPSEmailForm
+* Author: HP - Shaijan
+* Date: 07-Nov-2012 
+* Requirement # Request Id :
+* Description: UI to send the email while submit the PPS CPQ request
+***********************************************************/
+-->
+
+<apex:page standardController="Support_Request__c" extensions="SUPPORTRequest_PPS_Form_Controller" sidebar="false" showHeader="false">
+Salesforce.com Request Form
+<br></br>
+<br></br>
+<br></br>
+ <apex:pageBlock >
+        <apex:pageBlockSection title="Revision Details" collapsible="false" columns="1" rendered="{!If(!isNull(Support_Request__c.Revision_Comments__c),true,false)}">
+            <apex:outputLabel >============================</apex:outputLabel>
+        <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Revision_Comments__c) && isBlank(Support_Request__c.Revision_Comments__c))}">
+                <apex:outputLabel >Revision Comments &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Revision_Comments__c}" />
+            </apex:pageBlockSectionItem>
+            <br></br>
+        <br></br>
+        </apex:pageBlockSection>
+        <!--<apex:pageblockSection title="Routing Criteria" collapsible="false" columns="1">
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Routing_Region__c) && isBlank(Support_Request__c.Routing_Region__c))}">
+                <apex:outputLabel >Region &nbsp; &nbsp; -  </apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Routing_Region__c}"/>    
+            </apex:pageBlockSectionItem>
+            <apex:pageblockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.Routing_Region__c,'EMEA'),False,True) && !(isNull(Support_Request__c.CPQ_Routing_Territory__c) && isBlank(Support_Request__c.CPQ_Routing_Territory__c))}">
+                <apex:outputLabel >Territory &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CPQ_Routing_Territory__c}"/>    
+            </apex:pageblockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.CPQ_Routing_Country__c) && isBlank(Support_Request__c.CPQ_Routing_Country__c))}">
+                <apex:outputLabel >Country &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CPQ_Routing_Country__c}"/>    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.Routing_Region__c,'EMEA'),False,True) && !(isNull(Support_Request__c.CPQ_Other_Routing_Criteria__c) && isBlank(Support_Request__c.CPQ_Other_Routing_Criteria__c))}">
+                <apex:outputLabel >Other Routing Criteria &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CPQ_Other_Routing_Criteria__c}"/>    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Business_Unit__c) && isBlank(Support_Request__c.Business_Unit__c))}">
+                <apex:outputLabel >Business Unit &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Business_Unit__c}" />
+            </apex:pageBlockSectionItem>
+        </apex:pageblockSection> <br></br>-->     
+    <apex:pageBlockSection collapsible="false" columns="1">
+            <apex:outputLabel >Quote Request Details</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <!--Salesforce VF Rendering Bug-->
+                        <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Routing_Region__c) && isBlank(Support_Request__c.Routing_Region__c))}">
+                <apex:outputLabel >Region &nbsp; &nbsp; -  </apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Routing_Region__c}"/>    
+            </apex:pageBlockSectionItem>
+            <apex:pageblockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.Routing_Region__c,'EMEA'),False,True) && !(isNull(Support_Request__c.CPQ_Routing_Territory__c) && isBlank(Support_Request__c.CPQ_Routing_Territory__c))}">
+                <apex:outputLabel >Territory &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CPQ_Routing_Territory__c}"/>    
+            </apex:pageblockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.CPQ_Routing_Country__c) && isBlank(Support_Request__c.CPQ_Routing_Country__c))}">
+                <apex:outputLabel >Country &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CPQ_Routing_Country__c}"/>    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.Routing_Region__c,'EMEA'),False,True) && !(isNull(Support_Request__c.CPQ_Other_Routing_Criteria__c) && isBlank(Support_Request__c.CPQ_Other_Routing_Criteria__c))}">
+                <apex:outputLabel >Other Routing Criteria &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CPQ_Other_Routing_Criteria__c}"/>    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Business_Unit__c) && isBlank(Support_Request__c.Business_Unit__c))}">
+                <apex:outputLabel >Business Unit &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Business_Unit__c}" />
+            </apex:pageBlockSectionItem>
+            <apex:repeat value="{!$ObjectType.Support_Request__c.FieldSets.Rendering_Salesforce_Issue}" var="objRequest">  
+                <apex:outputfield value="{!Support_Request__c[objRequest]}" rendered="false"/>
+            </apex:repeat>
+        <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Name) && isBlank(Support_Request__c.Name))}">
+                      <apex:outputLabel >Support Request Number &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                       <apex:outputField value="{!Support_Request__c.Name}"/>
+            </apex:pageblockSectionItem>
+            <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Type_of_Request__c) && isBlank(Support_Request__c.Type_of_Request__c))}">
+                <apex:outputLabel >Request Type &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Type_of_Request__c}"/>
+            </apex:pageblockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.CPQ_Request_Type__c) && isBlank(Support_Request__c.CPQ_Request_Type__c))}">
+                <apex:outputLabel >Request For &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CPQ_Request_Type__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!IF(ISNULL(Support_Request__c.HP_Quote__r.Name),'false','true')}">
+                       <apex:outputLabel >HP Quote Name &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                   <apex:outputText value="{!Support_Request__c.HP_Quote__r.Name}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Request_Description__c) && isBlank(Support_Request__c.Request_Description__c))}">
+                <apex:outputLabel >Request Description &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Request_Description__c}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!IF(ISNULL(Support_Request__c.HP_Quote__r.Originating_System_Quote_ID__c),'false','true')}">
+                <apex:outputLabel >Originating System Quote ID &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.HP_Quote__r.Originating_System_Quote_ID__c}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Due_Date2__c) && isBlank(Support_Request__c.Due_Date2__c))}">
+                <apex:outputLabel >Request Due Date/Time &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Due_Date2__c}"/>
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem rendered="{!IF(ISNULL(Support_Request__c.Parent_Support_Request_Number__c),'false','true')}">
+                <apex:outputLabel >Original Request Id &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputText value="{!Support_Request__c.Parent_Request_Name__c}" />
+            </apex:pageBlockSectionItem>
+
+            <apex:repeat value="{!mapPPSFormWithFieldAPI['Request']}" var="formName">
+                <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                    <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c[formName.Field_API_Name__c]}"/>
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+            <apex:pageBlockSectionItem id="otherTermsAndCondition" rendered="{!IF(Contains(Support_Request__c.Terms_and_Conditions__c,'Non Standard HP Terms and Conditions, please specify'),true,false) && !(isNull(Support_Request__c.Address_1__c) && isBlank(Support_Request__c.Address_1__c))}">
+                <apex:outputLabel >Non-standard Terms and Conditions &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Terms_and_Conditions_Others__c}" />
+            </apex:pageBlockSectionItem>
+            <!--<apex:pageBlockSectionItem rendered="{!If(!isNull(Support_Request__c.BMI_ID__c),true,false)}">
+                <apex:outputLabel >{!$ObjectType.Support_Request__c.Fields['BMI_ID__c'].Label}    -    </apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.BMI_ID__c}"/>
+            </apex:pageBlockSectionItem>-->
+            <apex:outputField value="{!Support_Request__c.HP_Quote__r.Name}" rendered="{!IF(ISNULL(Support_Request__c.HP_Quote__r.Name),'false','true')}"/>
+            <apex:pageBlockSectionItem rendered="{!If(!isNull(Support_Request__c.BMI_Quote_URL__c),true,false)}">
+                <apex:outputLabel >{!$ObjectType.Support_Request__c.Fields['BMI_Quote_URL__c'].Label}    -   <apex:outputLabel ></apex:outputLabel> </apex:outputLabel>
+                <apex:outputText value="{!Support_Request__c.BMI_Quote_URL__c}"> </apex:outputText>
+                <!--<apex:outputField value="{!Support_Request__c.BMI_Quote_URL__c}"/>-->
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection><br></br>
+        <br></br>
+        
+        <apex:pageBlockSection title="Geo Split  (AMS Only - All fields must total 100%)" collapsible="false" rendered="{!IF(((CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)')) ||(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Pricing Escalation')))  && (!isNull(Support_Request__c.Global_Deal__c)),True,False) && geoSection}">
+                <apex:outputField value="{!Support_Request__c.Geo_Split_AP__c}" rendered="{!!(isNull(Support_Request__c.Geo_Split_AP__c) && isBlank(Support_Request__c.Geo_Split_AP__c))}"/>
+                <apex:outputField value="{!Support_Request__c.Geo_Split_LA__c}" rendered="{!!(isNull(Support_Request__c.Geo_Split_LA__c) && isBlank(Support_Request__c.Geo_Split_LA__c))}"/>
+                <apex:outputField value="{!Support_Request__c.Geo_Split_EU__c}" rendered="{!!(isNull(Support_Request__c.Geo_Split_EU__c) && isBlank(Support_Request__c.Geo_Split_EU__c))}"/>
+                <apex:outputField value="{!Support_Request__c.Geo_Split_JP__c}" rendered="{!!(isNull(Support_Request__c.Geo_Split_JP__c) && isBlank(Support_Request__c.Geo_Split_JP__c))}"/>
+                <apex:outputField value="{!Support_Request__c.Geo_Split_NA__c}" rendered="{!!(isNull(Support_Request__c.Geo_Split_NA__c) && isBlank(Support_Request__c.Geo_Split_NA__c))}"/>
+                <br></br>
+                <br></br>
+            </apex:pageBlockSection>
+        <apex:pageBlockSection collapsible="false" columns="1">
+            <apex:outputLabel >Opportunity Information</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Opportunity_Name__c) && isBlank(Support_Request__c.Opportunity_Name__c))}">
+                <apex:outputlabel >Opportunity &nbsp; &nbsp; -  &nbsp;</apex:outputlabel>
+                <apex:outputField value="{!Support_Request__c.Opportunity_Name__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Opportunity_ID_Formula__c) && isBlank(Support_Request__c.Opportunity_ID_Formula__c))}">
+                <apex:outputLabel >Opportunity ID &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Opportunity_ID_Formula__c}"/>    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Sales_Stage_For_Request_Form__c) && isBlank(Support_Request__c.Sales_Stage_For_Request_Form__c))}">
+                <apex:outputLabel >Sales Stage &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Sales_Stage_For_Request_Form__c }"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Forecast_Category__c) && isBlank(Support_Request__c.Forecast_Category__c))}">
+                <apex:outputLabel >Forecast Category &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Forecast_Category__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Opportunity_Owner_Name__c) && isBlank(Support_Request__c.Opportunity_Owner_Name__c))}">
+                <apex:outputLabel >Opportunity Owner Name &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Opportunity_Owner_Name__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Opportunity_Owner_Email__c) && isBlank(Support_Request__c.Opportunity_Owner_Email__c))}">
+                <apex:outputLabel >Opportunity Owner Email &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputText value="{!Support_Request__c.Opportunity_Owner_Email__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Requestor_Name__c) && isBlank(Support_Request__c.Requestor_Name__c))}">
+                <apex:outputLabel >Requestor Name &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Requestor_Name__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Requestor_email__c) && isBlank(Support_Request__c.Requestor_email__c))}">
+                <apex:outputLabel >Requestor Email &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputText value="{!Support_Request__c.Requestor_email__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Owner_s_BG__c) && isBlank(Support_Request__c.Owner_s_BG__c))}">
+                <apex:outputLabel >Opportunity Owner BG &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Owner_s_BG__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Managed_By__c) && isBlank(Support_Request__c.Managed_By__c))}">
+                <apex:outputLabel >Managed By &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Managed_By__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Route__c) && isBlank(Support_Request__c.Route__c))}">
+                <apex:outputLabel >Go To Market Route &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Route__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            
+            
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Fulfillment__c) && isBlank(Support_Request__c.Fulfillment__c))}">
+                <apex:outputLabel >Fulfillment &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Fulfillment__c}" />
+            </apex:pageBlockSectionItem>
+            
+            <!--<apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Customer_Engagement__c) && isBlank(Support_Request__c.Customer_Engagement__c))}">
+                <apex:outputLabel >Customer Engagment &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Customer_Engagement__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False) && !(isNull(Support_Request__c.Customer_Segment__c) && isBlank(Support_Request__c.Customer_Segment__c))}">
+                <apex:outputLabel >Customer Segment &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Customer_Segment__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False) && !(isNull(Support_Request__c.PPS_Competitor_Information__c) && isBlank(Support_Request__c.PPS_Competitor_Information__c))}">
+                <apex:outputLabel >Competitor Information &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.PPS_Competitor_Information__c}"/>
+            </apex:pageBlockSectionItem>
+            
+             <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False) && !(isNull(Support_Request__c.CISYS_ID__c) && isBlank(Support_Request__c.CISYS_ID__c))}">
+                <apex:outputLabel >CISYS ID (APJ Only) &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CISYS_ID__c}"/>
+            </apex:pageBlockSectionItem>-->
+            
+            
+            <apex:repeat value="{!mapPPSFormWithFieldAPI['Opportunity']}" var="formName">
+                <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                    <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputText value="{!Support_Request__c[formName.Field_API_Name__c]}"/>
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+        </apex:pageBlockSection> <br></br>
+        <br></br>
+        <apex:pageBlockSection collapsible="false" columns="1">
+            <apex:outputLabel >Account Information</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Account_Name__c) && isBlank(Support_Request__c.Account_Name__c))}">
+                <apex:outputLabel >Account Name &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Account_Name__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Account_Name_Latin_Capture__c) && isBlank(Support_Request__c.Account_Name_Latin_Capture__c))}">
+                <apex:outputLabel >Account Name Latin Capture &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Account_Name_Latin_Capture__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Industry_Vertical__c) && isBlank(Support_Request__c.Industry_Vertical__c))}">
+                <apex:outputLabel >Industry Vertical &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Industry_Vertical__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!IF(Contains(Support_Request__c.Lead_Country__c,'None'),false,true)}">
+                <apex:outputLabel >Lead Country &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Lead_Country__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Industry_Segment__c) && isBlank(Support_Request__c.Industry_Segment__c))}">
+                <apex:outputLabel >Industry Segment &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Industry_Segment__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel ></apex:outputLabel>
+            </apex:pageBlockSectionItem><br></br>
+            <br></br>
+            <apex:pageblockSection title="Sold To Address" columns="1" collapsible="false" rendered="{!showQuoteAddress}">
+                <apex:outputLabel >============================</apex:outputLabel>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Address_1__c) && isBlank(Support_Request__c.Address_1__c))}">
+                    <apex:outputLabel >Address Line 1 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Address_1__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Address_2__c) && isBlank(Support_Request__c.Address_2__c))}">
+                    <apex:outputLabel >Address Line 2 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Address_2__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Address_3__c) && isBlank(Support_Request__c.Address_3__c))}">
+                    <apex:outputLabel >Address Line 3 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Address_3__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.City__c) && isBlank(Support_Request__c.City__c))}">
+                    <apex:outputLabel >City &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.City__c }"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.State_Province__c) && isBlank(Support_Request__c.State_Province__c))}">
+                    <apex:outputLabel >State/Province &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.State_Province__c }"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Address_Postal__c) && isBlank(Support_Request__c.Address_Postal__c))}">
+                    <apex:outputLabel >Postal Code &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Address_Postal__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Country__c) && isBlank(Support_Request__c.Country__c))}">
+                    <apex:outputLabel >Country &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Country__c }"/>
+                </apex:pageblockSectionItem>
+            </apex:pageblockSection>
+            <apex:outputLabel ></apex:outputLabel>
+            <apex:pageblockSection title="Ship To Address" columns="1" collapsible="false" rendered="{!showShipToAddress}">
+                <apex:outputLabel >============================</apex:outputLabel>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Ship_To_Address_1__c) && isBlank(Support_Request__c.Ship_To_Address_1__c))}">
+                    <apex:outputLabel >Address Line 1 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Ship_To_Address_1__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Ship_To_Address_2__c) && isBlank(Support_Request__c.Ship_To_Address_2__c))}">
+                    <apex:outputLabel >Address Line 2 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Ship_To_Address_2__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Ship_To_Address_3__c) && isBlank(Support_Request__c.Ship_To_Address_3__c))}">
+                    <apex:outputLabel >Address Line 3 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Ship_To_Address_3__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Ship_To_City__c) && isBlank(Support_Request__c.Ship_To_City__c))}">
+                    <apex:outputLabel >City &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Ship_To_City__c }"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Ship_To_State_Province__c) && isBlank(Support_Request__c.Ship_To_State_Province__c))}">
+                    <apex:outputLabel >State/Province &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Ship_To_State_Province__c }"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Ship_To_Postal_Code__c) && isBlank(Support_Request__c.Ship_To_Postal_Code__c))}">
+                    <apex:outputLabel >Postal Code &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Ship_To_Postal_Code__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Ship_To_Country__c) && isBlank(Support_Request__c.Ship_To_Country__c))}">
+                    <apex:outputLabel >Country &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Ship_To_Country__c }"/>
+                </apex:pageblockSectionItem>
+            </apex:pageblockSection>
+            <apex:outputLabel ></apex:outputLabel>
+            <apex:pageblockSection title="Bill To Address" columns="1" collapsible="false" rendered="{!showInvoiceToAddress}">
+                <apex:outputLabel >============================</apex:outputLabel>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Invoice_To_Address_1__c) && isBlank(Support_Request__c.Invoice_To_Address_1__c))}">
+                    <apex:outputLabel >Address Line 1 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Invoice_To_Address_1__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Invoice_To_Address_2__c) && isBlank(Support_Request__c.Invoice_To_Address_2__c))}">
+                    <apex:outputLabel >Address Line 2 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Invoice_To_Address_2__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Invoice_To_Address_3__c) && isBlank(Support_Request__c.Invoice_To_Address_3__c))}">
+                    <apex:outputLabel >Address Line 3 &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Invoice_To_Address_3__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Invoice_To_City__c) && isBlank(Support_Request__c.Invoice_To_City__c))}">
+                    <apex:outputLabel >City &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Invoice_To_City__c }"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Invoice_To_State_Province__c) && isBlank(Support_Request__c.Invoice_To_State_Province__c))}">
+                    <apex:outputLabel >State/Province &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Invoice_To_State_Province__c }"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Invoice_Postal_Code__c) && isBlank(Support_Request__c.Invoice_Postal_Code__c))}">
+                    <apex:outputLabel >Postal Code &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Invoice_Postal_Code__c}"/>    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem rendered="{!!(isNull(Support_Request__c.Invoice_To_Country__c) && isBlank(Support_Request__c.Invoice_To_Country__c))}">
+                    <apex:outputLabel >Country &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Invoice_To_Country__c }"/>
+                </apex:pageblockSectionItem>
+            </apex:pageblockSection>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection collapsible="false" columns="1" rendered="{!technicalSection}" >
+            <apex:outputLabel >Technical Requirements/Product Information</apex:outputLabel><br></br><br></br>
+            <apex:outputLabel >============================</apex:outputLabel>
+    <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Config_ID_Products_Customer_SKU__c) && isBlank(Support_Request__c.Config_ID_Products_Customer_SKU__c))}">
+                <apex:outputLabel >Config ID/Products/Customer SKU/Configuration Details/Quantities/Pricing : &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Config_ID_Products_Customer_SKU__c}"/>    
+            </apex:pageBlockSectionItem>
+            <apex:repeat value="{!mapPPSFormWithFieldAPI['Technical']}" var="formName">
+                <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                    <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c[formName.Field_API_Name__c]}"/>
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+            <br></br>
+        <br></br>
+        </apex:pageBlockSection>
+        <apex:pageblockSection collapsible="false" columns="1">
+            <apex:outputLabel >Pricing</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Update Offering'),False,True) && !(isNull(Support_Request__c.CurrencyIsoCode) && isBlank(Support_Request__c.CurrencyIsoCode))}">
+                <apex:outputLabel >Currency &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CurrencyIsoCode}"/>
+            </apex:pageBlockSectionItem>
+            <apex:repeat value="{!mapPPSFormWithFieldAPI['Pricing']}" var="formName">
+                <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                    <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c[formName.Field_API_Name__c]}"/>
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+            <br></br>
+        <br></br>
+            <!--<apex:pageBlockSectionItem rendered="{!IF(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Special Pricing (New OPG)'),True,False) && !(isNull(Support_Request__c.MC_Code__c) && isBlank(Support_Request__c.MC_Code__c))}">
+                <apex:outputLabel >MC Code &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.MC_Code__c}"/>
+            </apex:pageBlockSectionItem>-->
+        </apex:pageblockSection>
+        <apex:pageBlockSection collapsible="false" columns="1" rendered="{!(OR(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'Manual Quote (for new/existing products)'),(CONTAINS(Support_Request__c.CPQ_Request_Type__c,'B2B Portal Quote (Products/Configuration exist/New)')))) && customerSection}">
+            <apex:outputLabel >Customer Contact Information</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:repeat value="{!mapPPSFormWithFieldAPI['Customer']}" var="formName">
+                <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                    <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c[formName.Field_API_Name__c]}"/>
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+            <br></br>
+        <br></br>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection collapsible="false" rendered="{!(showSpecialSection || showRevisionSpecialSection) && specialPriceSection}" id="pbSectionSpecial" columns="1">
+            <apex:outputLabel >Special Pricing</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Special_Pricing__c) && isBlank(Support_Request__c.Special_Pricing__c))}">
+                    <apex:outputLabel >Special Pricing &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Special_Pricing__c}" />    
+                </apex:pageBlockSectionItem>
+                <!-- <apex:pageBlockSectionItem rendered="{!SPDeal}">
+                    <apex:outputLabel >Special Pricing - Deal ID &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.
+                    }" />
+                </apex:pageBlockSectionItem>-->
+                <apex:pageBlockSectionItem rendered="{!IF((Contains(Support_Request__c.Special_Pricing__c,'Revision') || Contains(Support_Request__c.Special_Pricing__c,'Special Pricing Exists')) ,true,false) && (!isNull(Support_Request__c.Special_Pricing_Revision__c) && !isBlank(Support_Request__c.Special_Pricing_Revision__c))}">
+                    <apex:outputLabel >Special Pricing - Deal ID &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c.Special_Pricing_Revision__c}" />
+                </apex:pageBlockSectionItem>
+
+                <apex:outputField value="{!Support_Request__c.Opportunity_Fulfillment_Business_Model__c}" rendered="false"/>
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['Special_Left']}" var="formName">
+                    <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}" rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                        <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                        <apex:outputField value="{!Support_Request__c[formName.Field_API_Name__c]}" />
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1">
+                <apex:repeat value="{!mapPPSFormWithFieldAPI['Special_Right']}" var="formName">
+                        <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}" rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                            <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                            <apex:outputField value="{!Support_Request__c[formName.Field_API_Name__c]}" style="{!iF(formName.Field_API_Name__c == 'Pricing_Justification_and_Summary__c','height: 120px;width: 234px;','')}"/>
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                    <br></br>
+                    <br></br>
+            </apex:pageBlockSection>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection collapsible="false" rendered="{!showPricingEscalationSection}" columns="1">
+            <apex:outputLabel >Pricing Escalation</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:repeat value="{!mapPPSFormWithFieldAPI['pricing_escalation']}" var="formName">
+                <apex:pageBlockSectionItem helptext="{!$ObjectType.Support_Request__c.Fields[formName.Field_API_Name__c].inlineHelptext}" rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                    <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c[formName.Field_API_Name__c]}" />
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+            <br></br>
+        <br></br>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection collapsible="false" rendered="{!showOutputSection && outputSection}" columns="1">
+            <apex:outputLabel >Additional Quote Output</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:repeat value="{!mapPPSFormWithFieldAPI['Output']}" var="formName">
+                <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c[formName.Field_API_Name__c]) && isBlank(Support_Request__c[formName.Field_API_Name__c]))}">
+                    <apex:outputLabel >{!formName.Field_Label_Name__c} &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                    <apex:outputField value="{!Support_Request__c[formName.Field_API_Name__c]}"/>
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+            <br></br>
+        <br></br>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection collapsible="false" columns="1" rendered="{!otherSection}">
+            <apex:outputLabel >Other</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.CC_Email_Address__c) && isBlank(Support_Request__c.CC_Email_Address__c))}">
+                <apex:outputLabel >CC: Email Address &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.CC_Email_Address__c}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!!(isNull(Support_Request__c.Additional_Information__c) && isBlank(Support_Request__c.Additional_Information__c))}">
+                <apex:outputLabel >Additional Information &nbsp; &nbsp; -  &nbsp;</apex:outputLabel>
+                <apex:outputField value="{!Support_Request__c.Additional_Information__c}"/>
+            </apex:pageBlockSectionItem>
+            <br></br>
+        <br></br>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection collapsible="false" columns="1" rendered="{!attachments}">
+            <apex:outputLabel >Attachments</apex:outputLabel>
+            <apex:outputLabel >============================</apex:outputLabel>
+            <apex:repeat value="{!showAllAttachment}" var="formName">
+                <BR></BR>
+                <apex:pageBlockSectionItem >
+                    <apex:outputField value="{!formName.Name}"> </apex:outputField>
+                    <apex:outputText > - {!$Label.CPQAttachementURL+formName.Id}</apex:outputText>
+                </apex:pageBlockSectionItem>
+            </apex:repeat>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+    <br></br>
+
+</apex:page>

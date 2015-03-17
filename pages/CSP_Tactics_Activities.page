@@ -1,0 +1,141 @@
+<apex:page standardController="Competitive_Sales_Plan__c" extensions="cspExtensionController" showHeader="False" sidebar="False">
+<style>
+.pgcol {
+vertical-align:text-top;
+}
+
+span.dateFormat{
+    display:none;
+}
+       
+select[title="Search scope"]{
+    display:none;
+}
+
+body {
+    padding: 10px;
+}
+
+.tablestrat {
+    border-collapse:collapse;
+    border-width: 0px;
+    border-style: solid solid;  
+}
+
+.troff {
+    border-width: 1px;
+    border-style: none solid none solid;
+}
+.tdtop {
+    border-width: 1px;
+    border-style: solid solid none solid;
+}
+.tdbottom {
+    border-width: 1px;
+    border-style: none solid solid solid;
+}
+
+
+.rightborder {
+    border-right: solid;
+    border-width: 1px;  
+}
+
+.tdpadding {
+    padding: 5px;
+    text-align:left;
+}
+.tdheader {
+    text-align:left;
+    font-weight:bold;
+    font-size: 10px;
+}
+.offheader {
+    text-align:center;
+    font-weight:bold;
+    font-size: 14px;
+    background-color:#5ABBE8;
+}
+.tdbordertopbottom{
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #000000;
+    border-bottom-style: solid;
+    border-bottom-width:1px;
+    border-bottom-color: #000000;
+}
+.tdtopborder {
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #000000;
+}
+
+
+</style>
+<div><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="36"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<h1 style="font-size:28px;color:#5ABBE8;">Create Activities from Tactics</h1></div>
+ 
+    <apex:form >
+
+<apex:outputpanel id="ov_table">
+<table  width="100%" border="0" cellspacing="0" cellpadding="0" class="tablestrat">
+  <apex:variable value="{!1}" var="offRowNum"/>
+  <tr  class="troff">
+    <td colspan="5" class="rightborder tdpadding offheader tdbordertopbottom">Tactics</td>
+  </tr>
+  <tr class="troff">
+    <td class="tdpadding tdheader">Tactic</td>
+    <td class="tdpadding tdheader">Owner</td>
+    <td class="tdpadding tdheader">Timing</td>
+    <td class="tdpadding tdheader">Activity Created On</td>
+    <td class="rightborder tdpadding tdheader">&nbsp;</td>
+  </tr>
+
+  <apex:repeat value="{!RelatedOffensiveStrategiesT}" id="offensive_values" var="off" >
+  <tr class="troff" style="background-color:#f3f3f3;">
+    <td class="tdpadding"><apex:outputField value="{!off.tactic_text__c}" /></td>
+    <td class="tdpadding"><apex:outputField value="{!off.tactic_owner__c}" /></td>
+    <td class="tdpadding"><apex:outputField value="{!off.tactic_timing__c}" /></td>
+    <td class="tdpadding"><apex:outputField value="{!off.Activity_Created_On__c}" /></td>
+    <td class="rightborder tdpadding">
+        [<apex:commandlink value="Create Activity" action="{!CreateOffActivities}" reRender="ov_table">
+        <apex:param name="offrowId" value="{!off.id}" assignTo="{!chosenOffId}" />
+    </apex:commandlink>]</td>
+  </tr>
+  <apex:variable var="offRowNum" value="{!offRowNum + 1}"/>
+  </apex:repeat>
+  <apex:variable value="{!1}" var="defRowNum"/>
+  <tr  class="troff">
+    <td colspan="5" class="rightborder tdpadding offheader tdbordertopbottom">CounterTactics</td>
+  </tr>
+  <tr class="troff">
+    <td class="tdpadding tdheader">CounterTactic</td>
+    <td class="tdpadding tdheader">Owner</td>
+    <td class="tdpadding tdheader">Timing</td>
+    <td class="tdpadding tdheader">Activity Created On</td>
+    <td class="rightborder tdpadding tdheader">&nbsp;</td>
+  </tr>
+
+  <apex:repeat value="{!RelatedDefensiveStrategiesT}" id="defensive_values" var="def" >
+  <tr class="troff" style="background-color:#f3f3f3;">
+    <td class="tdpadding"><apex:outputField value="{!def.ct_countertactic__c}" /></td>
+    <td class="tdpadding"><apex:outputField value="{!def.ct_owner__c}" /></td>
+    <td class="tdpadding"><apex:outputField value="{!def.ct_timing__c}" /></td>
+    <td class="tdpadding"><apex:outputField value="{!def.Activity_Created_On__c}" /></td>
+    <td class="rightborder tdpadding">
+        [<apex:commandlink value="Create Activity" action="{!CreateDefActivities}" reRender="ov_table">
+        <apex:param name="defrowId" value="{!def.id}" assignTo="{!chosenDefId}" />
+    </apex:commandlink>]
+    </td>
+  </tr>
+  </apex:repeat>
+</table>
+</apex:outputpanel>
+<br/>
+
+ <div style="margin-left:auto;margin-right:auto;width:100px;">
+<input type="Button" onClick="window.close()" value="Close Window"  class="btn"/>
+            </div>
+        
+    </apex:form>
+</apex:page>

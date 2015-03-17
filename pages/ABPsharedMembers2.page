@@ -1,0 +1,62 @@
+<!--
+* Class Name: ABPsharedMembers2
+* Author: HP
+* Date:15/06/2013
+* Requirement # Request Id:3276 
+* Description: To display the members of the Account Plan sharing.
+              
+-->
+
+<apex:page standardController="Account_Plan__c" extensions="ABPSharelistcontroller" action="{!getRecordsToDisplay}">
+<apex:form >
+
+<apex:pageBlock title="Account Plan Team" >
+  <apex:pageblockTable value="{!AccountShares}" var="as"   >
+
+<apex:column >
+
+<apex:facet name="header">Name</apex:facet>
+
+<apex:outputtext value="{!as.user.Name}"/>
+<apex:outputtext value="{!as.theGroup.Name}"/>
+
+</apex:column>
+<apex:column >
+
+<apex:facet name="header">AccessLevel</apex:facet>
+
+<apex:outputtext value="{!as.share.AccessLevel}"/>
+
+</apex:column>
+
+<apex:column >
+
+<apex:facet name="header">Reason</apex:facet>
+
+<apex:outputtext value="{!as.share.RowCause}"/>
+
+</apex:column>
+
+<apex:column >
+
+<apex:facet name="header">Business Group</apex:facet>
+
+<apex:outputtext value="{!as.user.Business_Group__c}"/>
+
+</apex:column>
+
+<apex:column >
+
+<apex:facet name="header">Country</apex:facet>
+
+<apex:outputtext value="{!as.user.Employee_Country__c}"/>
+
+</apex:column>
+
+
+
+ </apex:pageblockTable>
+
+</apex:pageBlock>
+</apex:form>
+</apex:page>

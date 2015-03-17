@@ -1,0 +1,23 @@
+<apex:page standardController="HP_Quote__c" extensions="CPQOpenBMIDocumentURLController" showHeader="false" sidebar="false">
+    <apex:outputField value="{!HP_Quote__c.Quote_Detail_URL__c}" rendered="false"/>
+    <apex:outputField value="{!HP_Quote__c.BMI_ID__c}" rendered="false"/>
+    <script>
+        function redirectToViewDocument(func) {
+            var oldonload = window.onload;
+            if (typeof window.onload != 'function') {
+                window.onload = func;
+            } else {
+                window.onload = function() {
+                    if (oldonload) {
+                        oldonload();
+                    }func();
+                }
+            }
+        }
+        redirectToViewDocument(function() {
+            window.parent.location.href='{!HP_Quote__c.Quote_Detail_URL__c}';
+            //var t=setTimeout(function(){window.parent.location.href='{!HP_Quote__c.Quote_Detail_URL__c}'},5);
+        })
+    </script>
+    <apex:iframe src="{!BMIEditPage}" />
+</apex:page>

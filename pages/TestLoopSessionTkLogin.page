@@ -1,0 +1,34 @@
+<apex:page sidebar="false">
+<apex:includeScript value="{!URLFOR($Resource.SessionTkGwLoginMinJs)}"/>    
+<apex:form > 
+    Gateway Login TEST. POSTs a login to the SRP/Gateway every 20 seconds. (<a href="https://it-services-gw-itg.external.hp.com">https://it-services-gw-itg.external.hp.com</a>)<br/>
+    <br/>
+    <div id='status-text'></div>
+</apex:form>
+<script type="text/javascript">     
+    function getTime() {
+        var time = new Date();
+        return ("0" + time.getHours()).slice(-2)   + ":" + 
+               ("0" + time.getMinutes()).slice(-2) + ":" + 
+               ("0" + time.getSeconds()).slice(-2);
+    }
+    
+    function login(st) {
+        st.innerHTML += getTime() + ' &nbsp;-&nbsp;';           
+        
+        GWSessionTk.login();
+        
+        var text = getTime() + ' &nbsp';
+        text += GWSessionTk.errorStatus ? GWSessionTk.errorStatus : 'OK';
+        text += '<br/>';
+        st.innerHTML += text;
+    }
+    
+    var st = document.getElementById('status-text');
+    st.innerHTML += getTime() + ' &nbsp;-&nbsp;Please wait for first login attempt....<br/>';   
+    
+    login(st);          
+    var waitMs = 20 * 1000; // every 20 seconds
+    setInterval(function(){login(st);},waitMs);
+</script>
+</apex:page>

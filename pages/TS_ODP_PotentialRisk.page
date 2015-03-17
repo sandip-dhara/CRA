@@ -1,0 +1,798 @@
+<apex:page standardcontroller="Potential_Risk__c" extensions="Muthu_ODPPotentialRisk">
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.css')}" />
+
+
+    <!-- BEGIN CONTAINER -->
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+  <div id="main-content"> 
+    <!-- BEGIN PAGE CONTAINER-->
+    <div class="container-fluid"> 
+      <!-- Tabs -->
+      <div class="row-fluid">
+        <div class="span12 mtop20"> 
+        <apex:form styleClass="form-horizontal">
+        
+        
+                      <div class="tab-pane active" id="Test">
+                <div class="BDheading_OL">
+                  <h2>Potential Risk</h2>
+                </div>
+                <div>
+                    <div class="alert alert-error span4 pull-left mr30" style="display:none" id="err_msg" />
+                  <form class="form-horizontal">
+                    <div class="control-group">
+                      <label class="control-label">Project ID </label>
+                      <div class="controls"> <apex:outputText value="{!GetProject}"></apex:outputText> </div>
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label">Owner </label>
+                      <div class="controls">
+                       <apex:inputtext html-placeholder="User Name" styleClass="span6" id="txtUserName" html-readonly="readonly"/>
+                <apex:inputhidden id="hdnUserId" value="{!UserId}"/>
+                <span class=""><a class="btnAthena btn-primary" style="padding: 7px 12px !important;" data-toggle="modal" href="#UserNamePopUp"><span class="icon-search"></span> </a></span>
+                <div id="UserNamePopUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                  <div class="modal-header">
+                    <h3>Search User Name</h3>
+                  </div>
+                  <div class="modal-body">
+                  <span class="pull-right mtop30">
+                  <input type="button" class="btnAthena" data-dismiss="modal" aria-hidden="true" value="Cancel" />
+                   </span> 
+<label>Search Users: </label><input type="text" id="txtSearchUsers" class="SearchBox input-text" />
+<apex:pageBlock >
+<apex:pageBlockSection >
+  
+<apex:pageBlockTable value="{!GetUsers}" var="user"  >
+<apex:column >
+<apex:facet name="header"></apex:facet>
+<apex:outputLink hreflang="javascript:void(0);" onclick="return SetUserName('{!user.id}','{!user.Name}')">{!user.Name}</apex:outputLink>
+</apex:column>
+</apex:pageBlockTable>
+
+</apex:pageBlockSection>
+</apex:pageBlock>
+                  </div>
+                  
+                  <!--<div class="modal-footer">
+                    <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btnAthena btn-primary">Select</button>
+                  </div>-->
+                </div>
+                      </div>
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label">Potential Risk </label>
+                      <div class="controls">
+                         <!-- <textarea rows="3" class="input-xxlarge" ></textarea> -->
+                         <apex:inputTextArea styleclass="input-xxlarge" value="{!PotentialRiskDesc}"  id="txtPotentialDesc"/>
+                      </div>
+                    </div>
+                    <div class="form-actions">
+                    <div id="dialog" title="">
+        <p>Why did you click me?? </p>
+        <p>Heyyyyyy </p>
+    </div>
+    <input type="button" id="button" value="Click to open the dialog"/>
+                    <p><a href="javascript:void(null);" onclick="showDialog();">Open</a></p>
+
+<div id="dialog-modal" title="Basic modal dialog" style="display: none;"></div>
+                    <input type="hidden" id="hdnSavePontentialRisk" value="false"/>
+                    
+                      
+                      <button class="btnAthena pull-right " type="button" onclick="cancelAction()"> Cancel</button>
+                      <button class="btnAthena btn-primary pull-right mr5" type="button" onclick="SavePotentialRisk()" id="savePR" > Save</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              
+        
+     
+        
+          <!--BEGIN TABS-->
+          <div class="tabbable custom-tab tabs-left" id="tables"> 
+            <!-- Only required for left/right tabs -->
+            <ul class="nav nav-tabs tabs-left" id="tabs">
+             
+              <li class="active"><a  href="#tab_3_2"  data-toggle="tab" >Business Impact</a></li>
+              <li class="disabled" ><a href="#tab_3_3" id="litab_3_3" data-toggle="tab">Root Cause</a></li>
+              <li class="disabled"><a href="#tab_3_4" id="litab_3_4" data-toggle="tab">Process Control</a></li>
+               <li class="disabled"><a href="#tab_3_5" id="litab_3_5" data-toggle="tab">Creating Risks</a></li>
+              
+            </ul>
+            <!-- <apex:outputText value="{!Referer}"/> -->
+            <div class="tab-content">
+
+              <div class="tab-pane active"  id="tab_3_2">
+                <div class="BDheading_OL">
+                  <h2>Business Impact </h2>
+                  <a class="btnAthena btn-primary pull-right addNew" onclick="AddNewBusinessImpact()"  id="addNew">Add New </a>
+                  
+                </div>
+                <div>
+                  <table class="table table-striped table-bordered" id="tblBusinessImpact">
+                    <thead>
+                      <tr>
+                      <th>  </th>
+                        <th>Description</th>
+                        <th>Severity</th>
+                          <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    
+                     <apex:repeat value="{!GetBusinessImpact}" var="BusinessImpact"> 
+           <tr class="odd gradeX" >
+           <td>
+            <apex:inputhidden value="{!BusinessImpact.Id}" />
+           </td>
+           <td >
+        
+            <apex:InputTextArea value="{!BusinessImpact.Description__c}"  styleClass="input-xxlarge width98" ></apex:InputTextArea>
+           
+           </td>
+           <td >
+           <apex:InputField value="{!BusinessImpact.Severity__c}"  Styleclass="input-xxlarge width98"></apex:InputField>
+           </td>
+           <td >
+           <a><span class="icon-trash"></span></a>
+           </td>
+           </tr>
+           </apex:repeat>
+                    
+                    </tbody>
+                  </table>
+                  <!-- // DATATABLE - DTA -->
+                  <input type="hidden" id="hdnSaveBI" value="false"/>
+                  <button class="btnAthena pull-right mtop20" type="button"> Cancel</button>
+                  <button class="btnAthena btn-primary pull-right mr5 mtop20"  onclick="saveBusinessImapct()" type="button" id="saveBI"> Save </button>
+                </div>
+              </div>
+              <div class="tab-pane disabled" id="tab_3_3">
+                <div class="BDheading_OL">
+                  <h2>Root Cause </h2>
+                  
+                  <a class="btnAthena btn-primary pull-right addNew" onclick="AddNewRootCause()"> Add New </a>
+                </div>
+                <div>
+                  <table class="table table-striped table-bordered" id="tblRootCause">
+                    <thead>
+                      <tr>
+                      <th></th>
+                        <th>Description</th>
+                        <th>Occurance</th>
+                        <th>Business Impact</th>
+                          <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                                      
+            <apex:repeat value="{!GetRootCauses}" var="varRootCause"> 
+            <tr class="odd gradeX" >
+            <td>
+                <apex:inputhidden value="{!varRootCause.objRootCause.Id}" />
+            </td>
+            <td >
+
+                <apex:InputTextArea value="{!varRootCause.objRootCause.Description__c}"  styleClass="input-xxlarge width98" ></apex:InputTextArea>
+
+            </td>
+            <td >
+             <apex:InputField value="{!varRootCause.objRootCause.Occurance__c}"  Styleclass="input-xxlarge width98"></apex:InputField> 
+            </td>
+            <td> <li></li>  <a class="" data-toggle="modal" onclick="populateBusinessImpact()" >Add</a>
+            </td>
+            <td >
+            <a><span class="icon-trash"></span></a>
+            </td>
+            </tr>
+            </apex:repeat>
+                      
+                    </tbody>
+                  </table>
+                  <!-- // DATATABLE - DTA -->
+                  <input type="hidden" id="hdnSaveRC" value="false"/>
+                  <button class="btnAthena pull-right mtop20" type="button"> Cancel</button>
+                  <button class="btnAthena btn-primary pull-right mr5 mtop20"  onclick="saveRootCause()" type="submit"> Save</button>
+                </div>
+              </div>
+              
+              <apex:inputhidden id="AvailableBIs" value="{!GetAvailableBusinessImpacts}"/>
+              
+              
+              
+              <div id="dilogBI" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" data-backdrop="static">
+                            <div class="modal-header">
+                              <h3>Business Impacts</h3>
+                            </div>
+                            <div class="modal-body">
+                              <div class="control-group">
+                                <label class="control-label">Select Experties</label>
+                                <div class="controls ml0 clearB">
+                                  <table class="hpit_BVP_SealectBox BDbg span6">
+                                    <tbody>
+                                      <tr>
+                                        <td class="hpit_BVP_SealectBox_L">Available
+                                         <input type="text" id="searchtext_kpileft" class="SearchBox input-text" onkeyup='SearchListBox("searchtext_Bileft", "BI_Left", "HdnBI_Left", "BI_Right")' />
+                                                                        <select id="HdnBI_Left" multiple="multiple" class="span12" style="display:none;">
+                                                                        </select>
+                                                                        <select id="BI_Left" multiple="multiple" class="span12" style="height:250px">
+                                                                        </select>
+                                          
+                                          </td>
+                                        <td class="hpit_BVP_SealectBox_Btn" style="width:40px; padding:10px;">
+                                          <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="BIMoveRight" value=">" alt="Move Right" />
+                                                                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="BIMoveLeft" value="<" alt="Move Left" />
+                                                                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="BIMoveAllRight" value=">>" alt="Move Right" />
+                                                                        <input type="button" class="btn btnAthena btn-primary btnAthenaPopP" style="width:38px; margin-bottom:1px" id="BIMoveAllLeft" value="<<" alt="Move Left" />
+                                          </td>
+                                        <td class="hpit_BVP_SealectBox_R">Selected
+                                          <input type="text" id="searchtext_Biright" class="SearchBox input-text" onkeyup='SearchListBox("searchtext_Biright", "BI_Right", "HdnBI_Right", "BI_Left")' />
+                                                                        
+                                                                        <select id="HdnBI_Right" multiple="multiple" class="span12" style="display:none;"></select>
+                                                                        <select id="BI_Right" multiple="multiple" class="span12" style="height:250px"></select>
+                                          
+                                          </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button class="btnAthena" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                              <button class="btnAthena btn-primary">Save</button>
+                            </div>
+                          </div>
+              
+              
+              
+              
+              
+              <div class="tab-pane" id="tab_3_4">
+                <div class="BDheading_OL">
+                  <h2>Process Control </h2>
+                  <button class="btnAthena btn-primary pull-right addNew" type="submit"> Add New</button>
+                </div>
+                <div>
+                  <table class="table table-striped table-bordered" id="SLP_3">
+                    <thead>
+                      <tr>
+                        <th>Description</th>
+                        <th>Detection</th>
+                        <th>Root Cause</th>
+                          <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                  </table>
+                  <!-- // DATATABLE - DTA -->
+                  <input type="hidden" id="hdnSavePC" value="false"/>
+                  <button class="btnAthena pull-right mtop20" type="button"> Cancel</button>
+                  <button class="btnAthena btn-primary pull-right mr5 mtop20" type="submit"> Save</button>
+                </div>
+              </div>
+                <div class="tab-pane" id="tab_3_5">
+                <div class="BDheading_OL">
+                  <h2>Creating Risks </h2>
+                  <button class="btnAthena btn-primary pull-right addNew" type="submit"> Add New</button>
+                </div>
+                <div>
+                  <table class="table table-striped table-bordered" id="SLP_4">
+                    <thead>
+                      <tr>
+                          <th style="width:8px;"><input type="checkbox" class="group-checkable" data-set="#SLP_1 .checkboxes" /></th>
+                        <th>Business Imapact</th>
+                        
+                        <th>Root Cause </th>
+                        <th>Process Control </th>
+                          <th>RPN</th>
+                        <th>Name </th>
+                          <th>Description </th>
+                          <th>Owner </th>
+                          <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                     
+                    </tbody>
+                  </table>
+                  <!-- // DATATABLE - DTA -->
+                  
+                  <button class="btnAthena pull-right mtop20" type="button"> Cancel</button>
+                  <button class="btnAthena btn-primary pull-right mr5 mtop20" type="submit"> Submit for Approval</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--END TABS--> 
+          </apex:form>
+        </div>
+      </div>
+      
+      <!-- END PAGE CONTENT--> 
+    </div>
+    <!-- END PAGE CONTAINER--> 
+  </div>
+  <!-- END PAGE --> 
+</div>
+<!-- END CONTAINER --> 
+
+
+
+   <!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DataTableColumnFilter.js')}"/>
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+<!-- END JAVASCRIPTS --> 
+<script>
+
+// $("#addNew").prop('disabled',true);
+ //   $("#saveBI").prop('disabled',true);
+
+ //$("#savePR").click (function() {
+   // $("#saveBI").prop('disabled',false);
+//});
+
+
+    $(document).ready(function () {
+$("#tables").hide();
+  $("#savePR").click (function() {
+ $("#tables").show();
+ // alert("Clicked");
+  
+  // DATATABLE SLP_1
+        // -------------------------------------------------------------------------------- * -->
+
+        $('#tblBusinessImpact').dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+            "bFilter": true,
+            
+            //"bPaginate": false,
+            //"bLengthChange": false,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }]
+        });
+        
+
+        $('#tblRootCause').dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+            "bFilter": true,
+           // "bPaginate": false,
+           // "bLengthChange": false,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }]
+        });
+
+        $('#SLP_3').dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+            "bFilter": true,
+           // "bPaginate": false,
+           // "bLengthChange": false,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }]
+        });
+
+        $('#SLP_4').dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+            "bFilter": true,
+           // "bPaginate": false,
+           // "bLengthChange": false,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }]
+        });
+
+  });
+       
+        
+        
+        
+
+    });
+
+    // Utility; parse out parameter by name from URL query string
+    $.urlParam = function (name) {
+        var resultData = '';
+        var results = new RegExp('[\\?&]' + name + '=([^&#]*)')
+            .exec(window.location.href);
+        if (results == null) {
+            resultData = '';
+        }
+        else {
+            resultData = results[1] || 0;
+        }
+        return resultData;
+    }
+
+
+$('#litab_3_2').click(function(){
+debugger;
+    
+    var flag=$('#hdnSavePontentialRisk').val();
+    
+    if(flag=="true")
+    {
+    $(this).removeClass('disabled')
+    $(this).addClass('active')
+    return true;
+    } 
+    else
+    {
+     $(this).removeClass('active')
+    $(this).addClass('disabled')
+        return false;
+        
+        } 
+    
+});
+$('#litab_3_3').click(function(){
+debugger;
+    var flag=$('#hdnSaveBI').val();   
+    if(flag=="true")
+    {
+    $('#litab_3_3').removeClass('disabled')
+    $('#litab_3_3').addClass('active')
+    return true;
+    } 
+    else
+    {
+     $('#litab_3_3').removeClass('active')
+    $('#litab_3_3').addClass('disabled')
+        return false;
+        
+        } 
+});
+
+
+$('#litab_3_4').click(function(){
+debugger;
+    var flag=$('#hdnSaveRC').val();
+     if(flag=="true")
+    {
+    $(this).removeClass('disabled')
+    $(this).addClass('active')
+    return true;
+    }
+    
+    else
+    {
+     $(this).removeClass('active')
+    $(this).addClass('disabled')
+        return false;
+        
+    }
+       
+});
+
+
+
+$('#litab_3_5').click(function(){
+    if($(this).hasClass('active'))
+    var flag=true;
+    if(flag)
+    {
+    
+    return true;
+    }
+    
+    else
+    {
+        return false;
+        
+        }
+});
+
+
+
+    function SavePotentialRisk() {
+        debugger;
+         $('#hdnSavePontentialRisk').val("true");
+        var ProjectId = $.urlParam('OFID');
+        var PotentialDesc = $('[id$=txtPotentialDesc]').val();
+
+        Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.Muthu_ODPPotentialRisk.CreateProjectRisk}',
+              ProjectId,
+              PotentialDesc,
+              RedirectToBusinessImpact
+          );
+    }
+
+    function RedirectToBusinessImpact(result, event) {
+        debugger;
+        $('#hdnSavePontentialRisk').val("true");
+    }
+    function SetUserName(userId,userName)
+    {
+    $('[id$=txtUserName]').val(userName);
+    $('[id$=hdnUserId]').val(userId);
+    //var controlid=document.getElementById('{!$Component.UserProfileForm.txtUserName}');
+    //controlid.value=userName;
+    //controlid=document.getElementById('{!$Component.UserProfileForm.hdnUserId}');
+    //controlid.value=userId;
+    $('#txtSearchUsers').val('');
+    $('.list tr').show();
+    $('#UserNamePopUp').modal('hide');
+     //var controlid=document.getElementById('{!$Component.UserProfileForm.hdnUserId}');
+    var userId=$('[id$=txtUserName]').val(); 
+    
+    if(userId!='')
+    {
+    $('#err_msg').hide();
+    }
+    return false;
+    }
+    
+    function AddNewBusinessImpact()
+    {
+      debugger;
+      
+    var dropSev=  ("<select>"+
+  "<option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option>"+
+  "<option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option>"+
+  "</select>");
+          var oTable = $('#tblBusinessImpact').dataTable();
+          var BID="<input type='hidden' value='' />";
+          var BIDesc="<textarea rows='3' Class='input-xxlarge width98' />";
+          var BISev="<input type='text' value='' Class='input-xxlarge width98'/>";
+          var Delete="<a><span class='icon-trash'></span></a>";
+          oTable.fnAddData([BID,BIDesc,dropSev,Delete]);
+    }
+
+
+function cancelAction()
+{
+debugger;
+//window.setTimeout("location=('https://hp--esit.cs11.my.salesforce.com/a6y/o');",200);
+window.location.href='https://hp--esit.cs11.my.salesforce.com/a6y/o';
+//window.location='https://hp--esit.cs11.my.salesforce.com/a6y/o';
+//alert("Clicked");
+return false;
+                                                                                                                                                                                                                                                                                                ]
+}
+        function saveBusinessImapct(){
+        debugger;
+        $('#hdnSaveBI').val(true);
+       // $('#hdnSavePontentialRisk').val(true);
+        var lstData=new Array();
+        var oTable = $('#tblBusinessImpact').dataTable();
+        
+        for(var icount=1; icount<oTable[0].rows.length;icount++){
+        var BI=$(oTable[0].rows[icount].cells[0].children).val();
+        var Description= $(oTable[0].rows[icount].cells[1].children).val();
+        var Severity= $(oTable[0].rows[icount].cells[2].children).val();
+       
+        lstData.push({"BIID":BI,"BIDescription":Description,"BISeverity":Severity});
+        }
+       var ProjectId = $.urlParam('OFID');               
+       Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.Muthu_ODPPotentialRisk.CreateBusinessImpact}',
+                lstData,
+                ProjectId,
+                DisplayRootCause
+            );
+        
+        }
+       function DisplayRootCause(result,event)
+       {
+       $('#tab_3_3').removeAttr('disabled');
+       window.location.href=result;
+          debugger;
+          
+       }
+       
+       /* Function to save RootCause */
+       
+        function saveRootCause(){
+            debugger;
+            $('#hdnSaveRC').val("true");
+            var lstRootData = new Array();
+            var oTable = $('#tblRootCause').dataTable();
+            for(var icount = 1; icount<oTable[0].rows.length; icount++){
+                var RC = $(oTable[0].rows[icount].cells[0].children).val();
+                var Description = $(oTable[0].rows[icount].cells[1].children).val();
+                var Occurance = $(oTable[0].rows[icount].cells[2].children).val();
+                lstRootData.push({"RCID":RC,"RCDescription":Description,"RCOccurance":Occurance});
+            }
+            var ProjectId = $.urlParam('OFID');
+            console.log('ProjectId--------------'+ProjectId);
+            console.log('lstRootData------------'+JSON.stringify(lstRootData));
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.Muthu_ODPPotentialRisk.createRootCause}',lstRootData,ProjectId,function(result, event){
+                    console.log('result------------'+result);
+                    window.location.href = result;
+                    debugger;
+                },{escape: true}
+            );          
+        }
+          
+    function populateBusinessImpact()
+    {
+    debugger;
+    
+    $('#dilogBI').modal('show');
+          $('#BI_Left').empty();
+          
+        debugger;
+          var result=$('[id$=AvailableBIs]').val();
+          var output = [];
+          if(result!="[]")
+          {
+          var data=JSON.parse(result);
+          for(var index=0;index<data.length;index++)
+          {
+          output.push('<option value="' + data[index]['Id']+ '" title="' + data[index]['Description__c']+ '">' + data[index]['Description__c']+'</option>');
+          }
+          $('#BI_Left').append(output.join(""));
+          }         
+                 
+          $("#BIMoveRight,#BIMoveLeft").unbind().bind("click", function (event) {
+          var id = $(event.target).attr("id");
+          var selectFrom = id == "BIMoveRight" ? "#BI_Left" : "#BI_Right";
+          var moveTo = id == "BIMoveRight" ? "#BI_Right" : "#BI_Left";
+          MoveListBox(selectFrom, moveTo);
+          if (selectFrom == "#BI_Left") {
+              $("#searchtext_Bileft").val("");
+              $("#searchtext_Bileft").trigger("keyup");
+          }
+          else {
+              $("#searchtext_Biright").val("");
+              $("#searchtext_Biright").trigger("keyup");
+          }
+      });
+
+      $("#BIMoveAllRight,#BIMoveAllLeft").unbind().bind("click", function (event) {
+          var id = $(event.target).attr("id");
+          var selectFrom = id == "BIMoveAllRight" ? "#BI_Left" : "#BI_Right";
+          var moveTo = id == "BIMoveAllRight" ? "#BI_Right" : "#BI_Left";
+          MoveAllListBox(selectFrom, moveTo);
+      });
+        
+    }
+    
+    
+    function AddNewRootCause()
+    {
+      debugger;
+      
+    var dropSev=  ("<select>"+
+  "<option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option>"+
+  "<option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option>"+
+  "</select>");
+          var oTable = $('#tblRootCause').dataTable();
+          var BID="<input type='hidden' value='' />";
+          var BIDesc="<textarea rows='3' Class='input-xxlarge width98' />";
+          var BISev="<input type='text' value='' Class='input-xxlarge width98'/>";
+          var Delete="<a><span class='icon-trash'></span></a>";
+          var BusinessImpactItems="<li></li>  <a class='' data-toggle='modal' onclick='populateBusinessImpact()' >Add</a>";
+          oTable.fnAddData([BID,BIDesc,dropSev,BusinessImpactItems,Delete]);
+    }
+    
+       function SearchListBox(TextBox, MainListBox, HdnListBox, SecondListBox) {
+          $("#" + TextBox).css({ "background-image": "url(../Content/img/loader.gif)", "background-position": "right", "background-repeat": "no-repeat", "background-size": "contain" });
+          var textbox = $("#" + TextBox).val();
+          var listbox = $('#' + MainListBox).find("option");
+          var hdnlist = $('#' + HdnListBox).find("option");
+          if (textbox == "") {
+              $("#" + TextBox).css({ "background-image": "none" });
+          }
+          var resultMarkup = "";
+          if (listbox.length != hdnlist.length) {
+
+              $.each(hdnlist, function (indexA, valueA) {
+                  $.each($('#' + SecondListBox).find("option"), function (indexB, valueB) {
+
+                      if (valueA.value == valueB.value) {
+                          valueA.selected = "selected";
+                      }
+                  });
+              });
+              $('#' + HdnListBox).find("option:selected").remove();
+          }
+
+          if (listbox.length > hdnlist.length || (listbox.length < hdnlist.length && $('#' + HdnListBox).find("option").length == 0)) {
+              $('#' + HdnListBox).empty();
+              $.each($('#' + MainListBox).find("option"), function (index, e) {
+                  resultMarkup += '<option value="' + e.value + '">' + e.text + '</option>';
+              });
+              $('#' + HdnListBox).html(resultMarkup);
+          }
+
+          resultMarkup = "";
+          var Items = $('#' + HdnListBox).find("option");
+          for (var childIndex = 0; childIndex < Items.length; childIndex++) {
+
+              if (Items[childIndex].text.toLowerCase().indexOf(textbox.toLowerCase()) == 0) {
+                  resultMarkup += '<option value="' + Items[childIndex].value + '">' + Items[childIndex].text + '</option>';
+
+              }
+          }
+          $('#' + MainListBox).empty();
+          $('#' + MainListBox).html(resultMarkup);
+          if (resultMarkup == "") {
+              $("#" + TextBox).css({ "background-image": "none" });
+          }
+          setTimeout(function () { $("#" + TextBox).css({ "background-image": "none" }); }, 300);
+      }  
+      
+      
+      
+      $(function() {
+            $("#dialog").dialog({
+                autoOpen: false
+            });
+            $("#button").on("click", function() {
+                $("#dialog").dialog("open");
+            });
+        });
+      
+      
+      function showDialog()
+{
+    $("#dialog-modal").dialog(
+    {
+        width: 600,
+        height: 400,
+        open: function(event, ui)
+        {
+            var textarea = $('<textarea style="height: 276px;">');
+            $(textarea).redactor({
+                focus: true,
+                autoresize: false,
+                initCallback: function()
+                {
+                    this.set('<p>Lorem...</p>');
+                }
+            });
+        }
+     });
+}
+      
+      
+        function MoveListBox(selectFrom, moveTo) {
+debugger;
+          var selectedItems = $(selectFrom).find("option:selected").clone();
+          if (selectedItems.length > 0) {
+              $('span.error-keyup-2').remove();
+              $(moveTo).append(selectedItems);
+              $(selectFrom).find("option:selected").remove();
+              Sort(moveTo);
+              Sort(selectFrom);
+          }
+          else {
+              $('span.error-keyup-2').remove();
+              $(selectFrom).after("<span class='error error-keyup-2' style='color:red;'>dfgasdgas</span>");
+          }
+      }
+    
+    
+    </script>
+
+</apex:page>

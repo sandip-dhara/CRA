@@ -1,0 +1,48 @@
+<apex:page controller="OAE_StartHereCtlr">
+<br/><br/><br/>
+<apex:form >
+<apex:pageblock id="fullpage">
+<apex:pageblock id="userMsg" rendered="{!!gotUsers}">
+<h1>Welcome to the Object Assignment Engine!</h1>
+<br/><br/><br/>
+You need to have two users set up in your system before running this setup.
+<br/><br/><br/>
+</apex:pageblock>
+
+<apex:pageblock id="showLink" rendered="{!gotUsers && !firstDone}">
+<h1>Welcome to the Object Assignment Engine!</h1>
+<br/><br/><br/>
+Click 
+&nbsp;&nbsp;
+ <apex:commandLink value="HERE" action="{!populateFirst}" rerender="fullpage" />
+&nbsp;&nbsp;
+to create the first set of objects needed for a tour of the OAE functionality.
+<br/><br/><br/>
+</apex:pageblock>
+
+<apex:pageblock id="showSecond" rendered="{!gotUsers && firstDone && !secondDone}">
+<h1>Welcome to the Object Assignment Engine!</h1>
+<br/><br/><br/>
+Click 
+&nbsp;&nbsp;
+ <apex:commandLink value="HERE" action="{!populateSecond}" rerender="fullpage" />
+&nbsp;&nbsp;
+to create the second set of objects needed for a tour of the OAE functionality.
+<br/><br/><br/>
+</apex:pageblock>
+
+<apex:pageblock id="hideLink" rendered="{!gotUsers && firstDone && secondDone}">
+<h1>Welcome to the Object Assignment Engine!</h1>
+<br/><br/>
+<!-- TM:Debmalya:Link to Rule Parameters:Start-->
+    <apex:outputLink value="{!$Page.OAE_Rules_Start}" >Rule Parameters</apex:outputLink>
+    <br/>
+    <apex:outputLink value="{!$Page.OAE_Skills_Start}" >Skill Parameters</apex:outputLink>
+<!-- TM:Debmalya:Link to Rule Parameters:End-->
+<br/><br/>
+Thanks for setting up the objects.  Now go play!
+<br/><br/><br/>
+</apex:pageblock>
+</apex:pageblock>
+</apex:form>
+</apex:page>

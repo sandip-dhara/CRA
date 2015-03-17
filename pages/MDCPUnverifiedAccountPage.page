@@ -1,0 +1,131 @@
+<apex:page tabStyle="account" controller="MDCPUnverifiedAccountController" showheader="false" sidebar="false"   id="PageID">
+<apex:sectionHeader id="TitleSection" title="New Unverified Account"/>
+<body class="accountTab">
+<apex:form id="frm" >
+<apex:pageBlock id="TopBlock" >
+    <apex:actionStatus id="CreatingAccount" style="align:center" layout="block" >
+            <apex:facet name="start">
+                <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPCreatingAccount}</i></FONT>
+                <br/><br/>                       
+            </apex:facet>
+    </apex:actionStatus> 
+  
+<apex:pageBlockButtons location="top" id="pageblocktop">
+<apex:outputPanel id="saveresult"> 
+<apex:outputPanel id="noinput"/>    
+<apex:commandButton Id="save" title="Save account to salesforce" onclick="ValidateAccountform();" disabled="{!isCaseCreated}" value="Save"  reRender="noinput" />
+<apex:commandButton Id="Close"  onclick="window.close()"  value="Close" />
+<apex:actionFunction name="createAccount"  action="{!save}" reRender="saveresult,SaveAccount,InputSection" status="CreatingAccount" />
+<apex:outputPanel id="validationResult"/> 
+</apex:outputPanel>   
+</apex:pageBlockButtons>
+ 
+ <apex:outputPanel id="SaveAccount">
+    <apex:outputPanel id="DMLStatus" rendered="{!isCaseCreated}"  styleClass="successMessage">
+        <apex:outputText value="Unverified account has been created " styleClass="successMessage"/>&nbsp;
+         <apex:outputLink target="_blank"  value="/{!newUnverifiedAccountID}" ><apex:outputText value="here." styleClass="successMessage"/></apex:outputLink>
+        &nbsp;<apex:outputText value="Case# {!newCaseID} also has been created for Master Data team to follow up."/>&nbsp;<br/><br/>
+    </apex:outputPanel>
+</apex:outputPanel>
+<apex:outputPanel id="InputSection">
+<apex:pageBlockSection id="pageblk">
+    <apex:pageBlockSectionItem id="pagesec">
+                 <apex:outputLabel value="Account Name"  />
+                <apex:outputPanel id="pageoutpnl">
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputText value="{!name}" disabled="{!isCaseCreated}" onkeyup="clearmessage();"  label="Account Name" id="InputName"  required="true"/>
+                        <apex:outputPanel id="vadidationname"/>   
+                    </div>
+                </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem id="InputPhysicalStreetsection">
+                <apex:outputLabel >Physical Street</apex:outputLabel>
+        <apex:outputPanel id="pagePhysicalPhysicalStreet">
+
+    <div class="requiredInput">
+        <div class="requiredBlock"></div>
+
+    <apex:inputTextarea value="{!PhysicalStreet}" onkeyup="clearmessage();" disabled="{!isCaseCreated}" id="InputPhysicalStreet"/>
+                   <apex:outputPanel id="vadidationStreet"/>   
+                    </div>
+                </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem id="InputPhysicalCitysection">
+        <apex:outputLabel >Physical City</apex:outputLabel>
+                    <apex:outputPanel id="pagePhysicalCity">
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+
+    <apex:inputText value="{!PhysicalCity}" onkeyup="clearmessage();" disabled="{!isCaseCreated}" id="InputPhysicalCity"/>
+                            <apex:outputPanel id="vadidationCity"/>   
+                    </div>
+                </apex:outputPanel>
+    </apex:pageBlockSectionItem>  
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel >Physical State/Province</apex:outputLabel>
+    <apex:inputText value="{!PhysicalState }" disabled="{!isCaseCreated}"/>
+    </apex:pageBlockSectionItem> 
+
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel >Physical Zip / Postal Code</apex:outputLabel>
+    <apex:inputText value="{!PostalCode}" disabled="{!isCaseCreated}"/>
+    </apex:pageBlockSectionItem>    
+    <apex:pageBlockSectionItem id="selectedcountry">
+
+        <apex:outputLabel >Physical Country </apex:outputLabel>
+               <apex:outputPanel id="pageoutcntry">
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+
+        <apex:selectList value="{!selectedCountry}" disabled="{!isCaseCreated}" onchange="clearmessage();" id="SelectedCountry" size="1" required="true"  >
+          
+        <apex:selectOptions value="{!PhysicalCountrylist}"/>
+        </apex:selectList>
+                                 
+                    </div>  <apex:outputPanel id="vadidationcountry"/>   
+                </apex:outputPanel>
+    </apex:pageBlockSectionItem>                     
+
+</apex:pageBlockSection>
+</apex:outputPanel>
+</apex:pageBlock>
+</apex:form>
+</body>
+<script>
+function clearmessage(){
+document.getElementById('PageID:frm:TopBlock:pageblocktop:validationResult').innerHTML = '';
+document.getElementById('PageID:frm:TopBlock:pageblk:pagesec:InputName').style.background ="#FFFFFF"; 
+document.getElementById('PageID:frm:TopBlock:pageblk:InputPhysicalCitysection:InputPhysicalCity').style.background ="#FFFFFF"; 
+document.getElementById('PageID:frm:TopBlock:pageblk:InputPhysicalStreetsection:InputPhysicalStreet').style.background ="#FFFFFF"; 
+document.getElementById('PageID:frm:TopBlock:pageblk:selectedcountry:SelectedCountry').style.background ="#FFFFFF"; 
+}
+function ValidateAccountform(){
+var Inputname=document.getElementById('PageID:frm:TopBlock:pageblk:pagesec:InputName').value;
+var Inputcity=document.getElementById('PageID:frm:TopBlock:pageblk:InputPhysicalCitysection:InputPhysicalCity').value;
+var Inputstreet=document.getElementById('PageID:frm:TopBlock:pageblk:InputPhysicalStreetsection:InputPhysicalStreet').value;
+var selcontry=document.getElementById('PageID:frm:TopBlock:pageblk:selectedcountry:SelectedCountry');
+var txtcontry = selcontry.options[selcontry.selectedIndex].text;
+
+if((Inputname!='')&&(txtcontry !='--None--')&&(Inputstreet!='')&&(Inputcity!='')){
+createAccount();
+}else if(Inputname==''){
+document.getElementById('PageID:frm:TopBlock:pageblocktop:validationResult').innerHTML = '<font color=#FC0808>    please specify Account name</font>';
+document.getElementById('PageID:frm:TopBlock:pageblk:pagesec:InputName').style.background ="#F8E6E0"; 
+}else if(Inputstreet==''){
+document.getElementById('PageID:frm:TopBlock:pageblocktop:validationResult').innerHTML='<font color=#FC0808>    please specify Street name</font>';
+document.getElementById('PageID:frm:TopBlock:pageblk:InputPhysicalStreetsection:InputPhysicalStreet').style.background ="#FCEEEE"; 
+}else if(Inputcity==''){
+document.getElementById('PageID:frm:TopBlock:pageblocktop:validationResult').innerHTML='<font color=#FC0808>    please specify City name</font>';
+document.getElementById('PageID:frm:TopBlock:pageblk:InputPhysicalCitysection:InputPhysicalCity').style.background ="#FCEEEE"; 
+}else if(txtcontry =='--None--'){
+document.getElementById('PageID:frm:TopBlock:pageblocktop:validationResult').innerHTML='<font color=#FC0808>    please select Country </font>';
+document.getElementById('PageID:frm:TopBlock:pageblk:selectedcountry:SelectedCountry').style.background ="#F8E6E0"; 
+}
+
+}
+</script>
+ <apex:stylesheet value="{!$Resource.CSSMDCP}"/>
+  <apex:includeScript value="{!$Resource.MDCPGeneralScript}"/>
+</apex:page>

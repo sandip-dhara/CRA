@@ -1,0 +1,21 @@
+<!-- 
+/**********************************************************
+* Page Name: LeadAssignmentPage
+* Author: Accenture  
+* Date: 20-JULY-2012 
+* Requirement # Request Id: 
+* Description: VF page to assign Lead Owner
+**********************************************************/
+-->
+<apex:page standardController="Lead" extensions="LeadAssignmentController" recordSetVar="LeadsRecord" action="{!assignLeads}" >
+    <!-- Form to assign leads -->
+    <apex:form >
+        <apex:pageBlock title="{!$Label.Lead_Assignment}" rendered="{!errorFlag || isOwnerChanged}">
+            <apex:pageMessage escape="false" summary="<br/> {!successMessage1} <br/> {!successMessage2} </br>{!ownerChageMsg}" severity="Info" strength="3" rendered="{!successFlag || isOwnerChanged}"/>
+            <apex:pageMessages />
+          
+            <apex:commandButton action="{!returnBack}" value="Go Back" id="back" rendered="{errorFlag}"/> 
+        </apex:pageBlock> 
+
+    </apex:form>
+</apex:page>

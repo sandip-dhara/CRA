@@ -1,0 +1,136 @@
+<!-- 
+/**********************************************************
+* Page Name: OpportunityProductEdit
+* Author: Accenture
+* Date: 05-Aug-2012 
+* Requirement # Request Id : 
+* Description: TO show Alert message on SAVE button 
+* Last Modified by:  
+***********************************************************/
+-->
+
+<apex:page standardController="OpportunityLineItem">
+    <!-- Javascript to show alert message on SAVE button -->
+     <script language="javascript">          
+               function validate(recordTypeName) {
+               
+                    var rName= document.getElementById(recordTypeName).value;
+                    
+                    var autoSyncFlag= '{!OpportunityLineItem.Opportunity.SAP_Feed__c}';  
+                    
+                    var Contract = document.getElementById('{!$Component.frm.pb.rew.con}').value; 
+                                    
+                    var renewal = '{!$Label.Renewal_RecordType_Name}';    
+                    var msg = '{!$Label.Renewal_Stop_Sync}';
+                    if(rName == 'Renewal' && autoSyncFlag == 'true' && Contract != ''){                                                                     
+                        var result = confirm("{!$Label.Renewal_Stop_Sync}");                       
+                        if (result == false) {                                                      
+                          return false;
+                        }                  
+                    }   
+              }
+               
+     </script>
+     
+     
+    <apex:form >
+         <apex:inputHidden value="{!OpportunityLineItem.Opportunity.RecordType.Name}" id="recordTypeName"/>
+          
+     </apex:form>
+     
+    <apex:form id="frm">
+        
+        
+        <apex:sectionHeader title="Opportunity Product"  subTitle="{!OpportunityLineItem.PricebookEntry.Product2.Name}" />
+           <apex:pageBlock title="Opportunity Product Edit" id="pb">
+           
+           <!-- Page Messages section to show Error Messages -->
+           
+            <apex:pageMessages />
+            
+            <!-- Pageblock buttons section to show buttons -->          
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.Save}" id="saveButton" action="{!Save}" onclick="return validate('{!$Component.recordTypeName}')" />
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}" />
+            </apex:pageBlockButtons>
+            <!--*********************Product Info*****************-->
+            <!-- Pageblocksection to show line items fields -->
+            <apex:pageBlockSection columns="2" title="Product Information" id="pbsec">                              
+                <apex:inputField value="{!OpportunityLineItem.Opportunity.Name}" id="oppName" />
+                <apex:inputField value="{!OpportunityLineItem.Opportunity_Close_Date__c}"  id="optyclisedate"/>
+                <apex:inputField value="{!OpportunityLineItem.OpportunityID__c}"  id="OptyId"/>
+                
+                <apex:outputtext value="{!OpportunityLineItem.TotalPrice}"  id="totalprice"/>
+                <apex:inputField value="{!OpportunityLineItem.PricebookEntry.Product2.Name}" id="pName" />
+                <apex:inputField value="{!OpportunityLineItem.OpportunityStage__c}"  id="optystage"/>
+                <apex:outputtext value="{!OpportunityLineItem.ProductId__c}"  id="ProdId"/>
+                <apex:inputField value="{!OpportunityLineItem.Legacy_Ref_Id__c}" id="refid" />
+                <apex:inputField value="{!OpportunityLineItem.Business_Group__c}" id="BG" />
+                <apex:inputField value="{!OpportunityLineItem.UnitPrice}" required="true" id="uPrice"/>
+                 <apex:inputField value="{!OpportunityLineItem.GBU__c}" id="GBU" />
+                 <apex:inputField value="{!OpportunityLineItem.ServiceDate}" required="true" id="bookshipdt"/>
+                 
+                 <apex:inputField value="{!OpportunityLineItem.Product_Line__c}" id="Pline" />
+                
+                 <apex:outputLabel /> 
+                 <apex:inputField value="{!OpportunityLineItem.Sub_Product_Line__c}" id="SubPline" />
+                 <apex:outputLabel />
+                 
+                 <apex:inputField value="{!OpportunityLineItem.Quantity}"  id="quan"/>
+                 <apex:outputLabel />
+                <apex:inputField value="{!OpportunityLineItem.Subtotal}" id="subTotal" />
+                 <apex:outputLabel />
+                
+                     
+            </apex:pageBlockSection>
+            
+            
+            <!--*********************Services*****************-->
+            <apex:pageBlockSection columns="2" title="Services" id="serv">
+            <apex:inputField value="{!OpportunityLineItem.First_12_Month_Value__c}" id="f12month" /> 
+            <apex:inputField value="{!OpportunityLineItem.Attach__c}" id="att" /> 
+            <apex:inputField value="{!OpportunityLineItem.First_Fiscal_Year_Value__c}" id="fYear" /> 
+            <apex:inputField value="{!OpportunityLineItem.Start_Date__c}" id="strdate"/> 
+            <apex:inputField value="{!OpportunityLineItem.FFYR_Margin_Amount__c}" id="ffyrmargin" /> 
+            <apex:inputField value="{!OpportunityLineItem.End_Date__c}" id="enddate" /> 
+            <apex:inputField value="{!OpportunityLineItem.Margin_Amount__c}" id="mrginamt" /> 
+            <apex:inputField value="{!OpportunityLineItem.Margin_Percentage__c}" id="mrginprecen"/> 
+            
+            
+            </apex:pageBlockSection>
+            
+            <!--*********************Renewal*****************-->
+            <apex:pageBlockSection columns="2" title="Renewal" id="rew">
+             <apex:inputField value="{!OpportunityLineItem.Sales_Doc_Nbr__c}" id="sDocNum" />
+              <apex:inputField value="{!OpportunityLineItem.Contract_Start_Date__c}" id="Constrdt" />
+              <apex:inputField value="{!OpportunityLineItem.Contract__c}" id="con" />
+              <apex:inputField value="{!OpportunityLineItem.Contract_End_Date__c}" id="ConendDt" />
+              <apex:inputField value="{!OpportunityLineItem.RTS__c}" id="rts" />
+              <apex:inputField value="{!OpportunityLineItem.Win_Back__c}" id="winbk" />
+              <apex:inputField value="{!OpportunityLineItem.RTS_Component__c}" id="rtscom" />
+              <apex:inputtext value="{!OpportunityLineItem.Total_Incremental_Revenue__c}" id="tlIncrement" />
+              <apex:inputField value="{!OpportunityLineItem.Quote_Number__c}" id="quotenum" />
+            </apex:pageBlockSection>
+            
+            <!--*********************CPQ*****************-->
+            <apex:pageBlockSection columns="2" title="CPQ" id="cpq">
+              <apex:inputField value="{!OpportunityLineItem.Keep__c}" id="retain" />
+              <apex:inputField value="{!OpportunityLineItem.Program_Code__c}" id="prcode" />            
+            </apex:pageBlockSection>
+            
+            <!--*********************Partner*****************-->
+            <apex:pageBlockSection columns="2" title="Partner" id="part"> 
+              <apex:inputField value="{!OpportunityLineItem.Program__c}" id="pgm" />
+              <apex:inputField value="{!OpportunityLineItem.ProductName__c}" id="Prodname" />
+              <apex:inputField value="{!OpportunityLineItem.Status__c}" id="dealregStatus" />
+            </apex:pageBlockSection>
+            
+            
+            
+            
+            
+            
+        </apex:pageBlock>   
+           
+    </apex:form>  
+</apex:page>

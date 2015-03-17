@@ -1,0 +1,311 @@
+<apex:page controller="hpContactUsPage" title="HP Device Customization" sidebar="false" showHeader="false" standardStylesheets="{!If(SiteName==null,false,false)}" cache="false" id="PageId">
+
+      <style type="text/css">
+      #recaptcha_area, #recaptcha_table {
+    margin-top: 8px;}
+    
+    .inputfont
+    {
+      font-family:hpsimplified;
+    }
+      </style> 
+
+    
+    <div id="everything" class="everything" xmlns="http://www.w3.org/1999/xhtml">
+        <div id="top_buyhp" class="top_buyhp"> </div>
+        <div id="content">
+        
+     <!--  <c:hpdctopnavigationbar rendered="{!If(isLoggedIn = true,false,true)}" ></c:hpdctopnavigationbar>
+       <c:hpdcSecuretopnavigationbar rendered="{!isLoggedIn}"/> -->
+       
+       <c:hpdcSecuretopnavigationbar />  <!-- change for unsecure to secure -->
+       
+      
+            <div id="body" class="body">
+           
+            <apex:form id="idform">
+            
+             <apex:includeScript value="{!URLFOR($Resource.HPDC_JS_Css, '/HPDC_JS_Css/recaptcha_ajax.js')}"/>
+                        
+                           
+<!--
+            <script type="text/javascript" language="javascript" src="{!$resource.extpagesjs1}"></script> 
+            <script src="{!$resource.extpagesjs2}" type="text/javascript"></script>
+    -->        
+    <script type="text/javascript">
+       
+         function showPopUp1(){
+             //alert('test');
+            // reLoadCaptcha();
+         }
+        
+        function FillTaskProdIntFor()
+        {
+          //alert(document.getElementById('{!$Component.pageid:pagetemplateid:PageId:idform:ProductInterestedtype}').value);
+        
+          
+         document.getElementById('{!$Component.pageid:pagetemplateid:PageId:idform:ProductInterestedtypeTask}').value = document.getElementById('{!$Component.pageid:pagetemplateid:PageId:idform:ProductInterestedtype}').value;
+         
+         //alert(document.getElementById('PageId:idform:ProductInterestedtypeTask').value);
+        }
+    </script>
+  
+   
+           
+            <script type="text/javascript">
+            
+            /*var j$ = jQuery.noConflict();
+                j$(document).ready(function() {j$("#slider").nivoSlider({
+                    effect:'fold',
+                    animSpeed:300,
+                    pauseTime:5000
+            
+                });
+                
+                var mode = '{!$Site.Name}';
+                ChangeURLOnChangeInSiteOrSFUser(j$,mode);   
+            });*/
+            
+            function ChangeURLOnChangeInSiteOrSFUser(jqueryInstance,mode){
+                var j$ = jqueryInstance ;
+                j$.each(j$('a'),function(index,value){
+                       var customLink =  j$(this).attr('href') ;
+                       if(customLink!=undefined){
+                            var links= customLink.split('||');
+                            //alert(links);
+                            if(links!=undefined && links.length>1 ){
+                                //alert(mode);  
+                                if(mode !=null && mode !='')
+                                {
+                                    j$(this).attr('target','_self');
+                                    j$(this).attr('href',links[1]);
+                                    
+                                }
+                                else{
+                                    //j$(this).attr('target','itarget');   //Previously used updated by naveen
+                                    j$(this).attr('target','_self');
+                                    j$(this).attr('href',links[0]);
+                                }
+                            }
+                            
+                            else{
+                                //alert('TestElse-----');
+                                if(mode !=null && mode !='')
+                                {
+                                    j$(this).attr('target','_self');
+                                }
+                            }
+                          }  
+                    });
+            }
+        </script>
+        
+        <script type="text/javascript" >
+            //This function is called on load to show captcha.
+            function showRecaptcha(element) 
+            { 
+            
+              Recaptcha.create("{!publicKey}", element, {
+                    
+                    theme: 'white',
+                    tabindex: 0,
+                    callback: Recaptcha.focus_response_field
+              });
+              
+              
+            }
+            </script>
+             
+            <script type="text/javascript"  language="javascript">
+            function reLoadCaptcha()
+            {
+                var mode = '{!$Site.Name}';
+                ChangeURLOnChangeInSiteOrSFUser(j$,mode);    
+                showRecaptcha('dynamic_recaptcha_1');
+            }
+            var j$ = jQuery.noConflict();
+             j$(document).ready(function() {
+                reLoadCaptcha();
+             });
+             
+            </script>
+            
+            
+            <apex:actionFunction name="showPopUp1" action="{!SaveDetails}" status="contentLoadingStatus"    oncomplete="showPopUp(); return false;"  reRender="idform,pnlContainer ,pnlMsg"/> 
+                <div class="title-service"> 
+                    <h1>
+                        Contact Us <br/>
+                    </h1>
+                    <div class="form">
+                        <div>
+                            <apex:outputPanel id="pnlMsg">
+                            <ul class="errorloginMsg"><li><apex:messages id="successMsg" styleClass="{!strMsgClass}" /></li></ul>
+                        
+                        </apex:outputPanel>
+                        </div>
+                         <apex:outputPanel id="pnlContainer">
+                              <apex:actionFunction name="redirectPage" action="{!goToRedirect}"/>
+                             <apex:inputHidden id="inptHdn" value="{!isInserted}"/>
+                             
+                             <script type="text/javascript">
+       
+        function showPopUp(){
+           //alert('hh123'+ document.getElementById('pageid:pagetemplateid:PageId:idform:inptHdn').value);
+          // alert(document.getElementById('PageId:idform:inptHdn').value);
+           //if(document.getElementById('{!$Component.PageId:idform:inptHdn}').value == 'true')
+            
+            
+           if(document.getElementById('pageid:pagetemplateid:PageId:idform:inptHdn').value == 'true')
+            {
+                   // alert('Data saved successfully');
+                    //redirectPage();
+                   // alert("{!HomeredirectUrl}");
+                    
+                    window.location.assign("{!HomeredirectUrl}") 
+                    SetFooterPosition();
+            } 
+            
+            reLoadCaptcha();
+             
+        }
+        
+        </script>
+                             
+                        <div class="grid" style="padding-top: 20px;">
+                            <div class="input_wrapper">
+                                <label>First Name</label>
+                                <!-- <span class="label">Ivan</span> -->
+                                <apex:inputText value="{!strFirstName}" rendered="{!If(isLoggedIn = true,false,true)}" styleClass="inpt_log" />
+                                <apex:outputText value="{!strFirstName}" rendered="{!isLoggedIn}" styleClass="label"/>
+                            </div>
+                            <div class="input_wrapper">
+                                <label>Last Name<span class="mand">*</span></label>
+                                <apex:inputText value="{!strLastName}" rendered="{!If(isLoggedIn = true,false,true)}" styleClass="inpt_log {!If(strEmptyControlName = 'LastName','err_txt','')}"  tabindex="0"/>
+                                <apex:outputText value="{!strLastName}" rendered="{!isLoggedIn}" styleClass="label"/>
+                                
+                            </div>
+                            <div class="input_wrapper">
+                                <label>Email Address<span class="mand">*</span></label>
+                                <apex:inputText value="{!strEmailAddress}" rendered="{!If(isLoggedIn = true,false,true)}" styleClass="inpt_log {!If(strEmptyControlName = 'Email','err_txt','')}" />
+                                <apex:outputText value="{!strEmailAddress}" rendered="{!isLoggedIn}" styleClass="label"/>
+                            </div>
+                            <div class="input_wrapper">
+                               <!-- <label>Company Name<span class="mand">*</span></label> -->
+                               
+                               <apex:outputLabel rendered="{!If(isLoggedIn = true,false,true)}"> Company Name<span class="mand">*</span></apex:outputLabel>
+                               <apex:outputLabel rendered="{!!If(isLoggedIn = true,false,true)}"> Company Name</apex:outputLabel>
+                                <apex:inputText value="{!strCompanyName}" rendered="{!If(isLoggedIn = true,false,true)}" styleClass="inpt_log"  />
+                                <apex:outputText value="{!strCompanyName}" rendered="{!isLoggedIn}" styleClass="label"/>
+                            </div>
+                            <div class="input_wrapper">
+                                <label>Phone Number</label>
+                                <apex:inputText value="{!strPhoneNumber}" rendered="{!If(isLoggedIn = true,false,true)}" styleClass="inpt_log" />
+                                <apex:outputText value="{!strPhoneNumber}" rendered="{!isLoggedIn}" styleClass="label"/>
+                            </div>
+                          <!--  <div class="input_wrapper">
+                                <apex:outputPanel id="pnlLeadField" >
+                                <label>Product Interested For</label>
+                                <div class="dropdown_wrapper">
+                                    <input type="hidden" />
+                                    <apex:inputfield value="{!newLead.ProductInterestedFor__c}"   id="ProductInterestedtype" styleClass="inpt_log inputfont" onchange="FillTaskProdIntFor();"  /> 
+                                         
+                                    <apex:inputHidden value="{!ProductIntForTask}"   id="ProductInterestedtypeTask" /> 
+                                    
+                                </div> -->
+                                
+                             <!--   <div class="input_wrapper">
+                                <apex:outputPanel id="pnlLeadField" >
+                                <label>Service Interested In</label>
+                                <div class="dropdown_wrapper">
+                                    <input type="hidden" />
+                                    <apex:inputfield value="{!newLead.ProductInterestedFor__c}"   id="ProductInterestedtype" styleClass="inpt_log inputfont" onchange="FillTaskProdIntFor();"  /> 
+                                         
+                                    <apex:inputHidden value="{!ProductIntForTask}"   id="ProductInterestedtypeTask" /> 
+                                    
+                                </div> -->
+                                
+                                
+                                
+                                <div class="input_wrapper">
+                                <apex:outputPanel id="pnlLeadField" >
+                                 <label>Service Interested In</label>
+                                   <div class="dropdown_wrapper">
+                                    
+                                     <apex:selectList size="1" multiselect="false" styleClass="inpt_log  inputfont"  value="{!strSelectedInterest}" > 
+                                                <apex:selectOptions value="{!lstSelectOption}" ></apex:selectOptions>
+                                            </apex:selectList>
+                                        
+                                    </div>
+                            
+                             
+                                
+                                
+                                </apex:outputPanel>
+                                
+                            </div>
+                            
+                        <div class="input_wrapper"  style="height: 163px;" >                            
+                            <apex:outputPanel id="pnlQuery" rendered="{!isLoggedIn}">
+
+                                        <label>Query<span class="mand">*</span></label>
+                                        <apex:inputTextarea value="{!strTaskQuery}" styleClass="inpt_log {!If(strEmptyControlName = 'Query','err_txt','')}" />
+
+                            </apex:outputPanel>                            
+                            
+                            <apex:outputPanel id="pnlMessage" rendered="{!If(isLoggedIn=true,false,true)}">
+                            
+                                <label>Message <span class="mand">*</span></label>
+                                <!-- <textarea class="inpt_log" type="text" ></textarea> -->
+                                <apex:inputTextarea value="{!strOpenResponse}" styleClass="inpt_log" />
+                          
+                             </apex:outputPanel>   
+                         </div>
+                            
+                             <div class="input_wrapper">
+                                <div class ="tdTextboxleft" style="padding-top:10px;">
+                                <apex:outputPanel id="captcha" rendered="true" > 
+                                <apex:inputhidden value="{!challenge}" id="challenge" />
+                                <apex:inputhidden value="{!response}" id="response" />
+                                <script type="text/javascript">
+                                    //Javasript code: To get Challenge & Response value. This method called on Onclick event.
+                                    function captureResponse(ele) 
+                                    {            
+                                        document.getElementById('{!$Component.challenge}').value = document.getElementById('recaptcha_challenge_field').value;                                                            
+                                        document.getElementById('{!$Component.response}').value = document.getElementById('recaptcha_response_field').value;
+                                    }
+                                </script>
+                                
+                                <div id="dynamic_recaptcha_1"></div> 
+                                
+                                <!--  display the image using the reCAPTCHA AJAX API -->         
+                            </apex:outputPanel>
+                            
+                            
+                            </div>
+                         </div>
+     
+                     </div>
+                        </apex:outputPanel>
+                        <div style="width:100% background:#fff;">
+                        <div class="grid part last" >
+                            <!--By Clicking Submit you agree with the HP <br/>
+                            <a href="">Terms &amp; conditions</a> and <a href="">Review guidelines</a>-->
+                            <div class="buttons">                               
+                                <apex:commandLink value="Cancel" action="{!GoToHomePage}" styleClass="secondary-button gray" reRender="idform"/> 
+                              <apex:commandLink value="Submit"  onclick="javascript:captureResponse(this);"   action="{!SaveDetails}" status="contentLoadingStatus" rerender="idform,pnlContainer, pnlMsg"  styleClass="secondary-button orange" oncomplete="showPopUp();"/> 
+                                
+                              <!-- <apex:outputLink styleClass="secondary-button orange"  onclick="showPopUp1(); return false;" >Submit</apex:outputLink> -->
+                                 </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>  
+                 </apex:form> 
+            </div>
+           <c:hpdctopfooter ></c:hpdctopfooter>
+        </div>  
+        <c:hpdcbottomfooter ></c:hpdcbottomfooter>
+       <!--<c:hpdcfooter /> -->
+   </div>
+
+</apex:page>

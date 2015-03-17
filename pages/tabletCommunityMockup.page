@@ -1,0 +1,1657 @@
+<apex:page standardcontroller="Community__c" extensions="SLP_ViewCommunity,mobileUserData,mobileActivityController" action="{!InserSession}" cache="false" docType="html-5.0" sidebar="false" showheader="false" standardStylesheets="false">
+
+<head>
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+        
+    </head>
+    
+    
+     <script>  
+        
+var K = function () {
+    var a = navigator.userAgent;
+    return {
+        ie: a.match(/MSIE\s([^;]*)/)
+    }
+}();
+      
+      
+      function parseTwitterDate(a) {
+      var b = new Date();
+    var c = new Date(a);
+    if (K.ie) {
+        c = Date.parse(a.replace(/( \+)/, ' UTC$1'))
+    }
+    var d = b - c;
+    var e = 1000,
+        minute = e * 60,
+        hour = minute * 60,
+        day = hour * 24,
+        week = day * 7;
+    if (isNaN(d) || d < 0) {
+        return ""
+    }
+    if (d < e * 7) {
+        return "right now"
+    }
+    if (d < minute) {
+        return Math.floor(d / e) + " seconds ago"
+    }
+    if (d < minute * 2) {
+        return "about 1 minute ago"
+    }
+    if (d < hour) {
+        return Math.floor(d / minute) + " minutes ago"
+    }
+    if (d < hour * 2) {
+        return "about 1 hour ago"
+    }
+    if (d < day) {
+        return Math.floor(d / hour) + " hours ago"
+    }
+    if (d > day && d < day * 2) {
+        return "Yesterday"
+    }
+    if (d < day * 365) {
+        return Math.floor(d / day) + " days ago"
+    } else {
+        return "over a year ago"
+    }
+    /*var system_date = new Date(Date.parse(tdate));
+    var user_date = new Date();
+    if (K.ie) {
+        system_date = Date.parse(tdate.replace(/( \+)/, ' UTC$1'))
+    }
+    var diff = Math.floor((user_date - system_date) / 1000);
+    if (diff <= 1) {return "just now";}
+    if (diff < 20) {return diff + " seconds ago";}
+    if (diff < 40) {return "30 seconds ago";}
+    if (diff < 60) {return "less than a minute ago";}
+    if (diff <= 90) {return "1 minute ago";}
+    if (diff <= 3540) {return Math.round(diff / 60) + " minutes ago";}
+    if (diff <= 5400) {return "1 hour ago";}
+    if (diff <= 86400) {return Math.round(diff / 3600) + " hours ago";}
+    if (diff <= 129600) {return "1 day ago";}
+    if (diff < 604800) {return Math.round(diff / 86400) + " days ago";}
+    if (diff <= 777600) {return "1 week ago";}
+    return "on " + system_date;*/
+}
+
+
+var membersList = new Array();
+var chatterList= new Array();
+
+</script>
+
+  <div data-role="page" class="tabletcontent">
+
+  <div data-role="header" role="banner" class="header-toolbar" data-position="fixed" data-tap-toggle="false">
+    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+         <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" id="menuImage" class="logo"/></a>
+    </div>
+    <h1><input type="search" placeholder="Please enter search text" name="text-1" id="text-1" value="" data-corners="false" data-iconpos="right"/></h1>
+    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right" style="margin-top:8px;">  
+         <span class="welcome-header">Welcome</span><span> </span><span class="username">{!LoggedinUserDetails.Name}</span><span><img src="{!LoggedinUserDetails.FullPhotoUrl}" id="searchImage" class="circular" alt="no_username"/></span> 
+    </div>
+  </div><!-- /header -->
+
+  <div data-role="content"> 
+    <ul class="vertical_menu" >
+      <li>
+        <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/tabletSLPLanding0" data-ajax="false"></a>
+      </li>
+      <li>
+        <a href="#" id="open-popupArrow" data-ajax="false">Activity</a>
+      </li>
+      <li>
+        <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/tabletMyBoards" data-ajax="false"></a>
+      </li>
+      <li>
+        <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/tabletMyCommunities" data-ajax="false"></a>
+      </li>
+      <li>
+        <a class="topNavRoll topNavIconCom" href="#" data-ajax="false"></a>
+      </li>
+    </ul>
+    <div id="main_content">
+        <div class="content-primary" style="background:rgb(167,167,167);border:none !important;margin-top:-17px;margin-right:-16px;"> 
+            <div class="ui-grid-a" style="margin-left:10px;margin-top:10px;">
+                <div class="ui-block-a " id="leftColumn"> <!-- Left Column -->
+                
+                <div id="imageHolder" style="position: relative;background-color:rgb(228, 228, 228);">
+                <apex:outputPanel rendered="{!!CommunityStaticImage}"> 
+                  <!-- <img src="data:{!LearningBoardDtls.AttContentType};base64,{!LearningBoardDtls.Attbody}" /> -->
+                  <apex:image url="{!URLFOR($Action.Attachment.Download, AttachmentId)}" styleClass="BoardDetailImage" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!CommunityStaticImage}"> <img src='{!CommunityDefaultImageName}' class="BoardDetailImage" /> 
+                  <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}"/>--> 
+                </apex:outputPanel>
+                <div style="position: absolute; top:0; left:0; background-color:rgba(228, 228, 228, 0.7); width:100%; text-shadow:none;font-size:21px;"><span style="margin-left:10px">{!CommunityName}</span></div>
+                </div>
+                <div id="boardData" style="background-color:rgb(228, 228, 228);width:100%;padding-top:10px;">
+                <span><img class="circular" style="margin-left:5px;" src="{!CommunityOwnerDetails.FullPhotoUrl}" /></span><span class="username" style="text-shadow:none;margin-left:8px;">{!CommunityOwnerDetails.Name}</span>
+                <span id="followOwner" onclick="followPerson()" style="background:#F9A006;color:#ffffff;text-shadow:none;padding:10px;border:1px white solid;{!IF((isloggedUser),"display:none","display:inline")};">
+                Follow
+                </span>
+                <div style="visibility:hidden; height:0px">
+                <apex:form id="flwForm">
+                      <apex:OutputPanel >         
+                          <apex:commandbutton value="Follow" style="{!IF((isloggedUser),"display:none","display:block")}" action="{!followOwner}" id="btnFollow" styleClass="btnAthena btn-primary shareBtn" rendered="{!!IsFollowOwner}">
+                          </apex:commandbutton>
+                          <apex:commandbutton value="Unfollow" style="{!IF((isloggedUser),"display:none","display:block")}" action="{!unfollowOwner}" id="Commandbutton1" styleClass="btnAthena btn-primary shareBtn" rendered="{!IsFollowOwner}">
+                          </apex:commandbutton>
+                      </apex:OutputPanel>
+                  </apex:form>
+                  </div>
+                <p style="text-shadow:none;padding-left:10px;padding-bottom:10px;">{!CommunityDescription}</p>
+                </div>
+                
+                <div class="row-fluid">
+              <div id="info-section" class="hpit_athena_rightDiv span12" style="background:#ffffff !important;">
+                <div data-role="tabs" id="tabs" style="background:transparent !important;">
+                  <div data-role="navbar" class="custom-navbar">
+                    <ul class="tabsStyle">
+                      <li><a href="#one" id="custom-li-content" class="ui-btn-active" data-ajax="false">Content</a></li>
+                      <li><a href="#two" id="custom-li-chat" data-ajax="false">Chat</a></li>
+                    </ul>
+                  </div>
+                  <div id="one" class="ui-body-d ui-content" style="background:transparent;overflow: scroll; max-height:442px;">
+                    <ul data-role="listview" id="collateralList" class="listviewTopic"></ul>
+                    </div>
+                  <div id="two" style="background:transparent;padding-bottom:15px; max-height:442px;">
+                     <!-- Code for chatter feed - Begin -->
+        <div align="center" style="background-color:transparent !important;white-space:wrap !important;border:none !important;">
+                <fieldset class="ui-grid-a" align="center">
+          <div class="ui-block-a" style="width:70%"><input type="text" placeholder="Enter your comment..." name="fnameComment" id="fnameComment2" data-clear-btn="true" data-mini="false" data-corners="false"/></div>
+           <div class="ui-block-b" style="width:30%;" align="center"><a href="#" id="commentButton" data-role="button" style="background: #F9A006; color:#ffffff;margin-top:9px; text-shadow:none; border:none;" data-mini="true" onclick="postComment()">Post</a></div>
+           </fieldset> 
+         <div style="visibility:hidden; height:0px">
+        <apex:form id="frmPostInputComment2" onsubmit="return isPopulated('fnameComment2');">
+            <fieldset class="ui-grid-a">
+            <div class="ui-block-a" style="width:70%"><apex:inputText id="txtPostInputComment2" value="{!feedItemInputText}" html-placeholder="Enter your reply here..." style="min-height: 2.8em"/></div>
+            <div class="ui-block-b" style="width:30%"><apex:commandButton id="cmdBtnPostComment2" rerender="feedOutputPanel" action="{!postNewFeedItemTabletLB}" value="Post"/></div>
+            </fieldset> 
+            <div style="visibility:hidden; height:0px">
+                <apex:inputTextarea id="txtUserTopicCommentC" value="{!feedCommentID}" title="Comment"/>
+            </div>
+        </apex:form>
+        </div>
+        </div>
+        <div id="spacer" style="height:20px;">
+        </div>
+          <ul id="chatterList" data-role="listview" data-inset="false" style="transparent !important;white-space:wrap !important;border:none !important;overflow: scroll;max-height:422px;">
+        <apex:repeat value="{!feedItemPage.items}" var="feedItem">
+              
+                    <li data-icon="false" class="actvitylist" style="background:transparent !important;" id="foo">
+                        
+                        <img src="{!feedItem.photoUrl}" class="circular-image-container-chatter"/>
+                        <h2 class="hpFont" style="background:transparent;text-align:left;color:#38c;text-shadow:none;">{!feedItem.actor.name}</h2>         
+                        <p id="postedText" class="hpFont" style="background:transparent;text-align:left;color:black;text-shadow:none;white-space:normal!important;">{!feedItem.body.text}</p>
+                        <span class="ctrl hpFont" style="text-align:left;"><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" style="padding-right:15px;">
+                            <apex:outputText value="{0, date, dd MMM yy}" rendered="{!NOT(ISNULL(feedItem.createdDate))}">
+                                <apex:param value="{!feedItem.CreatedDate}" />
+                            </apex:outputText>
+                        </fieldset></span>
+                        
+                         <span>
+                         <ul data-role="listview" data-inset="true" style="box-shadow: 0 0px 0px rgba(0,0,0,0) !Important; background:transparent !important;border:none !important;">
+                         <apex:repeat value="{!feedItem.comments.comments}" var="comment">
+                         <li style="margin-left:-15px; margin-right:15px; background:transparent !important; border:none !important;">
+                             <img src="{!comment.user.photo.smallPhotoUrl}" class="circular-image-container-chatter"/>
+                             <h2 class="hpFont" style="background:transparent;text-align:left;color:#38c;text-shadow:none;">{!comment.user.firstname} {!comment.user.lastname}</h2>
+                             <p id="postedText"  class="hpFont" style="background:transparent;text-align:left;color:black;text-shadow:none;white-space:normal!important;">
+                             <apex:repeat value="{!comment.body.messageSegments}" var="segment">
+                                            <apex:outputPanel layout="none" rendered="{!segment.type == TextSegmentType}">
+                                                {!segment.text}
+                                            </apex:outputPanel>
+                                            <apex:outputPanel layout="none" rendered="{!segment.type == MentionSegmentType}">
+                                                <a href="/{!segment['record'].id}">@{!segment['record'].name}</a>
+                                            </apex:outputPanel>
+                                        </apex:repeat>
+                             </p>
+                             <span class="ctrl hpFont" style="text-align:left"><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" >
+                            <apex:outputText value=" {0, date, dd MMM yy}" rendered="{!NOT(ISNULL(comment.createdDate))}">
+                                <apex:param value="{!comment.CreatedDate}" />
+                            </apex:outputText>
+                        </fieldset></span>
+                        </li>
+                         </apex:repeat>
+                         
+                         </ul>
+                        
+                          <script>chatterList.push({'id':'{!feedItem.id}'});</script>
+                            </span>
+                    </li>
+                
+               
+        </apex:repeat>
+        </ul>
+        
+    <!-- Code for chatter feed - End -->
+                  </div>
+                  </div>
+               <!--<div style="overflow: auto; width: auto; max-height:442px;">
+               
+                 </div> -->
+              </div>
+            </div>
+                
+                </div>
+                
+                <div class="ui-block-b" id="rightColumn"> <!-- Right Column -->
+                
+                    <div class="ui-grid-a" style="vertical-align:middle;">
+                        <div class="ui-block-a" style="width:60%;vertical-align:middle;margin-top:9px;"><span><button style="background:#F9A006;color:#ffffff;text-shadow:none;">Share</button></span></div></div>
+                    
+              <div class="row-fluid">
+              <div class="hpit_athena_rightDiv span12" style="background:#ffffff !important;">
+                <div >
+                  <p><span ><span class="aActive" id="aContriMembers" onClick="CommunityContMember()"> Members<span id="ConMemCnt"></span></span></span></p>
+                </div>
+                <div class="row-fluid colorGrey"> <span class="span3 text-center"><a class="aActive" id="aAToZ" onClick="AToZSort(this)"> A-Z </a><span class="BorderR">&nbsp;</span></span> <span class="span3 text-center"><a class="colorGrey" id="aRoleName" onClick="RoleSort(this)"> Role </a><span class="BorderR">&nbsp;</span></span> <span class="span3 text-center"><a class="colorGrey" id="aRegion" onClick="RegionSort()"> Region </a><span class="BorderR">&nbsp;</span></span> <span class="span3 text-center"><a class="colorGrey" id="aBusinessGrp" onClick="BusinessGroupSort()"> Business Group </a></span> </div>
+                <div style="overflow: auto; width: auto; max-height:442px;">
+                  <ul class="item-list scroller padding" data-always-visible="1">
+                    <div id="divContMember"> </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row-fluid">
+              <div id="related-data" class="hpit_athena_rightDiv span12" style="background:#ffffff !important;">
+                <div >
+                  <p><span ><span class="aActive" id="aReleated"> Related<span id="ConMemCnt"></span></span></span></p>
+                </div>
+               <div style="overflow: auto; width: auto; max-height:442px;">
+               
+                <ul id="featuredList">
+                      <apex:repeat id="featuredListLB" value="{!RelatedLearningBoards}" var="brdRslt">
+                       <li style="margin-bottom:8px;">
+                       <a href="/apex/tabletLearningBoardMockup?id={!brdRslt.Lbid}" data-ajax="false">
+                       <!--<img src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" class="ui-li-thumb"/>-->
+                       <span style="color:black;text-decoration:none !important;">{!brdRslt.LBName}</span>
+                       <img>
+                       <apex:outputPanel rendered="{!!brdRslt.StaticImage}"> 
+                              <img src="{!URLFOR($Action.Attachment.Download, brdRslt.AttachmentId)}" class="ui-li-thumb"/>
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!brdRslt.StaticImage}">
+                                <img src="{!brdRslt.DefaultImageName}"  class="ui-li-thumb"/>
+                              </apex:outputPanel>
+                              </img>
+                       </a>
+                       </li>
+                      </apex:repeat>
+                      
+                    </ul>
+           
+                </div>
+              </div>
+            </div>
+                    
+                    </div><!-- /grid-a -->
+            
+            </div><!-- /grid-a -->
+        </div>                  
+    </div>
+  </div><!-- /content -->
+
+      <div data-role="popup" id="popupArrow" data-arrow="true" style="background:#E6E6E6;" data-position="fixed">
+            <ul data-role="listview" data-inset="false" id="activtyStream" style="width:300px;background-color:transparent;white-space:wrap !important;border:none !important;">
+            </ul>
+        </div>
+
+        <script>
+                    /*var aStream = getUserCommunityPostAndCommentsJSON;
+                    
+                     var index = -1;
+                    
+                    for (var obj in aStream) {
+                         if( aStream[obj].ListFeedPost[0].PostName.indexOf("Type:-UploadDoc") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist" ><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" style="text-decoration:none;" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has uploaded a file to the <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" style="text-decoration:none;" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has uploaded a file to the <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("Type:-Link") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a link to the <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a link to the <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("Type:-Video") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a video to the <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a video to the <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                         else if( aStream[obj].ListFeedPost[0].PostName.indexOf("Type:-Text") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a text file to the <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has posted a text file to the <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("I joined as a Member") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has joined as a member of <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> has joined as a member of <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("added as a Member") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> -  ' +  aStream[obj].ListFeedPost[0].PostName + ' to <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> - ' +  aStream[obj].ListFeedPost[0].PostName + ' to <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div<div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }
+                        else if( aStream[obj].ListFeedPost[0].PostName.indexOf("is now following") > -1){
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> ' +  aStream[obj].ListFeedPost[0].PostName.substring( aStream[obj].ListFeedPost[0].PostedUserName.length) + '  </div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> ' +  aStream[obj].ListFeedPost[0].PostName.substring( aStream[obj].ListFeedPost[0].PostedUserName.length) + '  </div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                        }  
+                        else{
+                            if(aStream[obj].IsCommunity){
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> - ' + aStream[obj].ListFeedPost[0].PostName + ' on <a data-ajax="false" class="bold" href="/apex/mobileCommunityMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            }
+                            else{
+                                $("#activtyStream").append('<li class="actvitylist"><img src="' + aStream[obj].ListFeedPost[0].UsrPhoto + '" class="circular-image-container" style="margin-left:5px;"/><div> <a href="#popupBasic" data-rel="popup" data-transition="pop" data-position-to="window" data-CreatedId="'+aStream[obj].ListFeedPost[0].PostedUserId+'" onclick="showMemberPopup(this)" style="text-decoration:none;" >' + aStream[obj].ListFeedPost[0].PostedUserName + '</a> - ' + aStream[obj].ListFeedPost[0].PostName + ' on <a data-ajax="false" class="bold" href="/apex/mobileLearningBoardMockup?id='+aStream[obj].BoardOrCommId+'" style="text-decoration:none;word-wrap: break-word;">' + aStream[obj].BoardOrCommNm+ '</a></div><div style="margin-top:5px;color:#767676"><span class="icon-time" style="margin-right:8px;"></span>'+ parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate) +'</div></li>');
+                            } 
+                            }                           
+                    }*/
+                    
+        </script>
+
+ <div data-role="popup" id="popupError" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <p style="margin:20px;">There is no data available for your selection at this time</p>
+        </div>
+        
+        <div data-role="popup" id="popupDownloadErr" data-overlay-theme="a" data-dismissible="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <p style="margin:20px;">Preview and Downloading of documents is only supported on Chrome for Android.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.android.chrome" class="ui-btn" style="margin:15px;background:#F9A006;color:#ffffff;">Get Chrome</a>
+        </div>
+        
+        <div data-role="popup" id="popupDownloadErrIOS" data-overlay-theme="a" data-dismissible="false">
+        <p style="margin:20px;">Downloading of documents is currently not supported on iOS devices.</p>
+        <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+        
+         <div data-role="popup" id="popupDownloadBlock" data-overlay-theme="a" data-dismissible="false">
+        <p style="margin:20px;">Downloading of documents is currently not supported on mobile devices.</p>
+        <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+        
+        <div data-role="popup" id="popupDownloadMissing" data-overlay-theme="a" data-dismissible="false">
+        <p style="margin:20px;">The document you were searching for is private and cannot be accessed.</p>
+        <a href="" class="ui-btn" data-rel="back" style="margin:15px;background:#F9A006;color:#ffffff;">OK</a>
+        </div>
+
+    <div data-role="popup" id="rateMyCollateralPop" data-overlay-theme="a" data-dismissible="false" style="width:400px;">
+            <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+            <div data-role="content">
+            <p>Rate this topic</p>
+            <h1 id="popupDocLName">Optimize Oil Production</h1>
+            <div class="hr" style="margin-bottom:20px;"><hr /></div>
+            <span>
+            <div style="display:table-cell;margin-top:20px;">Average rating:</div>
+            <span id="popupRatingimages" style="display:table-cell;">******</span>
+            </span>
+            <span >
+            <div style="display:table-cell;margin-top:20px;">Rated by&nbsp;</div>
+            <span id="popupRatingUsers" style="display:table-cell;"> 14 users</span>
+            </span>
+            <div class="hr" style="margin:20px;"><hr /></div>
+            <label for="ratingSlider">My rating:</label>
+           <input name="ratingSlider" id="ratingSlider" type="range" min="1" max="5" value="3" data-show-value="true" style="clear:left"/>
+            <div class="hr" style="margin:20px;"><hr /></div>
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><a href="#" data-rel="back" data-role="button" style="background:#767676;color:#ffffff;">Not now</a></div>
+                <div class="ui-block-b"><a href="#" id="rateButton" data-role="button" style="background:#F9A006;color:#ffffff;" data-mini="false" onclick="rateDocument()">Rate it</a></div>
+            </div><!-- /grid-a -->
+            <!-- Document information
+            <div style="float: left"><img id="popupDocOwnerPhoto" src="{!CommunityOwnerDetails.FullPhotoUrl}" class="communityOwnerImg"/></div>
+            <div id="popupDocLName">Unknown name</div>
+            <div id="popupDocLOwnerName" style="font-weight:bold;">Unknown owner</div>
+            <div style="clear:both"></div>
+            <div id="popupDocLDescription" style="white-space: normal;">No description</div> -->
+            <!-- Create SF form as hidden as a proxy to interact with SF when submitting rating -->
+                    <div style="visibility:hidden; height:0px">
+                        <apex:form id="SFRatingForm">
+                            <apex:inputHidden id="txtCommunityTopicID" value="{!CommunityTopicID}" />
+                            <apex:inputHidden id="txtOwnerContributor" value="{!IsOwnerOrContributor}" />
+                            <apex:outputLabel value="Your Rating" for="txtTopicScore"/>                 
+                            <apex:selectList id="txtTopicScore" value="{!UserTopicRating}" size="1">
+                                <apex:selectOption itemValue="1" itemLabel="1"/>
+                                <apex:selectOption itemValue="2" itemLabel="2"/>
+                                <apex:selectOption itemValue="3" itemLabel="3"/>
+                                <apex:selectOption itemValue="4" itemLabel="4"/>
+                                <apex:selectOption itemValue="5" itemLabel="5"/>
+                            </apex:selectList>
+                            <apex:outputLabel value="Rating comment (optional)" for="txtUserTopicRatingComment"/>                   
+                            <apex:inputTextarea id="txtUserTopicRatingComment"  rows="3" value="{!userTopicRatingComment}" title="Rating Comment"/>
+                            <apex:commandButton id="btnUserRating" action="{!SaveTopicUserRating}" value="Rate It!" >
+                            </apex:commandButton>
+                        </apex:form>
+                    </div>
+            
+        </div>
+</div>
+
+<div data-role="popup" id="form" data-theme="a" data-overlay-theme="a" style="box-shadow:none !important;" data-corners="false">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+        <div id="popContent"><ul id="popList" data-role="listview" data-inset="false" style="transparent !important;white-space:wrap !important;border:none !important;"></ul></div>
+        <fieldset class="ui-grid-a" align="center">
+          <div class="ui-block-a" style="width:70%"><input type="text" placeholder="Enter your reply..." name="fname" id="fname2" data-clear-btn="true" data-mini="false" data-corners="false"/></div>
+           <div class="ui-block-b" style="width:30%;" align="center"><a href="#" id="replyButton" data-role="button" style="background: #F9A006; color:#ffffff;margin-top:9px; text-shadow:none; border:none;" data-mini="true" onclick="postReply()">Post</a></div>
+           </fieldset> 
+         <div style="visibility:hidden; height:0px">
+        <apex:form id="frmPostInput2" onsubmit="return isPopulated('txtPostInput2');">
+            <fieldset class="ui-grid-a">
+            <div class="ui-block-a" style="width:70%"><apex:inputText id="txtPostInput2" value="{!feedItemInputText}" html-placeholder="Enter your reply here..." style="min-height: 2.8em"/></div>
+            <div class="ui-block-b" style="width:30%"><apex:commandButton id="cmdBtnPost2" rerender="feedOutputPanel" action="{!postNewCommentTabletLB}" value="Post"/></div>
+            </fieldset> 
+            <div style="visibility:hidden; height:0px">
+                <apex:inputTextarea id="txtUserTopicComment" value="{!feedCommentID}" title="Comment"/>
+            </div>
+        </apex:form>
+        </div>
+        </div>
+
+
+</div><!-- /page -->
+
+<style type="text/css">
+            
+            .tabsStyle{
+                width:42%;
+            }
+
+            #leftColumn{
+                width:60%;
+                background:transparent;
+            }
+            #rightColumn{
+                width:39%;
+                background:transparent;
+                margin-left:5px;
+                text-shadow:none;
+            }
+            .custom-navbar ul li a {
+                background-color: #ffffff !important; 
+                color:black !important; 
+                border-color:white !important;
+                text-align:center !important; 
+                outline-color: transparent;
+            }
+            
+            .custom-navbar ul li a.ui-btn-active {
+                background-color: #ffffff !important;
+                color:black !important; 
+                border-color:white !important;
+                text-align:center !important; 
+                border-bottom: 2px solid orange !important;
+                -moz-box-shadow: none !important;
+                -webkit-box-shadow: none !important;
+                box-shadow: none !important;
+                outline-color: transparent;     
+            }
+            .ui-state-focus a  {
+                outline: none;
+                -moz-box-shadow: none !important;
+                -webkit-box-shadow: none !important;
+                box-shadow: none !important;
+            }
+            
+            
+            .circular-image-container-chatter {
+            width:50px;
+            height:50px;
+            margin-top: 15px;
+            margin-left:5px;
+            padding: 3px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #ffffff;
+        }
+        
+        .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li-has-thumb{padding-left:75px !important}
+
+        .actvitylist{
+            background-color:transparent !important;
+            border-top:none !important;
+            border-left:none !important;
+            border-right:none !important;
+            border-bottom:solid 1px black !important;
+            margin-left:10px !important;
+            margin-right:10px !important;
+            text-shadow:none !important;
+        }
+        
+        #contentChatter .ui-collapsible-content {
+            background-color:#ededed !important;
+        }
+    a, u {
+        text-decoration: none !important;
+    }
+    .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li-has-thumb{padding-left:75px !important}
+        
+        .ui-listview>.ui-li-static, .ui-listview>.ui-li-divider, .ui-listview>li>a.ui-btn { white-space:normal !important }
+        
+        .hpFont{
+                font-family:"HP Simplified",sans-serif;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+            }
+
+    .circular-image-container {
+            width:50px;
+            height:50px;
+            margin-top: 15px;
+            margin-left:5px;
+            padding: 3px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #ffffff;
+        }
+
+    .actvitylist{
+            background-color:transparent !important;
+            border-top:none !important;
+            border-left:none !important;
+            border-right:none !important;
+            border-bottom:solid 1px black !important;
+            margin-left:10px !important;
+            margin-right:10px !important;
+            text-shadow:none !important;
+        }
+
+      .tabletcontent{
+          background: rgb(64,64,64)!important;
+      }
+      .header-toolbar{
+          background: rgb(64,64,64)!important;
+          border-color:transparent !important;
+      }
+      .circular{
+        border:4px solid #858585;
+        border-radius:40px;
+        width:40px;
+        height:40px;
+        vertical-align: middle;
+      }
+      .circular-content{
+        border:4px solid #fff;
+        border-radius:40px;
+        width:40px;
+        height:40px;
+        border-width: 4px !important;
+        -webkit-border-top-left-radius: 40px !important;
+        border-top-left-radius: 40px !important;
+        -webkit-border-bottom-left-radius:  40px !important;
+        border-bottom-left-radius:  40px !important;
+      }
+      .rating-stars{
+          -webkit-border-top-left-radius: 0px !important;
+          border-top-left-radius: 0px !important;
+         -webkit-border-bottom-left-radius:  0px !important;
+          border-bottom-left-radius:  0px !important;
+      }
+      .username{
+          color:rgb(0, 148, 218);
+          margin-bottom:17px;
+          margin-right:10px;
+          text-shadow:none;
+          font-size:17px;
+          vertical-align: middle;
+      }
+      .welcome-header{
+          color:white;
+          text-shadow:none;
+          font-size:17px;
+          vertical-align: middle;
+      }
+      .logo{
+          height:70px;
+          width:70px;
+          margin-left: 100px;
+      }
+      .content-primary{
+          float:right;
+          width:104%;
+          background: rgb(64,64,64);
+          border:none;
+      }
+      .my-page .ui-listview li{
+          height:230px;
+          width:32%;
+      }
+      .my-page .ui-listview li .ui-btn,
+      .my-page .ui-listview .ui-li-thumb{
+         border-top:none;
+         border-radius:0 !important;
+         background-color:transparent;
+         border-bottom: 0px !important;
+       }
+       /*.ui-listview .ui-li-has-thumb h2{
+                text-align:left;
+                height: 55px;
+                max-height:55px !important;
+                min-height:55px !important;
+       }*/
+       .data-containter{
+           height: 50px;
+           max-height:50px !important;
+           min-height:50px !important;
+       } 
+      .vertical_menu {
+        position:fixed;
+        float: left;
+        width: 50px;
+        border: none;
+        background-color: transparent;
+        padding: 5px;
+        margin: 5px;
+        text-shadow:none !important;
+      }
+      .vertical_menu li {
+        list-style: none;
+        margin: 5px;
+        text-shadow:none !important;
+      }
+      .vertical_menu li a {
+        text-decoration: none;
+        color: white;
+        text-shadow:none !important;
+      }
+      .vertical_menu li a:hover {
+        text-decoration: none;
+        text-shadow:none !important;
+      }
+
+      #main_content {
+        margin-left: 80px;
+      }
+      .ui-input-search::after {
+            left: 376px !important;
+            background-color: rgb(250,160,6) !important;
+            width:30px !important;
+            height: 30px !important;
+            margin-top: -15px !important;
+      }
+      .ui-input-search input {
+         padding-left: 5px !important; 
+      }
+      
+      .ui-alt-icon.ui-icon-search:after, .ui-alt-icon .ui-icon-search:after, .ui-input-search:after {
+        background-image: url("{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+      }
+      
+      .ui-mini.ui-btn-icon-notext, .ui-mini .ui-btn-icon-notext, .ui-header .ui-btn-icon-notext, .ui-footer .ui-btn-icon-notext {
+        display: none !important;
+       }
+       
+       #tabs .ui-btn-icon-notext {display:none !important}
+       
+       div.ui-input-search { width: 450px !important }
+      
+      .nametext{
+          font-size:9px;vertical-align: middle;margin-right:8px;
+       }
+       
+               .ui-focus {
+ -moz-box-shadow: none !important;
+ -webkit-box-shadow: none !important;
+ box-shadow: none !important;
+}
+      
+      @media all and (max-width: 769px) { /* iPad portrait */
+         div.ui-input-search { width: 300px !important }
+         .ui-input-search::after {
+            left: 267px !important;
+          }
+          .logo{
+              margin-left: 50px;
+          }
+          .my-page .ui-listview li{
+              height:230px;
+              width:48%;
+          }
+          .username{
+              font-size:14px;
+          }
+          .welcome-header{
+          font-size:14px;
+          }
+      }
+      
+      @media (min-width: 770px) and (max-width: 967px) and (orientation: landscape){ /* Nexus 7 landscape*/
+      
+      .ui-input-search::after {
+            left: 350px !important;
+       }
+       
+      }
+      
+      @media all and (max-width: 602px) { /* Nexus 7 portrait*/
+          .tabsStyle{
+                width:60%;
+            }
+         .logo{
+              margin-left: 20px;
+          }
+          .ui-input-search::after {
+              left: 206px !important;
+          }
+          
+          .username{
+               font-size:11px;
+          }
+           .welcome-header{
+              font-size:11px;
+          }
+          ui-listview .ui-li-has-thumb h2{
+                text-align:left;
+                height: 60px;
+                max-height:60px !important;
+                min-height:px !important;
+          }
+          .nametext{
+              font-size:7px;vertical-align: middle;margin-right:2px;
+          }
+      
+      }
+      
+      
+    </style>
+    
+    <script>
+    
+    $('#popupArrow').css('overflow', 'scroll');
+    $('#popupArrow').css('max-height', ($(window).height()*60)/100);
+    
+    $.mobile.document.on( "click", "#open-popupArrow", function( evt ) {
+            $( "#popupArrow" ).popup( "open", { x: evt.pageX+20, y: evt.pageY } );
+            evt.preventDefault();
+     });
+     
+     $( "#form" ).bind({
+       popupafterclose: function(event, ui) { 
+           $(this).find('#lvPop').remove();
+       
+        }
+    });
+    
+    $("#chatterList").on("click", "li", function() {
+                var index = $(this).index();
+                var index = $(this).index();
+                var viewportHeight = $(window).width() - 50;
+                if(viewportHeight > 400)
+                    viewportHeight = 400;
+                    
+                $("#form").css("width", viewportHeight);
+                $("#form").popup('open');
+                $('#form').popup('reposition', 'positionTo: window');
+                $("#popList").append('<li id ="lvPop" data-icon="false" class="actvitylist ui-li-static ui-body-inherit ui-li-has-thumb" style="background:transparent !important;">'+$(this).closest('li').html());
+                //$("#form-popup").css("top",$(window).height());
+                $("[id$=txtUserTopicComment]").text(chatterList[index].id);
+         });
+    
+    
+    $( document ).ready(function() {
+          // Handler for .ready() called.
+          //alert($(window).width());
+         window.domainSP = 'prime31.sharepoint.hp.com';
+         window.domainWWS = 'ensv.hp.com';
+         window.domainSP2013 = 'ea2013.sharepoint.hp.com';
+         window.domainEXO = 'it-services-gw-itg.external.hp.com';
+
+        //Get community id from query string and use it to load community data
+        var LearningBoardId = getParameterByName('id'); // Id of current community
+        var docId = getParameterByName('docId'); // Id of topic (document) to set display focus on
+        LoadCommunity(LearningBoardId, docId); 
+        CommunityContMember();
+        $('input[type="text"]').parent('div').removeClass('ui-input-has-clear')
+        
+        
+        if({!IsFollowOwner}){
+                $('#followOwner').empty();
+                $('#followOwner').text("Unfollow");
+            }
+            else{
+                $('#followOwner').empty();
+                $('#followOwner').text("Follow");
+            }
+            
+       var IsTabNeeded = false;
+            if ('{!IsOwnerOrContrOrMember}' == 'true'||'{!CommunityPublic}' == 'true') {
+                    IsTabNeeded = true;
+                }
+                else if ('{!IsOwnerOrContrOrMember}' == 'false'&&'{!CommunityPublic}' == 'false') {
+                    IsTabNeeded = false;
+                }
+
+                if (IsTabNeeded == false) {
+                     $('#tabs').hide();
+                $('#info-section').append('<p>You must be a member of this learning board to view content</p>');  
+                }
+                else if (IsTabNeeded == true) {
+
+                }
+ 
+            var relatedBoardCount = $('#featuredList').find('li');
+            
+            if(relatedBoardCount.length <= 0){
+            
+                $('#related-data').append('<p>No related content</p>');
+            }
+    });
+    
+    
+    // Returns HTML content with star images rendering a given rating
+        function renderRating(avgRating) {
+            // Used to display rating stars
+            var myStarOff = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-UnRated.png')}";
+            var myStarOn = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Rated.png')}";
+            var myStarHalf = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Half.png')}";
+
+            var ratingStarImgs = "";
+            for (var i=1; i<=5; i++) {
+                if (i <= avgRating) {
+                    ratingStarImgs += '<img src="'+myStarOn+'">';
+                } else if ((i - avgRating) <= 0.5){
+                    ratingStarImgs += '<img src="'+myStarHalf+'">';
+                } else {
+                    ratingStarImgs += '<img src="'+myStarOff+'">';
+                }
+            }
+            
+            return ratingStarImgs;
+        }
+            
+            $('#search-basic').live("keypress", function(e) {
+            
+                /* ENTER PRESSED*/
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    var searchTerm= $('#search-basic').val();
+                    if (searchTerm.length <=2) {
+                        alert('A minimum of 3 characters should be entered');
+                        return;
+                    }
+                    window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+encodeURIComponent(searchTerm);
+                    $.mobile.loading( "show", {
+                          text: "Loading...",
+                          textVisible: true,
+                          textOnly: false
+                    } ); // Displays load spinner while loading
+                }
+            });
+            
+            
+function BusinessGroupSort(data) {
+          var listCommContMem ='{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          var BGList = BusinessGroupFilter(parseCommContM);
+          // Call Sort By Name
+          //RegionList.sort(SortByBusinessGroup);
+          DisplayContributorMembers(BGList);
+          $('#aAToZ,#aContriMembers,#aRegion,#aRoleName').removeClass('aActive').addClass('colorGrey');
+          $('#aBusinessGrp').removeClass('colorGrey').addClass('aActive');
+      }
+
+      function SortByBusinessGroup(x, y) {
+
+          return ((x.BusinessGroup.toUpperCase() == y.BusinessGroup.toUpperCase()) ? 0 : ((x.BusinessGroup.toUpperCase() > y.BusinessGroup.toUpperCase()) ? 1 : -1));
+      }
+      function BusinessGroupFilter(data) {
+          var RegionArr = [];
+          var RegionArrLength = 0;
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].BusinessGroup != null && data[iCount].BusinessGroup != '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          RegionArr.sort(SortByBusinessGroup);
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].BusinessGroup == null || data[iCount].BusinessGroup == '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          return RegionArr;
+      }
+
+
+      function SortByRole(x, y) {
+
+          return (((x.RoleName || "").toUpperCase() == (y.RoleName || "").toUpperCase()) ? 0 : (((x.RoleName || "").toUpperCase() > (y.RoleName || "").toUpperCase()) ? 1 : -1));
+      }
+      function RoleFilter(data) {
+          var RegionArr = [];
+          var RegionArrLength = 0;
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].RoleName != null && data[iCount].RoleName != '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          RegionArr.sort(SortByRole);
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].RoleName == null || data[iCount].RoleName == '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          return RegionArr;
+      }
+
+      function RoleSort(data) {
+
+          var listCommContMem = '{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          var RegionList = RoleFilter(parseCommContM);
+          // Call Sort By Name
+          //RegionList.sort(SortByRole);
+          DisplayContributorMembers(RegionList);
+          $('#aAToZ,#aContriMembers,#aBusinessGrp,#aRegion').removeClass('aActive').addClass('colorGrey');
+          $('#aRoleName').removeClass('colorGrey').addClass('aActive');
+
+      }
+
+
+
+      function SortByRegion(x, y) {
+
+          return ((x.Region.toUpperCase() == y.Region.toUpperCase()) ? 0 : ((x.Region.toUpperCase() > y.Region.toUpperCase()) ? 1 : -1));
+      }
+      function RegionFilter(data) {
+          var RegionArr = [];
+          var RegionArrLength = 0;
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].Region != null && data[iCount].Region != '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          RegionArr.sort(SortByRegion);
+          for (var iCount = 0; iCount < data.length; iCount++) {
+              if (data[iCount].Region == null || data[iCount].Region == '') {
+                  RegionArr[RegionArrLength] = data[iCount];
+                  RegionArrLength = RegionArrLength + 1;
+              }
+          }
+          return RegionArr;
+      }
+
+      function RegionSort(data) {
+
+          var listCommContMem = '{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          var RegionList = RegionFilter(parseCommContM);
+          // Call Sort By Name
+          //RegionList.sort(SortByRegion);
+          DisplayContributorMembers(RegionList);
+          $('#aAToZ,#aContriMembers,#aBusinessGrp,#aRoleName').removeClass('aActive').addClass('colorGrey');
+          $('#aRegion').removeClass('colorGrey').addClass('aActive');
+
+      }
+
+      function SortByName(x, y) {
+
+          return ((x.UserName.toUpperCase() == y.UserName.toUpperCase()) ? 0 : ((x.UserName.toUpperCase() > y.UserName.toUpperCase()) ? 1 : -1));
+      }
+
+
+      function AToZSort(data) {
+
+          var listCommContMem = '{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          // Call Sort By Name
+          parseCommContM.sort(SortByName);
+          DisplayContributorMembers(parseCommContM);
+          $('#aRegion,#aContriMembers,#aBusinessGrp,#aRoleName').removeClass('aActive').addClass('colorGrey');
+          $('#aAToZ').removeClass('colorGrey').addClass('aActive');
+
+
+      }
+
+      function DisplayContributorMembers(parseCommContM) {
+          $('#divContMember').empty();
+
+          for (var iCount = 0; iCount < parseCommContM.length; iCount++) {
+              var DisplayContributorMem = (" <li>");
+              DisplayContributorMem += ("<span class='label hpit_athenaListPersonImg'>  <img src=" + parseCommContM[iCount].Userphoto + "  /> </span>");
+
+              DisplayContributorMem += ("<span class='itemLMdes itemLMCom'> ");
+
+              var UserDtls = "/apex/tabletUserProfile?id=" + parseCommContM[iCount].UserId;
+              DisplayContributorMem += (" <span class='bold'><a href=" + UserDtls + "  target='_top'>" + parseCommContM[iCount].UserName + "</a></span>");
+
+              if (parseCommContM[iCount].RoleName != null) {
+
+                  DisplayContributorMem += ("<span> " + parseCommContM[iCount].RoleName + "</span> ");
+              }
+              if (parseCommContM[iCount].IsExperts) {
+                  DisplayContributorMem += (" <span class='DivEx'>Expert</span> ");
+              }
+              if (parseCommContM[iCount].IsContributor) {
+                  DisplayContributorMem += (" <span class='DivEx DivCon'>Contributor</span> ");
+              }
+              DisplayContributorMem += (" </span>");
+              DisplayContributorMem += ("<div class='itemLMCom colorGrey'> ");
+              if (parseCommContM[iCount].Region != '' && parseCommContM[iCount].Region != null) {
+                  DisplayContributorMem += ("<span>" + parseCommContM[iCount].Region + "</span> ");
+              }
+              else {
+                  DisplayContributorMem += ("<span> &nbsp; </span> ");
+              }
+              if ((parseCommContM[iCount].Region != '' && parseCommContM[iCount].Region != null) && (parseCommContM[iCount].BusinessGroup != "" && parseCommContM[iCount].BusinessGroup != null)) {
+                  DisplayContributorMem += (" | ");
+              }
+              if (parseCommContM[iCount].BusinessGroup != "" && parseCommContM[iCount].BusinessGroup != null) {
+                  DisplayContributorMem += ("<span>" + parseCommContM[iCount].BusinessGroup + "</span> ");
+              }
+              else {
+                  DisplayContributorMem += ("<span> &nbsp; </span> ");
+              }
+
+              DisplayContributorMem += ("</div>");
+              DisplayContributorMem += ("</li>");
+              $('#divContMember').append(DisplayContributorMem);
+
+          }
+      }
+
+
+      function generateRandom(min, max) {
+          var arr = [];
+          while (arr.length < max) {
+              var randNum = Math.floor(Math.random() * (max - min + 1)) + min,
+                  found = false;
+              for (var i = 0; i < arr.length; i++) {
+                  if (arr[i] == randNum) {
+                      found = true;
+                      break;
+                  }
+              }
+              if (!found) arr[arr.length] = randNum;
+          }
+          return arr;
+      }
+
+      function CommunityContMember() {
+          $('#aRegion,#aAToZ,#aBusinessGrp,#aRoleName').removeClass('aActive').addClass('colorGrey');
+          $('#aContriMembers').removeClass('colorGrey').addClass('aActive');
+          var listCommContMem = '{!ContributorMember}';
+          var parseCommContM = $.parseJSON(listCommContMem);
+          //$('#ConMemCnt').val(parseCommContM.length);
+          var Cnt = '(' + parseCommContM.length + ')';
+          $('#ConMemCnt').text(Cnt);
+          DisplayContributorMembers(parseCommContM);
+          var $x = $("#divContMember li");
+
+          var orders = generateRandom(0, $x.length - 1);
+          // Array.prototype.sort.call($x, function () { 
+          //return Math.random() <0.5; 
+          //});
+
+          for (var ic = 0; ic < orders.length; ic++) {
+
+              $("#divContMember").append($x[orders[ic]]);
+          }
+          // orders.each(function (i, $x) {
+          //$("#divContMember").append($x[i]); });
+      }
+      
+      function LoadCommunity(LearningBoardId, docId) {
+            
+            $.mobile.loading( "show", {
+                text: "",
+                textVisible: false,
+                textOnly: false
+            } ); // Displays load spinner while loading
+            
+            var APEXAction = '{!$RemoteAction.SLP_ViewCommunity.getCommunityWithCat}';
+           // Call existing APEX controller action to get data about community
+            Visualforce.remoting.Manager.invokeAction(
+                APEXAction,
+                LearningBoardId,
+                function(result, event) { // callback function receiving result of call with list of category and collaterals
+                    $.mobile.loading( "hide"); // Hide load spinner after load is complete
+                    
+                    // Iterate through the list of all categories returned
+                    for (var catCount = 0; catCount < result.length; catCount++) {
+                        var currentCat = result[catCount];
+                        if (currentCat) {
+                            // Prepare display of content of each category as a list of collapsible content
+                            var catContent = "";
+                            var focusOnCat = false; // Will set to true in category contains a document we need to focus on
+                            if (currentCat.lstlrngs && currentCat.lstlrngs.length > 0) {
+                                for (var docCount = 0; docCount < currentCat.lstlrngs.length; docCount++) {
+                                    // For each collateral, add it to the list
+                                    var currentDoc = result[catCount].lstlrngs[docCount];
+                                    if (currentDoc) {
+                                        catContent += renderDoc(currentDoc);
+                                        // If this is a document we have to focus on, remember it
+                                        if (currentDoc.Lid === docId) {
+                                            focusOnCat = true;
+                                        }
+                                    }
+                                }
+                                // Display Category
+                               
+                                $("#collateralList").append(catContent);
+                            }
+                        }
+                    }
+                    $("#collateralList").collapsibleset().trigger("create");
+                    
+                    if (docId) { // If we need to focus on a specific collateral
+                        // Scroll by the number of pixels required to display focused document (document position - beginning of scroll area)
+                        $.mobile.silentScroll($('#docID_'+docId).offset().top - $('#mobileCommunityCollateralsContent').offset().top);
+//                            $('#docLink_'+docId).click(); // call click to display popup with details
+                    }
+                }
+            );
+        };
+        
+        ///////////////////////////////////////////////////////
+        // Render a listview line item on a specific collateral
+        //
+        function renderDoc(currentDoc) {
+            // href to linked document, if any
+            var docHRef = "";
+            // Direct URL to document, if any
+            var docURL = "";
+            
+            // List of icons to display (document classification...)
+            var iconSet = "";
+            var isDoc = false;
+            
+            // Replaces backslashes, single quotes and end of lines
+            var escapedLDescription = currentDoc.LDescription.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+            var escapedLOwnerName = currentDoc.LOwnerName.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+            var escapedLName = currentDoc.LName.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+
+            // Prepare icons displaying the type of document (client facing, practice approved, publish)
+            if (currentDoc.ClientFacing) {
+                iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_Approved.png')}", 'Client Facing');
+            }
+            if (currentDoc.PracticeApprv) {
+                iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_PracticeApproved.png')}", 'Practice Approved');
+            }
+            
+            // Depending on the type of collateral, prepare its display
+            if (currentDoc.LType == 'Text') {
+                // Nothing else to do
+                isDoc = false;
+            } else if (currentDoc.LType == 'Link or Document' || currentDoc.LType === 'Upload Document') {
+                docURL = currentDoc.LURL;
+                if (currentDoc.DocType == 'PDF') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Acrobat.png')}", 'PDF');
+                } else if (currentDoc.DocType == 'PPT') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Powerpoint.png')}", 'PowerPoint');
+                } else if (currentDoc.DocType == 'DOC') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Word.png')}", 'Word');
+                } else if (currentDoc.DocType == 'XLS') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Excel.png')}", 'Excel');
+                } else if (currentDoc.DocType == 'TXT') {
+                    isDoc = true;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_TXT.png')}", 'Text');
+                } else if (currentDoc.DocType == 'OTHER') {
+                    isDoc = false;
+                    iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_File-Web.png')}", 'Link');
+                };
+            } else if (currentDoc.LType == 'Video') {
+                isDoc = false;
+                iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/Icon_Video.png')}",'Video');
+                docURL = currentDoc.LURL;
+                if (currentDoc.LURL.indexOf('http') != 0) {
+                    docURL = 'http://'+docURL; // Video links don't seem to have a protocol (http://) defined, so add it if needed
+                }
+            };
+            
+            if(isDoc){
+                iconSet += renderIcon("{!URLFOR($Resource.iconassets, 'icons/download.png')}", 'Doc');
+            }
+            
+            //console.log("In list - ave = " + currentDoc.AvgRating + " count = " + currentDoc.RatersCount); 
+            var avgRatingImg = renderRating(currentDoc.AvgRating);
+            
+            //var content = '<li style=\"background-color: #5A5A5A;height:150px;border-bottom:1px solid white;\"><a href="'+ docURL +'" style=\"text-decoration:none\"><div id=\"mContainer\"><div id=\"imgHeaderContainer\" align=\"left\"><img id=\"docImg\"  src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/9.png')}\'\;\"  align=\"left\" style=\"width:100px;height:80px;margin:7px;\"/></div><h3 style=\"color:white;margin:0px;padding-top:7px;\">'+escapedLName+'</h3><p style=\"white-space: normal !important;height:60px;color:white;\">'+currentDoc.LShortDescription+'</p><div class=\"hr\" style=\"margin-left:15px;margin-right:15px;\"><hr /></div><div id=\"imgDescContatiner\"  style=\"float:left;margin-left:15px;\">'+iconSet +'</div><div id=\"imgDescContatiner\" style=\"float:right;margin-right:15px;\"><a href="#" id="docLink_'+currentDoc.Lid+'" onclick="displayDocDetails(\''+currentDoc.Lid+'\',\''+currentDoc.LType+'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\',\''+escapedLOwnerName+'\',\''+currentDoc.OwnerPhoto+'\',\''+docURL+'\',\''+currentDoc.AvgRating+'\',\''+currentDoc.RatersCount+'\')";>'+avgRatingImg+'</a></div></div></a></li>';
+            //var content = '<li style=\"background-color: #5A5A5A;height:150px;border-bottom:1px solid white;\" onclick="sendMyRequest(\''+docURL+'\');\"><div id=\"mContainer\"><div id=\"imgHeaderContainer\" align=\"left\"><img id=\"docImg\"  src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/9.png')}\'\;\"  align=\"left\" style=\"width:100px;height:80px;margin:7px;\"/></div><h3 style=\"color:white;margin:0px;padding-top:7px;\">'+escapedLName+'</h3><p style=\"white-space: normal !important;height:60px;color:white;\">'+currentDoc.LShortDescription+'</p><div class=\"hr\" style=\"margin-left:15px;margin-right:15px;\"><hr /></div><div id=\"imgDescContatiner\"  style=\"float:left;margin-left:15px;\">'+iconSet +'</div><div id=\"imgDescContatiner\" style=\"float:right;margin-right:15px;\"><a href="#" id="docLink_'+currentDoc.Lid+'" onclick="displayDocDetails(\''+currentDoc.Lid+'\',\''+currentDoc.LType+'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\',\''+escapedLOwnerName+'\',\''+currentDoc.OwnerPhoto+'\',\''+docURL+'\',\''+currentDoc.AvgRating+'\',\''+currentDoc.RatersCount+'\')";>'+avgRatingImg+'</a></div></div></li>';
+            var content = '<li style=\"background-color: #5A5A5A;height:150px;border-bottom:1px solid white;\"><div id=\"mContainer\"><div id="selection_check" onclick="sendMyRequest(\''+docURL+'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\');\"><div id=\"imgHeaderContainer\" align=\"left\"><img id=\"docImg\"  src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/9.png')}\'\;\"  align=\"left\" style=\"width:100px;height:80px;margin:7px;\"/></div><h3 style=\"color:white;margin:0px;padding-top:7px;\">'+escapedLName+'</h3><p style=\"white-space: normal !important;height:60px;color:white;\">'+currentDoc.LShortDescription+'</p></div><div class=\"hr\" style=\"margin-left:15px;margin-right:15px;\"><hr /></div><div onclick="sendMyRequestDownload(\''+docURL+'\',\''+currentDoc.DocType+'\');\" id=\"imgDescContatiner\"  style=\"float:left;margin-left:15px;\">'+iconSet +'</div><div id=\"imgDescContatiner\" style=\"float:right;margin-right:15px;\"><a href="#" id="docLink_'+currentDoc.Lid+'" onclick="displayDocDetails(\''+currentDoc.Lid+'\',\''+currentDoc.LType+'\',\''+currentDoc.DocType+'\',\''+escapedLName+'\',\''+escapedLOwnerName+'\',\''+currentDoc.OwnerPhoto+'\',\''+docURL+'\',\''+currentDoc.AvgRating+'\',\''+currentDoc.RatersCount+'\')";>'+avgRatingImg+'</a></div></div></li>';
+
+            
+            
+            
+            
+            // Create list entry. If there is no URL to a collateral, don't display data icon on the right
+           // var content = "";
+            /*content += '<li style="background-color: #404040;">'; 
+            content += '<div id="mContainer"><div id="imgHeaderContainer">' + 
+             '<img id="docImg" align="left" style="width:100px;height:80px;margin-right:7px;" src="' + currentDoc.DefaultImageName + '" onerror=\"this.src=\'{!URLFOR($Resource.mslp_pic, 'pic/9.png')}\'\;\"></img>' + 
+             '</div>'
+            //content += '</div>';
+            content +='<h3 style="color:white;">'+escapedLName+'</h3>'+
+                        '<p style="white-space: normal !important;height:50px;color:white;">'+currentDoc.LShortDescription+'</p>' +
+                        '<div class="hr"><hr /></div>' +  
+                        '<div id="imgDescContatiner"  style="float:left;">'+
+                                iconSet + 
+                            '</div>' +  
+                        '<div id="imgRateContainer" style="float:right;">';         
+           
+            // Display current rating as stars ("on" or "off" to display the current rating)
+            
+            content += avgRatingImg;
+            
+            content +='</div>';
+            content += '</li>';*/
+            
+            return content;
+        };
+        
+        // 
+        function renderIcon(iconURL, description) {
+            return '<img style="display: inline-block; margin-left:5px; margin-right:5px; float:left" id="docType1" src="'+iconURL+'"></img>'
+            //return '<span class="detailDoc"><img src="' + iconURL + '" '+(description?'title="'+description+'" ':' ')+'class="pull-right mrl"/></span>'
+        };
+        
+        // Returns HTML content with star images rendering a given rating
+        function renderRating(avgRating) {
+            // Used to display rating stars
+            var myStarOff = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-UnRated.png')}";
+            var myStarOn = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Rated.png')}";
+            var myStarHalf = "{!URLFOR($Resource.iconassets, 'icons/Icon_RatingStar-Half.png')}";
+
+            var ratingStarImgs = "";
+            for (var i=1; i<=5; i++) {
+                if (i <= avgRating) {
+                    ratingStarImgs += '<img src="'+myStarOn+'">';
+                } else if ((i - avgRating) <= 0.5){
+                    ratingStarImgs += '<img src="'+myStarHalf+'">';
+                } else {
+                    ratingStarImgs += '<img src="'+myStarOff+'">';
+                }
+            }
+            
+            return ratingStarImgs;
+        }
+        
+        // Display details about a document as a popup
+        function displayDocDetails(id, docLType, docDocType, docLName, docLOwnerName, docOwnerPhoto, docURL, avgRating, ratersCount) {
+            console.log("Rating = " + avgRating + " count = " + ratersCount);
+            var txtCommunityTopicID = $('[id$=txtCommunityTopicID]');
+            txtCommunityTopicID.val(id);
+           
+            $('#popupDocLName').text(docLName);
+            var ratingStarImgs = renderRating(avgRating);
+            $('#popupRatingimages').html(ratingStarImgs);
+             var ratersCountTxt = "";
+            if (ratersCount > 0) {
+                ratersCountTxt = ratersCount + ' user'+((ratersCount > 1)?'s':'');
+            }
+            else{
+                ratersCountTxt = "0 users";
+            }
+            $('#popupRatingUsers').text(ratersCountTxt);
+            $('#rateMyCollateralPop').popup('open');
+            $('#rateMyCollateralPop').popup('reposition', 'positionTo: window');
+            /*
+            
+            if (docURL) {
+                $("#popupDownloadButton").attr("href", docURL).css("visibility", "visible");
+             } else {
+                $("#popupDownloadButton").attr("href", "#").css("visibility", "hidden");
+            }
+            
+            $.mobile.pageContainer.pagecontainer('change', '#mobileCommunityCollateralsDetails');*/
+
+            return false;
+        };
+        
+        // Function called when rating a document: copy jQM form values into SF form anf submit SF form
+        function rateDocument() {
+        
+        $("#rateButton").addClass('ui-disabled');
+        
+            // Get values from jQM form
+            var rating = $("#ratingSlider").val();
+            var ratingComments = $("#ratingComments").val();
+            
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtUserTopicRatingComment]").text(ratingComments);
+            $("[id$=txtTopicScore]").val(rating) /*.selectmenu('refresh') */;
+            
+            // Simulate click on SF submit button
+            $("[id$=btnUserRating]").click();
+            return false;
+        }
+        
+        // Read parameter from query string
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        
+function sendMyRequest(url, doctype, docTitle) {
+
+    var sDocType = doctype;
+    
+    if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+        if(url.indexOf('http') != 0)
+        {
+            window.location = "http://" + url;
+        }
+        else{
+            window.location = url;
+        }
+        return;
+    }
+
+    var sDomain = getDomainName(url);
+    console.log(">>>> "+ sDomain);
+    var endpoint = '';
+    
+    
+    if (sDomain == window.domainWWS) {
+        endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&matchreference=" + url;
+    }
+    else if (sDomain == window.domainSP) {
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+        renderMyDoc(url, docTitle);
+        return;
+    }
+    else if(sDomain == window.domainSP2013){
+        endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+    }
+    else if(sDomain == window.domainEXO){
+        endpoint = url;
+        renderMyDoc(endpoint , docTitle);
+        return;
+    }
+    else {
+        // handle unknown case
+        $('#popupDownloadMissing').popup('open');
+        $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+        return;
+    }
+
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    if ($(this).find("numhits").text() == '0'||$(this).find("numhits").text() == '') {
+                     $('#popupDownloadMissing').popup('open');
+                     $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                     return;
+                     }
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            renderMyDoc(link, docTitle);
+                        });
+                    });
+                });
+            });
+        },
+        error: function (xhr, status) {
+        //console.log(thrownError.responseText);
+            //var er = jQuery.parseJSON(thrownError);
+            if(isThisAndroid()&&xhr.status==0){
+                $('#popupDownloadErr').popup('open');
+                $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+            }
+            else{
+                alert('Error: Your security session has expired. Please sign out and sign in again');
+            }  
+        }
+
+    });
+}
+
+function sendMyRequestDownload(url, doctype, docTitle) {
+
+     var sDocType = doctype;
+
+    if(sDocType == "OTHER"){ //Link is not to a document so we don't need key view just go to the url
+         if(url.indexOf('http') != 0)
+        {
+            window.location = "http://" + url;
+        }
+        else{
+            window.location = url;
+        }
+        return;
+    }
+
+    var sDomain = getDomainName(url);
+    
+    var endpoint = '';
+    if (sDomain == window.domainWWS) {
+        endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&matchreference=" + url;
+        //window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&reference=" + url;
+        //return;
+    }
+    else if (sDomain == window.domainSP) {
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+        //renderMyDoc(url, docTitle);
+        window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&reference=" + url;
+        return;
+    }
+    else if(sDomain == window.domainSP2013){
+        //endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + url + "%7d:FILEURL";
+        window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&reference=" + url;
+        return;
+    }
+    else if(sDomain == window.domainEXO){
+        window.location = url;
+        return;
+    }
+    else {
+        // handle unknown case
+        $('#popupDownloadMissing').popup('open');
+        $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+        return;
+    }
+    
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    if ($(this).find("numhits").text() == '0'||$(this).find("numhits").text() == '') {
+                      $('#popupDownloadMissing').popup('open');
+                      $('#popupDownloadMissing').popup('reposition', 'positionTo: window');
+                     return;
+                     }
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            //renderMyDoc(link, docTitle);
+                            window.location = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/action=View&NoACI=true&OutputType=raw&EmbedImages=true&reference=" + link;
+                        });
+                    });
+                });
+            });
+        },
+        error: function (xhr, status) {
+            //var er = jQuery.parseJSON(thrownError);
+            if(isThisAndroid()&&xhr.status==0){
+                $('#popupDownloadErr').popup('open');
+                $('#popupDownloadErr').popup('reposition', 'positionTo: window');
+            }
+            else{
+                alert('Error: Your security session has expired. Please sign out and sign in again');
+            }  
+        }
+    });
+    
+}
+
+function getDomainName(url) {
+    var r = /:\/\/(.[^/]+)/;
+    return url.match(r)[1];
+    //return $('#basic').val().match(r)[1];
+}
+
+function renderMyDoc(url, docTitle) {
+    //window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+    window.location.href="/apex/mobileDocViewer?docURL=" + url + "&&docTitle=" + docTitle;
+}
+
+function isPopulated(elementId)
+        {
+            console.log("isPopulated function");
+            var populated = false;    
+            
+            // check if the value of the html element has a truthy value or not.     
+            if ($("[id$=" + elementId + "]").val())
+            {
+                populated = true;
+            }
+            console.log("The text input populated - " +populated ); 
+            return populated;
+        }
+        
+         function postComment() {
+            
+            if($("#fnameComment2").val()){
+                if($("#fnameComment2").val().length > 5000){
+                    alert("There is a limit of 5000 characters, you have entered " + $("#fnameComment2").val().length + " characters.");
+                    return;
+                    
+                }
+                else{
+                    $("#commentButton").addClass('ui-disabled');
+                }
+            }
+            else{
+                alert("Please enter some text");
+            }
+            
+            // Get values from jQM form
+            var comment= $("#fnameComment2").val();
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtPostInputComment2]").val(comment);
+            // Simulate click on SF submit button
+            $("[id$=cmdBtnPostComment2]").click();
+            //return false;
+        }
+        
+        function postReply() {
+            
+            if($("#fname2").val()){
+                if($("#fname2").val().length > 5000){
+                    alert("There is a limit of 5000 characters, you have entered " + $("#fname2").val().length + " characters.");
+                    return;
+                    
+                }
+                else{
+                    $("#replyButton").addClass('ui-disabled');
+                }
+            }
+            else{
+                alert("Please enter some text");
+            }
+            
+            // Get values from jQM form
+            var comment= $("#fname2").val();
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtPostInput2]").val(comment);
+            // Simulate click on SF submit button
+            $("[id$=cmdBtnPost2]").click();
+            //return false;
+        }        
+        
+function isThisChrome(){
+var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+return is_chrome;
+}
+      
+function isThisAndroid(){
+var ua = navigator.userAgent.toLowerCase();
+var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+if(isAndroid) {
+  return true;
+}
+else{
+  return false;
+}
+} 
+
+function followPerson(){
+    if({!IsFollowOwner}){
+        $("[id$=Commandbutton1]").click();
+        }
+        else{
+        $("[id$=btnFollow]").click();
+    }
+ };                                    
+
+    </script>
+
+</apex:page>

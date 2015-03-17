@@ -1,0 +1,62 @@
+<!-- 
+/**********************************************************
+* Page Name: CampaignInfluencePage
+* Author: HP
+* Date: 13-SEP-2012 
+* Requirement # Request Id: 
+* Description: VF page for Custom Campaign Influence
+**********************************************************/
+-->
+
+<apex:page standardController="Campaign_Influence__c" extensions="CampaignInfluenceController" id="page" action="{!checkOptyEditAccessCI}">
+    <!-- Form to add products on lead -->
+    <apex:form id="form">
+        <apex:sectionHeader title="Edit Campaign Influence" rendered="{!hasEditAccess}"/>
+        <apex:pageMessages />
+        <apex:pageBlock rendered="{!!hasEditAccess}">
+        <h1><b>Insufficient Privilages </b></h1>
+        <p>You do not have the level of access necessary to perform the operation you requested. Please contact the owner of the record or your administrator if access is necessary.
+        <br/><br/>Click <apex:commandLink action="{!Cancel}" value="here"/> to return to the previous page. </p>
+        </apex:pageBlock>
+        <apex:pageBlock title="Edit Campaign Influence" id="pageBlock" rendered="{!hasEditAccess}">
+            <!-- Command buttons to perform actions -->
+            <apex:pageBlockButtons >
+                 <apex:commandButton value="Save" action="{!saveOppCI}" />
+                 <apex:commandButton value="Cancel" action="{!Cancel}"/>
+            </apex:pageBlockButtons>
+                
+            <apex:pageBlockSection collapsible="false" columns="2" id="pageBlockSection">
+            
+            <apex:pageBlockSectionItem id="pageBlockSectionItem1">
+                    <apex:outputLabel value="Opportunity" />
+                    <apex:commandLink value="{!oppty.Name}" id="oppty" action="{!Cancel}"/>
+                </apex:pageBlockSectionItem>
+
+                <br/><apex:pageBlockSectionItem id="pageBlockSectionItem">
+                    <apex:outputLabel value="Campaign name" />
+                    <apex:inputField value="{!campaignInfluence.Campaign__c}" id="camp" required="true"/>
+                </apex:pageBlockSectionItem>
+
+                
+                <br/><apex:pageBlockSectionItem id="pageBlockSectionItem2">
+                    <apex:outputLabel value="Primary Campaign Source" />
+                    <apex:inputField value="{!campaignInfluence.Primary_Campaign_Source__c}" id="program" />
+                </apex:pageBlockSectionItem>
+                       
+            </apex:pageBlockSection>                        
+        </apex:pageBlock>    
+    </apex:form>
+    
+    <!-- JavaScript -->
+    <script>
+        window.onload = function(){
+            var productlineId = 'page:form:pageBlock:pageBlockSection:pageBlockSectionItem:camp';
+            var lookupId = productlineId + '_lkwgt';
+            var lookupComp = document.getElementById(lookupId);   
+            /* Setting lookup url*/
+            if (lookupComp != null) {
+                lookupComp.href = "javascript: openLookup('/apex/CampaignLookupPage?lkfm=page%3Afrm&lknm="+productlineId+"&lktp=' + getElementByIdCS('"+productlineId+"_lktp').value,1000,'1','&lksrch=' + escapeUTF(getElementByIdCS('"+productlineId+"').value.substring(0, 80)))";    
+            }           
+        }         
+    </script>
+</apex:page>

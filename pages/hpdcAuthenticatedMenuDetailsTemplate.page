@@ -1,0 +1,147 @@
+<apex:page showHeader="false" sidebar="false" controller="hpdcAuthenticatedMenuDetailsController" standardStylesheets="false">
+<html>
+<head>
+<body>
+<div id="everything" class="everything">
+<div id="top_buyhp" class="top_buyhp"> </div>
+<div id="content">
+   
+        <c:hpdcSecuretopnavigationbar ></c:hpdcSecuretopnavigationbar>
+   
+    <style>
+        #body span, #body li{
+            font-family: HPSimplified !important;
+            //color: #5A5A5A !important;
+            font-size: 16px !important;    
+        }
+        
+        .first-part {
+        padding: 50px 0 65px;
+    }
+    .first-part label {
+        display: block;
+        padding: 0 20px;
+    }
+    
+    .grid.first-part a {
+        font-weight: normal;
+    }
+    .grid.part span {
+        font-weight: normal;
+    }
+    .grid.part a {
+        font-weight: normal;
+    }
+    </style>
+   <script type="text/javascript">
+       var j$ = jQuery.noConflict();
+       j$(document).ready(function(){         
+           j$("a").each(function(id,elm){
+                var str = elm.href;
+                if(str.indexOf("||") != -1){
+                    var a = str.split('||');                    
+                    if('{!isSite}' == 'true'){
+                        elm.href = a[1];
+                    }else{
+                        elm.href = a[0];
+                    }
+                }                
+           });
+           var a;
+           var b;
+           if('{!lstMenuName}' != null){
+               a = "{!lstMenuName}";
+               a = a.replace('[','');
+               a = a.replace(']','');
+               b = a.split(",");          
+           }
+           var c=0;
+           if('{!tabName}' != ''){               
+               for(var i =0;i < b.length;i++){                    
+                   var temp = b[i];
+                   temp = temp.trim();
+                   if(temp == '{!tabName}'){
+                       j$("#id_"+temp).addClass("selected");
+                       j$("#"+temp).show();
+                       c++;
+                   }
+               }                   
+           }
+           if('{!tabName}' == '' || c == 0){               
+               var temp = b[0];
+               temp = temp.trim();
+               j$("#id_"+temp).addClass("selected");
+               j$("#"+temp).show();
+           }           
+       });
+       function showDetails(elm){
+           var a;
+           var b;
+           if('{!lstMenuName}' != null){
+               a = "{!lstMenuName}";
+               a = a.replace('[','');
+               a = a.replace(']','');
+               a = a.replace(' ','');
+               b = a.split(",");          
+           }
+           if(b != null){
+               for(var i =0;i < b.length;i++){                    
+                   var temp = b[i];
+                   temp = temp.trim();
+                   if(j$("#id_"+temp).hasClass('selected')){                  
+                      j$("#id_"+temp).removeClass("selected");
+                      j$("#"+temp).hide();                       
+                  }                  
+               }
+           }
+           var id = elm.id;
+           j$("#"+id).addClass("selected");
+           id = id.replace('id_','');
+           j$("#"+id).show(); 
+           
+       }
+    </script>
+    
+   <style>
+       body{
+           background-color:#fff !important;
+       }
+   </style>
+   
+   
+    <div id="body" class="body" >
+        <div class="title-service"> 
+            <h1>
+                {!mainHeading}
+            </h1>
+            <div class="grid">
+                <div class="grid mod-nav">
+                    <ul>
+                        <apex:repeat value="{!lstWPMenu}" var="ob">                        
+                            <li style="cursor: pointer;" onclick="showDetails(this)" id="id_{!ob.id}">
+                                {!ob.menu}
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                    <span class="clear"></span>
+                </div>
+                <div class="grid first-part" id="id_menuDeatils">
+                    <apex:repeat value="{!lstWPMenu}" var="ob">
+                        <div id="{!ob.id}" style="display:none">
+                            <apex:outputLabel escape="false" value="{!ob.dscription}"></apex:outputLabel>
+                        </div>
+                    </apex:repeat>
+                </div>
+            </div>
+        </div>
+    </div>    
+        <c:hpdctopfooter ></c:hpdctopfooter>
+    </div>  
+        <c:hpdcbottomfooter ></c:hpdcbottomfooter>
+</div>
+</body>   
+</head>
+</html>
+
+
+</apex:page>

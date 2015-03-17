@@ -1,0 +1,23 @@
+<!-- 
+/**********************************************************
+* Page Name: DeleteAllAccountTeam
+* Author: Accenture
+* Date: 10-APR-2012 
+* Requirement # Request Id:
+* Description: This page will provide the option to delete selected or all account team members to the account owner and account team members. 
+***********************************************************/
+-->
+<apex:page controller="DeleteAllAccountTeamController" tabstyle="Account">
+<apex:SectionHeader title="{!$Label.AccountTeam}"  subTitle="{!$Label.DeleteTeam}"  description="{!$Label.Delete_Team_Description}" />
+    <apex:form >
+           <apex:pageBlock >
+            <apex:pageBlockSection ></apex:pageBlockSection>            
+            <apex:inputCheckbox id="deleteChkId" value="{!removeMembersFromOpt}" />
+            <apex:outputText value="{!$Label.Delete_Team}"/>
+            <apex:pageblockButtons location="bottom">
+            <apex:commandButton action="{!deleteAllTeamMembers}" value="Delete"/>
+            <apex:commandButton action="{!cancel}" value="cancel"/>
+            </apex:pageblockButtons>
+        </apex:pageBlock>        
+    </apex:form>
+</apex:page>

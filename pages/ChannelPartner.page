@@ -1,0 +1,155 @@
+<!-- 
+/**********************************************************
+* Page Name: ChannelPartner
+* Author: Accenture
+* Date: 27-MAR-2012 
+* Requirement # Request Id :
+* Description: To multiple Partner Account for opportunity
+***********************************************************/
+-->
+<apex:page standardController="Channel_Partner__c" extensions="ChannelPartnerController"  tabStyle="Opportunity" id="page">
+    <apex:form id="frm" >
+        <apex:sectionHeader title="{!$ObjectType.Channel_Partner__c.label}"/>
+        <apex:pagemessages />
+        <!-- Page block for adding channel partner -->
+        <apex:pageBlock title="{!$ObjectType.Channel_Partner__c.label} Edit" id="pageBlock">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!Save}" value="{!$Label.Save}" />
+                <apex:commandButton action="{!Cancel}" value="{!$Label.Cancel}"/>
+            </apex:pageBlockButtons>
+            <!-- Data table for adding channel partner -->
+            <apex:DataTable value="{!channelPartnerList}" var="cp" cellspacing="5" id="dataTable" >
+                <apex:column headerValue="{!$ObjectType.Channel_Partner__c.fields.Partner_Type__c.label}" >                        
+                    <apex:inputField id="partnerType" value="{!cp.channelPartner.Partner_Type__c }" onblur="modifyAccountLookupButton(this,'{!$Component.channelPartner}')"/>
+                </apex:column>
+                <!-- <apex:column headerValue="{!$ObjectType.Channel_Partner__c.fields.Channel_Partner__c.label}" >                        
+                    <apex:inputField id="channelPartner" value="{!cp.channelPartner.Location__c}"/>
+                </apex:column>  -->
+                <apex:column headerValue="Partner Location" >                        
+                    <apex:inputText value="{!cp.locatorname}"  style="width:130px"  id="channelPartner"/>                      
+                    <a href="#" id="link2" title="Lookup}" tabindex="6"  onclick="modifyAccountLookupButton('{!$Component.partnerType}','{!$Component.channelPartner}')">
+                    <img class="lookupIcon" title="Lookup"  src="/s.gif"/></a> 
+                </apex:column>
+                                 
+                 <apex:column headerValue="" >                        
+                    <apex:inputhidden id="channelPartner1" value="{!cp.channelPartner.Channel_Partner__c}"/>
+                </apex:column>  
+                 
+                <apex:column headerValue="" >                        
+                    <apex:inputHidden id="location" value="{!cp.channelPartner.Location__c}"/>
+                </apex:column>    
+                
+                <apex:column headerValue="Partner" >                        
+                    <apex:inputText id="PartnerName" value="{!cp.PartnerName}" disabled="true"/>
+                </apex:column>          
+                 <!--added by HP IT for Partner OM 4/24/2013-->
+                <apex:column headerValue="Business Relationship" >                        
+                    <apex:inputText id="PartnerRole" value="{!cp.channelPartner.Partner_Account_Role2__c}" disabled="true" />
+                </apex:column>
+                
+                 <!-- Commented byHPIT Austin requested 04/24/2013 -->
+
+                <!--added by HP IT for Partner OM 9/25/2012-->
+              <!--   <apex:column headerValue="{!$ObjectType.Channel_Partner__c.fields.Partner_Account_Role__c.label}" >                        
+                    <apex:inputField id="partnerAccountRole" value="{!cp.channelPartner.Partner_Account_Role__c }" />
+                </apex:column>-->
+                
+                 <!-- Commented by Accenture as requested 24/04/2012 -->
+                 <apex:column headerValue="{!$ObjectType.Channel_Partner__c.fields.Primary__c.label}">
+                    <apex:selectRadio value="{!cp.channelPartner.Primary__c}" id="radio" onclick="unCheckOthers('{!$Component.radio}','{!$Component.partnerType}')" >
+                        <apex:selectOption itemValue="true" itemLabel=""/>
+                    </apex:selectRadio>
+                    
+                </apex:column>
+                
+             
+             
+               
+                <apex:column rendered="{!$ObjectType.Channel_Partner__c.fields.Sourced__c.Accessible}">
+    <apex:facet name="header">{!$ObjectType.Channel_Partner__c.fields.Sourced__c.Label} </apex:facet>
+    <apex:selectRadio value="{!cp.channelPartner.Sourced__c}" id="radioTwo" onclick="unCheckOthersCheck('{!$Component.radioTwo}','{!$Component.partnerType}')" >
+        <apex:selectOption itemValue="true" itemLabel=""/>
+    </apex:selectRadio>
+ </apex:column> 
+                
+                </apex:DataTable>
+        </apex:pageBlock>
+    </apex:form>
+   <script>
+       /* window.onload = function(){
+            for(var i=0;i<5;i++){
+                var channelPartnerId = 'page:frm:pageBlock:dataTable:'+i+':channelPartner';
+                var radioId = 'page:frm:pageBlock:dataTable:'+i+':radio:0';
+                //document.getElementById(channelPartnerId).disabled=true;
+                //alert(radioId);
+                document.getElementById(radioId).disabled=true;
+                var partnerTypeObj = document.getElementById('page:frm:pageBlock:dataTable:'+i+':partnerType');
+                
+                modifyAccountLookupButton(partnerTypeObj,channelPartnerId);
+            }
+        }  */
+        var newWin = null;
+        function modifyAccountLookupButton(partnerTypeId,channelPartnerId){
+            window.focus();
+            var channelPartnerObj = document.getElementById(channelPartnerId);
+            var enableRadioId = channelPartnerId.substring(29,30);
+            var partnerTypeObj = document.getElementById(partnerTypeId);
+            
+            if (channelPartnerObj != null && partnerTypeObj.value !='') {
+                
+                var partnertypeval = partnerTypeObj.value;
+                var partnerVal = channelPartnerObj .value;
+                var url="/apex/ChannelPartnerLookup?lkfm=page%3Afrm&partnerType="+partnertypeval+"&lknm="+enableRadioId+"&lksrch="+partnerVal+" ";
+                newWin=window.open(url, 'Popup','height=500,width=1600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+                document.getElementById('page:frm:pageBlock:dataTable:'+enableRadioId+':radio:0').disabled = false;
+                
+                if (partnerTypeObj.value == 'Alliance Partner' && document.getElementById('page:frm:pageBlock:dataTable:'+enableRadioId+':radio:0').checked == true) {
+                    alert('Alliance Partner Cannot be Primary');
+                    document.getElementById('page:frm:pageBlock:dataTable:'+enableRadioId+':radio:0').checked = false;
+                }
+            }else{
+                alert('Please select partner type before selecting partner location.');
+                //channelPartnerObj.href = "javascript: alert('Please select partner type before selecting partner location.');";
+            }
+        }
+        
+        function unCheckOthersCheck(selectVar, partnert){
+            for(var i=0;i<5;i++){
+                
+                var currentRadio = document.getElementById('page:frm:pageBlock:dataTable:'+i+':radioTwo:0');
+                var currentRadioStr = 'page:frm:pageBlock:dataTable:'+i+':radioTwo:0';
+                if(currentRadioStr.indexOf(selectVar)<0)
+                    currentRadio.checked=false;
+             }
+        }
+        function unCheckOthers(selectVar, partnert){
+            for(var i=0;i<5;i++){
+                
+                var currentRadio = document.getElementById('page:frm:pageBlock:dataTable:'+i+':radio:0');
+                var currentRadioStr = 'page:frm:pageBlock:dataTable:'+i+':radio:0';
+                if(currentRadioStr.indexOf(selectVar)<0)
+                    currentRadio.checked=false;
+             }
+             
+            var RadioId = selectVar.substring(29,30);
+            var channelPartnerValue = document.getElementById('page:frm:pageBlock:dataTable:'+RadioId +':partnerType');
+            if (channelPartnerValue.value == 'Alliance Partner'){
+                  alert('Alliance Partner Cannot be Primary');
+                  document.getElementById('page:frm:pageBlock:dataTable:'+RadioId+':radio:0').checked=false;
+            } 
+        }
+        
+        function backPopulateMain(locationID,locatorID,partnerAccountID,PartnerAccountName,BusinessRelationship,rownumber){
+            
+            document.getElementById('page:frm:pageBlock:dataTable:'+rownumber+':channelPartner').value=locatorID;
+            document.getElementById('page:frm:pageBlock:dataTable:'+rownumber+':channelPartner1').value=partnerAccountID;
+            document.getElementById('page:frm:pageBlock:dataTable:'+rownumber+':location').value=locationID;
+            document.getElementById('page:frm:pageBlock:dataTable:'+rownumber+':PartnerName').value=PartnerAccountName;
+            <!--Added by HPIT FROM Austin on 04/24/2013-->
+            document.getElementById('page:frm:pageBlock:dataTable:'+rownumber+':PartnerRole').value=BusinessRelationship;
+            
+            newWin.close();
+        }
+       
+    </script>   
+</apex:page>

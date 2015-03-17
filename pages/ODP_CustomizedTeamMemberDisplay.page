@@ -1,0 +1,28 @@
+<apex:page standardController="Offering_Release__c" extensions="ExtendedTeamMemberDisplay">
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+<script>
+       $j = jQuery.noConflict();
+       $j(document).ready(function() {
+
+       });
+</script>   
+<apex:form >
+<apex:pageBlock >
+    <apex:pageMessages ></apex:pageMessages>    
+    <apex:pageBlockTable value="{!ctmList}" var="ctm" id="ctmTable" rendered="{!DisplayIndicator}">    
+        <apex:column headerValue="Team Member Detail">
+                <a href="/{!ctm.id}" target="_blank" class="hotLink"><apex:outputText value="{!ctm.Name}" /></a>
+        </apex:column>
+        <apex:column headerValue="Role Name" value="{!ctm.Role_Name__c}"/> 
+        <apex:column headerValue="Member Name" value="{!ctm.User__r.Name}"/>                
+        <apex:column value="{!ctm.Contributor__c}" />
+        <apex:column value="{!ctm.Reviewer__c}" />
+        <apex:column value="{!ctm.Accountable__c}" />
+    </apex:pageblockTable>
+    <apex:outputLabel value="*OOPS    ---" style="color:red;" rendered="{!!DisplayIndicator}">No Team Member Assigned to the current <a href="/{!para_OffRelID}"  class="hotLink"><apex:outputText value="{!para_OffRelName}" /></a></apex:outputLabel>          
+</apex:pageblock>
+</apex:form>   
+</apex:page>

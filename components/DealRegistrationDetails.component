@@ -1,0 +1,44 @@
+<apex:component controller="DealReg_ProdDetailsForDealApprEmail" access="global">
+<apex:attribute name="opportId" type="ID" assignTo="{!dealOpptyID}" description="OpportunityId"/>
+<table>
+  <tr>
+     <td height="20"></td>     
+  </tr>
+</table>
+<apex:dataTable value="{!optyStatus}" var="programListValue" columns="4" border="1" width="100%" bgcolor="#fae1c3">
+       <apex:column style="vertical-align:bottom" width="40%">
+          <apex:facet name="header"><div style="background-color:gray;"><font size="4" color="white">Program Name</font></div></apex:facet>
+          <span style="color:red; font-weight: bold">{!programListValue.programName}</span>  
+            <div style="text-align:center;">
+              <apex:repeat var="busiGroupUnit" value="{!programListValue.productLineLists}">   
+                <apex:outputText value="{!busiGroupUnit}"/> <br></br>
+              </apex:repeat> 
+           </div>
+       </apex:column>  
+       <apex:column style="vertical-align:bottom" width="10%">
+         <apex:facet name="header"><div style="background-color:gray;"><font size="4" color="white">Status</font></div></apex:facet>
+          <span style="height:19px;"></span>
+          <div style="text-align:left;">
+             <apex:repeat var="pStatus" value="{!programListValue.productStatusLists}">              
+                <apex:outputText value="{!pStatus}"/> <br></br>
+              </apex:repeat> 
+           </div> 
+        </apex:column>
+       <apex:column style="vertical-align:top" width="20%">
+          <apex:facet name="header"><div style="background-color:gray;"><font size="4" color="white">Reason for Rejection</font></div></apex:facet>
+           <div style="text-align:left;">
+             <apex:repeat var="rejectionReason" value="{!programListValue.rejectionReasonSet}">              
+                <apex:outputText value="{!rejectionReason}"/> <br></br>
+              </apex:repeat> 
+           </div>                                                               
+       </apex:column>
+       <apex:column style="vertical-align:top" width="30%">
+          <apex:facet name="header"><div style="background-color:gray;"><font size="4" color="white">HP Comments</font></div></apex:facet>
+           <div style="text-align:left;">
+             <apex:repeat var="HPComments" value="{!programListValue.HPCommentsSet}">              
+                <apex:outputText value="{!HPComments}"/> <br></br>
+              </apex:repeat> 
+           </div>                                                               
+       </apex:column>       
+</apex:dataTable>
+</apex:component>

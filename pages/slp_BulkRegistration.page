@@ -1,0 +1,430 @@
+<apex:page controller="slp_BulkRegistration" showHeader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+    <!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+    <!--[if !IE]><!-->
+    <html lang="en">    
+        <!--<![endif]-->
+        <!-- BEGIN HEAD -->
+        <head>
+        <meta charset="utf-8" />
+        <title>insight Bulk Registration</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        
+            <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+             <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/css/uniform.default.css')}" />
+                
+        </head>
+        <body>
+            <header>
+            <apex:form id="DataForm">
+            <!--<apex:inputhidden id="AvailableExperts" value="{!GetAvailableExperts}"/>
+            <apex:inputhidden id="Users" value="{!GetUsers}"/>-->
+            </apex:form>
+               <div class="navbar">
+          <div class="navbar-inner">
+            <div class="container-fluid"><!-- <a class="HpLogo"> 
+              <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/insight_web_logo.png')}" style="width:220px" alt="HP Logo"/></a>    -->
+              <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo" styleclass="HpLogo"/>
+              <!-- </a>-->
+              <div class="nav mtop20">
+                <h1 class="h1fontS">insight</h1>
+                <h3>Information - on your terms</h3>
+              </div>
+              <ul class="nav pull-right top-menu">
+                <!-- BEGIN USER LOGIN DROPDOWN -->
+                
+                <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span>
+                  <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="userImage" alt="no_username"/>
+                  </span> </a>
+                  <ul class="dropdown-menu extended logout">
+                    <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a></li>
+                    <li><a href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!LoggedinUserDtls.id}">Edit Profile</a></li>
+                    <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+                  </ul>
+                </li>
+                <!-- END USER LOGIN DROPDOWN -->
+              </ul>
+              <c:SLP_SearchCustomComponent InputString="Bulk Registration Page"/>
+              <div class="alert alert-error topSearchEr" style="display:none;" id="err_msg"> </div>
+            </div>
+          </div>
+        </div>
+              <div class="navbar">
+                <div class="navbar-inner">
+                        <div class="container-fluid menunavBar"> <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Home"></a>
+                        <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus"></span></a> 
+                        <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/SLP_createcommunity" title="Create Community"><span class="icon-plus NaviconPlus"></span></a>
+                        <a class="topNavRoll topNavIconCom" href="https://{!getSfInstance}/apex/SLP_UserRoleAndExpertiseMapping" title="User Role & Expert Mapping"><span class="NaviconPlus"></span></a>
+                  </div>
+                </div>
+              </div>
+            </header>
+                <div id="container" class="row-fluid"> 
+                  <!-- BEGIN PAGE -->
+                  <div id="main-content">
+                    <div class="BDheading">
+                      <h2>Bulk Registration</h2>
+                    </div>
+                    <div class="alert alert-error span4 pull-left mr30" style="display:none" id="err_msg"></div>
+                      <div>
+                          <br />
+                            <div id="pills" class="custom-wizard-pills">
+                      <fieldset>
+                        <legend id="legendHead"> Bulk registration Wizard </legend>
+                        <div class="clearfix wizardUlDiv">
+                          <div class="wizardDivBg"></div>
+                          <ul style="position: absolute;z-index: 999;">
+                            <li id="li1"><a  data-toggle="tab">1</a></li>
+                            <li id="li2"><a data-toggle="tab">2</a></li>
+                            <li id="li3"><a data-toggle="tab">3</a></li>
+                            <li id="li4" style="margin-right:0"><a  data-toggle="tab">4</a></li>
+                          </ul>
+                        </div>
+                     
+                                            <div class="tab-content wizardTabCon"> 
+                                             
+                        <div class="tab-pane" id="pills-tab1" style="margin-left:100px;margin-top:25px">
+                    <apex:form >
+                    <apex:inputhidden id="hdnIsUploadFile" value="{!IsUploadFile}"/>
+                         <apex:outputpanel rendered="{!IsUploadFile}">
+                                <apex:inputFile value="{!contentFile}" filename="{!nameFile}" id="file"/> 
+                                    <apex:commandButton action="{!ReadFile}" onclick="return ReadCSVFile();" value="Upload File" id="theButton" styleclass="btnAthena btn-primary btnAthenaPopP"/>
+                                </apex:outputpanel>
+                                   </apex:form>
+                                <Label id="lblErrorUpload" style="display:none" class="colorWarning warningImg" />  
+                        </div>
+                        <div class="tab-pane" id="pills-tab2" style="margin-left:100px;margin-top:25px">
+                            <apex:form >
+                            <apex:inputhidden id="hdnIsOnboardUsersEnabled" value="{!IsOnboardUsersEnabled}"/>
+                                <apex:outputpanel rendered="{!IsOnboardUsersEnabled}" >
+                                    <apex:OutputText value="Pre process status" /> 
+                                    <br/><br/><apex:OutputText value="{!TotalPreProcessFiles}" />
+                                    <br/><br/><apex:OutputText value="{!TotalPreProcessSuccessFiles}" />
+                                    <br/><br/><apex:OutputText value="{!TotalPreProcessFailureFiles}" />
+                                      <br/><br/>                                  
+                                    <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!AddOrUpdateBoardingUsers}" value="Create/Update user Account" id="btnAddorUpdateMembers"/>
+                                </apex:outputpanel>
+                        
+                                   </apex:form>
+                              
+                           </div>
+                        <div class="tab-pane" id="pills-tab3" style="margin-left:100px;margin-top:25px">
+ <apex:form >
+ <apex:inputhidden id="hdnIsProcessUsersEnabled" value="{!IsProcessUsersEnabled}"/>
+                                   <apex:outputpanel rendered="{!IsProcessUsersEnabled}" >
+                                                                 <apex:OutputText value="{!TotalPreProcessFiles}" />
+                                <br/><br/><apex:OutputText value="{!TotalPreProcessSuccessFiles}" /><br/><br/>
+                                    <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!ProcessUsers}" value="Process Users" id="btnProcessUsers"/>
+                                </apex:outputpanel>
+                                   </apex:form>
+                        </div>
+                        <div class="tab-pane" id="pills-tab4" style="margin-left:100px;margin-top:25px">
+                           <apex:form >
+                            <apex:inputhidden id="hdnIsExportToBaordUser" value="{!IsExportToBaordUser}"/>
+                                    <apex:outputpanel rendered="{!IsExportToBaordUser}" >
+                                    <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"   value="Status Export To Excel" id="ExportButton" onclick="ExportToExcelOnBoardingUsers()" />
+                                </apex:outputpanel>
+                                <apex:pagemessages />
+                                <apex:outputpanel rendered="{!IsLogFileDownLoad}" >
+                                <br/><br/><apex:OutputText value="{!TotalPreProcessFailureFiles}" />
+                                <br/><br/><a href="/servlet/servlet.FileDownload?file={!successId}" target="_blank">Click Me To DownLoad Pre process Log File</a>
+                                </apex:outputpanel>
+                                   </apex:form>
+                        </div>
+                                                        
+                               
+                      
+                      </div>
+                       </fieldset>
+                    </div>
+       
+                        <!-- <apex:form >
+                        <apex:pageBlock >
+                            Bulk registration is a 4 step process <br />
+                                1.Upload the File<br />
+                                2.Create/Update user account<br />
+                                3.Process users<br />
+                                4.Export Status <br />  
+                        </apex:pageBlock>                          
+                        
+                         <apex:sectionHeader title="Upload data from CSV file"/> 
+                          
+                          <apex:pageBlock >
+                            <center>
+                                <apex:outputpanel rendered="{!IsUploadFile}">
+                                <apex:inputFile value="{!contentFile}" filename="{!nameFile}" id="file"/> 
+                                    <apex:commandButton action="{!ReadFile}" onclick="return ReadCSVFile();" value="Upload File" id="theButton" styleclass="btnAthena btn-primary btnAthenaPopP"/>
+                                </apex:outputpanel>
+                                <Label id="lblErrorUpload" style="display:none" class="colorWarning warningImg" /> 
+                                <apex:outputpanel rendered="{!IsOnboardUsersEnabled}" >
+                                    
+                                    <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!AddOrUpdateBoardingUsers}" value="Create/Update user Account" id="btnAddorUpdateMembers"/>
+                                <br/><br/>
+                                    <apex:OutputText value="Pre process status" /> 
+                                </apex:outputpanel>
+                                <apex:outputpanel rendered="{!IsProcessUsersEnabled}" >
+                                    <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  action="{!ProcessUsers}" value="Process Users" id="btnProcessUsers"/>
+                                </apex:outputpanel>
+                                <apex:outputpanel rendered="{!IsExportToBaordUser}" >
+                                    <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"   value="Status Export To Excel" id="ExportButton" onclick="ExportToExcelOnBoardingUsers()" />
+                                </apex:outputpanel>
+                               <!-- <apex:pagemessages />
+                                
+                                
+                                <br/><br/><apex:OutputText value="{!TotalPreProcessFiles}" />
+                                <br/><br/><apex:OutputText value="{!TotalPreProcessSuccessFiles}" />
+                                
+                                <apex:outputpanel rendered="{!IsLogFileDownLoad}" >
+                                <br/><br/><apex:OutputText value="{!TotalPreProcessFailureFiles}" />
+                                <br/><br/><a href="/servlet/servlet.FileDownload?file={!successId}" target="_blank">Click Me To DownLoad Pre process Log File</a>
+                                </apex:outputpanel>
+                                
+                            </center>              
+                          </apex:pageBlock>                         
+                          
+                           
+                          
+                       </apex:form> -->
+                   </div>
+                  </div>
+                  <!-- END PAGE --> 
+                </div>
+         <!--  <a href="/servlet/servlet.FileDownload?file={!fileId}" target="_blank">Click Me To DownLoad Uploaded File</a><br/><br/> -->
+           
+           
+           <div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+            <!-- END FOOTER --> 
+            
+            <!-- BEGIN JAVASCRIPTS --> 
+            <!-- Load javascripts at bottom, this will reduce page load time
+                     --> 
+                <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>  
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/jquery.uniform.min.js')}"/>     
+
+      <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/DT_bootstrap.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap-wizard/jquery.bootstrap.wizard.min.js')}"/>
+
+      <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+      
+                <!-- ie8 fixes -->
+                <!--[if lt IE 9]>
+               <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+               <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+               <![endif]-->
+            
+                <!--common script for all pages-->
+
+                         <script type="text/javascript">
+                         
+                 $(" input[type=radio], input[type=checkbox]").uniform();
+              var Script = function () {
+
+              $('#pills').bootstrapWizard({
+                  'tabClass': 'nav nav-pills', 'debug': false, onShow: function (tab, navigation, index) {
+                      console.log('onShow');
+                  }, onNext: function (tab, navigation, index) {
+                      console.log('onNext');
+                  }, onPrevious: function (tab, navigation, index) {
+                      console.log('onPrevious');
+                  }, onLast: function (tab, navigation, index) {
+                      console.log('onLast');
+                  }, onTabClick: function (tab, navigation, index) {
+                      //console.log('onTabClick');
+                  }, onTabShow: function (tab, navigation, index) {
+                      console.log('onTabShow');
+                   var $total = navigation.find('li').length;
+                      var $current = index + 1;
+                      var $percent = ($current / $total) * 100;
+                         $('#pills').find('.bar').css({ width: $percent + '%' });
+                  }
+              });
+          }();
+          
+           $(document).ready(function () {
+            if (jQuery('#li1').hasClass("active")) {
+                jQuery('#li1').removeClass("active")
+            }
+            else if (jQuery('#li2').hasClass("active")) {
+                jQuery('#li2').removeClass("active")
+            }
+            else if (jQuery('#li3').hasClass("active")) {
+                jQuery('#li3').removeClass("active")
+            }
+            else if (jQuery('#li4').hasClass("active")) {
+                jQuery('#li4').removeClass("active")
+            }
+            $('#pills-tab1').hide();
+            $('#pills-tab2').hide();
+            $('#pills-tab3').hide();
+            $('#pills-tab4').hide();
+            
+            var $total = 4;
+              var $current = 0;
+           if($('[id$=hdnIsUploadFile]').val()=="true")
+           {
+           $('#pills-tab1').show();
+           $current = 1;
+              jQuery('#li1').addClass("active");
+           }
+           else if($('[id$=hdnIsOnboardUsersEnabled]').val()=="true")
+           {
+            jQuery('#li2').addClass("active");
+            $('#pills-tab2').show();
+                    $current = 2;
+           }
+           else if($('[id$=hdnIsProcessUsersEnabled]').val()=="true")
+           {
+           $('#pills-tab3').show();
+            $current = 3;
+            jQuery('#li3').addClass("active");
+           }
+           else if($('[id$=hdnIsExportToBaordUser]').val()=="true")
+           {
+           $('#pills-tab4').show();
+            $current = 4;
+            jQuery('#li4').addClass("active");
+           }
+               var $percent = ($current / $total) * 100;
+                 $('#pills').find('.bar').css({ width: $percent + '%' });
+             });
+             
+             function ExportToExcelResult(result, event) {
+debugger
+              var ExcelName = '{!uploadFileName}';
+              var CommName='Bulk Registration Status';
+             
+
+          var tabla = '<html  xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>' + CommName + '</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml></head> <body> <table id="tblExport"><tr>';
+          tabla += '<th>Email</th><th>Role </th><th>Area of focus</th><th>Community Contributor</th><th>Community Member</th><th>Board Contributor</th><th>Board Member</th><th> Format valid</th><th> Failure Log</th><th> New User</th></tr>';
+          for (var iCnt = 0; iCnt < result.length; iCnt++) {
+              tabla += '<tr>';
+              tabla += '<td> ' + result[iCnt].Email__c + ' </td>';
+              if (result[iCnt].Role__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Role__c + ' </td>';
+              }
+              else
+              {
+              tabla += '<td>  </td>';
+              }
+              if (result[iCnt].Area_Of_Focus__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Area_Of_Focus__c + ' </td>';
+              }
+              else
+              {
+              tabla += '<td>  </td>';
+              }
+              
+              if (result[iCnt].Community_Contributor__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Community_Contributor__c + ' </td>';
+              }
+              else
+              {
+              tabla += '<td>  </td>';
+              }
+              if (result[iCnt].Community_Member__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Community_Member__c + ' </td>';
+              }
+              else
+              {
+              tabla += '<td>  </td>';
+              }
+              if (result[iCnt].Board_Contributor__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Board_Contributor__c + ' </td>';
+              }
+              else
+              {
+              tabla += '<td>  </td>';
+              }
+              if (result[iCnt].Board_Member__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Board_Member__c + ' </td>';
+              }
+              else
+              {
+              tabla += '<td>  </td>';
+              }
+             
+              if (result[iCnt].FormatValid__c != undefined) {
+              tabla += '<td> ' + result[iCnt].FormatValid__c + ' </td>';
+              }
+              else
+              {
+              tabla += '<td>  </td>';
+              }
+              if (result[iCnt].Failure_Log__c != undefined) {
+              tabla += '<td> ' + result[iCnt].Failure_Log__c + ' </td>';
+              }
+             else
+              {
+              tabla += '<td>  </td>';
+              }
+              if (result[iCnt].New_User__c != undefined) {
+              tabla += '<td> ' + result[iCnt].New_User__c + ' </td>';
+              }
+              else
+              {
+              tabla += '<td>  </td>';
+              }
+               
+              tabla += '</tr>';
+          }
+                    tabla += '</table></body></html>';
+
+          //var dateT = new Date();
+          //ExcelName = ExcelName +'_Status' + '_' + dateT.format("d-M-Y");
+           ExcelName = ExcelName.replace('.csv','')+'_Status'
+
+          var filename = ExcelName + '.xls';   //'Community Name.xls';
+
+          var link = document.createElement('a');
+          var mimeType = 'application/xls';
+
+          var blob = new Blob([tabla], { type: mimeType });
+          var url = URL.createObjectURL(blob);
+          link.href = url;
+
+          link.setAttribute('download', filename);
+          link.click();
+         }
+          function ExportToExcelOnBoardingUsers()
+            {
+            debugger
+            var SLPBulkRegisterId='{!SLPBulkRegId}';
+              Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.slp_BulkRegistration.GetCommunityMemberDetailsExcel}',
+              SLPBulkRegisterId,
+               ExportToExcelResult
+               );
+            }
+            function ReadCSVFile()
+            {
+             debugger
+             var isExist= $('[id$=file]').val();
+             $('#lblErrorUpload').hide();
+             if(isExist!='' && isExist!=null)
+             {
+                             return true;
+             
+             }
+             else
+             {
+             $('#lblErrorUpload').show();
+              $('#lblErrorUpload').text('Please upload CSV file');
+               return false;
+             }
+             
+            }
+            </script>
+                <!-- END JAVASCRIPTS -->  
+       </body>
+   </html> 
+</apex:page>

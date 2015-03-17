@@ -1,0 +1,1 @@
+public class SLP_Exception extends Exception {public void main(){}}

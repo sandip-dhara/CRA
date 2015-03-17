@@ -1,0 +1,198 @@
+<apex:page standardController="Account" tabStyle="account" showheader="false" extensions="CPQMDCPSearchController" recordSetvar="accts" sidebar="false"   id="PageID" >
+    <Script>
+        function AllowNumeric(e)
+        {
+            var a = e.charCode;
+            return ((a >= 48 && a <= 57)|| a==45);
+        }
+        function showpage(){
+            //document.getElementById('PageID:FormId:searchsection:searchresultsection:searchSection:SearchResultBlock:resulTitletheader').style.display='none';
+            showpagehashtop() ;
+            }
+        function addressPopup(address,city,postal_code,country,state){
+            //alert('Address:'+address+'City:'+city);
+            window.parent.opener.addressPopulate('{!secName}',address,city,postal_code,country,state);
+        }
+        function closeWindow(){
+            window.close();
+        }
+        function inputValidation(){
+            alert('Input validation');
+        }
+        function checkValidation(selItem){
+            var tableId = 'PageID:formId:pb:searchblocksection:button:dataTable:';
+            //var tableTR = 
+            var flag = 0;
+            var mohit = document.getElementById('PageID:formId:pb:searchblocksection:button:dataTable');
+            var inputElem = mohit.getElementsByTagName('tr');
+            if(inputElem.length>2)
+                for(i=0;i<inputElem.length-1;i++){
+                var a=document.getElementById(tableId+i+':selectedValue').value;
+                    if(a == selItem.value)
+                        flag = flag + 1;
+                        if(flag == 2)
+                        {
+                            alert('You could not specify the same field for searching more than once');
+                            document.getElementById(tableId+i+':selectedValue').value = '';
+                            break;
+                         }
+                    }                
+            }
+    </Script>
+    <apex:sectionHeader id="TitleSection" title="Search Master Data"/>
+    <apex:form id="formId" >
+        <apex:pageBlock id="pb">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Close" title="Close" onclick="window.close()"/>
+            </apex:pageBlockButtons>
+            <apex:pageMessages rendered="{!errorMsg}"></apex:pageMessages>            
+            <apex:pageBlockSection columns="1" title="Search Conditions" id="searchblocksection">
+                <apex:pageBlock id="button">
+                    <apex:pageBlockButtons location="top">
+                        <apex:commandButton value="Search" title="Search" action="{!searchResult}" reRender="formId" status="DetailLoading" />
+                        <apex:commandButton value="Clear" title="Clear" action="{!clearInputs}" status="DetailLoading" reRender="formId" />
+                    </apex:pageBlockButtons>
+                    <apex:actionStatus id="DetailLoading" style="align:center" layout="block" >
+                        <apex:facet name="start">
+                            <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                            <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPDetailStatus}</i></FONT>
+                            <br/><br/>                       
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <apex:variable value="{!0}" var="rownum"/>
+                    <apex:DataTable value="{!listWrap}" var="a" cellspacing="5" id="dataTable">
+                            <apex:column headerValue=" ">
+                            <!--<apex:commandButton value="Del " title="Del" action="{!delRow}" reRender="searchblocksection" immediate="true"/>-->
+                            <apex:commandLink action="{!delRow}" reRender="searchblocksection" status="DetailLoading" ><apex:commandButton value="Del" title="Del" />
+                                <apex:param name="I" value="{!rownum}" assignTo="{!rowNumber}"/>
+                            </apex:commandLink>    
+                        </apex:column>
+                        <apex:column headerValue=" ">
+                            <apex:selectList value="{!a.selectedItem}" multiselect="false" onchange="javascript:checkValidation(this);" size="1" id="selectedValue" >
+                                <apex:selectOptions value="{!searchItems}"/>
+                            </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </apex:column>
+                        <apex:column headerValue=" ">
+                            <apex:inputtext value="{!a.searchText}" id="InputValue" />
+                            <apex:variable var="rownum" value="{!rownum+1}"/>
+                        </apex:column>
+                        <!--<apex:column headerValue="" style="">
+                            <apex:outputText value="test"></apex:outputText>
+                        </apex:column>-->
+                    </apex:DataTable>
+                    <!--<apex:Messages rendered="{!errorMsg}"/>-->
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton value="Add" title="Add" action="{!addRow}" reRender="searchblocksection" status="DetailLoading" />
+                    </apex:pageBlockButtons>
+                </apex:pageBlock>
+            </apex:pageBlockSection>
+            <apex:actionRegion >
+            <apex:pageBlockSection columns="1" title="Search Results" id="searchResultSection">
+                <apex:outputPanel id="SearchResultPanel"> 
+                  <apex:pageBlock id="searchSection" mode="maindetail" >
+                    <apex:actionStatus id="SearchLoadingstatus" style="align:center" >
+                        <apex:facet name="start" >
+                            <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPSearchStatus}</i></FONT>
+                            <br/><br/>                       
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <apex:actionStatus id="SortingStatus" style="align:center" >
+                        <apex:facet name="start" >
+                            <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPSortStatus}</i></FONT>
+                                <br/><br/>  
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <apex:actionStatus id="LoadPrevioussearch" style="align:center" >
+                            <apex:facet name="start" >
+                                <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPPrevioussearch}</i></FONT>
+                                <br/><br/>                       
+                            </apex:facet>
+                    </apex:actionStatus>
+                
+                    <apex:actionStatus id="PaginationStatus" style="align:center" >
+                        <apex:facet name="start" >
+                            <img src="{!$Resource.MDCPSortingStatus}" height="15" width="15"/>&nbsp;&nbsp;
+                                <FONT COLOR="#356FB6" SIZE="2"><i>{!$Label.MDCPPagination}</i></FONT>
+                                <br/><br/>       
+                        </apex:facet>
+                    </apex:actionStatus>
+                <apex:outputPanel id="OnlySearchResultPanel">
+                
+                    <apex:pageBlock mode="maindetail" rendered="{!NOT(ISNULL(currentPageListSize))}" id="SearchResultBlock">
+                
+                     <!-------------------------------------result title section----------------------------------------->   
+                    <apex:outputPanel id="resulTitletheader">
+                        <apex:outputText id="resultheader" value="Found {!totalRecords} records " style="color:#2E172D;font-size:13px;" rendered="{!AND(IF(totalRecords>0, true, false),totalRecords<200)}"/>
+                        <apex:outputPanel id="MaxResult" rendered="{!totalRecords=200}" style="color:#2E172D;font-size:13px;">Your results exceed the maximum display of 200 records.  Please refine your query.</apex:outputPanel>
+                        <apex:outputPanel id="NoResult" rendered="{!currentPageListSize=0}" style="color:#2E172D;font-size:13px;">No Matched Record Found</apex:outputPanel>
+                    </apex:outputPanel>
+                     <!-----------------------------------end result title------------------------------------------------>
+                  
+                 <TABLE class="styleMiddle" align="left" border="0" width="100%" bgcolor="#36A5C7" >
+                    <TR>
+                    <td>
+                        <table class="tableClass" id="thePage:theTable" align="left" border="0" cellpadding="3" >
+                            <tr><td><font color="white" fontsize="13"></font></td></tr>
+                        </table>    
+                    </td>
+                    <td>
+                        <table class="tableClass" id="thePage:theTable" align="Right" border="0" cellpadding="2"  >
+                            <tr><td>
+                            <font color="white" align="center" fontsize="10">You are looking at {!CurrentPageDisplayed } out of {!totalPages } available pages
+                            </font></td></tr>
+                        </table> 
+                    </td>
+                    <td>
+                        <table class="tableClass" id="thePagetheTable" align="right" border="0" cellpadding="-1">
+                            <tr><td><font align="center" >
+                            <apex:selectList value="{!selectedPage}" id="nameEqualsStartWithConstains" size="1" onchange="showpage();" >
+                            <apex:selectOptions value="{!optionsList }"/>
+                            </apex:selectList>  
+                            </font></td>
+                            <td><font >
+                            <apex:actionFunction name="showpagehashtop" action="{!showpagehashtop}" status="PaginationStatus" rerender="SearchResultPanel" />
+                            </font></td></tr> 
+                        </table>
+                    </td>
+                    </TR>
+                </TABLE> 
+                   
+                  <apex:variable value="{!0}" var="numfield"/>
+                    <apex:PageBlockTable rendered="{!currentPageListSize!=0}"  columns="14" value="{!searchResultByPage}" var="rowItem" >
+                        <apex:repeat value="{!listFieldToShow}" var="flds">
+                            <apex:column >
+                                <apex:facet name="header">
+                                    <apex:commandLink action="{!SortByFieldName}" value="{!$ObjectType.MDCPResult__c.Fields[flds].Label}" reRender="SearchResultPanel"  status="SortingStatus" >
+                                    <apex:param name="sortBy" value="{!flds}" assignTo="{!sortBy}"/>
+                                    </apex:commandLink>
+                                </apex:facet> 
+                                <apex:outputText value="{!rowItem[mapFieldToShow[flds]]}" rendered="{!( flds == 'Postal_Code__c'  || flds == 'MDCP_Id__c' || flds == 'City__c' ||flds == 'Country__c'|| flds == 'Non_LatinName__c' || flds == 'DUNS__c' ||flds == 'Tax_ID__c'||flds == 'State__c' || flds == 'Domestic_DUNS__c')}"/>
+                                <apex:commandLink action="{!addressPopulation}" oncomplete="addressPopup('{!address}','{!city1}','{!postalCode}','{!countryName}','{!state}'),window.close()" value="{!rowItem[mapFieldToShow[flds]]}" rendered="{!flds == 'Address__c' || flds == 'Name'}" status="DetailLoading">
+                                    <apex:param name="DetailFieldName" value="{!flds}" assignTo="{!DetailFieldName}"/>
+                                    <apex:param name="DetailRowValue1" value="{!numfield}" assignTo="{!DetailRowValue}"/>
+                                    <apex:param name="RowValue" value="{!numfield}" assignTo="{!rowNumber}"/>
+                                </apex:commandLink>
+                                <!--<apex:commandLink action="{!GetDetails}" value="{!rowItem[mapFieldToShow[flds]]}" rendered="{!(flds == 'Name' ||flds == 'Global_DUNS__c'||flds == 'Domestic_DUNS__c')}" reRender="DetailSection,Detailheader" status="DetailLoading">
+                                    <apex:param name="DetailFieldName" value="{!flds}" assignTo="{!DetailFieldName}"/>
+                                    <apex:param name="DetailRowValue" value="{!numfield}" assignTo="{!DetailRowValue}"/>
+                                </apex:commandLink>--> 
+                                <apex:inputCheckbox disabled="true" value="{!rowItem[mapFieldToShow[flds]]}"  rendered="{!(flds == 'isOutOfBusiness__c'||flds == 'Is_Competitor__c')}"/>
+                                <apex:variable var="numfield" value="{!numfield+1}"/>  
+                            </apex:column>
+                          
+                        </apex:repeat>
+                    </apex:PageBlockTable> 
+                </apex:pageBlock>
+                <apex:outputText id="faultmessage" rendered="{!IsMDCPDown}" style="color:#FF0000;font-size:12px;"><font color="#FF0000"><H2>{!errorMessage}</H2></font></apex:outputText>  
+                </apex:outputPanel>  
+                </apex:pageBlock>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            </apex:actionRegion>
+        </apex:pageBlock>    
+    </apex:form>
+    
+</apex:page>

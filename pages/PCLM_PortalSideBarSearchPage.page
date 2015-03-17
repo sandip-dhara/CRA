@@ -1,0 +1,21 @@
+<!-- *********************************************************
+* PageName: PCLM_PortalSideBarSearch_Page
+* Author: HP  
+* Date: 08-JANUARY-2013 
+* Requirement #: 4042
+* Description:This page is placed in the side bar componenet. A user enter a string and clicks on Go. The user is navigated
+              to 'PartnerPortalLeadOpptySearch_Page' VF page which shows the result.
+********************************************************* -->
+<apex:page showHeader="False" sidebar="false">
+    <apex:includeScript value="{!$Resource.jQuery}"/>
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+        j$(document).ready(function(){
+            j$("#searchButton").bind('click',function(){
+                 top.location="/apex/PCLM_PortalLeadOpptySearchPage?searchText="+encodeURIComponent((j$("#userInputValue").val()));
+             });
+         });
+    </script>
+    <input id="userInputValue" type="text"/><br/>
+    <input id="searchButton" type="button" value="{!$Label.Search_Lead_opportunity}"/>
+</apex:page>

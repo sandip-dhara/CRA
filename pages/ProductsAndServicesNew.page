@@ -1,0 +1,2406 @@
+<apex:page standardController="OpportunityLineItem" extensions="ProductsAndServicesControllerNew" id="productPage" sidebar="false" action="{!opptyAccess}">
+
+<script>
+function setFocus() {
+ document.getElementById('{!$Component.productPage.productForm.bgp}').focus();    
+}
+</script>
+
+<body onload="setFocus()" />
+
+<apex:form id="productForm">
+    <apex:actionFunction action="{!saveInline}" name="saveInline" rerender="existingProductsBlock,exceptionPanel,opportunitypanel,productPage:productForm:amountid,inactive" status="saving" oncomplete="setTimeout(function() {calculateAmounts();},1500);setcheckcountzero();"/>
+    <apex:actionFunction action="{!deleteSelected}" name="deleteOpptyProducts" rerender="existingProductsBlock,exceptionPanel,opportunitypanel,inactive" status="deleting" oncomplete="setTimeout(function() {calculateAmounts();},2200);setcheckcountzero();"/>
+    <apex:actionFunction action="{!newOpptyStatistics}" name="calculateAmounts" rerender="opptyValues" status="calculating"/>
+    <apex:actionFunction action="{!cancelUpdate}" name="refreshTable" rerender="opptyValues,existingProductsBlock,exceptionPanel,inactive"/>
+    <!--<apex:actionFunction action="{!Cancelsinglerow}" name="refreshrow" rerender=""/>-->
+    <apex:actionFunction action="{!Cancelsinglerow}" name="refreshrow" reRender="opptyValues,existingProductsBlock,exceptionPanel,inactive">                               
+        <apex:param name="paramid" value="{!$Component.selectedOli}"/>                              
+   </apex:actionFunction>
+    <apex:actionFunction action="{!clearAllFlags}" name="clearFlags" rerender="error"/>
+    <apex:actionFunction name="searchBG" rerender="oliPanel" status="searching" oncomplete="changeGBUvals();" action="{!clearquickaddrecord}"/>
+    <apex:actionFunction name="searchGBU" rerender="oliPanel" status="searching"  action="{!clearquickaddrecord}"/>
+    <apex:actionFunction name="changeGBUval" action="{!changeGBUValues}" rerender="searchExistingGlobalBusinessUnit"  />
+
+
+<style type="text/css">
+    
+        .PS_table
+    {
+    font-size:14px;
+    font-weight:bold;
+    border-left-color:#000000;
+    border-top-color:#000000;
+    border-bottom-color:#000000;
+    border-spacing:1px;
+    background-color:#CCCCCC;
+    border-right-color:#FFFFFF;
+    border-right-width:15px;
+    }    
+    
+    #QuanityField{
+    border-top: 0px solid #FFFFFF;width:0px;position:relative;top:0px;left:0px;line-height: 0px
+    }
+    
+    
+    
+    .PS_table2
+    {
+    font-size:14px;
+    font-weight:bold;
+    border-color:solid black 1px;
+    border-left-color:#000000;
+    border-right-color:#000000;
+    border-top-color:#000000;
+    border-bottom-color:#000000;
+    border-spacing:1px;
+    background-color:#CCCCCC;
+    }
+    
+    .LabelStyle
+    {
+    height:25px;
+    font-Size:12px;
+    font-weight:bold;
+    text-align:Left;
+    color:#714A56;
+    white-space: nowrap;
+    }
+    
+    .CaptionClass
+    {
+    Text-align:Left;
+    color:#714A56;
+    }
+    
+    .FieldStyle
+    {
+    height:25px;
+    font-Size:13px;
+    Text-align:Left;
+    color:#714A56;
+    white-space: nowrap
+    }
+    
+    .HeaderStyle
+    {
+    Text-align:Left;
+    width:100px;
+    color:blue;
+    white-space: nowrap;
+    }
+
+    .PS_table_Main
+    {
+    font-size:14px;
+    border-color:solid grey 1px;
+    border-left-color:#000000;
+    border-right-color:#000000;
+    border-top-color:#000000;
+    border-bottom-color:#000000;
+    border-spacing:1px;
+    }
+    
+    .PS_Inner_table
+    {
+    font-size:13px;
+    background-color:#F0EFEF;
+    border-right-color:#FFFFFF;
+    border-right-width:15px;
+    }
+    
+    .PS_Inner_table2
+    {   
+    font-size:13px;
+    background-color:#F0EFEF;
+    }
+    
+    .PS_Header
+    {
+    textalign:Center;
+    width:100%;
+    } 
+
+    
+</style>
+
+
+
+<!--Opportunity Header and Quick Add Section background-color:#66CCFF;-->
+<apex:Panelgrid columns="2" border="0" style="width:100%" styleclass="PS_table_Main" >
+    
+    <!--Opportunity Header Grid-->
+    <apex:Panelgrid columns="1" border="0" style="width:100%;" styleclass="PS_table" >
+        <apex:panelgroup >
+        <apex:OutputLabel value="{!$Label.Opportunity} " styleclass="PS_Header"/>
+        <apex:OutputLink value="/{!Oppty.Id}" > {!Oppty.Name} </apex:OutputLink>
+        </apex:panelgroup>
+    </apex:panelgrid>
+    
+    
+        
+    <!--Opportunity Add Products Grid-->
+    <apex:Panelgrid columns="2" border="0" style="width:100%;" styleclass="PS_table2" >
+        <apex:OutputLabel value="{!$Label.Add_Products_Services}" styleclass="PS_Header"/>
+        <div style="text-align:right">
+        <a href="#" onclick=" window.open('/apex/AddProdHelp','popup','height=300,width=900,left=150,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes')">Help</a> 
+        
+        <!--a href="/apex/AddProdHelp" target="_parent">Help</a>-->  
+        <!-- <a href="" onclick="javascript:window.open('/apex/AddProdHelp');">Help</a>  -->        
+        <!--<apex:OutputLink value="/{!Oppty.Id}" target="_blank" styleclass="PS_Header1"> Help </apex:OutputLink>-->
+        
+        </div>
+    </apex:panelgrid>
+    
+        <!--Opportunity Add Products Grid-->
+
+    
+    <apex:Panelgrid columns="1" border="0" style="width:100%;" styleclass="PS_Inner_table" id="opportunitypanel" >
+     
+            
+    <!--Opportunity Header Content-->
+    <apex:Panelgroup >
+    <table width="100%" border="0" Cellspacing="0">
+    
+    <tr>
+    <td class="LabelStyle">{!$Label.Opportunity_Id}</td>
+    <td class="FieldStyle"><apex:OutputField value="{!Oppty.Opportunity_ID__c}" /></td>
+    <!--<apex:panelgroup > <apex:OutputLink value="/{!Oppty.Id}" styleclass="FieldStyle"> {!Oppty.Name} </apex:OutputLink></apex:panelgroup> 
+    </td>-->
+    <td class="LabelStyle">{!$Label.Total_Opportunity_Value}</td>
+    <td class="FieldStyle" >
+        <apex:panelgroup id="amountid">
+        <apex:outputtext value="{!oppty.CurrencyISOCode}" />
+        <apex:outputText value="{0, number, ###,###,###.00}" style="text-align:Left;">
+        <apex:param value="{!oppty.Amount}" />
+        </apex:outputText>
+        <apex:outputText value=".00" rendered="{!ISBLANK(oppty.Amount)}" >
+        <apex:param value="{!oppty.Amount}" />
+        </apex:outputText> 
+        </apex:panelgroup>
+          <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != oppty.CurrencyIsoCode)}">
+                            (
+                            <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                            
+                            <apex:outputText value="{0, number, ###,###,###.00}" >
+                            <apex:param value="{!opp.Amount}" />
+                            </apex:outputText>
+                            <apex:outputText value=".00"  rendered="{!ISBLANK(oppty.Amount)}">
+                            <apex:param value="{!oppty.Amount}" />
+                            </apex:outputText>
+                            )
+           </apex:panelgroup>
+     </td>
+   <!-- {!Oppty.Amount}</td>   -->
+    </tr>
+    
+    <tr>
+    <td class="LabelStyle">{!$Label.Account_Name}</td>
+    <td class="FieldStyle"><apex:OutputLink value="/{!oppty.Account.Id}">{!oppty.Account.Name}</apex:outputLink></td>
+    <td class="LabelStyle">{!$Label.Total_fiscal_value}</td>
+    <td class="FieldStyle">
+     <apex:panelgroup >
+        <apex:outputText value="{!oppty.CurrencyISOCode}" />
+        <apex:outputText value="{0, number, ###,###,###.00}" >
+        <apex:param value="{!oppty.Total_First_Fiscal_Yr_Value__c}" />
+        </apex:outputText>
+        </apex:panelgroup>
+        <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != oppty.CurrencyIsoCode)}">
+                        (
+                        <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                        
+                        <apex:outputText value="{0, number, ###,###,###.00}" >
+                        <apex:param value="{!opp.Total_First_Fiscal_Yr_Value__c}" />
+                        </apex:outputText>
+                        )
+        </apex:panelgroup>
+    </td>
+    </tr>
+    
+    <tr>
+    <td class="LabelStyle">{!$Label.sales_stage}</td>
+    <td class="FieldStyle">{!Oppty.StageName}</td>
+    <td class="LabelStyle">{!$Label.Total_value}</td>
+    <td class="FieldStyle">
+     <apex:panelgroup >
+                <apex:outputText value="{!oppty.CurrencyISOCode}" />
+                <apex:outputText value="{0, number, ###,###,###.00}" >
+                <apex:param value="{!oppty.Total_First_12_Month_Value__c}" />
+                </apex:outputText>
+                </apex:panelgroup>
+             <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != oppty.CurrencyIsoCode)}">
+                        (
+                        <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                        
+                        <apex:outputText value="{0, number,###,###,###.00}" >
+                        <apex:param value="{!opp.Total_First_12_Month_Value__c}" />
+                        </apex:outputText>
+                        )
+             </apex:panelgroup>
+    </td>
+    </tr>
+    
+    <tr>
+    <td class="LabelStyle">{!$Label.Close_Date}</td>
+    <td class="FieldStyle"><apex:OutputField value="{!Oppty.CloseDate}" /></td>
+    <td class="LabelStyle"></td>
+    <td class="FieldStyle"></td>
+
+    </tr>
+    
+    
+    
+    </table>
+    </apex:Panelgroup>
+    
+       
+    </apex:Panelgrid>
+    
+     
+    
+    <!--<apex:Panelgrid columns="2" border="1" style="width:100%;" >
+        <apex:Outputtext value="Opportunity Name" style="align:right;"/>
+        <apex:outputLink value="/{!Oppty.Id}"  styleclass="FieldStyle">{!Oppty.Name}</apex:outputLink>
+        <apex:OutputLabel value="Sales Stage" styleclass="LabelStyle"/>
+        <apex:OutputField value="{!Oppty.StageName}" styleclass="FieldStyle"/>
+        <apex:OutputLabel value="Close Date" />
+        <apex:OutputField value="{!Oppty.CloseDate}" />
+        <apex:OutputLabel value="Total Opportunity Value" />
+        <apex:OutputLabel value="" />
+        <apex:OutputLabel value="Total First Fiscal Year Value" />
+        <apex:OutputLabel value="" />
+        <apex:OutputLabel value="Total First 12 Month Value" />
+    </apex:panelgrid>-->
+           
+        
+        
+    <!--Opportunity Add Products Content
+    <apex:Panelgrid columns="2" border="0" styleclass="PS_Inner_table">  -->
+    
+    <apex:Panelgrid columns="1" border="0" style="width:100%;{!isAddProd}" styleclass="PS_Inner_table2" id="quickaddpanel" >
+        
+               <apex:Panelgroup >
+            <table width="100%" border="0" cellspacing="0">
+              <tr>
+                 <!--***********************BG********************-->
+                <td class="LabelStyle">
+                 <apex:outputLabel styleclass="FieldStyle">{!$Label.BG_Products}</apex:outputLabel>
+                </td>
+                <td class="FieldStyle">
+                  <apex:actionRegion >
+                  <div style="float:left;" ><img src="{!$Resource.RequiredImage}" align="left"/></div>
+                  <apex:selectList value="{!searchBusinessGroup}" style="width:160px" size="1" id="bgp" onchange="definegbupickvalue()" >
+                     <apex:selectOptions value="{!BGPicklist}" />
+                  </apex:selectList> 
+                 <apex:actionFunction name="onchangeofbgvalue"  action="{!OnchangeofBG}"  immediate="false" reRender="gb,pl,spl"/>
+               <apex:actionFunction name="allgbupicklistvalues"  action="{!GBUPicklistvalues}"  immediate="false" reRender="gb,pl,spl"/>
+                </apex:actionRegion>
+              </td>
+              
+              <!--**********************************GBU**************************-->
+              <td class="LabelStyle">
+                <apex:outputLabel >{!$ObjectType.Product2.fields.GBU__c.label} </apex:outputLabel> 
+              </td>
+              <td class="FieldStyle">
+                <apex:actionRegion >        
+                <div style="float:left;" ><img src="{!$Resource.RequiredImage}" align="left"/></div>
+                <apex:selectList value="{!searchGlobalBusinessUnit}" style="width:160px" size="1" id="gb" onchange="definebgpickvalue()">
+                    <apex:selectOptions value="{!GBUPicklist}"/>
+                </apex:selectList>
+                <apex:actionFunction name="onchangeofgbuvalue"  action="{!OnchangeOfGBU}"  immediate="false" reRender="bgp,pl,spl"/>
+                </apex:actionRegion>
+              </td>
+              </tr>
+             
+              
+              
+                
+                <!--****************************ProductLine****************-->
+                <tr>
+                <td class="LabelStyle">
+                 <apex:outputLabel >{!$ObjectType.Product2.fields.Product_Line__c.label}</apex:outputLabel>
+                </td>
+                <td class="FieldStyle">
+                 <apex:inputtext value="{!productlinename}" id="pl" style="width:160px"/>                                            
+                 <a href="#" id="link1" title="{!$Label.PL_Lookup}" tabindex="6"  onclick="modifyProductsLookup('{!$Component.gb}','{!$Component.pl}','','{!$Component.bgp}','4','add')">
+                 <img class="lookupIcon" title="{!$Label.PL_Lookup}" alt="{!$Label.Contact_Lookup}" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+                </td>
+                
+                <!--********subproductline****************-->
+              <td class="LabelStyle">
+                <apex:outputLabel >{!$ObjectType.Product2.fields.Sub_Product_Line__c.label}</apex:outputLabel>
+              </td>
+              <td class="FieldStyle">
+                
+                <apex:inputText value="{!subproductlinename}" id="spl" style="width:160px"/>                      
+                <a href="#" id="link2" title="{!$Label.SPL_Lookup}" tabindex="6"  onclick="modifyProductsLookup('{!$Component.gb}','{!$Component.pl}','{!$Component.spl}','{!$Component.bgp}','5','add')">
+                <img class="lookupIcon" title="{!$Label.SPL_Lookup}" alt="{!$Label.Contact_Lookup}" src="/s.gif" style="vertical-align:bottom"/>
+                </a>
+                
+              </td>
+              </tr>
+              
+              
+              <!--****************************Quantity****************************-->
+              <tr>
+               <td class="LabelStyle"><apex:outputLabel >{!$ObjectType.OpportunityLineItem.fields.Quantity.label}</apex:outputLabel>
+               </td>
+              <td class="FieldStyle">  
+              <div style="float:left;" ><img src="{!$Resource.RequiredImage}" align="left"/></div>
+              <apex:inputText id="quantity" value="{!quantity}" style="width:160px" />
+               </td>
+             
+             
+              
+              
+               <!--******************************Unit Price*******************-->
+              <td class="LabelStyle"> <apex:outputLabel > {!$Label.Unit_Price}</apex:outputLabel>
+              </td>
+              <td >
+              <div style="float:left;" ><img src="{!$Resource.RequiredImage}" align="left"/></div>
+                <apex:inputField value="{!opplineitem.UnitPrice}" id="unitPrice" style="width:160px" />
+              </td>
+              </tr>
+              
+              
+              
+                <!--**************************BookShip Date***********************-->
+              <tr>
+                <td class="LabelStyle"><apex:outputLabel >{!$ObjectType.OpportunityLineItem.fields.serviceDate.label}</apex:outputLabel> 
+                </td>
+                <td class="FieldStyle">
+                 
+                 <c:noDateLink id="hideDateLink">
+                  <div style="float:left;" ><img src="{!$Resource.RequiredImage}" align="left"/></div>
+                  <apex:inputField value="{!opplineitem.ServiceDate}"   id="shipDate" style="width:160px"/>
+                 </c:noDateLink>
+                </td> 
+                
+                <!-- ********************* ICOEM ***************  -->
+                <td class="LabelStyle"> <apex:outputLabel > ICOEM</apex:outputLabel>
+              </td>
+              <td >
+              <div style="float:left;" ></div>
+                <apex:inputField value="{!opplineitem.ICOEM__c}" id="ICOEM__c" style="width:20px" /> &nbsp;&nbsp;&nbsp;&nbsp; 
+              
+              
+                                
+              <!--********************Add/Clear***********-->
+              
+             <!-- <td class="LabelStyle">  -->
+          <!--<apex:actionFunction action="{!fetchOpptyStatistics}" name="fetchOpptyStatistics" rerender="opportunitypanel" status="saving"/> 
+              <apex:actionFunction action="{!newOpptyStatistics}" name="calculateAmounts" rerender="opportunitypanel" status="calculating"/> -->
+
+             <apex:commandButton id="add" value="{!$Label.Add}" action="{!SaveLinteItem}" style="width:50px" rendered="{!(NOT(noAccessFlag))}" reRender="opportunitypanel,exceptionPanel,existingProductsBlock,quickaddpanel,oliTable,inactive" status="adding"/>
+              &nbsp;&nbsp;&nbsp;
+              <apex:commandButton id="clearSearch" value="{!$Label.Clear}" action="{!Clearquickaddsection}" rendered="{!(NOT(noAccessFlag))}" style="width:50px" reRender="quickaddpanel"/></td>
+              
+              </tr>
+            
+            </table> 
+              
+        </apex:Panelgroup>      
+   
+<!-- </apex:Panelgrid>  -->
+<apex:inputHidden value="{!opplineitem.priceBookEntryId}" id="pricebookId"/>
+</apex:Panelgrid>
+
+<apex:Panelgrid columns="1" border="0" style="width:0%;" styleclass="PS_table">
+      
+</apex:panelgrid>
+</apex:panelGrid>
+
+<!--Opportunity Edit and Delete Section-->
+<apex:Panelgrid columns="1" border="0" style="width:100%;table-layout:fixed">
+    <!--Opportunity Edit and Delete Section Grid-->
+    <apex:Panelgrid columns="2" border="0" styleclass="PS_table" style="width:100%;table-layout:fixed">
+     <apex:OutputLabel value="{!$Label.Manage_Products_Services}"  styleclass="PS_Header"/>
+     <div style="text-align: right;">
+       <a href="#" onclick=" window.open('/apex/ManageProdHelp','popup','height=350,width=900,left=150,top=100,resizable=no,titlebar=no,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,status=no,url=no')">Help</a> 
+    </div>
+    </apex:Panelgrid>
+    <!--Opportunity Edit Products Content-->
+    <apex:Panelgrid columns="1" border="0" style="width:100%;table-layout:fixed">
+
+    <!----------------- Product Search -------------------------->
+
+        <apex:pageBlock id="existingProductsBlock" rendered="{!allProductsFlag}" mode="edit">
+            <!-- Search Panel for existing Line items-->
+                
+                
+            <!-- Commented by Deepak Saxena OMPM Renewal 3.0 as it was showing None because of Stop Text in action status -->
+            <!-- <apex:actionStatus id="counterStatus"  startText=" ({!$Label.Rendering})"  stopText="{!searchExistingGlobalBusinessUnit}"/>  --> 
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.Apply_Programs}" action="{!applyPrograms}" rendered="{!ProgramVisibilityFlag}" /> 
+                <apex:commandButton value="{!$Label.Save}" onclick="saveObject()"  rerender="opportunitypanel,productPage:productForm:amountid" style="width:70px;"  rendered="{!(NOT(noAccessFlag))}" />
+                <apex:commandButton value="{!$Label.Retain}" onclick="LockKeep()" rerender="opptyValues" style="width:70px;"  rendered="{!IF(CONTAINS($Profile.Name, 'Partner') || !showRetain ,False, True)}"/>
+                <apex:commandButton value="{!$Label.Release}"  onclick="ReleaseKeep()" rerender="opptyValues" style="width:70px;"  rendered="{!IF(CONTAINS($Profile.Name, 'Partner') || !showRetain,False, True)}"/>
+                <apex:commandButton value="{!$Label.Delete}" onclick="deleteObjectButton();" rerender="opptyValues,inactive" style="width:70px;"  rendered="{!(NOT(noAccessFlag))}"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancelUpdate}" rerender="existingProductsBlock,opptyValues,inactive" style="width:70px;" status="refreshing" rendered="{!(NOT(noAccessFlag))}" oncomplete="setcheckcountzero();"/>
+                <apex:commandButton value="{!$Label.Filter_By}" rerender="doSearch" style="width:70px;" rendered="{!(NOT(noAccessFlag))}" onclick="showSearch()" />
+                <apex:commandButton value="{!$Label.Mass_Book_Ship_Date_Update}" rerender="dateDiv" style="width:200px;" onclick="showDateSection()"  rendered="{!(NOT(noAccessFlag))}"/>
+                
+                
+            </apex:pageBlockButtons>
+            
+            <!-- Section for bulk update of book/ship date-->
+            <div id= "doSearch" style="float:left;width:100%;display:none;">
+                <apex:outputPanel id="existingSearchPanel"  styleClass="searchPanelCls" layout="block" rendered="{!existingProductsFilterFlag}" style="white-space: nowrap;">
+                    
+                    <apex:panelGrid columns="20" cellspacing="5"  frame="box" style="margin-left:00px;background-color:#FFFFFF;width:100%">
+                        <apex:panelGroup >
+                        <apex:outputLabel for="searchExistingBusinessGroup" style="margin-left:00px;">
+                            <strong>{!$Label.Business_Group}</strong>
+                        </apex:outputLabel>
+                        <apex:selectList value="{!searchExistingBusinessGroup}" size="1" id="searchExistingBusinessGroup" onchange="searchingOnBG();">
+                            <apex:selectOptions value="{!BGPicklistExist}"  />
+                        </apex:selectList>
+                        
+                        &nbsp;
+                        &nbsp;
+                        <apex:outputLabel for="searchExistingGlobalBusinessUnit">
+                            <strong>{!$Label.Global_BU}</strong>
+                        </apex:outputLabel>
+                        
+                        <apex:selectList value="{!searchExistingGlobalBusinessUnit}" size="1" id="searchExistingGlobalBusinessUnit" onchange="searchingOnGBU();" >
+                            <apex:selectOptions value="{!GBUPicklistExist}"  />
+                             <apex:actionSupport event="onchange"  rerender="SBUnit" status="counterStatus"/>                  
+                        </apex:selectList>
+                        &nbsp;
+                        &nbsp;
+                        
+                       <!-- <apex:outputLabel for="SBUnit">
+                                <strong>{!$Label.Program_Promotion} : </strong>
+                            </apex:outputLabel>
+                        <apex:selectList value="{!SBUnit}" size="1" id="SBUnit" disabled="{ISNULL(searchExistingGlobalBusinessUnit)}"> >
+                               <apex:selectOptions value="{!ProgramPicklist}">
+                               </apex:selectOptions>
+                        </apex:selectList> -->
+                        
+                                              
+                        <apex:outputLabel value="{!$Label.Product_line}" styleClass="searchLabelCls" style="font-weight : bold;"/>
+                        <apex:inputText id="PLSearch" value="{!searchExistingProductLine}" onkeypress="" style="width:150px" /> 
+                        &nbsp;
+                        &nbsp;
+                        
+                        <apex:outputLabel value="{!$Label.Sub_product_line}" styleClass="searchLabelCls" style="font-weight : bold;"/>
+                        <apex:inputText id="SPLSearch" value="{!searchExistingSubProductLine}" onkeypress="" style="width:150px"/>  
+                        
+                        <BR></BR>
+                        <BR></BR>
+                                   
+                        <span Class="searchspanCls">
+                            <apex:commandButton id="goSearch" value="{!$Label.Go}" rerender="oliPanel" status="searching" style="width:50px" oncomplete="productServiceSeperation()" action="{!clearquickaddrecord}">
+                            </apex:commandButton>
+                            &nbsp;&nbsp;
+                            <apex:commandButton id="clearSearch" value="{!$Label.Clear}" action="{!clearAllSearch}" reRender="searchExistingBusinessGroup,searchExistingGlobalBusinessUnit,PLSearch,SPLSearch,oliPanel" style="width:50px" oncomplete="productServiceSeperation()">
+                            </apex:commandButton>
+                            &nbsp;&nbsp;
+                            <apex:commandButton id="closeSearch" value="{!$Label.Close}" action="{!closeAllSearch}" rerender="existingProductsBlock" style="width:50px" oncomplete="productServiceSeperation()">
+                            </apex:commandButton>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                            <apex:outputText value="{!$Label.Use_fields_to_filter_existing_line_items}" style="font-style:italic"/>
+                        </span>
+                        <!--&nbsp;-->
+                      </apex:panelGroup>  
+                    </apex:panelGrid>   
+                </apex:outputPanel>
+                </div>
+                
+                 
+           <apex:actionStatus id="closing">
+                <apex:facet name="start">
+                    <img src="{!$Resource.AjaxAnimation}" />
+                </apex:facet>
+           </apex:actionStatus>
+           &nbsp;
+            
+            <!-- Section for bulk update of book/ship date-->
+            <div id= "dateDiv" style="float:left;width:100%;display:none;">
+                <apex:outputPanel id="bsDatePanel">
+                
+                    <apex:panelGrid columns="8" cellspacing="2" style="background-color:#FFFFFF" frame="box" id="grid">
+                        <apex:outputLabel value="*Please select type of action" styleClass="searchLabelCls" style="font-weight : bold; margin-left:0px;" />
+                        &nbsp;&nbsp;&nbsp;
+                        
+                        <apex:panelGrid columns="1"  >
+                     <apex:panelGroup >
+                <Strong>
+                <apex:selectRadio value="{!filters}" onclick="showmasterDate()" id="massbookshipdateRadio">
+                    <apex:selectOption itemValue="updateboksh" itemLabel="Update Book/Ship Date" />
+                    <apex:selectOption itemValue="moveboksh" itemLabel="Increment Book/Ship Date  (by Days)"/>
+                </apex:selectRadio>
+                </Strong>
+                </apex:panelGroup>
+            </apex:panelGrid>
+                        <c:noDateLink id="datelink">
+                            <apex:inputField id="masterDate" value="{!testOpptyProduct.ServiceDate}" style="font-weight:bold;"/>
+                        </c:noDateLink>
+                        <apex:inputField id="masterDatemove" value="{!testOpptyProduct.Add_days_to_BookShip_Date__c}" style="font-weight:bold;width:50px"/>
+                        &nbsp;
+                        <span Class="searchspanCls">
+                            <apex:commandButton id="btnUpdate" value="{!$Label.Update_product}" rerender="opptyValues"  onclick="populateDate()" oncomplete="showDateSection()"  style="margin-left:60px;width:70px">
+                            </apex:commandButton>
+                            <apex:commandButton id="btnCancel" value="{!$Label.Exit_product}" onclick="showDateSection()" rerender="dateDiv" style="width:70px">
+                            </apex:commandButton>
+                        </span>
+                    </apex:panelGrid>
+                </apex:outputPanel>
+           </div>
+           
+           
+          
+           
+           <!-- Error panel: Successful + Failed Operations displayed here with relevant messages-->
+            <div id= "error" style="float:left;width:100%;display:block;">
+                <div id= "msgDiv" style="float:left;width:100%;display:block;">
+                   <apex:outputPanel id="exceptionPanel">  
+                                 
+                       <apex:commandLink value=" {!$Label.Close_Message}" id="cmdlnk" rendered="{!((isEdittedFlag) || (isDeletedFlag) || (isEditFailureFlag) || (isDeleteFailureFlag)  || (isInsertedFlag)  || (isInsertFailureFlag) ||(isDeleteBeforeInsertFlag)  || (isDeleteBeforeInsertFailureFlag)|| (isInsertAfterDeleteFlag) || (isInsertAfterDeleteFailureFlag) || (isOrphanFlag)||(Islineiteminserted)||(Isiteminsertfailed))}" rerender="opptyValues" onclick="hideMessages()"/>
+                      <apex:commandLink value="{!$Label.Close_Message}" id="cmdlnk1" style="display:none;" rendered="{!(NOT((isEdittedFlag) || (isDeletedFlag) || (isEditFailureFlag) || (isDeleteFailureFlag)  || (isInsertedFlag)  || (isInsertFailureFlag) ||(isDeleteBeforeInsertFlag)  || (isDeleteBeforeInsertFailureFlag)|| (isInsertAfterDeleteFlag) || (isInsertAfterDeleteFailureFlag) || (isOrphanFlag)||(Islineiteminserted)||(Isiteminsertfailed)))}" rerender="opptyValues" onclick="hideMessages()"/>
+                       <apex:outputLabel id="warnmsg" style="display:none;">
+                           <apex:pageMessage summary="{!$Label.Updates_to_Book_Ship_Date_Message}" severity="
+                           
+                           
+                           " strength="3" />
+                       </apex:outputLabel> 
+                       <apex:pageMessage summary="{!$Label.Successful_Message}" severity="confirm" strength="2" rendered="{!((isEdittedFlag) || (isDeletedFlag) || (isInsertedFlag)  || (isDeleteBeforeInsertFlag)  || (isInsertAfterDeleteFlag)||(Islineiteminserted))}">
+                            <apex:outputPanel rendered="{!isDeletedFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Deletion_Success}</b></FONT>
+                                <apex:dataList value="{!listDeleteSuccess}" var="a">{!a}</apex:dataList> <br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!isEdittedFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Updation_Success}</b></FONT>
+                                <apex:dataList value="{!listEditSuccess}" var="b">{!b}</apex:dataList> <br/>
+                               
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!isInsertedFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Insertion_Success}</b></FONT>
+                                <apex:dataList value="{!listInsertSuccess}" var="c">{!c}</apex:dataList> <br/>
+                            </apex:outputPanel>
+                            <!-- Added for R4-->
+                     <!-- <apex:pageMessage summary="{!$Label.Inactive_Warning}" severity="" strength="2" rendered="{!(isInactvieProduct=true)}"/>        -->
+                              <apex:outputPanel rendered="{!Islineiteminserted}">
+                               &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Insertion_Success}</b></FONT>
+                               {!opplineitemname}<br/>
+                                </apex:outputPanel>
+                            
+                            <!--R4 functionality ends here-->
+                            <!--<apex:outputPanel rendered="{!isDeleteBeforeInsertFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>Disassociation Success: </b></FONT>
+                                <apex:dataList value="{!listDisassociateSuccess}" var="d">{!d}</apex:dataList> <br/>
+                            </apex:outputPanel>-->
+                            <apex:outputPanel rendered="{!isInsertAfterDeleteFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Association_Success}</b></FONT>
+                                <apex:dataList value="{!listAssociationSuccess}" var="e">{!e}</apex:dataList> <br/>
+                            </apex:outputPanel>
+                        </apex:pageMessage>
+                        
+                      
+                           
+                           
+                        
+                        <apex:pageMessage summary="{!$Label.Operation_Failed}" severity="Error" strength="2" rendered="{!((isEditFailureFlag) || (isDeleteFailureFlag) || (isInsertFailureFlag)  || (isDeleteBeforeInsertFailureFlag)  || (isInsertAfterDeleteFailureFlag)||(Isiteminsertfailed))}">
+                            <apex:outputPanel rendered="{!isDeleteFailureFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Deletion_Failure}</b></FONT>
+                                <apex:dataList value="{!listDeleteFailure}" var="a">{!a}</apex:dataList> <br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!Isiteminsertfailed}">
+                            <FONT COLOR="black" SIZE="2"><b>{!$Label.Insertion_Failure}</b></FONT>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!isEditFailureFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Updation_Failure}</b></FONT>
+                                <apex:dataList value="{!listEditFailure}" var="b">{!b}</apex:dataList> <br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!isInsertFailureFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Insertion_Failure}</b></FONT>
+                                <apex:dataList value="{!listInsertFailure}" var="c">{!c}</apex:dataList> <br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!isDeleteBeforeInsertFailureFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Disassociation_Failure} </b></FONT>
+                                <apex:dataList value="{!listDisassociateFailure}" var="d">{!d}</apex:dataList> <br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!isInsertAfterDeleteFailureFlag}">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<FONT COLOR="black" SIZE="2"><b>{!$label.Association_Failure}</b></FONT>
+                                <apex:dataList value="{!listAssociationFailure}" var="e">{!e}</apex:dataList> <br/>
+                            </apex:outputPanel>
+                        </apex:pageMessage>
+                        <!--<apex:pagemessages id="pm"/> -->
+                        <apex:pagemessages id="pm" escape="false"/> 
+
+                    </apex:outputPanel>
+                </div>
+            </div>
+            <!--R6-sudhakar code for inactive watning message -->
+              <apex:outputPanel id="inactive" rendered="{!(isInactvieProduct)}">
+                            <b style="color:red;font-size:125%;  margin-left:300px;">"Warning:</b>
+                             <b style="color:red;font-size:100%;">{!$Label.Inactive_Warning} <apex:image value="{!($Resource.Inactive)}" style="width:15px"/>{!$Label.Inactive_Warning2}</b>
+                           
+              </apex:outputPanel>
+                      
+            
+            <!-- Line items displayed here-->
+            <apex:outputPanel id="oliPanel" layout="block" style="overflow:auto;width:100%;">
+                <apex:actionStatus id="adding">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2"><b><i>{!$label.Adding_Row}</i></b></FONT>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="deleting">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2"><b><i>{!$Label.Deleting_Records}</i></b></FONT>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="sorting">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2"><b><i>{!$label.Sort_Record}.</i></b></FONT>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="clearing">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2"><b><i>{!$Label.Please_Wait}</i></b></FONT>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="searching">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}"/>
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2" style="padding-bottom:100px;padding-right:2px;padding-left:2px"><b><i>{!$Label.Displaying_Searched_Records}</i></b></FONT>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="saving">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2"><b><i>{!$Label.Updating_Records}</i></b></FONT>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="refreshing">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}" />
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2"><b><i>{!$Label.Refreshing_Records}</i></b></FONT>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="calculating">
+                <apex:facet name="start">
+                    <img src="{!$Resource.AjaxAnimation}" />
+                    &nbsp;&nbsp;
+                    <FONT COLOR="black" SIZE="2"><b><i>{!$label.Update_Values}</i></b></FONT>
+                    <br/><br/>
+                </apex:facet>
+            </apex:actionStatus>
+                
+             <apex:outputlabel style="padding-left: 75.5%;">
+                    <apex:commandLink id="clink0" value="{!action0} {!$Label.RTS_Specific_Information_Section}" style="background-color :#F8F8F8; color:black;font-size:11px;font-weight:bold;width:100px;" oncomplete="productServiceSeperation()" onclick="setcheckcountzero();" action="{!displayRTSInfo}" rerender="oliPanel" status="expanding" rendered="{!collapsibleFlag0}">
+                      <apex:actionStatus id="expanding0">
+                        &nbsp;
+                        <apex:facet name="start">
+                           <img src="{!$Resource.AjaxAnimation}" />
+                       </apex:facet>
+                      </apex:actionStatus>
+                    </apex:commandLink>
+             </apex:outputlabel>
+                    <br/>
+             <apex:outputlabel style="padding-left: 75.5%;">
+                    <apex:commandLink id="clink" value="{!action} {!$Label.ES_Specific_Information_Section}" style="background-color :#F8F8F8; color:black;font-size:11px;font-weight:bold;" action="{!displayEsInfo}" oncomplete="productServiceSeperation()" onclick="setcheckcountzero();" rerender="oliPanel" status="expanding" rendered="{!collapsibleFlag}">
+                      <apex:actionStatus id="expanding">
+                    &nbsp;
+                        <apex:facet name="start">
+                            <img src="{!$Resource.AjaxAnimation}" />
+                        </apex:facet>
+                      </apex:actionStatus>
+                    </apex:commandLink>
+             </apex:outputlabel>
+                    <br/>
+                
+                <apex:pageBlockTable value="{!OpportunityLineItems[selectedPage]}" var="oli" id="oliTable" captionclass="CaptionClass" style="width:1280px;">
+                    <apex:facet name="caption" >
+                    <b>Use action link to edit</b>
+                    
+                    </apex:facet>
+                    &nbsp;   
+                    
+                    <apex:column rendered="{!(NOT(noAccessFlag))}" styleClass="HeaderStyle" style="width:40px;">
+                        <apex:facet name="header" >                            
+                            <apex:panelgroup >
+                            <apex:inputCheckbox id="masterBox" value="{!masterCheckboxFlag}"  > 
+                                <apex:actionSupport event="onclick" onsubmit="enableAllFields();" reRender=""/>
+                            </apex:inputCheckbox>
+                            
+                            <apex:Outputlabel value="Action" />
+                            </apex:panelgroup>
+                        </apex:facet>
+                         <apex:inputCheckbox value="{!oli.selected}" id="selectedOli" rendered="{! oli.oli.productName__c!= '1052 - Outside Segment Elimination Entrepreneur'}">
+                             <apex:actionSupport event="onclick" onsubmit=" enableFieldsbyCheckbox('{!$Component.selectedOli}'); changeText('{!$Component.selectedOli}', 'input');" reRender=""/>
+                             
+                          </apex:inputCheckbox> 
+                            <apex:outputpanel rendered="{! oli.oli.productName__c!= '1052 - Outside Segment Elimination Entrepreneur'}">
+                            <a href="#" class="actionLink" style="color:blue;" id='{!$Component.selectedOli}:Edit' onclick=" enableFieldsbyCheckbox('{!$Component.selectedOli}', true); changeText('{!$Component.selectedOli}', 'link'); return false;">Edit</a>
+                            </apex:outputpanel>
+                        <!--<apex:commandLink styleClass="actionLink" style="color:blue" id='{!$Component.selectedOli}:Edit' title="edit" value="{!$Label.Edit}" onclick="" />
+                            <apex:actionSupport event="onclick" onsubmit="enableFieldsbyCheckbox('{!$Component.selectedOli}')" reRender=""/>-->
+                        <apex:inputHidden value="{!oli.isNew}" id="newProduct"/>
+                        <apex:inputHidden value="{!oli.isService}" id="isService"/>
+                        <apex:inputHidden value="{!oli.existingBusinessGroup}" id="hiddenBG"/>
+                        <apex:inputHidden value="{!oli.priceBookEntryId}" id="pbeId"/>
+                        <apex:inputHidden value="{!oli.oli.ProductName__c}" id="ProdName"/>
+                        <apex:inputHidden value="{!oli.oli.ICOEM__c}" id="icoem"/>  
+                        <apex:OutputText value=" | " style="color:blue" rendered="{! oli.oli.productName__c!= '1052 - Outside Segment Elimination Entrepreneur'}"/>  
+                        <!--<a href="#" class="actionLink" style="color:blue;" onClick="return deleteObject(true,'{!$Component.selectedOli}'); false;">{!$Label.Del}</a>-->
+                       <!--<apex:commandLink styleClass="actionLink" style="color:blue" id="DelCommandLink" value="{!$Label.Del}" onclick="return deleteObject(true,'{!$Component.selectedOli}');" rendered="{!(NOT(noAccessFlag))}" reRender="oliTable,opportunitypanel">-->
+                       <apex:commandLink styleClass="actionLink" style="color:blue" id="DelCommandLink" value="Del" onclick="return deleteObject(true,'{!$Component.selectedOli}');" rendered="{!(NOT(noAccessFlag)) && oli.oli.productName__c!= '1052 - Outside Segment Elimination Entrepreneur' }" reRender="oliTable,opportunitypanel,inactive">
+                         <!--apex:actionSupport event="onclick" onsubmit="return deleteObject(true,'{!$Component.selectedOli}');" rendered="{!(NOT(noAccessFlag))}" reRender="oliTable,opportunitypanel"-->
+                         
+                        </apex:commandLink>
+                        <apex:OutputText value=" | " style="color:blue" rendered="{! oli.oli.productName__c!= '1052 - Outside Segment Elimination Entrepreneur'}"/> 
+                        <apex:commandLink styleClass="actionLink" style="color:blue" action="/{!oli.oli.id}"  value="Sch" id="SchCommandLink" rendered="{! oli.oli.productName__c!= '1052 - Outside Segment Elimination Entrepreneur'}">
+                        
+                      </apex:commandLink> 
+                      
+                      <!--<apex:commandLink styleClass="actionLink" style="color:blue;visibility:hidden;" title="save" value="{!$Label.Save}" id="theCommandLinksave" reRender="oliTable,opportunitypanel">
+                       </apex:commandLink>-->
+                    </apex:column>
+                    <!-- <apex:column >
+                        <apex:inputHidden value="{!oli.isService}" id="isService"/>
+                    </apex:column>-->
+                    
+                    
+                     <!-- Added By Sudhakar R6 -->
+                    
+                  <apex:column headerValue="" width="15px" >
+                       
+                        <apex:image id="status" value="{!if(!oli.isActive!=false,$Resource.Inactive,null)}" style="width:20px" /> <!-- rendered="if({!oli.productlevel}=='4',true,false)"  -->
+                        <script>
+                            if('{!oli.selected}'!= 'true'){
+                                
+                                document.getElementById('{!$Component.status}').disabled = true;
+                                
+                                 }
+                        </script>
+                    </apex:column>
+                   <!--  End-Added By Sudhakar R6 -->
+                  
+                    
+                    <apex:column value="{!oli.existingBusinessGroup}"  headerValue="{!$Label.BG_Products}" id="bgp" style="width:30px;white-space: nowrap;" /> 
+                     
+                    <apex:column headerValue="{!$Label.Business_Unit}" style="width:150px;white-space: nowrap;">
+                    <img src="{!$Resource.RequiredImage}" />
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewData}" value="{!$Label.GBU_product} {!IF(sortExpression=='PricebookEntry.Product2.GBU__c',IF(sortDirection='ASC','?','?'),'')}" oncomplete="productServiceSeperation()" reRender="oliPanel" status="sorting">
+                            <apex:param value="PricebookEntry.Product2.GBU__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <!-- apex:inputText value="{!oli.existingGlobalBusinessUnit}" id="gb" style="width:150px" onmousedown="displayMessage()" -->   
+                        <apex:selectList value="{!oli.existingGlobalBusinessUnit}" size="1"  id="gb" onchange="NullifyPLSubPL('{!$Component.gb}','{!$Component.selectedOli}')" style="width:140px" title="{!oli.existingGlobalBusinessUnit}">
+                        <apex:selectOptions value="{!oli.gbuPickvalues}" />   
+                        </apex:selectList>                    
+                            <!-- a href="#" id="link" title="{!$Label.GBU_Lookup}" tabindex="6" onclick="modifyProductsLookup('{!$Component.gb}','','','{!$Component.bgp}','2')">
+                            <img class="lookupIcon" title="{!$Label.GBU_Lookup}" alt="{!$Label.Contact_Lookup}" src="/s.gif"/><a  -->                        
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.gb}').disabled = true;
+                            }
+                        </script>
+                    </apex:column> 
+                     
+                    <apex:column headerValue="{!$ObjectType.Product2.fields.Product_Line__c.label}" style="width:135px;white-space: nowrap;">  
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewData}" value="{!$ObjectType.Product2.fields.Product_Line__c.label}{!IF(sortExpression=='PricebookEntry.Product2.Product_Line__c',IF(sortDirection='ASC','?','?'),'')}" oncomplete="productServiceSeperation()" reRender="oliPanel" status="sorting">
+                            <apex:param value="PricebookEntry.Product2.Product_Line__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>                                          
+                        <apex:inputText value="{!oli.existingProductLine}" id="pl" style="width:130px" onmousedown="displayMessage()" title="{!oli.existingProductLine}"/>                                            
+                            <a href="#" id="link1" title="{!$Label.PL_Lookup}" tabindex="6"  onclick="modifyProductsLookup('{!$Component.gb}','{!$Component.pl}','','{!$Component.bgp}','4','edit')">
+                            <img class="lookupIcon" title="{!$Label.PL_Lookup}" alt="{!$Label.Contact_Lookup}" src="/s.gif"/></a>                     
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.pl}').disabled = true;                                
+                            }
+                        </script>                      
+                    </apex:column>                     
+                    <apex:column headerValue="{!$ObjectType.Product2.fields.Sub_Product_Line__c.label}" style="width:135px;white-space: nowrap;">
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewData}" value="{!$ObjectType.Product2.fields.Sub_Product_Line__c.label}{!IF(sortExpression=='PricebookEntry.Product2.Sub_Product_Line__c',IF(sortDirection='ASC','?','?'),'')}" oncomplete="productServiceSeperation()" reRender="oliPanel" status="sorting">
+                            <apex:param value="PricebookEntry.Product2.Sub_Product_Line__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:inputText value="{!oli.existingSubProductLine}" id="spl" style="width:130px" onmousedown="displayMessage()" title="{!oli.existingSubProductLine}"/>                      
+                            <a href="#" id="link2" title="{!$Label.SPL_Lookup}" tabindex="6"  onclick="modifyProductsLookup('{!$Component.gb}','{!$Component.pl}','{!$Component.spl}','{!$Component.bgp}','5','edit')">
+                            <img class="lookupIcon" title="{!$Label.SPL_Lookup}" alt="{!$Label.Contact_Lookup}" src="/s.gif"/></a>                        
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.spl}').disabled = true;
+                            }
+                        </script>
+                    </apex:column>
+                    <!--<apex:column >
+                        <apex:inputHidden value="{!oli.existingBusinessGroup}" id="hiddenBG"/>
+                    </apex:column> -->
+                    <apex:column value="{!oli.oli.Contract__c}"  headerValue="{!$Label.Contract_product}" id="con" rendered="{!IsRecordType}"/>
+                     /* For Retain Flag by shaijan Thomas on 9/27/2012 */ 
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Keep__c.label}" rendered="{!showRetain}">
+                            <apex:inputField value="{!oli.oli.Keep__c}"  id="keep" />
+                            <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.keep}').disabled = true;
+                            }
+                        </script>  
+                    </apex:column>
+                     /* For Retain Flag by shaijan Thomas on 9/27/2012 */
+                 <!--   <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.serviceDate.label}">
+                        <c:noDateLink id="hideDateLink">
+                            <apex:inputField value="{!oli.oli.ServiceDate}"  id="shipDate" onchange="displayMessageforScheduleDate();" />
+                            <script>
+                                if('{!oli.selected}' != 'true'){
+                                    document.getElementById('{!$Component.shipDate}').disabled = true;
+                                }
+                            </script>
+                        </c:noDateLink>
+                    </apex:column> -->
+                    <!-- Add this code for scopetype by sudhakar in R6 -->
+                    <apex:column headerValue="{!$Label.Scope_Type}" id="sct" style="width:40px" >
+                        <apex:selectList value="{!oli.oli.scope_type__c}" size="1" id="scopepick" rendered="{!if((oli.existingBusinessGroup =='ES' || oli.existingBusinessGroup =='HP Software'),true,false)}">
+                            <apex:selectOptions value="{!oli.scopetypePickVals}"/>                 
+                        </apex:selectList>
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                if(document.getElementById('{!$Component.scopepick}')!=null){
+                                    document.getElementById('{!$Component.scopepick}').disabled = true;
+                                }
+                            }
+                        </script>
+                        
+                    </apex:column>  
+                   <!-- Add this code for req 4304 -->
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.serviceDate.label}" style="width:60px;white-space: nowrap;">
+                    <img src="{!$Resource.RequiredImage}" align="left" />
+                     <apex:facet name="header">
+            
+                            <apex:commandLink action="{!ViewData}" value="{!$ObjectType.OpportunityLineItem.fields.serviceDate.label}{!IF(sortExpression=='OpportunityLineItem.serviceDate',IF(sortDirection='ASC','?','?'),'')}" oncomplete="productServiceSeperation()" reRender="oliPanel" status="sorting">
+                            <apex:param value="OpportunityLineItem.serviceDate" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <c:noDateLink id="hideDateLink">
+                            <apex:inputField value="{!oli.oli.ServiceDate}"  id="shipDate" onchange="displayMessageforScheduleDate('{!$Component.selectedOli}');" />
+                            <script>
+                                if('{!oli.selected}' != 'true'){
+                                    document.getElementById('{!$Component.shipDate}').disabled = true;
+                                }
+                            </script>
+                        </c:noDateLink>
+
+                    </apex:column> 
+                    
+                    
+                    <apex:column headerValue="{!$Label.Schedule}" id="sch" style="width:40px">
+
+                      <apex:outputField value="{!oli.oli.HasSchedule}" /> 
+                      <!--<img src="{!$Resource.schedule}"/>-->                  
+                      <apex:commandLink action="/{!oli.oli.id}"  value="" rendered="{!!oli.oli.HasSchedule}">
+                       <!-- <apex:image value="{!$Resource.schedule}" height="15px" width="10px"/>-->
+                      </apex:commandLink>
+                      
+                        
+                    </apex:column>
+                    <apex:column style="width:55px;white-space: nowrap;">
+                    <img src="{!$Resource.RequiredImage}" />
+                        <apex:facet name="header">
+                                <apex:OutputText value="{!$Label.Unit_Price}" title="{!$ObjectType.OpportunityLineItem.Fields.UnitPrice.inlineHelpText}" />
+                            </apex:facet>
+                            
+                        <apex:inputField value="{!oli.oli.UnitPrice}" id="unitPrice" style="width:50px"/>
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                            
+                                document.getElementById('{!$Component.unitPrice}').disabled = true;
+                                
+                            }
+                        </script>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Quantity.label}" >
+                        <!--apex:outputField id="disabledQuantity" value="{!oli.oli.Quantity}" rendered="{!oli.oli.HasSchedule}"-->
+                        <apex:inputField value="{!oli.oli.Quantity}" id="quantity" style="width:50px"/>
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                
+                                document.getElementById('{!$Component.quantity}').disabled = true;                                
+                                
+                            }
+                        </script>
+                    </apex:column>
+                    <apex:column value="{!oli.oli.Subtotal}" style="text-align:right;width:150px;white-space: nowrap;">
+                        <apex:facet name="header">
+                            <apex:outputPanel id="dat" style="float:right;">{!$Label.Subtotal_product}</apex:outputPanel>
+                        </apex:facet>
+                    </apex:column>
+                     <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Attach__c.label}">
+                        <apex:inputField value="{!oli.oli.Attach__c}" id="att" style="width:30px" />
+
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.att}').disabled = true;
+                            }
+                        </script>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.ICOEM__c.label}">
+                        <apex:inputField value="{!oli.oli.icoem__c}" id="icoem1" style="width:30px" />
+
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.icoem1}').disabled = true;
+                            }
+                        </script>
+                    </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.First_12_Month_Value__c.label}">
+                        <apex:inputField value="{!oli.oli.First_12_Month_Value__c}" id="monthVal" style="width:100px"/>
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.monthVal}').disabled = true;
+                            }
+                        </script>
+                    </apex:column>
+                    <!--<apex:column >
+                        <apex:inputHidden value="{!oli.isNew}" id="newProduct"/>
+                    </apex:column> -->
+                    <apex:column headerValue="{!$Label.FFYR}" style="width:80px;"  rendered="{!EsSpecificFlag}">
+                        <apex:inputField value="{!oli.oli.First_Fiscal_Year_Value__c}" id="firstValue" style="width:70px;"/>
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.firstValue}').disabled = true;
+                            }
+                        </script>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Margin_Amount__c.label}" rendered="{!EsSpecificFlag}" style="">
+                        <apex:inputField value="{!oli.oli.Margin_Amount__c}" id="margin" style="width:80px"/>
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.margin}').disabled = true;
+                            }
+                        </script>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.FFYR_Margin_Amount__c.label}" rendered="{!EsSpecificFlag}" style="">
+                        <apex:inputField value="{!oli.oli.FFYR_Margin_Amount__c}" id="FFYRmargin" style="width:80px"/>
+                        <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.FFYRmargin}').disabled = true;
+                            }
+                        </script>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Start_Date__c.label}" style="width:50px;" rendered="{!EsSpecificFlag}">
+                        <c:noDateLink id="startDateHide">
+                            <apex:inputField value="{!oli.oli.Start_Date__c}" id="startDate"/>
+                            <script>
+                                if('{!oli.selected}' != 'true'){
+                                    document.getElementById('{!$Component.startDate}').disabled = true;
+                                }
+                            </script>
+                        </c:noDateLink>
+                    </apex:column>
+                                       
+                                 
+            <!-- OMPM R3 Renewals------- Owner: Deepak Saxena------  Open -->
+                     <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.RTS__c.label}" style="width:50px;" rendered="{!RTSSpecificFlag}">
+                            <apex:inputField value="{!oli.oli.RTS__c}" id="rts">
+                                 <script>
+                            if('{!oli.selected}' != 'true'){
+                                document.getElementById('{!$Component.rts}').disabled = true;
+                            }
+                              </script>
+                                <apex:actionSupport event="onclick"  onsubmit="enableFieldsbyCheckbox2('{!$Component.rts}')"  reRender=""/>
+                            </apex:inputField>
+                         </apex:column>
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.RTS_Component__c.label}" style="width:50px;" rendered="{!RTSSpecificFlag}">
+                                                       
+                            <apex:inputText value="{!oli.RTSComponent}" id="rtsComponent" />
+                            <script>
+                                if('{!oli.oli.RTS__c}' != 'true'){
+                                    document.getElementById('{!$Component.rtsComponent}').disabled = true;
+                                }
+                            </script>
+                         
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Win_Back__c.label}" style="width:50px;" rendered="{!RTSSpecificFlag}">
+                            <apex:inputField value="{!oli.oli.Win_Back__c}" id="rtsWinBack"/>
+                            <script>
+                                if('{!oli.oli.RTS__c}' != 'true'){
+                                    document.getElementById('{!$Component.rtsWinBack}').disabled = true;
+                                }
+                            </script>
+                         
+                    </apex:column>
+                    
+             <!-- OMPM R3 Renewals------- Owner: Deepak Saxena------  Close -->
+             
+                    <!-- <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.RTS_Start_Date__c.label}" style="width:50px;background-color :#F8F8F8;" rendered="{!RTSSpecificFlag}">
+                            <apex:inputField value="{!oli.oli.RTS_Start_Date__c}" id="rtsStartDate"/>
+                         
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.RTS_End_Date__c.label}" style="width:50px;background-color :#F8F8F8;" rendered="{!RTSSpecificFlag}">
+                            <apex:inputField value="{!oli.oli.RTS_End_Date__c}" id="rtsEndDate"/>  
+                         
+                    </apex:column> -->
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.End_Date__c.label}" style="width:50px;" rendered="{!EsSpecificFlag}">
+                        <c:noDateLink id="endDateHide">
+                            <apex:inputField value="{!oli.oli.End_Date__c}" id="endDate"/>
+                            <script>
+                                if('{!oli.selected}' != 'true'){
+                                    document.getElementById('{!$Component.endDate}').disabled = true;
+                                }
+                            </script>
+                        </c:noDateLink>
+                    </apex:column>
+                    <!--<apex:column >
+                        <apex:inputHidden value="{!oli.priceBookEntryId}" id="pbeId"/>
+                    </apex:column>-->
+                </apex:pageBlockTable>
+                <br/>
+                <apex:selectList value="{!selectedPage}" size="1" multiselect="false" disabled="{!NOT(navigationFlag)}">
+                    <apex:SelectOptions value="{!pagesOptions}"><b>{!$Label.Page_Product}</b> </apex:SelectOptions>
+                    <apex:actionSupport event="onchange" action="{!nextPage}" reRender="oliPanel" status="{!$Label.Navigating_Product}" oncomplete="productServiceSeperation()"/>
+                </apex:selectList>
+                &nbsp;
+                <apex:actionStatus id="navigating">
+                    <apex:facet name="start">
+                        <img src="{!$Resource.AjaxAnimation}"/>
+                        &nbsp;&nbsp;
+                        <FONT COLOR="black" SIZE="2"><b><i>{!$label.Navigating}</i></b></FONT>
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:outputLabel rendered="{!largeResultFlag}">
+                        <center> <i> {!$Label.Displayed} {!noOfRecordPerPage} {!$Label.Product_Navigate_View} </i> </center>
+                </apex:outputLabel>
+                <apex:outputLabel rendered="{!NOT(navigationFlag)}">
+                        <center> <i> {!$Label.Product_navigation_Rule} </i> </center>
+                </apex:outputLabel>    
+                <apex:outputLabel id="noResultsPanel" rendered="{!noResultsFlag}">
+                <br/>
+                    <b style="color:red;  margin-left:500px;">{!$Label.No_Products}</b>
+                    <br/><br/>
+                    <b style="color:red; margin-left:510px;">{!$Label.No_Products_Reason_1}</b>
+                    <br/>
+                    <b style="color:red; margin-left:510px;">{!$Label.No_Products_Reason_2}</b>
+                </apex:outputLabel>
+                 <br/>
+                <apex:selectList value="{!selectedPageMore}" size="1" multiselect="false">
+                    <apex:SelectOptions value="{!pagesOptionsforMoreRecords}"><b>{!$Label.OpptyLinItemePerPage}</b> </apex:SelectOptions>
+                    <apex:actionSupport event="onchange" action="{!nextPage}" reRender="oliPanel" status="{!$Label.Navigating_Product}" oncomplete="productServiceSeperation()"/>
+                </apex:selectList>
+                
+                <script>
+                   var oliTable = 'productPage:productForm:existingProductsBlock:oliTable:';
+                   var inputEl = document.getElementsByTagName("input");
+                   if(document.getElementById('productPage:productForm:existingProductsBlock:pm').innerHTML != ''){
+                        for (i=0;i<inputEl.length;i++){
+                            if(document.getElementById(oliTable +i+':selectedOli').checked == true){
+                                if(document.getElementById(oliTable +i+':quantity') != null){
+                                document.getElementById(oliTable +i+':quantity').disabled = false;
+                                }
+                                document.getElementById(oliTable +i+':hideDateLink:comp:shipDate').disabled = false;
+                                if (document.getElementById(oliTable +i+':keep') != null) {
+                                document.getElementById(oliTable +i+':keep').disabled = false; // For Keep Flag by shaijan Thomas on 9/27/2012
+                                }                               
+                                document.getElementById(oliTable +i+':gb').disabled = false;
+                                document.getElementById(oliTable +i+':pl').disabled = false;
+                                document.getElementById(oliTable +i+':spl').disabled = false;
+                                if(document.getElementById(oliTable +i+':firstValue')!=null){
+                                document.getElementById(oliTable +i+':firstValue').disabled = false;
+                                }
+                                document.getElementById(oliTable +i+':unitPrice').disabled = false;
+                                if(document.getElementById(oliTable +i+':margin')!=null){
+                                document.getElementById(oliTable +i+':margin').disabled = false;
+                                }
+                                if(document.getElementById(oliTable +i+':isService').value == 'true'){
+                                    document.getElementById(oliTable +i+':monthVal').disabled = false;
+                                    document.getElementById(oliTable +i+':att').disabled = false;
+                                    if(document.getElementById(tableId +i+':endDateHide:comp:endDate') != null){
+                                         document.getElementById(tableId +i+':endDateHide:comp:endDate').disabled = false;
+                                    }
+                                    if(document.getElementById(tableId +i+':startDateHide:comp:startDate') != null){
+                                         document.getElementById(tableId +i+':startDateHide:comp:startDate').disabled = false;
+                                    }
+                                    
+                                }else if(document.getElementById(oliTable +i+':isService').value == 'false'){
+                                    document.getElementById(oliTable +i+':monthVal').disabled = true;
+                                    document.getElementById(oliTable +i+':att').disabled = true;
+                                    if(document.getElementById(tableId +i+':endDateHide:comp:endDate') != null){
+                                         document.getElementById(tableId +i+':endDateHide:comp:endDate').disabled = true;
+                                    }
+                                    if(document.getElementById(tableId +i+':startDateHide:comp:startDate') != null){
+                                         document.getElementById(tableId +i+':startDateHide:comp:startDate').disabled = true;
+                                    }
+                                    
+                                }
+                                if (document.getElementById(oliTable +i+':rts') != null) {
+                                    document.getElementById(oliTable +i+':rts').disabled = false;
+                                    }  
+                            }
+                        }
+                    }
+                    
+                </script>
+            </apex:outputPanel>
+            <br/>
+            &nbsp;&nbsp;&nbsp;
+        </apex:pageBlock>
+        
+   <script> 
+  var tableId = 'productPage:productForm:existingProductsBlock:oliTable:';
+   var objArr=new Array();
+   function Fieldvalue() {
+    
+   var inputElem = document.getElementsByTagName("input");
+    for (i=0;i<inputElem.length;i++){
+       if(document.getElementById(tableId + 'masterBox').checked == true){
+             var ob=new Object();
+             if(document.getElementById(tableId +i+':gb')!=null)
+                 ob.gb= document.getElementById(tableId +i+':gb').value;
+             if(document.getElementById(tableId +i+':pl')!=null)
+                 ob.pl= document.getElementById(tableId +i+':pl').value;
+             if(document.getElementById(tableId +i+':spl')!=null)
+                 ob.spl= document.getElementById(tableId +i+':spl').value;
+             if (document.getElementById(oliTable +i+':keep') != null) {
+             ob.keep= document.getElementById(tableId +i+':keep').checked;
+             }
+             if(document.getElementById(tableId +i+':hideDateLink:comp:shipDate')!=null)
+                 ob.shipDate= document.getElementById(tableId +i+':hideDateLink:comp:shipDate').value;
+             if(document.getElementById(tableId +i+':unitPrice')!=null)
+                 ob.unitPrice=document.getElementById(tableId +i+':unitPrice').value;
+             if(document.getElementById(tableId +i+':quantity') != null)
+                 ob.quantity=document.getElementById(tableId +i+':quantity').value;
+             if(document.getElementById(tableId +i+':FFYRmargin') != null){
+               ob.FFYRMarginAmt = document.getElementById(tableId+i+':FFYRmargin').value;
+              
+             }    
+              
+             if (document.getElementById(tableId+i+':firstValue') != null){
+                 ob.FFYRValue = document.getElementById(tableId+i+':firstValue').value;
+             } 
+             
+             if (document.getElementById(tableId+i+':margin') != null){   
+                 ob.MarginAmt = document.getElementById(tableId+i+':margin').value;
+             }
+             if(document.getElementById(tableId+i+':isService') != null) {
+                 if(document.getElementById(tableId+i+':isService').value == 'true'){
+            
+                    if(document.getElementById(tableId +i+':startDateHide:comp:startDate') != null){
+                       ob.startdate = document.getElementById(tableId +i+':startDateHide:comp:startDate').value;
+                    }
+                    if(document.getElementById(tableId +i+':endDateHide:comp:endDate') != null){
+                        ob.enddate = document.getElementById(tableId +i+':endDateHide:comp:endDate').value;
+                    }
+                    if(document.getElementById(tableId +i+':monthVal') != null)
+                        ob.F12monthval=document.getElementById(tableId +i+':monthVal').value;
+                    if(document.getElementById(tableId +i+':att') != null)
+                        ob.attach=document.getElementById(tableId +i+':att').checked;
+                    
+                    
+                 }
+             }
+             if(document.getElementById(tableId +i+':rts') != null){
+              ob.rts = document.getElementById(tableId+i+':rts').checked;
+              
+             }
+              if (document.getElementById(tableId+i +':rtsComponent') != null){
+              ob.rtscomponent=document.getElementById(tableId+i +':rtsComponent').value;
+              }
+             if (document.getElementById(tableId+i +':rtsWinBack') != null){
+              ob.winback=document.getElementById(tableId+i +':rtsWinBack').checked;
+              }          
+             objArr[i]=ob;
+            
+        }
+    }
+  }
+   
+    
+    /*This method enables all rows for ediitng*/
+    function enableAllFields(){
+         var inputElem = document.getElementsByTagName("input");
+         var oliTableIndex = 'productPage:productForm:existingProductsBlock:oliTable:';
+         try{
+             var j=0;
+             for (i=0;i<inputElem.length;i++){
+                 if(document.getElementById(oliTableIndex+i+':selectedOli') != null)
+                    {
+                        j++;
+                    }
+             }
+             
+             for (i=0;i<inputElem.length;i++){
+                 if(document.getElementById(tableId + 'masterBox').checked == true && document.getElementById(tableId +i+':ProdName').value != '1052 - Outside Segment Elimination Entrepreneur'){
+                         checkcount = j;
+                         /* Making only canecl button visible  */
+                          if(j == 1){
+                          document.getElementById(tableId+i+':selectedOli:Edit').innerHTML = 'Save';
+                          document.getElementById(tableId+i+':DelCommandLink').innerHTML = 'Cancel';
+                          document.getElementById(tableId+i+':SchCommandLink').innerHTML = '';
+                         }else{
+                          document.getElementById(tableId+i+':selectedOli:Edit').innerHTML = '';
+                          document.getElementById(tableId+i+':DelCommandLink').innerHTML = 'Cancel';
+                          document.getElementById(tableId+i+':SchCommandLink').innerHTML = '';
+                         
+                         } 
+                        
+                             if (document.getElementById(tableId +i+':selectedOli')!= null){
+                                 document.getElementById(tableId +i+':selectedOli').checked = true;
+                             }
+                         
+                             if(document.getElementById(tableId +i+':quantity') != null){
+                                 document.getElementById(tableId +i+':quantity').disabled = false;
+                             }
+                         
+                             document.getElementById(tableId +i+':hideDateLink:comp:shipDate').disabled = false;
+                             if (document.getElementById(oliTable +i+':keep') != null) {
+                             document.getElementById(tableId +i+':keep').disabled = false; //For Keep Flag by shaijan Thomas on 9/27/2012
+                             }                       
+                             document.getElementById(tableId +i+':gb').disabled = false;
+                             document.getElementById(tableId +i+':pl').disabled = false;
+                             document.getElementById(tableId +i+':spl').disabled = false;
+                             if (document.getElementById(tableId +i+':firstValue') != null){
+                                 document.getElementById(tableId +i+':firstValue').disabled = false;
+                             }    
+                             document.getElementById(tableId +i+':unitPrice').disabled = false;
+                             if(document.getElementById(tableId +i+':FFYRmargin') != null){
+                                 document.getElementById(tableId +i+':FFYRmargin').disabled = false;
+                             }    
+                             if (document.getElementById(tableId +i+':margin') != null){
+                                 document.getElementById(tableId +i+':margin').disabled = false;
+                             }
+                             if(document.getElementById(tableId +i+':isService').value == 'true'){
+                                 if (document.getElementById(tableId +i+':startDateHide:comp:startDate') != null){
+                                     document.getElementById(tableId +i+':startDateHide:comp:startDate').disabled = false;
+                                 }
+                                 if (document.getElementById(tableId +i+':endDateHide:comp:endDate') != null){    
+                                     document.getElementById(tableId +i+':endDateHide:comp:endDate').disabled = false;
+                                 }    
+                                 document.getElementById(tableId +i+':att').disabled = false;
+                                 document.getElementById(oliTable +i+':monthVal').disabled = false;
+                                 
+                             }
+                             if (document.getElementById(tableId +i+':rts') != null){
+                                 document.getElementById(tableId +i+':rts').disabled = false;
+                             }
+                              if (document.getElementById(tableId +i+':scopepick') != null){
+                                 document.getElementById(tableId +i+':scopepick').disabled = false;
+                             }
+                             
+                              if (document.getElementById(tableId +i+':icoem1') != null){
+                                 document.getElementById(tableId +i+':icoem1').disabled = false;
+                             }
+                        
+                         
+                 }else if (document.getElementById(tableId +'masterBox').checked == false && document.getElementById(tableId +i+':ProdName').value != '1052 - Outside Segment Elimination Entrepreneur'){
+                      checkcount = 0;
+                      
+                     document.getElementById(tableId+i+':selectedOli:Edit').innerHTML = 'Edit';
+                     document.getElementById(tableId+i+':DelCommandLink').innerHTML = 'Del';
+                     document.getElementById(tableId+i+':SchCommandLink').innerHTML = 'Sch';
+                    
+                     if (document.getElementById(tableId +i+':selectedOli')!= null){
+                         document.getElementById(tableId +i+':selectedOli').checked = false;
+                     }
+                     
+                     if(document.getElementById(tableId +i+':quantity') != null){
+                         document.getElementById(tableId +i+':quantity').disabled = true;
+                     }
+                     document.getElementById(tableId +i+':hideDateLink:comp:shipDate').disabled = true;
+                     if (document.getElementById(oliTable +i+':keep') != null) {
+                     document.getElementById(tableId +i+':keep').disabled = true; // For Keep Flag by shaijan Thomas on 9/27/2012 
+                     }
+                     document.getElementById(tableId +i+':gb').disabled = true;
+                     document.getElementById(tableId +i+':pl').disabled = true;
+                     document.getElementById(tableId +i+':spl').disabled = true;
+                     if(document.getElementById(tableId +i+':firstValue') != null){
+                         document.getElementById(tableId +i+':firstValue').disabled = true;
+                     }    
+                     document.getElementById(tableId +i+':unitPrice').disabled = true;
+                     if(document.getElementById(tableId +i+':FFYRmargin') != null){
+                         document.getElementById(tableId +i+':FFYRmargin').disabled = true;
+                     }    
+                     if(document.getElementById(tableId +i+':margin') != null){
+                         document.getElementById(tableId +i+':margin').disabled = true;
+                     }
+                     if(document.getElementById(tableId +i+':startDateHide:comp:startDate') != null){
+                         document.getElementById(tableId +i+':startDateHide:comp:startDate').disabled = true;
+                     }
+                     if(document.getElementById(tableId +i+':endDateHide:comp:endDate') != null){
+                         document.getElementById(tableId +i+':endDateHide:comp:endDate').disabled = true;
+                     }
+                     
+                     if (document.getElementById(tableId+i+':icoem1') != null){   
+                         document.getElementById(tableId+i+':icoem1').disabled = true;
+                     }
+                     
+                     if (document.getElementById(tableId+i+i+':scopepick') != null){   
+                         document.getElementById(tableId+i+i+':scopepick').disabled = true;
+                     }
+                     if(document.getElementById(tableId +i+':att')!= null ){
+                         document.getElementById(tableId +i+':att').disabled = true;
+                     }
+                     if(document.getElementById(tableId +i+':monthVal') !=  null){
+                         document.getElementById(tableId +i+':monthVal').disabled = true;
+                     }
+                     if (document.getElementById(tableId +i+':rts') != null){
+                         document.getElementById(tableId +i+':rts').disabled = true;
+                     }
+                         
+                } 
+                
+            }
+         Fieldvalue();  
+        }catch(e){
+         Fieldvalue();
+     }
+    }
+    function disablesevelink(recordsize){
+  
+
+ 
+    try{
+        if(checkcount>1){
+        
+               document.getElementById('productPage:productForm:existingProductsBlock:oliTable:0:selectedOli:Edit').style.display='none';
+              }
+            }catch(e){
+            
+            }
+        
+        } 
+    /*** OMPM R3 renewals 
+    Owner: Deepak Saxena******* Open*/
+    function enableFieldsbyCheckbox2(checkboxId){
+         var prodNo = checkboxId.match(/\d+/);        
+         if(document.getElementById(checkboxId).checked == true){
+                 document.getElementById(tableId+prodNo +':rtsComponent').disabled = false;
+                 document.getElementById(tableId+prodNo +':rtsWinBack').disabled = false;
+                 
+         }
+         else{
+                 
+                
+                 document.getElementById(tableId+prodNo +':rtsComponent').disabled = true;
+                 document.getElementById(tableId+prodNo +':rtsWinBack').disabled = true;
+         
+         }
+    }
+    
+    /*** OMPM R3 renewals 
+    Owner: Deepak Saxena******* Close*/
+    
+    
+    
+    var checkcount=0;
+    /*This method enable a single row by click of checkbox*/
+    function enableFieldsbyCheckbox(checkboxId, isTextLink){
+         
+            
+         var checkbox = document.getElementById(checkboxId);
+         if(isTextLink){
+             checkbox.checked = !checkbox.checked;
+         }
+         checkbox_parent = checkbox.parentNode;
+         checkbox_parent_parent = checkbox_parent.parentNode;
+         //console.log('found checkbox');
+         
+         if(checkbox.checked == true){
+             checkbox_parent_parent.style.backgroundColor = '#ccc';
+              checkcount++;
+             
+         }
+         else{
+             checkbox_parent_parent.style.backgroundColor = '#ffffff';
+             checkcount--;
+             
+            
+         }
+         
+         
+         
+         var prodNo = checkboxId.match(/\d+/);        
+         if(document.getElementById(checkboxId).checked == true  ){
+        
+         //document.getElementById(checkboxId).checked == false
+             if(document.getElementById(tableId+prodNo +':quantity') != null){
+                 document.getElementById(tableId+prodNo +':quantity').disabled = false;
+                 document.getElementById(tableId+prodNo +':unitPrice').disabled = false;
+                 document.getElementById(tableId+prodNo +':hideDateLink:comp:shipDate').disabled = false;
+             }
+             
+             //document.getElementById(tableId+prodNo +':bg').style.backgroundColor="Red";
+             if (document.getElementById(tableId+prodNo +':keep') != null) {
+             document.getElementById(tableId+prodNo +':keep').disabled = false; // For Keep Flag by shaijan Thomas on 9/27/2012 
+             }
+             document.getElementById(tableId+prodNo +':gb').disabled = false;
+             document.getElementById(tableId+prodNo +':pl').disabled = false;
+             document.getElementById(tableId+prodNo +':spl').disabled = false;
+             if(document.getElementById(tableId +prodNo+':FFYRmargin') != null){
+                 document.getElementById(tableId+prodNo+':FFYRmargin').disabled = false;
+             }    
+             
+             if (document.getElementById(tableId+prodNo +':firstValue') != null){
+                 document.getElementById(tableId+prodNo +':firstValue').disabled = false;
+             } 
+             if (document.getElementById(tableId+prodNo +':margin') != null){   
+                 document.getElementById(tableId+prodNo +':margin').disabled = false;
+             }
+             if(document.getElementById(tableId+prodNo +':isService').value == 'true'){
+                if(document.getElementById(tableId +prodNo +':startDateHide:comp:startDate') != null){
+                     document.getElementById(tableId +prodNo +':startDateHide:comp:startDate').disabled = false;
+                }
+                if(document.getElementById(tableId +prodNo +':endDateHide:comp:endDate') != null){
+                     document.getElementById(tableId +prodNo +':endDateHide:comp:endDate').disabled = false;
+                }
+                
+                document.getElementById(tableId +prodNo +':monthVal').disabled = false;
+                 if (document.getElementById(tableId+prodNo +':att') != null){   
+                 document.getElementById(tableId+prodNo +':att').disabled = false;
+             }
+             }
+             if (document.getElementById(tableId+prodNo +':rts') != null){   
+                 document.getElementById(tableId+prodNo +':rts').disabled = false;
+             }
+             if (document.getElementById(tableId+prodNo +':icoem1') != null){   
+             document.getElementById(tableId+prodNo +':icoem1').disabled = false;
+             }
+             if (document.getElementById(tableId+prodNo +':scopepick') != null){ 
+                 document.getElementById(tableId+prodNo +':scopepick').disabled = false;
+             }
+             
+         }else if (document.getElementById(checkboxId).checked == false){
+             if(document.getElementById(tableId+prodNo +':quantity') != null){
+                 document.getElementById(tableId+prodNo +':quantity').disabled = true;
+             }
+             if (document.getElementById(tableId+prodNo +':keep') != null) {
+             document.getElementById(tableId+prodNo +':keep').disabled = true; /* For Keep Flag by shaijan Thomas on 9/27/2012 */
+             }
+             document.getElementById(tableId+prodNo +':gb').disabled = true;
+             document.getElementById(tableId+prodNo +':pl').disabled = true;
+             document.getElementById(tableId+prodNo +':spl').disabled = true;
+             document.getElementById(tableId+prodNo +':hideDateLink:comp:shipDate').disabled = true;
+             document.getElementById(tableId+prodNo +':unitPrice').disabled = true;
+             if(document.getElementById(tableId +prodNo+':FFYRmargin') != null){
+                 document.getElementById(tableId +prodNo+':FFYRmargin').disabled = true;
+             }    
+             if (document.getElementById(tableId+prodNo +':firstValue') != null){
+                 document.getElementById(tableId+prodNo +':firstValue').disabled = true;
+             } 
+             if (document.getElementById(tableId+prodNo +':margin') != null){   
+                 document.getElementById(tableId+prodNo +':margin').disabled = true;
+             }
+             
+             if(document.getElementById(tableId +prodNo +':startDateHide:comp:startDate') != null){
+                 document.getElementById(tableId +prodNo +':startDateHide:comp:startDate').disabled = true;
+             }
+             if(document.getElementById(tableId +prodNo +':endDateHide:comp:endDate') != null){
+                 document.getElementById(tableId +prodNo +':endDateHide:comp:endDate').disabled = true;
+             }
+              if (document.getElementById(tableId+prodNo +':att') != null){   
+                 document.getElementById(tableId+prodNo +':att').disabled = true;
+                 }
+                
+             document.getElementById(tableId +prodNo +':monthVal').disabled = true;
+             if (document.getElementById(tableId+prodNo +':rts') != null){   
+                 document.getElementById(tableId+prodNo +':rts').disabled = true;
+             }
+             if (document.getElementById(tableId+prodNo +':icoem1') != null){   
+             document.getElementById(tableId+prodNo +':icoem1').disabled = true;
+             }
+             if (document.getElementById(tableId+prodNo +':scopepick') != null){   
+             document.getElementById(tableId+prodNo +':scopepick').disabled = true;
+             }
+        }
+        
+      
+  
+        
+   
+    }
+    
+    function setcheckcountzero(){
+    
+        checkcount=0;
+    }
+    
+    /* This method displays alert message when the user tries to manually Edit BG,GBU,PL & SPL*/
+    var dispMessage = 'false';
+    function displayMessage(){
+    if(dispMessage == 'false'){
+        alert('{!$Label.No_Manual_Changes_Allowed}');
+        dispMessage = 'true';
+        }
+    }
+    
+    /*This method Pops up alert meaages and calls action to save selected item
+      Modifed for CR-0139 - Stop SAP Functionality for RENEWALS  - 10th Aug 2012
+    */
+    
+    function disablesavebutton(){
+        //document.getElementById("productPage:productForm:existingProductsBlock:j_id71:j_id73").style.display = "none";
+        //document.getElementById("productPage:productForm:existingProductsBlock:j_id71:bottom:j_id73").style.display = "none";
+        
+        document.getElementById("productPage:productForm:existingProductsBlock:j_id71:j_id73").disabled = true;
+        document.getElementById("productPage:productForm:existingProductsBlock:j_id71:bottom:j_id73").disabled = true;
+        
+        
+    
+    }
+    
+    function saveObject(){
+     try{   
+      if({!NOT(IsRecordType)}){
+           saveInline();
+      }else if ({!oppty.SAP_Feed__c} == true){
+         var isSave = true;   
+         var inputElem = document.getElementsByTagName("input");         
+         for (i=0;i<inputElem.length;i++){
+            if(isSave){
+             if(document.getElementById(tableId +i+':selectedOli') !=null){                      
+             if(document.getElementById(tableId +i+':selectedOli').checked == true){
+                var Contract = document.getElementById(tableId+i+':con');
+                if(Contract != null || Contract == 'undefined'){                    
+                    Contract=new String(Contract.innerHTML).search(/href/i);
+                    if((document.getElementById(tableId +i+':newProduct').value == 'false') && (Contract >0) ){
+                      var result = confirm("{!$Label.Renewal_Stop_Sync}");
+                        if (result == true) {
+                            saveInline();
+                            isSave = false;
+                        }else {
+                            return false;
+                        }
+                    }else{
+                       saveInline();
+                       isSave = false;
+                    }
+                }            
+                
+             }
+             }
+            }
+         }      
+      }else{
+        saveInline();
+      }
+     }catch(e){
+     
+     }   
+    }
+    /******This method is for Delete Button *****/
+    function deleteObjectButton(){
+     try{
+      if({! NOT(IsRecordType) }){
+        var result = confirm("{!$Label.Delete_Confirm}");
+        if (result == true) {
+            deleteOpptyProducts();
+        }else {
+            return false;
+        }
+      }else if ({!oppty.SAP_Feed__c} == true){ 
+         var isDelete = true;     
+         var inputElem = document.getElementsByTagName("input");         
+         for (i=0;i<inputElem.length;i++){
+            if(isDelete){
+             if(document.getElementById(tableId +i+':selectedOli') !=null){                      
+             if(document.getElementById(tableId +i+':selectedOli').checked == true){
+                var Contract = document.getElementById(tableId+i+':con');
+                if(Contract != null || Contract == 'undefined'){                    
+                    Contract=new String(Contract.innerHTML).search(/href/i); 
+                    if((document.getElementById(tableId +i+':newProduct').value == 'false') && (Contract >0) ){
+                      var result = confirm("{!$Label.Renewal_Stop_Sync}");
+                        if (result == true) {
+                            deleteOpptyProducts();
+                            isDelete = false;
+                        }else {
+                            return false;
+                        }
+                    }else{
+                       deleteOpptyProducts();
+                       isDelete = false;
+                    }
+                }            
+                
+             }
+             }
+            }
+        }      
+      }else{
+        deleteOpptyProducts();
+      } 
+
+     }catch(e){
+     }  
+       
+    }
+    
+     /*This method is used for showing warning message when bookship date will change*/
+     
+     function displayMessageforScheduleDate(checkboxId){
+       var prodNo = checkboxId.match(/\d+/);
+       var sch=document.getElementById(tableId+prodNo +':sch');
+       var schcheck=sch.getElementsByTagName('img');
+     if(schcheck[0].alt == "Checked"){
+        document.getElementById("msgDiv").style.display = 'block'; 
+        document.getElementById('productPage:productForm:existingProductsBlock:warnmsg').style.display = 'block';
+        document.getElementById('productPage:productForm:existingProductsBlock:cmdlnk1').style.display = 'block';
+       }
+       
+     }
+                  
+    /*This method is used for change the Edit,Del and sch buttons to save and cancel*/
+    
+
+  var objArr=new Array();
+  var tableId = 'productPage:productForm:existingProductsBlock:oliTable:';
+  var btn = document.getElementById('productPage:productForm:existingProductsBlock:oliTable:0:DelCommandLink');
+  
+
+function changeText(checkboxId, type){
+try{
+var oliTableIndex = 'productPage:productForm:existingProductsBlock:oliTable:';
+var inputElemIndex = document.getElementsByTagName("input");
+var baseId = checkboxId.split("selectedOli");
+var inputElemIndexLen = inputElemIndex.length;
+
+    if(inputElemIndexLen > 15)
+    {
+    inputElemIndexLen = 15;
+    
+    }   
+                
+    if(document.getElementById(checkboxId+':Edit').innerHTML == 'Edit')
+    {
+      var ob=new Object(); 
+    
+    var prodNo = checkboxId.match(/\d+/);
+         ob.gb= document.getElementById(tableId+prodNo +':gb').value;
+         ob.pl= document.getElementById(tableId+prodNo +':pl').value;
+         ob.spl= document.getElementById(tableId+prodNo +':spl').value;
+         if (document.getElementById(tableId+prodNo +':keep') != null) {
+         ob.keep= document.getElementById(tableId+prodNo +':keep').checked;
+         }
+         ob.shipDate= document.getElementById(tableId+prodNo +':hideDateLink:comp:shipDate').value;
+         ob.unitPrice=document.getElementById(tableId+prodNo +':unitPrice').value;
+         ob.quantity=document.getElementById(tableId+prodNo +':quantity').value;
+          if(document.getElementById(tableId +prodNo+':FFYRmargin') != null){
+               ob.FFYRMarginAmt = document.getElementById(tableId+prodNo+':FFYRmargin').value;
+              
+             }    
+              
+             if (document.getElementById(tableId+prodNo +':firstValue') != null){
+                 ob.FFYRValue = document.getElementById(tableId+prodNo +':firstValue').value;
+             } 
+             
+             if (document.getElementById(tableId+prodNo +':margin') != null){   
+                 ob.MarginAmt = document.getElementById(tableId+prodNo +':margin').value;
+             }
+             
+             if(document.getElementById(tableId+prodNo +':isService').value == 'true'){
+        
+                if(document.getElementById(tableId +prodNo +':startDateHide:comp:startDate') != null){
+                   ob.startdate = document.getElementById(tableId +prodNo +':startDateHide:comp:startDate').value;
+                }
+                if(document.getElementById(tableId +prodNo +':endDateHide:comp:endDate') != null){
+                    ob.enddate = document.getElementById(tableId +prodNo +':endDateHide:comp:endDate').value;
+                }
+               
+                ob.F12monthval=document.getElementById(oliTable +prodNo +':monthVal').value;
+                ob.attach=document.getElementById(oliTable +prodNo +':att').checked;
+                
+                
+             }
+             if (document.getElementById(tableId+prodNo +':rts') != null){   
+                 ob.rts = document.getElementById(tableId+prodNo +':rts').checked;
+             }
+              if (document.getElementById(tableId+prodNo +':rtsComponent') != null){
+              ob.rtscomponent=document.getElementById(tableId+prodNo +':rtsComponent').value;
+              }
+             if (document.getElementById(tableId+prodNo +':rtsWinBack') != null){
+              ob.winback=document.getElementById(tableId+prodNo +':rtsWinBack').checked;
+              }
+          objArr[prodNo]=ob;
+        
+         
+        document.getElementById(checkboxId+':Edit').innerHTML = 'Save';
+        var baseId = checkboxId.split("selectedOli");
+        
+        document.getElementById(baseId[0]+'DelCommandLink').innerHTML = 'Cancel';
+        document.getElementById(baseId[0]+'SchCommandLink').innerHTML ='';
+        
+        if(checkcount == 1)
+        { 
+            document.getElementById(checkboxId+':Edit').innerHTML = 'Save';
+            document.getElementById(baseId[0]+'DelCommandLink').innerHTML = 'Cancel';
+            document.getElementById(baseId[0]+'SchCommandLink').innerHTML = '';
+        }
+        if(checkcount > 1)
+        { 
+            for (i=0;i<inputElemIndexLen;i++)
+            {              
+                if(document.getElementById(oliTableIndex+i+':selectedOli') != null)
+                {
+                    if(document.getElementById(oliTableIndex+i+':selectedOli').checked == true)
+                    {
+                        document.getElementById(oliTableIndex+i+':selectedOli:Edit').innerHTML = '';
+                        document.getElementById(oliTableIndex+i+':DelCommandLink').innerHTML = 'Cancel';
+                        document.getElementById(oliTableIndex+i+':SchCommandLink').innerHTML = '';
+                    }
+                }
+                            
+            }
+        }
+    }
+    else if(document.getElementById(checkboxId+':Edit').innerHTML == 'Save')
+    {
+
+        
+
+        if(type=='link')
+        {
+            document.getElementById(checkboxId).checked = true;
+            
+            saveObject();  
+            document.getElementById(checkboxId).checked = false;
+        }
+        if(type=='input')
+        { 
+            if(checkcount == 0)
+            
+            {
+                document.getElementById(checkboxId+':Edit').innerHTML = 'Edit';
+                document.getElementById(baseId[0]+'DelCommandLink').innerHTML = 'Del';
+                document.getElementById(baseId[0]+'SchCommandLink').innerHTML = 'Sch';
+            }
+            
+        }
+       
+    }
+    else if(document.getElementById(baseId[0]+'DelCommandLink').innerHTML == 'Cancel')
+    {
+    
+   
+        if(checkcount == 1)
+        {
+            
+            for (i=0;i<inputElemIndexLen;i++)
+            {
+                
+                if(document.getElementById(oliTableIndex+i+':selectedOli') != null)
+                {
+                    if(document.getElementById(oliTableIndex+i+':selectedOli').checked == true)
+                    {    
+                        document.getElementById(oliTableIndex+i+':selectedOli:Edit').innerHTML = 'Save';
+                        document.getElementById(oliTableIndex+i+':DelCommandLink').innerHTML = 'Cancel';
+                        document.getElementById(oliTableIndex+i+':SchCommandLink').innerHTML = '';
+                    } else{
+                            document.getElementById(oliTableIndex+i+':selectedOli:Edit').innerHTML = 'Edit';
+                            document.getElementById(oliTableIndex+i+':DelCommandLink').innerHTML = 'Del';
+                            document.getElementById(oliTableIndex+i+':SchCommandLink').innerHTML = 'Sch';
+                    }
+                } 
+            }      
+            
+        }
+        if(checkcount > 1)
+        {
+            
+            for (i=0;i<inputElemIndexLen;i++)
+            {
+            
+                if(document.getElementById(oliTableIndex+i+':selectedOli') != null)
+                {
+                    if(document.getElementById(oliTable+i+':selectedOli').checked == true)
+                    {
+                                 
+                        document.getElementById(oliTableIndex+i+':selectedOli:Edit').innerHTML = '';
+                        document.getElementById(oliTableIndex+i+':DelCommandLink').innerHTML = 'Cancel';
+                        document.getElementById(oliTableIndex+i+':SchCommandLink').innerHTML = '';
+                    }else{
+                        document.getElementById(oliTableIndex+i+':selectedOli:Edit').innerHTML = 'Edit';
+                        document.getElementById(oliTableIndex+i+':DelCommandLink').innerHTML = 'Del';
+                        document.getElementById(oliTableIndex+i+':SchCommandLink').innerHTML = 'Sch';
+                    }
+                }
+            }
+        } 
+    }
+ }catch(e){
+ }
+      
+}
+
+    /*This method Pops up alert meaages and calls action to delete selected item
+      Modifed for CR-0139 - Stop SAP Functionality for RENEWALS  - 10th Aug 2012
+    */
+        function deleteObject(isTextLink,checkboxId){
+       
+        var baseId = checkboxId.split("selectedOli");
+        var inputElemIndex = document.getElementsByTagName("input");
+        var inputElemIndexLen1 = inputElemIndex.length;
+     try{
+         
+       
+        if(document.getElementById(baseId[0]+'DelCommandLink').innerHTML == 'Del')
+        {
+     //alert(isTextLink);
+     
+      if(isTextLink){
+          
+             //checkbox1.checked = !checkbox.checked;
+             document.getElementById(checkboxId).checked = true;
+            
+         }
+      if({! NOT(IsRecordType) }){
+        //var checkbox1 = document.getElementById(checkboxId);
+         
+        var result = confirm("{!$Label.Delete_Confirm}");
+        if (result == true) {
+            deleteOpptyProducts();
+        }else {
+            document.getElementById(checkboxId).checked = false;
+            return false;
+        }
+      }else if ({!oppty.SAP_Feed__c} == true){ 
+         var isDelete = true;     
+         var inputElem = document.getElementsByTagName("input");         
+         for (i=0;i<inputElem.length;i++){
+            if(isDelete){
+             if(document.getElementById(tableId +i+':selectedOli') !=null){                      
+             if(document.getElementById(tableId +i+':selectedOli').checked == true){
+                var Contract = document.getElementById(tableId+i+':con');
+                if(Contract != null || Contract == 'undefined'){                    
+                    Contract=new String(Contract.innerHTML).search(/href/i); 
+                    if((document.getElementById(tableId +i+':newProduct').value == 'false') && (Contract >0) ){
+                      var result = confirm("{!$Label.Renewal_Stop_Sync}");
+                        if (result == true) {
+                            deleteOpptyProducts();
+                            isDelete = false;
+                        }else {
+                            return false;
+                        }
+                    }else{
+                       deleteOpptyProducts();
+                       isDelete = false;
+                    }
+                }            
+                
+             }
+             }
+            }
+        }      
+      }else{
+        deleteOpptyProducts();
+
+      } 
+      oppty = fetchOpptyStatistics();
+      }
+      else if(document.getElementById(baseId[0]+'DelCommandLink').innerHTML == 'Cancel')
+      {
+      
+      var prodNo = checkboxId.match(/\d+/);
+      if(objArr[prodNo] != undefined){
+          var ob=objArr[prodNo];
+          document.getElementById(tableId+prodNo +':gb').value=ob.gb;
+          document.getElementById(tableId+prodNo +':pl').value=ob.pl;
+          document.getElementById(tableId+prodNo +':spl').value=ob.spl;
+          document.getElementById(tableId+prodNo +':quantity').value=ob.quantity;
+          if (document.getElementById(tableId+prodNo +':keep') != null) {
+          document.getElementById(tableId+prodNo +':keep').checked=ob.keep;
+          }
+          document.getElementById(tableId+prodNo +':hideDateLink:comp:shipDate').value= ob.shipDate;
+          document.getElementById(tableId+prodNo +':unitPrice').value= ob.unitPrice;
+          document.getElementById(tableId+prodNo +':quantity').value= ob.quantity;
+          if(ob.FFYRMarginAmt!= undefined){
+          document.getElementById(tableId+prodNo+':FFYRmargin').value = ob.FFYRMarginAmt;
+          }
+          if(ob.FFYRValue != undefined){
+          document.getElementById(tableId+prodNo +':firstValue').value = ob.FFYRValue;
+          }
+          if(ob.MarginAmt != undefined){
+          document.getElementById(tableId+prodNo +':margin').value = ob.MarginAmt;
+          }
+          if(ob.startdate != undefined){
+          document.getElementById(tableId +prodNo +':startDateHide:comp:startDate').value = ob.startdate;
+          }
+          if(ob.enddate != undefined){
+          document.getElementById(tableId +prodNo +':endDateHide:comp:endDate').value = ob.enddate;
+          }
+          if(ob.F12monthval != undefined){
+          document.getElementById(tableId +prodNo +':monthVal').value =ob.F12monthval;
+          }
+          if(ob.attach != undefined){
+          document.getElementById(tableId +prodNo +':att').checked=ob.attach;
+          } 
+          if(ob.rts != undefined){
+          document.getElementById(tableId +prodNo +':rts').checked = ob.rts;
+          }   
+          if(ob.rtscomponent != undefined){
+            document.getElementById(tableId+prodNo +':rtsComponent').value=ob.rtscomponent;
+          }
+          if(ob.winback != undefined){
+              document.getElementById(tableId+prodNo +':rtsWinBack').checked=ob.winback;
+          }               
+      }    
+      enableFieldsbyCheckbox(checkboxId, true);
+      document.getElementById(checkboxId).checked = false;
+      document.getElementById(tableId+prodNo +':gb').disabled = true;
+      document.getElementById(tableId+prodNo +':pl').disabled = true;
+      document.getElementById(tableId+prodNo +':spl').disabled = true;
+      document.getElementById(tableId+prodNo +':hideDateLink:comp:shipDate').disabled = true;
+      document.getElementById(tableId+prodNo +':unitPrice').disabled = true;
+      if(document.getElementById(tableId+prodNo +':quantity') != null){
+            document.getElementById(tableId+prodNo +':quantity').disabled = true;
+      }
+      if (document.getElementById(tableId+prodNo +':keep') != null) {
+      document.getElementById(tableId+prodNo +':keep').disabled = true;
+      }
+      if (document.getElementById(tableId+prodNo +':firstValue') != null){
+                 document.getElementById(tableId+prodNo +':firstValue').disabled = true;
+       } 
+      if (document.getElementById(tableId+prodNo +':margin') != null){   
+                 document.getElementById(tableId+prodNo +':margin').disabled = true;
+      }
+             
+       if(document.getElementById(tableId +prodNo +':startDateHide:comp:startDate') != null){
+                 document.getElementById(tableId +prodNo +':startDateHide:comp:startDate').disabled = true;
+       }
+       if(document.getElementById(tableId +prodNo +':endDateHide:comp:endDate') != null){
+                 document.getElementById(tableId +prodNo +':endDateHide:comp:endDate').disabled = true;
+       }
+      if (document.getElementById(tableId+prodNo +':rts') != null){  
+        document.getElementById(tableId+prodNo +':rtsComponent').disabled = true;
+        document.getElementById(tableId+prodNo +':rtsWinBack').disabled = true;
+         }
+      document.getElementById(checkboxId+':Edit').innerHTML = 'Edit';
+        var baseId = checkboxId.split("selectedOli");
+        document.getElementById(baseId[0]+'DelCommandLink').innerHTML = 'Del';
+        document.getElementById(baseId[0]+'SchCommandLink').innerHTML ='Sch';
+        if(checkcount == 1)
+        { 
+            for (i=0;i<inputElemIndexLen1;i++)
+            {            
+                if(document.getElementById(tableId+i+':selectedOli') != null)
+                {    
+                    if(document.getElementById(tableId+i+':selectedOli').checked == true)
+                    {
+                        document.getElementById(tableId+i+':selectedOli:Edit').innerHTML = 'Save';
+                        document.getElementById(tableId+i+':DelCommandLink').innerHTML = 'Cancel';
+                        document.getElementById(tableId+i+':SchCommandLink').innerHTML = '';
+                    }
+                }
+                            
+            }
+        }
+      return false;
+     
+       }  
+     }
+
+     catch(e){
+     
+     }    
+    }
+        
+    /*This method shows and hides mass book/ship date section*/
+    
+    function showDateSection(){
+        document.getElementById('productPage:productForm:existingProductsBlock:datelink:comp:masterDate').value = '';
+        document.getElementById('productPage:productForm:existingProductsBlock:masterDatemove').value = '';
+        if (document.getElementById("dateDiv").style.display == "none"){
+            document.getElementById("dateDiv").style.display= "block";
+            document.getElementById('productPage:productForm:existingProductsBlock:massbookshipdateRadio:0').checked = true;
+            document.getElementById('productPage:productForm:existingProductsBlock:datelink:comp:masterDate').style.display ='block';   
+            document.getElementById('productPage:productForm:existingProductsBlock:masterDatemove').style.display = 'none';
+        }else if (document.getElementById("dateDiv").style.display == "block"){   
+            document.getElementById("dateDiv").style.display= "none";
+        }
+         
+    }
+    
+    function showmasterDate(){
+        var Radioval1=document.getElementById('productPage:productForm:existingProductsBlock:massbookshipdateRadio:0').checked ;
+        var Radioval2=document.getElementById('productPage:productForm:existingProductsBlock:massbookshipdateRadio:1').checked ;
+    if(Radioval1==true){
+     document.getElementById('productPage:productForm:existingProductsBlock:datelink:comp:masterDate').style.display = "block";
+     document.getElementById('productPage:productForm:existingProductsBlock:masterDatemove').style.display ="none"; 
+     document.getElementById('productPage:productForm:existingProductsBlock:datelink:comp:masterDate').value='';     
+    }
+    if(Radioval2==true){
+    document.getElementById('productPage:productForm:existingProductsBlock:datelink:comp:masterDate').style.display = "none";
+    document.getElementById('productPage:productForm:existingProductsBlock:masterDatemove').style.display ="block"; 
+    document.getElementById('productPage:productForm:existingProductsBlock:masterDatemove').value='';
+    }
+    }
+        
+    /*This method shows and hides Search section*/
+    function showSearch(){
+        if (document.getElementById("doSearch").style.display == "none"){
+            document.getElementById("doSearch").style.display= "block";
+        }else if (document.getElementById("doSearch").style.display == "block"){   
+            document.getElementById("doSearch").style.display= "none";
+        }
+    }
+    
+        
+    /*This method hides all success & error messages*/
+    function hideMessages(){
+       
+        if (document.getElementById("msgDiv").style.display == "block"){  
+            document.getElementById("msgDiv").style.display= "none";
+            clearFlags();
+        }
+    }
+    
+    /*This method mass updates the book/ship date*/
+   function populateDate(){
+    
+        var Radioval1=document.getElementById('productPage:productForm:existingProductsBlock:massbookshipdateRadio:0').checked ;
+        var Radioval2=document.getElementById('productPage:productForm:existingProductsBlock:massbookshipdateRadio:1').checked ;
+    if(Radioval1==true){
+    
+        var dateVal = document.getElementById('productPage:productForm:existingProductsBlock:datelink:comp:masterDate').value;
+        var inputEleme = document.getElementsByTagName("input");
+        
+        for (i=0;i<inputEleme.length;i++){
+            
+                if(document.getElementById(tableId +i+':selectedOli') != null){
+                 
+                  if(document.getElementById(tableId +i+':selectedOli').checked == true && dateVal != ''){
+                    var sch=document.getElementById(tableId+i+':sch');
+                    if(sch != null){
+                    var schcheck=sch.getElementsByTagName('img');
+                      if(schcheck[0].alt == "Checked"){
+                        document.getElementById("msgDiv").style.display = 'block'; 
+                        document.getElementById('productPage:productForm:existingProductsBlock:warnmsg').style.display = 'block';
+                        document.getElementById('productPage:productForm:existingProductsBlock:cmdlnk1').style.display = 'block';
+                      }
+                      
+                    }
+                       document.getElementById(tableId +i+':hideDateLink:comp:shipDate').value = dateVal;
+                  }
+                  
+                }
+            
+        } 
+    }
+    if(Radioval2==true){
+    var dateValmove =document.getElementById('productPage:productForm:existingProductsBlock:masterDatemove').value;
+    
+    var inputEleme = document.getElementsByTagName("input");
+    
+    
+    for (i=0;i<inputEleme.length;i++){
+            if(document.getElementById(tableId +i+':selectedOli') != null){
+                
+                if(document.getElementById(tableId +i+':selectedOli').checked == true && dateValmove != ''){
+                    /*document.getElementById(tableId +i+':hideDateLink:comp:shipDate').value=dateValmove;*/
+                  
+                   var joindate = new Date(document.getElementById(tableId +i+':hideDateLink:comp:shipDate').value);
+                   var num = new Number(dateValmove);
+                   
+                   joindate.setDate(joindate.getDate() + num);
+                   var dd = joindate.getDate();
+                   var mm = joindate.getMonth()+1;
+                   var y = joindate.getFullYear();
+                   var joinFormattedDate = mm + '/' + dd + '/' + y;
+                   
+                   document.getElementById(tableId +i+':hideDateLink:comp:shipDate').value=joinFormattedDate;
+                   
+                   var sch=document.getElementById(tableId+i+':sch');
+                  if(sch != null){
+                    var schcheck=sch.getElementsByTagName('img');
+                    if(schcheck[0].alt == "Checked"){
+                        document.getElementById("msgDiv").style.display = 'block'; 
+                        document.getElementById('productPage:productForm:existingProductsBlock:warnmsg').style.display = 'block';
+                        document.getElementById('productPage:productForm:existingProductsBlock:cmdlnk1').style.display = 'block';
+                    }
+                      
+                  }
+                }
+                  
+            }
+    } 
+    }
+    
+   }
+    
+    function productServiceSeperation(){
+        var inputEleme = document.getElementsByTagName("input");
+        for (i=0;i<inputEleme.length;i++){
+        if(document.getElementById(tableId +i+':selectedOli').checked == true && 
+            document.getElementById(tableId +i+':newProduct').value == 'true' && 
+            document.getElementById(tableId+i+':isService').value == 'false'){
+            
+                document.getElementById(tableId+i+':att').checked= false;
+            document.getElementById(oliTable +i+':monthVal').value = '';
+            document.getElementById(oliTable +i+':monthVal').disabled = true;
+            document.getElementById(tableId+i+':att').disabled = true;
+            if(document.getElementById(tableId +i+':startDateHide:comp:startDate') != null){
+                document.getElementById(tableId +i+':startDateHide:comp:startDate').value = '';
+                document.getElementById(tableId +i+':startDateHide:comp:startDate').disabled = true
+            }
+            if(document.getElementById(tableId +i+':endDateHide:comp:endDate') != null){
+                 document.getElementById(tableId +i+':endDateHide:comp:endDate').value = '';
+                 document.getElementById(tableId +i+':endDateHide:comp:endDate').disabled = true;
+            }
+            }    
+        }
+    }
+    /*This method Formats the unit Price*/
+    function formatAmounts(num) {
+        num = num.toString().replace(/\$|\,/g, '');
+        if (isNaN(num)) num = "0";
+            sign = (num == (num = Math.abs(num)));
+            num = Math.floor(num * 100 + 0.50000000001);
+            cents = num % 100;
+            num = Math.floor(num / 100).toString();
+        if (cents < 10){
+            cents = "0" + cents;
+        }
+        for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++){
+            num = num.substring(0, num.length - (4 * i + 3)) + ',' + num.substring(num.length - (4 * i + 3));
+        }
+        return (((sign) ? '' : '-') + num + '.' + cents);
+    }
+    /* For Retain and Release button by shaijan Thomas on 9/27/2012 */
+    function LockKeep(){
+        var inputEleme1 = document.getElementsByTagName("input");
+        for (i=0;i<inputEleme1.length;i++){
+            if(document.getElementById(tableId +i+':selectedOli') != null){
+                if(document.getElementById(tableId +i+':selectedOli').checked == true){
+                    document.getElementById(tableId +i+':keep').checked = true;
+                }
+            }
+         }
+    }
+    function ReleaseKeep(){
+        var inputEleme2 = document.getElementsByTagName("input");
+        for (i=0;i<inputEleme2.length;i++){
+            if(document.getElementById(tableId +i+':selectedOli') != null){
+                if(document.getElementById(tableId +i+':selectedOli').checked == true){
+                    document.getElementById(tableId +i+':keep').checked = false;
+                }
+            }
+         }
+    }
+    /* For Retain and Release button by shaijan Thomas on 9/27/2012 */
+  
+  
+  /* For R4 requriement*/
+  function definegbupickvalue(){
+     var bgpickvalue=document.getElementById('productPage:productForm:bgp').value;
+      if(bgpickvalue=='None'){      
+          allgbupicklistvalues();
+          document.getElementById('productPage:productForm:gb').disabled=true;
+      }else{
+          document.getElementById('productPage:productForm:gb').disabled=true;
+          onchangeofbgvalue();
+          
+      }
+     
+ }
+ 
+     function definebgpickvalue(){     
+        var bgpickvalue=document.getElementById('productPage:productForm:bgp').value; 
+        document.getElementById('productPage:productForm:bgp').disabled=true;
+         onchangeofgbuvalue();
+        if(bgpickvalue=='None'){
+                    document.getElementById('productPage:productForm:bgp').disabled=true;
+                     //onchangeofgbuvalue();
+         }    
+     }
+  
+      function clearquickaddpanel(bgnull){
+      alert(bgnull);
+           alert((document.getElementById('productPage:productForm:bgp')));
+           document.getElementById('productPage:productForm:pricebookId').value= null;
+           document.getElementById('productPage:productForm:bgp').value=bgnull;
+           alert((document.getElementById('productPage:productForm:bgp').value));
+           document.getElementById('productPage:productForm:gb').value= null;
+           document.getElementById('productPage:productForm:pl').value= null;
+      
+      }
+      
+     
+   </script>         
+        
+        
+        
+        
+    </apex:panelgrid>
+
+
+</apex:Panelgrid>
+</apex:form>
+
+
+<script>
+var conalert = 'false';
+  var newWin=null;
+    function modifyProductsLookup(gbuId,plId,splId,bgId,level,section){
+     try{
+       
+        var lineNo = gbuId.match(/\d+/);
+        var gbuVal = document.getElementById(gbuId);
+        var plVal = document.getElementById(plId);
+        var splVal = document.getElementById(splId);
+        
+        var curr = '{!Oppty.CurrencyIsoCode}';
+        var userGbu = '{!activeUser.Global_Business_Unit__c}'; 
+         
+        var bgVal;
+        if(section=='add'){
+
+            bgVal= document.getElementById(bgId).value;
+        }else if(section=='edit'){
+ 
+         bgVal= document.getElementById(bgId).innerHTML;        
+        }
+
+        var rFlag = true;
+
+        
+        
+        if(rFlag){
+              
+              if (bgVal != null && gbuVal != null && plVal != null && splVal != null) {
+            if (gbuVal.value != ''){
+                var url = "/apex/Productsquickaddlookup?lkfm=productPage%3AproductForm&bg=" + encodeURIComponent(bgVal) + "&gbu=" + encodeURIComponent(gbuVal.value) + "&pl=" + encodeURIComponent(plVal.value) + "&spl=" + encodeURIComponent(splVal.value) + "&level=" + level + "&lknm=" + bgId + "&curr=" +curr +"&sec=" +section;
+            } else {
+                var url = "/apex/Productsquickaddlookup?lkfm=productPage%3AproductForm&bg=" + encodeURIComponent(bgVal) + "&gbu=" + encodeURIComponent(userGbu) + "&pl=" + encodeURIComponent(plVal.value) + "&spl=" + encodeURIComponent(splVal.value) + "&level=" + level + "&lknm=" + bgId + "&curr=" +curr +"&sec=" +section;
+            }
+        }
+        else if (bgVal != null && gbuVal != null && plVal != null){ 
+            if (gbuVal.value != ''){
+                var url = "/apex/Productsquickaddlookup?lkfm=productPage%3AproductForm&bg=" + encodeURIComponent(bgVal) + "&gbu=" + encodeURIComponent(gbuVal.value) + "&pl=" + encodeURIComponent(plVal.value) + "&level=" + level + "&lknm=" + bgId + "&curr=" +curr +"&sec=" +section;
+                
+            } else {
+                var url = "/apex/Productsquickaddlookup?lkfm=productPage%3AproductForm&bg=" + encodeURIComponent(bgVal) + "&gbu=" + encodeURIComponent(userGbu) + "&pl=" + encodeURIComponent(plVal.value) + "&level=" + level + "&lknm=" + bgId + "&curr=" +curr +"&sec=" +section;
+               
+            }
+        }
+        else if (bgVal != null && gbuVal != null) {
+            if (gbuVal.value != ''){
+                var url = "/apex/Productsquickaddlookup?lkfm=productPage%3AproductForm&bg=" + encodeURIComponent(bgVal) + "&gbu=" + encodeURIComponent(gbuVal.value) + "&level=" + level + "&lknm=" + bgId + "&curr=" +curr +"&sec=" +section;
+            } else{
+                var url = "/apex/Productsquickaddlookup?lkfm=productPage%3AproductForm&bg=" + encodeURIComponent(bgVal) + "&gbu=" + encodeURIComponent(userGbu) + "&level=" + level + "&lknm=" + bgId + "&curr=" +curr +"&sec=" +section;
+            }
+        }
+        else {
+            var url = "/apex/Productsquickaddlookup?lkfm=productPage%3AproductForm&lknm=" + bgId + "&curr=" +curr + "&level=" + level +"&sec=" +section;
+        }
+        newWin = window.open(url, 'Popup','height=500,width=1600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+        if (window.focus){
+           newWin.focus();
+        }
+        
+        }
+        
+      }catch(e){
+      //return true;
+      }   
+        return true;
+    }
+
+    var dispMessage = 'false';
+    function displayMessage(){
+    if(dispMessage == 'false'){
+        alert('{!$Label.No_Manual_Changes_Allowed}');
+        dispMessage = 'true';
+        }
+    }
+    
+    
+    function backPopulate(productId, productName, businessGroup, globalBusinessUnit, productLine,subProductLine, textBox, serviceFlag,section){
+        newWin.close();
+
+        if(section=='add'){
+            document.getElementById('productPage:productForm:pricebookId').value= productId;
+            document.getElementById('productPage:productForm:bgp').value= businessGroup;
+            document.getElementById('productPage:productForm:gb').value= globalBusinessUnit;
+            document.getElementById('productPage:productForm:pl').value= productLine;
+            document.getElementById('productPage:productForm:spl').value= subProductLine;
+          }
+       if(section=='edit'){
+           var prod = textBox.match(/\d+/); 
+           var tableId = 'productPage:productForm:existingProductsBlock:oliTable:';
+        document.getElementById(tableId+prod +':bgp').innerHTML = businessGroup;
+        document.getElementById(tableId+prod +':hiddenBG').value = businessGroup;
+        document.getElementById(tableId+prod +':gb').value= globalBusinessUnit;
+        document.getElementById(tableId+prod +':pl').value= productLine;
+        document.getElementById(tableId+prod +':spl').value= subProductLine;
+        document.getElementById(tableId+prod +':pbeId').value= productId;        
+        document.getElementById(tableId+prod +':newProduct').value= true;
+        document.getElementById(tableId+prod +':isService').value= serviceFlag;
+        if(document.getElementById(tableId+prod+':isService').value == 'true'){
+            document.getElementById(tableId+prod+':att').disabled = false;
+            document.getElementById(oliTable +prod+':monthVal').disabled = false;
+            if(document.getElementById(tableId +prod +':endDateHide:comp:endDate') != null){
+                 document.getElementById(tableId +prod +':endDateHide:comp:endDate').disabled = false;
+            }
+            if(document.getElementById(tableId +prod +':startDateHide:comp:startDate') != null){
+                 document.getElementById(tableId +prod +':startDateHide:comp:startDate').disabled = false;
+            }
+        }
+        if(document.getElementById(tableId+prod+':isService').value == 'false'){
+            document.getElementById(tableId+prod+':att').checked= false;
+            document.getElementById(oliTable +prod+':monthVal').value = '';
+            document.getElementById(oliTable +prod+':monthVal').disabled = true;
+            document.getElementById(tableId+prod+':att').disabled = true;
+            if(document.getElementById(tableId +prod +':startDateHide:comp:startDate') != null){
+                document.getElementById(tableId +prod +':startDateHide:comp:startDate').value = '';
+                document.getElementById(tableId +prod +':startDateHide:comp:startDate').disabled = true
+            }
+            if(document.getElementById(tableId +prod +':endDateHide:comp:endDate') != null){
+                 document.getElementById(tableId +prod +':endDateHide:comp:endDate').value = '';
+                 document.getElementById(tableId +prod +':endDateHide:comp:endDate').disabled = true;
+            }
+        }
+       
+       }
+    
+    
+    }
+
+    function searchingOnBG(){
+        document.getElementById('productPage:productForm:existingProductsBlock:searchExistingGlobalBusinessUnit').value='';
+        searchBG();
+    }
+    function searchingOnGBU(){
+        searchGBU();
+    }
+    function changeGBUvals(){
+        document.getElementById('productPage:productForm:existingProductsBlock:searchExistingGlobalBusinessUnit').disabled=true;
+        changeGBUval();
+    }
+     function NullifyPLSubPL(GBUId,checkboxId){
+        var prodNo = checkboxId.match(/\d+/);        
+         if(document.getElementById(checkboxId).checked == true){
+
+                 document.getElementById(tableId+prodNo +':pl').value ='';
+                  document.getElementById(tableId+prodNo +':spl').value ='';
+                  document.getElementById(tableId+prodNo +':newProduct').value =true;
+                  document.getElementById(tableId+prodNo +':pbeId').value='null';
+         }
+    
+    }
+</script>
+
+
+</apex:page>

@@ -1,0 +1,20 @@
+<apex:page standardController="Related_Opportunities__c" extensions="JunctionRelatedOpportunitiesController" tabStyle="Opportunity" id="page">
+    <apex:form >
+        <apex:sectionHeader title="Related Opportunities Edit" subtitle="Add Related Opportunities" />
+        <apex:pageMessages />
+        <apex:pageBlock title="Add Related Opportunities">
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!Save}" value="Save"/>
+            <apex:commandButton action="{!Cancel}" value="Cancel"/>
+        </apex:pageBlockButtons>
+        <apex:dataTable value="{!realtedOpptyList}" var="realtedOppty" cellspacing="5" id="dataTable">
+            <apex:column headerValue="{!$ObjectType.Related_Opportunities__c.fields.Opportunity__c.label}" id="OpptyCol">                        
+                <apex:outputField id="Oppty" value="{!realtedOppty.oppty.Opportunity__c}"/>
+            </apex:column>
+            <apex:column headerValue="{!$ObjectType.Related_Opportunities__c.fields.Related_Opportunity__c.label}" id="relOpptyCol">                        
+                <apex:inputField id="relOppty" value="{!realtedOppty.oppty.Related_Opportunity__c}"/>
+            </apex:column>
+        </apex:dataTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

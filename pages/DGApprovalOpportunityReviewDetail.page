@@ -1,0 +1,216 @@
+<!-- *****************************************************
+Author: Mousumi Panda
+Created Date: 26-APR-2013
+Release: R5
+Capability: Deal Governance
+Description: Detail page for Opportunity Review 
+***********************************************************-->
+
+<apex:page standardController="Approval__c" extensions="DGPopulatingApprovers,DGApprovalOpptyReviewControllerDtlEdit,DGCoordinatorAccess">
+<style>
+
+.csfth {
+width:160px;
+
+}
+
+</style>
+
+<Script>
+     function validate(){
+        var submit = confirm("You are about to submit this approval request. The request will be locked from editing, and a summary of this opportunity and its planning tools will be attached to the request. Do you want to continue?");
+        if (submit == true) {
+        return true;
+        }else {
+        return false;  
+    }        
+} 
+
+
+</Script>
+
+<apex:form >
+<apex:pagemessages id="msg"></apex:pagemessages>
+ <apex:sectionHeader title="Approval" subtitle="{!Approval__c.Approval_Long_Name__c}"/>
+     <apex:pageBlock title="Opportunity Review Detail" mode="maindetail" id="pageblock">
+       <apex:pageBlockButtons location="top">
+           <!--<input type="button" class="btn" value="Edit" title="edit" onclick="location.href='/apex/DGApprovalOpportunityReviewEdit?id={!Approval__c.id}&retURL=/apex/ApprovalOpportunityReviewTypeDetail?id={!Approval__c.id}'"/>-->
+              <apex:commandButton value="Edit" action="{!customEditOR}" rendered="{!NOT(isSubmit)}"/>
+           <!-- <apex:commandButton action="{!Delete}" value="Delete"/>-->
+            <apex:commandButton value="Submit For Approval" action="{!populateApprovers}" onclick="return validate()"  rendered="{!NOT(isSubmit)}"/> 
+           <!-- <apex:commandButton value="Recall Approval" action="{!recallApproval}" onclick="return validate()" rendered="{!IF(Approval__c.Submitter__c == $User.Id && isSubmit==true ,true,false)}" /> -->
+            <apex:commandButton value="Change Approvers"  action="{!CustomChangeApprover}" rendered="{!IF(CoordinatorAccess == true && Approval__c.Status__c == 'Submitted' && (Approval__c.Approval_Flow_Type__c == 'Sequential' || Approval__c.Approval_Flow_Type__c == 'Hybrid'), true, false)}" /> 
+            <apex:commandButton value="Get Opportunity Summary"  onclick="window.open('apex/dg_Snapshot?id={!Approval__c.Opportunity_system_id__c}','Popup','resizable=yes,scrollbars=yes,toolbar=no,status=no')" rendered="{!IF(CoordinatorAccess == true && Approval__c.Status__c == 'Submitted', true, false)}"/>
+            <!--<apex:commandLink value="Help" onclick="window.open('/apex/approval_help','app_help','width=600,height=400')"/>-->
+       </apex:pageBlockButtons>
+       <apex:pageBlockSection columns="2" title="Opportunity Information" id="pbsec"> 
+            <apex:outputField value="{!Approval__c.Opportunity_Id__c}"/>
+            <apex:outputField value="{!Approval__c.Opportunity_Type__c}"/>
+            <apex:pageBlockSectionItem >
+                <apex:OutputLabel value="Opportunity Name"/>
+                <apex:OutputLink value="/{!Approval__c.Opportunity_system_id__c}" > {!Approval__c.Opportunity_Name__c} </apex:OutputLink>
+            </apex:pageBlockSectionItem>
+            <apex:outputField value="{!Approval__c.Close_Date__c}"/>
+            <apex:pageBlockSectionItem >
+              <apex:OutputLabel value="Account Name"/>
+              <apex:OutputLink value="/{!Approval__c.Account_id__c}" > {!Approval__c.Account_Name__c} </apex:OutputLink>
+            </apex:pageBlockSectionItem>
+            <apex:outputField value="{!Approval__c.Sales_Stage__c}"/>
+            <apex:outputField label="Opportunity Owner" value="{!Approval__c.Opportunity_Owner__c}"/>
+            <apex:outputField label="Opportunity's Owner BG" value="{!Approval__c.Owners_BG__c}"/>
+            <apex:outputField label="Region (Account Region)" value="{!Approval__c.Region_Account_Region__c}"/>
+            <apex:outputField label="Total Opportunity Value" value="{!Approval__c.Total_Opportunity_Value__c}"/>
+            <!--<apex:pageblocksectionItem >
+             <apex:outputlabel value="{!$Label.Total_Opportunity_Value}" />
+              <apex:panelgrid columns="2">
+              <apex:panelgroup id="amountid">
+               <apex:outputtext value="{!Approval__c.Opportunity__r.CurrencyISOCode}" />
+               <apex:outputText value="{0, number, ###,###,###.00}" style="text-align:Left;">
+                  <apex:param value="{!Approval__c.Opportunity__r.Amount}" />
+                </apex:outputText>
+               <apex:outputText value=".00" rendered="{!ISBLANK(Approval__c.Opportunity__r.Amount)}" >
+               <apex:param value="{!Approval__c.Opportunity__r.Amount}" />
+               </apex:outputText> 
+             </apex:panelgroup>
+             <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != opptyrec.CurrencyISOCode)}">
+                            (
+                            <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                            
+                            <apex:outputText value="{0, number, ###,###,###.00}" >
+                            <apex:param value="{!opptyrec.Amount}" />
+                            </apex:outputText>
+                            <apex:outputText value=".00" rendered="{!ISBLANK(Approval__c.Opportunity__r.Amount)}" >
+                            <apex:param value="{!opptyrec.Amount}" />
+                            </apex:outputText>
+                            )
+           </apex:panelgroup>
+           </apex:panelgrid> 
+            </apex:pageblocksectionItem> -->
+            
+            <!--<apex:outputField value="{!Approval__c.Total_Opportunity_Value__c}"/>-->
+            <apex:OutputField value="{!Approval__c.Proposal_Due_Date__c}"/>
+           <apex:inputhidden value="{!Approval__c.Opportunity__c}" /> 
+            
+            
+            
+            
+         <!--  <apex:panelgroup rendered="{!(activeUser.DefaultCurrencyIsoCode != oppty.CurrencyIsoCode)}">
+                            (
+                            <apex:outputText value="{!activeUser.DefaultCurrencyISOCode}" />
+                            
+                            <apex:outputText value="{0, number, ###,###,###.00}" >
+                            <apex:param value="{!oppty.Amount}" />
+                            </apex:outputText>
+                            <apex:outputText value=".00"  rendered="{!ISBLANK(oppty.Amount)}">
+                            <apex:param value="{!oppty.Amount}" />
+                            </apex:outputText>
+                            )
+           </apex:panelgroup>
+           
+           </apex:outputtext>-->
+            
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" title="Opportunity Review Details" id="ORdetails">
+             <apex:outputField value="{!Approval__c.Meeting_Review_Request_Date__c}"/>
+             <apex:outputField value="{!Approval__c.Pursuit_Budget_USD__c}"/>
+             <apex:outputField value="{!Approval__c.Approval_Description__c}"/>
+             <apex:outputField value="{!Approval__c.Requestor_Comments__c}"/>
+             <apex:outputfield value="{!Approval__c.Status__c}"/>
+             <apex:Outputfield value="{!Approval__c.Approval_Routing_Note__c}"/>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Opportunity Pursuit Resource Requirements" columns="1">
+  
+            <apex:pageBlockTable value="{!PersuitResourceWrapper}" var="p" id="cp_table2" width="100%">
+               <apex:column >
+                <apex:facet name="header">Pursuit Team Name/Role</apex:facet>
+                <apex:outputField value="{!p.opursuitresourcesObj.Pursuit_Team_Name_Role__c}"/>
+                </apex:column>
+                <apex:column >
+                <apex:facet name="header">Region/Sub-Region/Country</apex:facet>
+                <apex:outputField value="{!p.opursuitresourcesObj.Region_subregion_Country__c}"/>
+                </apex:column>
+                <apex:column >
+                <apex:facet name="header">Estimated Start Date</apex:facet>
+                 <c:noDateLink >
+                <apex:outputField value="{!p.opursuitresourcesObj.Estimated_Start_Date__c}"/>
+                 </c:noDateLink>
+                </apex:column>
+                <apex:column >
+                <apex:facet name="header">Estimated End Date</apex:facet>
+                <c:noDateLink >
+                <apex:outputField value="{!p.opursuitresourcesObj.Estimated_End_Date__c}"/>
+                </c:noDateLink>
+                </apex:column>
+                <apex:column >
+                <apex:facet name="header">Requested Hours</apex:facet>
+                <apex:outputField value="{!p.opursuitresourcesObj.Requested_Hours__c}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+   
+
+   
+     </apex:pageBlock>
+    
+    
+      <apex:pageBlock Title="Attachments">
+
+         <apex:pageblockButtons location="top">
+                 <apex:commandButton value="Attach" title="Attach" action="/apex/UploadAttachment?Approvalid={!Approval__c.id}&Page=DGApprovalOpportunityReviewDetail&context=Approval" rendered="{!IF(((Approval__c.Submitter__c == $User.Id || Approval__c.CreatedById == $User.Id) && (Approval__c.Status__c == 'Open' || Approval__c.Status__c == 'Rejected' || Approval__c.Status__c == 'Recalled')) || CoordinatorAccess == true ,true,false)}"/>
+                  <apex:param id="VF" name="VFPage" value="$CurrentPage.Name"/>
+         </apex:pageblockButtons>
+                  <apex:pageBlockTable value="{!Attachments}" var="att" id="at" width="100%" columns="8">
+                    <apex:column headerValue="Action">
+                       <apex:CommandLink value="Check Out" action="{!LockAttachment}" rendered="{!IF(att.checkedOutBy!=loggedInUserName && att.at.Description != 'System Generated Snapshot',true,false)}">
+                        <apex:param name="lastmodified" value="{!att.checkedOutBy}" assignTo="{!lastmodified}"/>
+                        <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+                        <apex:param name="bLock" value="true" assignTo="{!block}" />
+                    </apex:commandLink>
+                    <apex:outputtext value=" | " rendered="{!IF(att.checkedOutBy!=loggedInUserName && att.at.Description != 'System Generated Snapshot',true,false)}"/> 
+                    <apex:CommandLink value="Edit" rendered="{!IF(att.isChecked== true && att.checkedOutBy==loggedInUserName && att.at.Description != 'System Generated Snapshot',true,false)}" action="{!customAttachmentEdit}"> <!-- && att.LastModifiedById== $User.Id  -->
+                        <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+                        <!--<apex:param name="lastmodifiedBy" value="{!att.LastModifiedBy}" assignTo="{!lastmodifiedBy}"/>-->
+                        <apex:param name="filename" value="{!att.at.name}" assignTo="{!filename}"/>
+                    </apex:commandLink>                 
+                    <apex:outputtext value=" | " rendered="{!IF(att.isChecked== true && att.checkedOutBy==loggedInUserName && att.at.Description != 'System Generated Snapshot',true,false)}"/>
+                       <apex:CommandLink value="Delete" action="{!DeleteAttachment}" rendered="{!IF(((((Approval__c.Submitter__c == $User.Id || Approval__c.CreatedById == $User.Id)) && (Approval__c.Status__c == 'Open' || Approval__c.Status__c == 'Rejected' || Approval__c.Status__c == 'Recalled')) || CoordinatorAccess == True) && att.at.Description != 'System Generated Snapshot' &&att.isChecked== false ,True,False)}">
+                       <apex:param name="DelAttach" value="{!att.at.id}" assignTo="{!attId}"/>
+                       </apex:commandLink>
+                    <apex:outputtext value=" | " rendered="{!IF(((((Approval__c.Submitter__c == $User.Id || Approval__c.CreatedById == $User.Id)) && (Approval__c.Status__c == 'Open' || Approval__c.Status__c == 'Rejected' || Approval__c.Status__c == 'Recalled')) || CoordinatorAccess == True) && att.at.Description != 'System Generated Snapshot' &&att.isChecked== false ,True,False)}"/>
+                    <apex:CommandLink value="Version History" rendered="{!att.at.Description != 'System Generated Snapshot'}" onclick="window.open('/apex/DGAttachmentVersionHistoryPage?filename={!att.at.name}&ApprovalWorkspaceID={!att.at.parentID}&page=DGApprovalOpportunityReviewDetail','Popup','left=320px,width=700px,height=400px,resizable=yes,scollbars=yes,toolbar=no,status=no')">
+                        
+                    </apex:commandLink>
+                        </apex:column>
+                    <apex:column headerValue="Description">
+                         <apex:outputField value="{!att.at.Description}"/>
+                    </apex:column>
+                    <apex:column headerValue="Attachment">
+                        <apex:outputLink value="{!URLFOR($Action.Attachment.Download, att.at.id)}" target="_blank">{!att.at.name}</apex:outputLink>
+                        </apex:column>
+                     <apex:column headerValue="Version Number">
+                         <apex:outputText value="{!att.VersionNumber}"/>
+                         </apex:column>
+                        <apex:column headerValue="Created By">
+                         <apex:outputField value="{!att.at.CreatedById}"/>
+                         </apex:column>
+                    <apex:column headerValue="Created Date">
+                         <apex:outputField value="{!att.at.CreatedDate}"/>
+                         </apex:column>
+                    
+                         <apex:column headerValue="Check-Out By">
+                         <apex:outputText value="{!att.checkedOutBy}" rendered="{!IF(att.isChecked== true,true,false)}"/>
+                         </apex:column>
+                         <apex:column headerValue="Check-Out Date">
+                         <apex:outputField value="{!att.at.LastModifiedDate}" rendered="{!IF(att.isChecked== true,true,false)}"/>
+                         </apex:column>
+                     </apex:pageBlockTable>
+                     
+         
+    </apex:pageBlock> 
+</apex:form>       
+      <!--<apex:relatedList list="NotesAndAttachments"/>-->
+      <apex:relatedList list="Approval_workspaces__r"/>
+      <apex:relatedList list="ProcessSteps"/>
+       
+</apex:page>

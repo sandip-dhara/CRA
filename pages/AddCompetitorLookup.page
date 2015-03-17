@@ -1,0 +1,95 @@
+<!-- 
+/**********************************************************
+* Page Name: AddCompetitorLookup
+* Author: HP
+* Date: 25-JULY-2012 
+* Requirement # Request Id : 
+* Description: To display Competitor Account According to the region & BG of the logged in User
+***********************************************************/
+-->
+<apex:page controller="AddCompetitorLookupController" action="{!initialize}" showHeader="false" sideBar="false" tabStyle="Account">
+    <!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+    
+    <body class="lookupTab  LookupSearchFrame, marginCls">
+        <apex:form >
+          <apex:sectionHeader title="{!$Label.Competitor_Search}" />
+                <apex:actionRegion >  
+                    <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">
+                        <!-- <apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>  -->
+                        <apex:outputLabel value="{!$Label.Name}" styleClass="searchLabelCls" for="txtSearch"/>
+                        <apex:inputText id="AccSearch" value="{!AccSearchText}" onkeypress="return searchAccountOnEnter(event,this);"/>
+                        <apex:outputLabel value="{!$Label.BusinessGroup}" styleClass="searchLabelCls" for="txtSearch"/>
+                       <apex:selectList value="{!BGsearchText}" size="1" onkeypress="return searchAccountOnEnter(event,this);">
+                            <apex:selectOptions value="{!BGPicklist}" />
+                       </apex:selectList>
+                        
+                        <span class="searchspanCls">
+                            <apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!searchAccounts}" rerender="searchResults">
+                            </apex:commandButton>
+                        </span>
+                    </apex:outputPanel>
+                    <p>{!$Label.Competitors_filter_region}</p>
+                    <p>{!$Label.Wildcard_Usage}</p>
+                    <apex:outputPanel rendered="{!NOT(CONTAINS($Profile.Name, 'Partner'))}">
+                      <p>{!$Label.MDCPCompetitorSearch} <apex:commandLink value="Master Data" onclick="openpopup();" /></p>
+                    </apex:outputPanel>  
+                     <!-- Page block for showing search result -->
+                    <apex:pageBlock id="searchResults">
+                    <apex:outputpanel styleClass="resultPanelCls" layout="block">
+                        <apex:pageBlockTable value="{!listCompetitorAccounts}" var="CompAcc">
+                            <apex:column headerValue="{!$Label.Competitor_Account_Name}">
+                            <!--SORTING -->
+                            <apex:facet name="header">
+                                <apex:commandLink action="{!searchAccounts}" value="{!$Label.Competitor_Account_Name}{!IF(sortExpression=='name',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSort">
+                                    <apex:param value="name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                            
+                            
+                            <!-- SORTING -->
+                            <apex:outputLink value="javascript:top.window.opener.lookupPick('{!FormTag}','{!TextBox}_lkid','{!TextBox}','','{!CompAcc.Id}','{!CompAcc.Name}','null','')">{!CompAcc.Name}</apex:outputLink>
+                            </apex:column>
+                           <!-- <apex:column value="{!CompAcc.Valid_Business_Group__c}"/>  -->
+                           <apex:column headerValue="{!$Label.BusinessGroup}">
+                               <apex:outputtext value="{!CompAcc.Valid_Business_Group__c}"/>
+                           </apex:column>
+                           <!-- <apex:column value="{!CompAcc.Regions__c}"/>
+                            <apex:column value="{!CompAcc.Type}"/> -->
+                        </apex:pageBlockTable> 
+                        <apex:outputLabel rendered="{!isResultEmpty}">
+                            <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+                        </apex:outputLabel>
+                    </apex:outputpanel>
+                    </apex:pageBlock>
+                </apex:actionRegion>
+                <!-- defining action function for searching accounts -->
+                <apex:actionFunction action="{!searchAccounts}" name="searchAccountOnEnterKey" rerender="searchResults">
+                   <apex:param name="firstParam" assignTo="{!searchText}" value="" />
+               </apex:actionFunction>
+        </apex:form>
+        <script>
+        function searchAccountOnEnter(ev,searchTextObj)  {
+            var searchTextValue=searchTextObj.value;
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                searchAccountOnEnterKey(searchTextValue);  
+                return false;           
+             } 
+         }
+        function openpopup(){
+            var Width=(screen.width/10)*8.5; 
+            var Height=(screen.height/10)*7.5; 
+            thiswindow=window.open('/apex/MDCPDynamicSearchPage?entity=Competitor&Region={!RegionMDCP} ',
+            'MDCPSearchpage','scrollbars=yes,resizable=1,width='+Width+',height='+Height+',left=0,top=0');
+            thiswindow.moveTo(190,5);
+            if (window.focus){ 
+                thiswindow.focus() 
+            } 
+            if (!thiswindow.closed){ 
+                thiswindow.focus() 
+            }
+
+        } 
+        </script>
+    </body>
+</apex:page>

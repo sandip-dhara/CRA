@@ -1,0 +1,48 @@
+<apex:page standardController="Account_Plan__c" extensions="BUaggregationController" tabstyle="Account_Plan__c" showHeader="false" sidebar="False">
+
+
+
+<style>   
+ .odd{background-color: #CEECF5;}
+ .even{background-color: #A9D0F5;}
+ .line{line-height: 18pt;}
+</style>
+    <style>
+        .tableContainer
+        {
+            height:290px; 
+            width: 100%;
+            overflow: auto;
+        }       
+        .floatingStyle 
+        { 
+            position:relative; 
+        } 
+    </style>
+ <apex:form >
+<apex:pageBlock title="Business Unit Plans" >
+<center><apex:commandButton value="Back" action="{!back}" /></center>
+<apex:pageBlockSection title="Totals by BG " collapsible="False" >
+<apex:datatable Value="{!Results}" var="item"  columns="12" width="80%"   cellspacing="1" frame="box" cellpadding="5" >
+        <apex:column headerValue="BG Name"   style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}" value="{!item.buName}" width="8.3%"  />        
+        <apex:column headerValue="FY11 Sales (actuals)($)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy11format}" width="15%" /> 
+        <apex:column headerValue="YOY 1(%)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy11Avg}"  width="15%"/>
+        <apex:column headerValue="FY12 Sales (actuals)($)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy12format}" width="15%" />        
+        <apex:column headerValue="YOY 2(%)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy12Avg}"  width="15%"/>
+        <apex:column headerValue="FY13 Sales (Projected)($)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy13format}" width="8.3%" />        
+        <apex:column headerValue="YOY 3(%)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy13Avg}"  width="8.3%"/>
+        <apex:column headerValue="FY14 Sales (Projected)($)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy14format}" width="8.3%" />        
+        <apex:column headerValue="YOY 4(%)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}" value="{!item.fy14Avg}"  width="8.3%"/>
+        <apex:column headerValue="FY15 Sales (Projected)($)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy15format}" width="8.3%" />        
+        <apex:column headerValue="YOY 5(%)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}" value="{!item.fy15Avg}"  width="8.3%"/>
+        <apex:column headerValue="FY16 Sales (Projected)($)" style="{!if(item.buName='Totals','background-color:#008080;font-weight: bold;color:white', 'background-color: #C0C0C0')}"  value="{!item.fy16format}" width="8.3%" />                
+        
+        
+        
+        <apex:stylesheet value="/sCSS/21.0/sprites/1297816277000/Theme3/default/gc/versioning.css" /> 
+</apex:dataTable> 
+</apex:pageBlockSection>
+<b><strong style="color: red;">Note: The totals exclude HPFS</strong></b>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

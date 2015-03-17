@@ -1,0 +1,1084 @@
+<apex:page controller="SLP_Activity" extensions="mobileUserData" cache="false" docType="html-5.0"
+           sidebar="false" showheader="false" standardStylesheets="false">
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/data-tables/jquery.dataTables.js')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.slideshow, 'responsiveslides.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mslp_res, 'fonts/icomoon/style.css')}" />
+        <apex:includeScript value="{!URLFOR($Resource.slideshow, 'responsiveslides.js')}" />
+        
+        <script>  
+        
+var K = function () {
+    var a = navigator.userAgent;
+    return {
+        ie: a.match(/MSIE\s([^;]*)/)
+    }
+}();
+      
+      
+      function parseTwitterDate(a) {
+      var b = new Date();
+    var c = new Date(a);
+    if (K.ie) {
+        c = Date.parse(a.replace(/( \+)/, ' UTC$1'))
+    }
+    var d = b - c;
+    var e = 1000,
+        minute = e * 60,
+        hour = minute * 60,
+        day = hour * 24,
+        week = day * 7;
+    if (isNaN(d) || d < 0) {
+        return ""
+    }
+    if (d < e * 7) {
+        return "right now"
+    }
+    if (d < minute) {
+        return Math.floor(d / e) + " seconds ago"
+    }
+    if (d < minute * 2) {
+        return "about 1 minute ago"
+    }
+    if (d < hour) {
+        return Math.floor(d / minute) + " minutes ago"
+    }
+    if (d < hour * 2) {
+        return "about 1 hour ago"
+    }
+    if (d < day) {
+        return Math.floor(d / hour) + " hours ago"
+    }
+    if (d > day && d < day * 2) {
+        return "Yesterday"
+    }
+    if (d < day * 365) {
+        return Math.floor(d / day) + " days ago"
+    } else {
+        return "over a year ago"
+    }
+    /*var system_date = new Date(Date.parse(tdate));
+    var user_date = new Date();
+    if (K.ie) {
+        system_date = Date.parse(tdate.replace(/( \+)/, ' UTC$1'))
+    }
+    var diff = Math.floor((user_date - system_date) / 1000);
+    if (diff <= 1) {return "just now";}
+    if (diff < 20) {return diff + " seconds ago";}
+    if (diff < 40) {return "30 seconds ago";}
+    if (diff < 60) {return "less than a minute ago";}
+    if (diff <= 90) {return "1 minute ago";}
+    if (diff <= 3540) {return Math.round(diff / 60) + " minutes ago";}
+    if (diff <= 5400) {return "1 hour ago";}
+    if (diff <= 86400) {return Math.round(diff / 3600) + " hours ago";}
+    if (diff <= 129600) {return "1 day ago";}
+    if (diff < 604800) {return Math.round(diff / 86400) + " days ago";}
+    if (diff <= 777600) {return "1 week ago";}
+    return "on " + system_date;*/
+}
+
+</script>
+        
+        <style type="text/css" rel="stylesheet">
+            @font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            body{
+                font-family:"HP Simplified",sans-serif;
+                color:#fff;
+            }
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .ui-content{
+                
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif; 
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                    .infoFld .menu_button{
+                    position:absolute;
+                    top:14px;
+                    right:6px;
+                    width:24px;
+                    height:24px;
+                    z-index:3;
+                }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:20px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:29px;
+            }
+            
+            .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+        </style>
+    
+    <body>
+        <div data-role="page" id="startpage">
+          <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <a href="#" data-role="none" data-ajax="false" id="buttonMenu"><img class ="menu_button" src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImageList"/></a>
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                <form data-ajax="false">
+                <input data-corners="false" class="search" type="search" placeholder="Search" id="search-basic"></input>
+                </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">                
+                <li data-icon="false" id="wizardRow" style="display:none;"><a data-ajax="false" style="color:#0096D3;" href="https://{!getSfInstance}/apex/mobileSelfReg" class="hpFont">Complete your profile</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mSLPLanding0" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileActivityPage" class="hpFont">Activity</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyCommunities" class="hpFont">My Communities</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileMyBoards" class="hpFont">My Boards</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin2" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+                
+          <div data-role="header" style="background:#404040; vertical-align: middle;height: 54px; line-height:54px;border:none;" data-position="fixed" data-tap-toggle="false">
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><div id="wizardNotify" style="display:none; width:25px; height:25px; background-color:red;margin: 8px 0px 0px 7px;position: absolute;border-radius: 12.5px;"></div><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+        <div data-role="header" style="overflow:hidden; display: block; background:#f9a006; border: none; color: white; text-shadow: none; height: 25px; margin-top: -27px;">
+                <h3 style="margin-top:-27px;">My Activities</h3>
+            </div>
+    </div>
+
+        <div data-role="content" class="ui-content" style="margin-top:23px;">           
+            <ul id="activtyStream" data-role="listview" data-inset="false" style="background-color:rgba(255, 255, 255, 0.8);white-space:wrap !important;border:none !important;">
+              <apex:repeat value="{!GenerateUserCommunityPostAndComments}"  var="CommunityPostComment">
+              <li class="actvitylist" >
+                  <apex:repeat value="{!CommunityPostComment.ListFeedPost}"  var="Post">
+                    <img src="{!Post.UsrPhoto}" class="circular-image-container" style="margin-left:5px;"/>
+                      <apex:outputPanel rendered="{!!CommunityPostComment.IsCommunity}" >
+                        <div> <a class="bold" style="text-decoration:none;" data-ajax="false" href='/apex/mobileLearningBoardMockup?id={!CommunityPostComment.BoardOrCommId}'> {!CommunityPostComment.BoardOrCommNm}</a> - <a href="#" style="text-decoration:none;" data-CreatedId="{!Post.PostedUserId}" onclick="showMemberPopup(this)" >{!Post.PostedUserName}</a> </div>
+                      </apex:outputPanel>
+                      <apex:outputPanel rendered="{!CommunityPostComment.IsCommunity}" >
+                        <div> <a class="bold" style="text-decoration:none;" data-ajax="false" href='/apex/mobileCommunityMockup?id={!CommunityPostComment.BoardOrCommId}'> {!CommunityPostComment.BoardOrCommNm}</a> - <a href="#" style="text-decoration:none;" data-CreatedId="{!Post.PostedUserId}" onclick="showMemberPopup(this)" >{!Post.PostedUserName}</a> </div>
+                      </apex:outputPanel>
+                        <span> {!Post.PostName} </span> 
+                        <apex:outputPanel rendered="{!Post.IsLink}">
+                             <div id="{!CommunityPostComment.SequenceNo}">  </div>
+                        </apex:outputPanel>
+                        <div class="colorGrey" id="time_{!CommunityPostComment.SequenceNo}"><span data-CreatedId='{!Post.PostedUserId}' data-IsComm="{!CommunityPostComment.IsCommunity}"  data-FeedItemId='{!Post.PostId}' data-BrdComm="{!CommunityPostComment.BoardOrCommId}" data-SequenceNo ="{!CommunityPostComment.SequenceNo}" onclick="shareActivity(this)" class="icon-share" style="font-size:16pt;text-align:center;color:#ffffff;float:right;"></span></div>
+                       
+<!-- <a data-ajax="false"  href='/apex/mobileLearningBoardMockup?id={!CommunityPostComment.BoardOrCommId}'>{!Post.Title}</a> -->
+                  </apex:repeat>
+                </li>
+              </apex:repeat>
+               
+            </ul>  
+            <br/>
+            <button id="more" style="background:#F9A006;color:#ffffff;text-shadow:none;">Show More</button>
+        </div> <!--content-->
+        
+        <div data-role="popup" id="popupShare" data-overlay-theme="a" data-dismissible="true" style="min-width: 100%;">
+        <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+                        <div data-role="content">
+                    <ul data-role="listview" data-filter="true" data-icon="false" data-inset="false">    
+                    <li><a href="#" style="padding-top: 0px;padding-bottom: 0px;padding-right: 42px;padding-left: 0px;">
+                           <fieldset data-role="controlgroup" data-iconpos="right">                                                        
+                                <input type="checkbox" name="checkbox-2b" id="checkbox-2b" />                    
+                                <label for="checkbox-2b" style="border-top-width: 0px;margin-top: 0px;border-bottom-width: 0px;margin-bottom: 0px;border-left-width: 0px;border-right-width: 0px;">
+                                    <label  style="padding:10px 0px 0px 10px;"> 
+                                        <h3>Mark McNelis</h3>
+                                        <p>mark.mcnelis@hp.com</p>
+                                    </label> 
+                                </label>
+                            </fieldset> 
+                        </a>
+                    </li>
+                    <li><a href="#" style="padding-top: 0px;padding-bottom: 0px;padding-right: 42px;padding-left: 0px;">
+                            <fieldset data-role="controlgroup" data-iconpos="right">                                                        
+                                <input type="checkbox" name="checkbox-2b" id="checkbox-2b" />                    
+                                <label for="checkbox-2b" style="border-top-width: 0px;margin-top: 0px;border-bottom-width: 0px;margin-bottom: 0px;border-left-width: 0px;border-right-width: 0px;">
+                                    <label  style="padding:10px 0px 0px 10px;"> 
+                                        <h3>Claude Villermain</h3>
+                                        <p>claude.villermain@hp.com</p>
+                                    </label> 
+                                </label>
+                            </fieldset>    
+                        </a>
+                    </li>
+            </ul>
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                     <div id="myfollow" style="margin-top:30px;">
+                     <a href="#" data-role="button" id="followButton" data-mini="false" style="background:#F9A006;color:#ffffff;line-height:30px;" onclick="followPerson()" >
+                     <div id="followDiv">
+                     <!--<img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Following-White.png')}" style="height:30px;vertical-align:middle;margin-right:5px" id="followText"/>-->
+                     Cancel
+                     </div>
+                     </a>
+                     </div>
+                     <div style="visibility:hidden; height:0px">
+                  </div>
+                </div>
+                <div class="ui-block-b">
+                    <div id="myemail" style="margin-top:30px;">
+                    <a href="mailto:test@trst.com" data-role="button" data-mini="false" style="background:#F9A006;color:#ffffff;line-height:30px;">
+                    <div>
+                    <!--<img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Email-Large.png')}" style="height:30px;vertical-align:middle;margin-right:5px" />-->
+                    Share</div>
+                    </a>
+                 </div>
+                </div>
+      </div><!-- /grid-a -->
+            
+         </div>
+            </div>
+            
+               <!-- START PEOPLE PANEL -->
+
+    <div data-role="panel" id="peoplePanel" data-position="right" data-display="overlay" style="background:#f3f3f3;">
+        <div id="peoplePanelContent">
+         <a href="#peoplePanel" style="text-decoration:none;text-shadow:none;"><span id="icoCloseButton"  class="icon-caret-right" style="font-size:32pt;text-align:center;color:rgb(135, 136, 138);margin-left:10px;"></span></a>
+        </div>
+
+    </div><!-- /panel -->
+
+<!-- END PEOPLE PANEL --> 
+        
+        
+                    <!-- START SHARE PANEL -->
+    <style>
+        #sharePanel {
+            background-color:#F3F3F3;
+        }
+        #sharePanel .ui-panel-inner {
+            padding: 10px !important;
+        }
+        #sharePanel h1 {
+            display:block;
+            width:230px;
+        }
+        #sharePanel h2 {
+            display:block;
+            font-size: 13px;
+            padding-bottom: 20px;
+        }
+    </style>
+    <script>
+        function closePanel() {
+            $( "#sharePanel" ).panel( "close" , "");
+        }
+        
+      function changePage(index) {
+        var hTree = $('#contacts').controlgroup("container").children();
+        var indices = [];
+        for (var v =0; v < hTree.length; v++) {
+            //console.log( v + ' ' + $( hTree[v] ).text() + ': ' + $( hTree[v] ).hasClass('sResult') );
+            if ( $( hTree[v] ).hasClass('sResult') ) {
+                indices.push(v);
+            }
+        }
+        
+        var lstLen = indices.length;
+        if ( lstLen <= 0 ) {
+            lstLen = hTree.length;
+        }
+        var numOfTabs = Math.ceil( lstLen / 5 );
+        //console.log('num of tabs: ' + numOfTabs);
+
+
+        if (index == -1) {    // Go Left
+            var jmp = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) - 1;
+            if (jmp >= 1) {
+                changePage(jmp);
+                $('#'+jmp).attr("checked",true).checkboxradio("refresh");
+                $('#'+(jmp+1)).attr("checked",false).checkboxradio("refresh");
+                
+                                var nextBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) + 1;
+                if (nextBox > 5) {
+                    nextBox = 0;
+                }
+
+                var prevBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) - 1;
+                if (prevBox < 0) {
+                    prevBox = 0;
+                }
+                                                
+                if ($('#'+(nextBox)).css('display') == 'none') {
+                    $('#'+(nextBox)).css('display','');
+                    $('#l_'+(nextBox)).css('display','');
+                    $('#'+(nextBox-3)).css('display','none');
+                    $('#l_'+(nextBox-3)).css('display','none');
+                }
+                
+                if ($('#'+(prevBox)).css('display') == 'none') {
+                    $('#'+(prevBox)).css('display','');
+                    $('#l_'+(prevBox)).css('display','');
+                    $('#'+(prevBox+3)).css('display','none');
+                    $('#l_'+(prevBox+3)).css('display','none');
+                }
+            }
+            return;            
+        }
+        else if (index == -2) {    // Go Right
+            var jmp = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) + 1;
+            if (jmp >= 1 && jmp <= numOfTabs) {
+                changePage(jmp);
+                $('#'+jmp).attr("checked",true).checkboxradio("refresh");
+                $('#'+(jmp-1)).attr("checked",false).checkboxradio("refresh");
+                
+                var nextBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) + 1;
+                if (nextBox > 5) {
+                    nextBox = 0;
+                }
+
+                var prevBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) - 1;
+                if (prevBox < 0) {
+                    prevBox = 0;
+                }
+                                                
+                if ($('#'+(nextBox)).css('display') == 'none') {
+                    $('#'+(nextBox)).css('display','');
+                    $('#l_'+(nextBox)).css('display','');
+                    $('#'+(nextBox-3)).css('display','none');
+                    $('#l_'+(nextBox-3)).css('display','none');
+                }
+                
+                if ($('#'+(prevBox)).css('display') == 'none') {
+                    $('#'+(prevBox)).css('display','');
+                    $('#l_'+(prevBox)).css('display','');
+                    $('#'+(prevBox+3)).css('display','none');
+                    $('#l_'+(prevBox+3)).css('display','none');
+                }
+
+            }
+            return;
+        }
+      
+        index--;
+        
+        /*var rsPage = 5;    // number of results per page
+        var start = index * rsPage;
+        var end = Math.min((start + rsPage) - 1, hTree.length - 1);
+        
+        for (var v=0; v < hTree.length; v++) {
+            if ((v >= start) && (v <= end)) {
+                $( hTree[v] ).css('display','');
+            }
+            else {
+                $( hTree[v] ).css('display','none');
+            }
+        }*/     
+                     
+        
+        
+        if ( indices.length == 0 ) {
+            for ( var d =0; d <= hTree.length; d++ ) {
+                indices.push(d);
+            }   
+        }
+        
+        var rsPage = 5;    // number of results per page
+        var start = index * rsPage;
+        var end = Math.min((start + rsPage) - 1, indices.length - 1);
+        //console.log('(' + start + ', ' + end + ')');
+
+        for (var v=0; v < indices.length; v++) {
+            if ((v >= start) && (v <= end)) {
+                $( hTree[indices[v]] ).css('display','');
+            }
+            else {
+                $( hTree[indices[v]] ).css('display','none');
+            }
+        }
+        
+                        
+        $("#contacts")
+        .enhanceWithin()
+        .controlgroup("refresh");
+        
+      }
+    
+      function createPagination(nTabs) {
+      
+      if ( nTabs <= 1 ) {
+          $('#pages').css('display','none');
+          return;
+      }
+      else {
+          $('#pages').css('display','');
+      }
+      
+      $('#pages')
+            .controlgroup("container")
+            .html('');
+            
+        var maxTabs = 3;
+        $('#pages')
+            .controlgroup("container")
+            .append('<a href="#" class="ui-btn ui-corner-all ui-icon-arrow-l ui-btn-icon-left" onclick="changePage(-1)">&nbsp;</a>');
+            
+            for(var i = 1; i <= nTabs; i++) {
+                if ( i==1 ) {
+                    $('#pages')
+                    .controlgroup("container")
+                    .append('<input type="radio" name="radio-choice-h-6" id="'+ i +'" value="on" checked="checked" onclick="changePage('+ i +')"><label for="'+ i +'" id="l_'+ i +'">' + i + '</label>');
+                }
+                else {
+                    if (i > maxTabs) {
+                      $('#pages')
+                        .controlgroup("container")
+                        .append('<input type="radio" name="radio-choice-h-6" id="'+ i +'" onclick="changePage('+ i +')" style="display:none;"><label for="'+ i +'" id="l_'+ i +'" style="display:none;">' + i + '</label>');                    
+                    }
+                    else {
+                        $('#pages')
+                        .controlgroup("container")
+                        .append('<input type="radio" name="radio-choice-h-6" id="'+ i +'" onclick="changePage('+ i +')"><label for="'+ i +'" id="l_'+ i +'">' + i + '</label>');
+                    }
+                }                
+            }
+            
+            $('#pages')
+            .controlgroup("container")
+            .append('<a href="#" class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-icon-right" onclick="changePage(-2)">&nbsp;</a>');
+            
+            $("#pages")
+            .enhanceWithin()
+            .controlgroup("refresh");
+            
+            $("input[type='radio']").bind( "change", function(event, ui) {
+                var nextBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) + 1;
+                if (nextBox > 5) {
+                    nextBox = 0;
+                }
+
+                var prevBox = parseInt($('input:radio[name=radio-choice-h-6]:checked').attr('id')) - 1;
+                if (prevBox < 0) {
+                    prevBox = 0;
+                }
+                                                
+                if ($('#'+(nextBox)).css('display') == 'none') {
+                    $('#'+(nextBox)).css('display','');
+                    $('#l_'+(nextBox)).css('display','');
+                    $('#'+(nextBox-3)).css('display','none');
+                    $('#l_'+(nextBox-3)).css('display','none');
+                }
+                
+                if ($('#'+(prevBox)).css('display') == 'none') {
+                    $('#'+(prevBox)).css('display','');
+                    $('#l_'+(prevBox)).css('display','');
+                    $('#'+(prevBox+3)).css('display','none');
+                    $('#l_'+(prevBox+3)).css('display','none');
+                }
+
+            });
+
+            
+            changePage(1);
+       }
+                  
+      function shareActivity(data){
+      
+          var seqNo = $(data).attr('data-SequenceNo');
+          var createdId = $(data).attr('data-CreatedId');
+          var feedItemId = $(data).attr('data-FeedItemId');
+          var commId = $(data).attr('data-BrdComm');
+          var isComm = $(data).attr('data-IsComm');
+          
+          //console.log('>>>>>>>>>>>' + seqNo + ', ' + createdId + ', ' + feedItemId + ', ' + commId+ ', '+ isComm);
+          
+          $('#contacts').controlgroup("container").html('');
+          $( "#sharePanel" ).panel( "open" , "");
+          
+          var id = seqNo; //$(data).attr('data-SequenceNo');
+
+          $('#hdnSetPosition').val(id);
+
+          var CreateUsrId = createdId;  // $(data).attr('data-CreatedId');
+          var FeedImId = feedItemId; //$(data).attr('data-FeedItemId');
+          var BoradOrCommId = commId; //$(data).attr('data-BrdComm');
+          var IsComm = isComm //$(data).attr('data-IsComm');
+          document.getElementById("{!$Component.SlpActv.hdnIsComm}").value = IsComm;
+          document.getElementById("{!$Component.SlpActv.hdnBoradOrComm}").value = BoradOrCommId;
+
+          document.getElementById("{!$Component.SlpActv.hdnFeedItemId}").value = FeedImId;
+          //$('[id$=hdnFeedItemId]').val(FeedImId);
+          Visualforce.remoting.Manager.invokeAction(
+           '{!$RemoteAction.SLP_Activity.UserFollwerShare}',
+           CreateUsrId,
+           ShowNetworkUsers
+       );
+
+     }
+            
+      function ShowNetworkUsers(result, event) {
+            for(var i = 0; i < result.length; i++) {
+                $('#contacts')
+                .controlgroup("container")
+                .append('<input type="checkbox" name="itemIds" id="'+ result[i].Id +'"/> <label for="'+ result[i].Id +'" style="color:#0093D1;">'+ result[i].Name +'</label>');           
+            }
+            
+            $("#contacts")
+            .enhanceWithin()
+            .controlgroup("refresh");
+            
+            // Pagination
+            if (result.length > 5) {                
+                var numOfTabs = Math.ceil( result.length / 5 );
+                createPagination(numOfTabs);
+            }
+      }
+      
+      function SaveUsers()
+      {
+      
+            $("#shareButton").addClass('ui-disabled');
+            
+            var strRel = '';
+            var lst = $('#contacts').closest('fieldset').find(':checkbox');
+            
+            for (var i=0; i<lst.length; i++) {
+                if ($("#" + lst[i].id).prop("checked")) {
+                    if (strRel == '') {
+                        strRel = lst[i].id;
+                    }
+                    else {
+                        strRel = strRel + ',' + lst[i].id;
+                    }
+                }
+            }
+
+          if (strRel == '')
+          {
+              alert('Select at least one user');
+              $("#shareButton").removeClass('ui-disabled')
+          }
+          else
+          {
+              document.cookie = "TopicCatName=" + $('[id$=hdnContentCtgyName]').val();
+
+              $('[id$=hdnShareContentFlag]').val('Y');
+
+              var ShareCmt = $('#commentArea').val();
+              var TopicId = window.tId;
+              var topName = $('#topicTitle').text();
+              
+              $('[id$=hdnShareOperatingSystem]').val(GetOSName());
+              $('[id$=hdnShareBrowser]').val(GetBrowserName());
+              $('[id$=hdnShareDeviceType]').val('Mobile');
+
+              
+              document.getElementById("{!$Component.SlpActv.hdnSelectedUsrsId}").value = strRel;
+              document.getElementById("{!$Component.SlpActv.hdnShareComment}").value = ShareCmt;
+              
+              var button = document.getElementById("{!$Component.SlpActv.SActivityShare}");
+              button.click();
+          }
+      }
+
+      
+    </script>
+    <div data-role="panel" id="sharePanel" data-position="right" data-display="overlay">
+        <h2>Select users from your network</h2>
+        <h1 id="topicTitle"></h1>
+        <hr/>
+
+        <fieldset data-role="controlgroup" id="contacts" data-filter="true" data-icon="false">                
+        </fieldset>
+        
+        <div data-role="controlgroup" id="pages" data-type="horizontal" data-mini="true">
+        </div>
+        
+        
+        <textarea name="commentArea" id="commentArea"></textarea>
+        <div id="btnPnl">
+            <a href="#" class="ui-btn" style="float:left; background-color:#767676; border-top-right-radius: 10px 10px;border-bottom-left-radius: 10px 10px; color: white;text-shadow: none; width:30%;" onclick="closePanel();">Cancel</a><a href="#" id="shareButton" class="ui-btn" style="float:right; background-color:#2fade7;border-top-right-radius: 10px 10px;border-bottom-left-radius: 10px 10px;color: white;text-shadow: none; width:30%;" onclick="SaveUsers()">Share</a>
+        </div>
+            <apex:form style="display:none !important;" id="SlpActv">
+                <apex:commandButton styleclass="btnAthena btn-primary btnAthenaPopP"  style="display:none !important" action="{!SharedComment}" value="hide" id="SActivityShare"/>
+                  <apex:inputText id="hdnFeedItemId" style="display:none"  value="{!hdnFeedItem}"/>
+                  <apex:inputText id="hdnSelectedUsrsId" style="display:none"  value="{!SelectedUsrs}"/>
+                  <apex:inputText id="hdnShareComment" style="display:none"  value="{!hdnSharecmt}"/>
+                  <apex:inputText id="hdnBoradOrComm" style="display:none"  value="{!hdnBoardComm}"/>
+                  <apex:inputText id="hdnIsComm" style="display:none"  value="{!IshdnComm}"/>
+                  <apex:inputText id="hdnActivitySequence" style="display:none"  value="{!ActivitySequenceNo}"/>
+                  <apex:inputText id="hdnShareOperatingSystem" style="display:none"  value="{!ShareOperatingSystem}"/>
+                  <apex:inputText id="hdnShareBrowser" style="display:none"  value="{!ShareBrowser}"/>
+                  <apex:inputText id="hdnShareDeviceType" style="display:none"  value="{!ShareDeviceType}"/>
+            </apex:form>
+
+    </div><!-- /panel -->
+
+<!-- END SHARE PANEL --> 
+
+        
+      </div><!-- page-->
+      
+      
+      
+    </body>
+    
+    <style>
+        .ui-panel-inner{padding: 0}
+    </style>
+    <script type="text/javascript">
+    
+    $('#activtyStream  > li').slice(0,20).css('display', 'block');
+    
+    $(document).ready(function(){
+                if ({!!WizardComplete}) {
+                    $( '#wizardRow' ).css('display','block');
+                    $( '#wizardNotify' ).css('display','');
+                }
+    
+                  var aStream = {!getUserCommunityPostAndCommentsJSON};
+                     for (var obj in aStream) {
+                     if(aStream[obj].ListFeedPost==undefined||aStream[obj].ListFeedPost[0].PostName==null){
+                         //do nothing
+                     }
+                     else{
+                         $("#time_"+aStream[obj].SequenceNo).append('<span class="icon-time"></span>'+parseTwitterDate(aStream[obj].ListFeedPost[0].PostedDate)+'');
+                     if(aStream[obj].ListFeedPost[0].LinkUrl==null){
+                        //do nothing            
+                      }else{
+                         if(aStream[obj].ListFeedPost[0].LinkUrl.indexOf("SLP_ViewCommunity") > -1){
+                             if(aStream[obj].ListFeedPost[0].LinkUrl.indexOf("servlet.shepherd")>-1){
+                                 var link = aStream[obj].ListFeedPost[0].LinkUrl;
+                             }else{
+                                 var index = aStream[obj].ListFeedPost[0].LinkUrl.indexOf("?id=");
+                                 var preLink= aStream[obj].ListFeedPost[0].LinkUrl.substring(index+4);
+                                 var link = "/apex/mobileCommunityMockup?id="+preLink;
+                             }
+                              $("#"+aStream[obj].SequenceNo).append('<span class="icon-link"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>')                          
+                         }
+                         else{
+                             if(aStream[obj].ListFeedPost[0].LinkUrl.indexOf("servlet.shepherd")>-1){
+                                 var link = aStream[obj].ListFeedPost[0].LinkUrl;
+                             }else{
+                                 var index = aStream[obj].ListFeedPost[0].LinkUrl.indexOf("?id=");
+                                 var preLink= aStream[obj].ListFeedPost[0].LinkUrl.substring(index+4);
+                                 var link = "/apex/mobileLearningBoardMockup?id="+preLink;
+                             }
+                             
+                             if (aStream[obj].ListFeedPost[0].contentfileType == 'doc') {
+                             console.log(aStream[obj].ListFeedPost[0].contentfileType);
+                                 $("#"+aStream[obj].SequenceNo).append('<span class="icon-dload-word" style="font-size:20pt;"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>');                                 
+                             }
+                             else if (aStream[obj].ListFeedPost[0].contentfileType == 'xls') {
+                                 $("#"+aStream[obj].SequenceNo).append('<span class="icon-dload-excel" style="font-size:20pt;"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>')
+                             }
+                             else if (aStream[obj].ListFeedPost[0].contentfileType == 'pdf') {
+                                 $("#"+aStream[obj].SequenceNo).append('<span class="icon-dload-pdf" style="font-size:20pt;"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>')
+                             }
+                             else if (aStream[obj].ListFeedPost[0].contentfileType == 'txt') {
+                                 $("#"+aStream[obj].SequenceNo).append('<span class="icon-dload-text" style="font-size:20pt;"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>')
+                             } 
+                             else if (aStream[obj].ListFeedPost[0].contentfileType == 'ppt') {
+                                 $("#"+aStream[obj].SequenceNo).append('<span class="icon-dload-powerpoint" style="font-size:20pt;"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>')
+                             } 
+                             else {
+                                 $("#"+aStream[obj].SequenceNo).append('<span class="icon-link"> </span><a data-ajax="false" style="text-decoration:none;" href='+link+'>'+aStream[obj].ListFeedPost[0].Title+'</a>')                             
+                             }
+
+                         }
+                         
+                         }//Else from do nothing I
+                         }//Else from do nothing II
+                          
+                     }//For
+                     
+         $( "#contacts" ).on( "filterablefilter", function( event, ui ) {
+            var lastVal = $(".ui-filterable input").attr('data-lastval');
+            console.log(lastVal);
+            
+            if (lastVal == '') {
+                changePage(1);
+                $("input[name*=radio-choice-h-6]:checked").each(function() {
+                    $(this).attr("checked",false).checkboxradio("refresh");
+                });
+                $('#1').attr("checked",true).checkboxradio("refresh");
+//                console.log('itemssss: ' + ui.items.length);
+                for (var i=0; i<ui.items.length; i++) {
+                    $( ui.items[i] ).removeClass('sResult');
+                }
+                
+                var numOfTabs = Math.ceil( ui.items.length / 5 );
+                createPagination(numOfTabs);
+                
+                $('#pages').css('display','');
+                return;
+            }
+            checkRange(ui);
+            
+            function checkRange(items) {
+                var dStr = '';
+                var visible = 0;
+                for (var i=0; i<items.items.length; i++) {
+                    if (!($(items.items[i]).hasClass('ui-screen-hidden'))) {
+                        if (visible < 1000) {
+                            $(items.items[i]).css('display','');
+                            visible++;
+                            $(items.items[i]).addClass('sResult');
+                            dStr += $(items.items[i]).text() + '\n';
+                        }
+                        else {
+                            $(items.items[i]).css('display','none');
+                            $(items.items[i]).removeClass('sResult');
+                            $('#pages').css('display','');
+                        }                        
+                    }
+                }
+                
+                            
+                $("#contacts")
+                .enhanceWithin()
+                .controlgroup("refresh");
+                
+                createPagination(Math.ceil( visible / 5 ));
+            }            
+        } );
+    
+    });
+        
+        $('#search-basic').live("keypress", function(e) {
+            
+            /* ENTER PRESSED*/
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                var searchTerm= $('#search-basic').val();
+                
+                if (searchTerm.length <=2) {
+                    alert('A minimum of 3 characters should be entered');
+                    return;
+                }
+                if (searchTerm.length >=3998) {
+                        alert('A maximum of 3997 characters should be entered');
+                        return;
+                    }
+                
+                window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+encodeURIComponent(searchTerm);
+                $.mobile.loading( "show", {
+                      text: "Loading...",
+                      textVisible: true,
+                      textOnly: false
+                } ); // Displays load spinner while loading
+            }
+        })
+        
+         function highlightRow(elem){
+            $(elem).css({background: '#FF8800'});
+            setTimeout(function(){
+                 $(elem).css({background: 'transparent'});
+            }, 800);
+        }  
+        
+        $('#listviewmenu').on('click tap mousedown', 'li', function() {
+            highlightRow($(this));
+        });
+        
+        $('#menuImage').on('click tap mousedown touchstart', '', function() {
+            $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });
+        
+        $('#menuImageList').on('click tap mousedown touchstart', '', function() {
+            $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImageList").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });    
+        
+        $('#searchImage').on('click tap mousedown touchstart', '', function() {
+            $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+            setTimeout(function(){
+                 $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+            }, 300);
+        }); 
+        
+        $('#more').click(function() {
+        $('#activtyStream > li:hidden').slice(0,20).fadeIn();
+        if (!($('#activtyStream > li:hidden').length >= 1)) {
+        $(this).remove();
+        }
+        });    
+        
+        function showMemberPopup(data){
+        
+        var CreateUsrId = $(data).attr('data-CreatedId');
+            $("#peoplePanelContent #memberFrame").remove();
+            var viewportHeight = $(window).height() - 50;
+            //if(viewportHeight > 400)
+           //     viewportHeight = 400;
+            $("#peoplePanelContent").append( '<iframe src="/apex/mobileProfileNew?id=' + CreateUsrId + '" height="' + viewportHeight + '" width="100%;" style="border:0px;" id="memberFrame"></iframe>' );
+            $( "#peoplePanel" ).panel( "open" , "");
+        
+        }       
+        
+        
+      function GetOSName()
+      {
+  
+          var ua = navigator.userAgent;
+          var uaindex;
+        
+          // determine OS
+          if ( ua.match(/iPad/i) || ua.match(/iPhone/i) )
+          {
+            mobileOS = 'iOS';
+            uaindex  = ua.indexOf( 'OS ' );
+          }
+          else if ( ua.match(/Android/i) )
+          {
+            mobileOS = 'Android';
+            uaindex  = ua.indexOf( 'Android ' );
+          }
+          else
+          {
+            mobileOS = ua; //'unknown-mobileOS';
+          }
+          return mobileOS;
+      }
+      
+      function GetBrowserName()
+      {
+                 
+      var nVer = navigator.appVersion;
+      var nAgt = navigator.userAgent;
+      var browserName  = navigator.appName;
+      var fullVersion  = ''+parseFloat(navigator.appVersion); 
+      var majorVersion = parseInt(navigator.appVersion,10);
+      var nameOffset,verOffset,ix;
+                                    if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+         browserName = "Opera";
+         fullVersion = nAgt.substring(verOffset+6);
+         if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                      fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In MSIE, the true version is after "MSIE" in userAgent
+      else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+         browserName = "Microsoft Internet Explorer";
+         fullVersion = nAgt.substring(verOffset+5);
+      }
+      // In Chrome, the true version is after "Chrome" 
+      else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+         browserName = "Chrome";
+         fullVersion = nAgt.substring(verOffset+7);
+      }
+      // In Safari, the true version is after "Safari" or after "Version" 
+      else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+         browserName = "Safari";
+         fullVersion = nAgt.substring(verOffset+7);
+         if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+                      fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In Firefox, the true version is after "Firefox" 
+      else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+                     browserName = "Firefox";
+                     fullVersion = nAgt.substring(verOffset+8);
+      }
+      // In most other browsers, "name/version" is at the end of userAgent 
+      else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')) ) {
+                     browserName = nAgt.substring(nameOffset,verOffset);
+                     fullVersion = nAgt.substring(verOffset+1);
+                     if (browserName.toLowerCase()==browserName.toUpperCase()) {
+                        browserName = navigator.appName;
+                     }
+      }
+      var fVer = fullVersion.substring(0, fullVersion.indexOf(' '));
+      return browserName + ' ' + fVer;
+      
+     }
+            
+       
+    </script>
+    <style type="text/css">
+    .actvitylist{
+            background-color:transparent !important;
+            border-top:none !important;
+            border-left:none !important;
+            border-right:none !important;
+            border-bottom:solid 1px black !important;
+            margin-left:10px !important;
+            margin-right:10px !important;
+            text-shadow:none !important;
+        }
+    
+        .starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+        .circular-image-container {
+            width:50px;
+            height:50px;
+            margin-top: 15px;
+            margin-left:5px;
+            padding: 3px;
+            border-radius: 50px;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+            background-color: #ffffff;
+        }
+        ul#activtyStream li {
+            display: none;
+        }
+        
+        .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li-has-thumb{padding-left:75px !important}
+        
+        .ui-listview>.ui-li-static, .ui-listview>.ui-li-divider, .ui-listview>li>a.ui-btn { white-space:normal !important }
+        
+        .hpFont{
+                font-family:"HP Simplified",sans-serif;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+            }
+            
+        
+        
+    </style>
+
+</apex:page>

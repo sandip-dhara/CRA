@@ -1,0 +1,73 @@
+<!-- 
+/**********************************************************
+* Page Name: OpportunityProductEditAll
+* Author: Accenture
+* Date: 27-MAR-2012 
+* Requirement # Request Id :
+* Description: To override opportunity products Edit All button functionality
+***********************************************************/
+-->
+<apex:page controller="OpportunityProductEditAllController" tabStyle="Opportunity" id="page" >
+    <style>
+        body .pbBody table.list tfoot tr th {
+        border-left: 0px solid #D4DADC;
+        border-right: 0px solid #D4DADC;
+        background-color: white;
+}
+    </style>
+    <apex:form >
+        <apex:sectionHeader title="{!$Label.Edit_Products_for} {!oppName}" />
+        <apex:pageMessages />
+        <!-- Page block for editing opportunity products information -->
+        <apex:pageBlock >
+            <apex:pageblockButtons >
+                <apex:commandButton value="{!$Label.Save}" action="{!Save}"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!Cancel}"/>
+            </apex:pageblockButtons>
+            <apex:pageBlockTable value="{!lineItemMap}" var="lineItem" id="pageBlockTable">
+                <apex:column headerValue="{!$ObjectType.Product2.fields.Name.label}" id="opptyCol">
+                    <apex:inputHidden id="hiddenLineItemID" value="{!lineItemMap[lineItem].lineItem.id}"/>                        
+                    <apex:outputField value="{!lineItemMap[lineItem].lineItem.PricebookEntry.Product2.Name}"/>     
+                </apex:column>             
+                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Quantity.label}" id="quantityCol">                        
+                    <apex:inputField id="quantity" value="{!lineItemMap[lineItem].lineItem.Quantity}" rendered="{!NOT(lineItemMap[lineItem].lineItem.HasQuantitySchedule || lineItemMap[lineItem].lineItem.HasRevenueSchedule)}" onchange="callActionMethod('{!$Component.hiddenLineItemID}','{!$Component.quantity}','{!$Component.unitPrice}')"/>
+                    <apex:outputField id="disabledQuantity" value="{!lineItemMap[lineItem].lineItem.Quantity}" rendered="{!lineItemMap[lineItem].lineItem.HasQuantitySchedule || lineItemMap[lineItem].lineItem.HasRevenueSchedule}"/>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.UnitPrice.label}" id="unitPriceCol">                        
+                    <apex:inputField id="unitPrice" value="{!lineItemMap[lineItem].lineItem.unitprice}" rendered="{!NOT(lineItemMap[lineItem].lineItem.HasRevenueSchedule)}" onchange="callActionMethod('{!$Component.hiddenLineItemID}','{!$Component.quantity}','{!$Component.unitPrice}')"/>
+                    <apex:outputField id="disabledunitPrice" value="{!lineItemMap[lineItem].lineItem.unitprice}" rendered="{!lineItemMap[lineItem].lineItem.HasRevenueSchedule}"/>
+                </apex:column>              
+                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.Subtotal.label}" id="subTotalCol">
+                    <apex:outputText id="subTotal" value="{!lineItemMap[lineItem].lineItem.PricebookEntry.CurrencyIsoCode} {!lineItemMap[lineItem].strSubTotal}"/>
+                    <apex:facet name="footer">
+                    <div align="left" style="color: red;background: white;">
+                        <B>{!$Label.Total} : {!globalSubTotal}</b>
+                    </div>
+                </apex:facet>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.OpportunityLineItem.fields.ServiceDate.label}" id="serviceDateCol">                        
+                    <div class="requiredInput"><div class="requiredBlock"></div>
+                        <apex:inputField id="serviceDate" value="{!lineItemMap[lineItem].lineItem.ServiceDate}"/>
+                    </div>
+                </apex:column>                
+            </apex:pageBlockTable>
+            <div align="right" style="display:'block'">
+                <apex:actionStatus startText="{!$Label.Calculating}" id="myStatus">
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+        </apex:pageBlock>
+        <!-- Action Function for recalculating sub total -->
+        <apex:actionFunction name="echo" action="{!recalculateSubTotal}" reRender="pageBlockTable,myStatus" status="myStatus">
+            <apex:param name="firstParam" value="" />
+            <apex:param name="secondParam" value="" />
+            <apex:param name="thirdParam" value="" />
+        </apex:actionFunction>
+    </apex:form>
+    <script>
+        function callActionMethod(lineItemid,quantity,unitPrice){
+            echo();
+        }
+    </script>
+
+</apex:page>

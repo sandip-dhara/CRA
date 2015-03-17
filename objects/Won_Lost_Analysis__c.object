@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>R2.0-Won/Loss and Analysis On Opportunity</description>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>true</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Account_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Opportunity__r.Account.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Account Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Account_Region__c</fullName>
+        <externalId>false</externalId>
+        <formula>Opportunity__r.Account.Sales_Region__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Account Region</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Close_Date__c</fullName>
+        <externalId>false</externalId>
+        <formula>Opportunity__r.CloseDate</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Close Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Description__c</fullName>
+        <description>Description for reason selection</description>
+        <externalId>false</externalId>
+        <label>Description</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Incumbent_Competitor__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Incumbent Competitor</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Won/Lost Analysis (Incumbent Competitor)</relationshipLabel>
+        <relationshipName>Won_Lost_Analysis1</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Opportunity__c</fullName>
+        <externalId>false</externalId>
+        <label>Opportunity</label>
+        <referenceTo>Opportunity</referenceTo>
+        <relationshipName>Opportunity_Plan</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Owner_s_Business_Group__c</fullName>
+        <externalId>false</externalId>
+        <formula>Opportunity__r.Business_Group2__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Owner&apos;s Business Group</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Owner_s_Global_Business_Unit__c</fullName>
+        <externalId>false</externalId>
+        <formula>Opportunity__r.Owner_s_Global_Business_Unit__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Owner&apos;s Global Business Unit</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Partner__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>To Capture Primary Partner from Opportunity</description>
+        <externalId>false</externalId>
+        <label>Primary Partner</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Won/Lost Analysis (Partner)</relationshipLabel>
+        <relationshipName>Win_Loss_Analysis1</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Primary_Competitor__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>To Capture Primary competitor from Account</description>
+        <externalId>false</externalId>
+        <label>Primary Competitor</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Won/Lost Analysis (Incumbent Competitor)</relationshipLabel>
+        <relationshipName>Win_Loss_Analysis</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Prior_Sales_Stage__c</fullName>
+        <description>To capture Prior SalesStage</description>
+        <externalId>false</externalId>
+        <label>Prior Sales Stage</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Reason_Selection_Options__c</fullName>
+        <description>Definitions for Reason Selection Options</description>
+        <externalId>false</externalId>
+        <label>Reason Selection Options</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Teaming / Partnering</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Client relationship</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Value proposition</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Terms &amp; Conditions</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Solution alignment and fit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Transition plan and transformation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Competitive pricing</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Differentiation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Expertise &amp; knowledge</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Timeliness / Responsiveness</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Pursuit &amp; Sales team effectiveness</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Delivery Team</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Executive Engagement</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Region__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT($User.Region__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Region</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sales_Stage__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(Opportunity__r.StageName)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Sales Stage</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Select__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Select 3 top reasons that apply. HP Won/Lost/Disengaged because</inlineHelpText>
+        <label>Additional Won / Lost Reasons</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Teaming / Partnering</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Client relationship</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Value proposition</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Terms &amp; Conditions</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Solution alignment and fit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Transition plan and transformation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Competitive pricing</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Differentiation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Expertise &amp; knowledge</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Timeliness / Responsiveness</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Pursuit &amp; Sales team effectiveness</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Delivery Team</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Executive engagement</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Selection__c</fullName>
+        <description>Selection Option</description>
+        <externalId>false</externalId>
+        <label>Selection</label>
+        <length>15</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Total_Opportunity_Value__c</fullName>
+        <externalId>false</externalId>
+        <formula>Opportunity__r.Amount</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Total Opportunity Value</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Won_Lost_Date__c</fullName>
+        <description>To Capture Won/Lost Date</description>
+        <externalId>false</externalId>
+        <label>Won/Lost Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Won_Lost_Reasons__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT( Opportunity__r.Win_Loss_Reason__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Won/Lost Reasons</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>X2_Provide_any_comments_or_elaborate__c</fullName>
+        <externalId>false</externalId>
+        <label>Additional Comments</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>X3_What_went_well__c</fullName>
+        <description>In looking back across the entire procurement, what went especially well during this pursuit from an HP perspective that we should try to replicate in future opportunities?</description>
+        <externalId>false</externalId>
+        <inlineHelpText>In looking back across the entire procurement, what went especially well during this pursuit from an HP perspective that we should try to replicate in future opportunities?</inlineHelpText>
+        <label>What went well?</label>
+        <length>32768</length>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>X4_Where_can_we_improve__c</fullName>
+        <description>4.  In looking back across the entire procurement, are there any areas for improvement for HP?</description>
+        <externalId>false</externalId>
+        <inlineHelpText>4.  In looking back across the entire procurement, are there any areas for improvement for HP?</inlineHelpText>
+        <label>Where can we improve?</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <label>Won/Lost Analysis</label>
+    <nameField>
+        <displayFormat>WL-{00000000}</displayFormat>
+        <label>Won/Lost Analysis Number</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Won/Lost Analysis</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Choose_three_reasons</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(INCLUDES( Select__c , &quot;Teaming / Partnering&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Client relationship&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Value proposition&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Terms &amp; Conditions&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Solution alignment and fit&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Transition plan and transformation&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Competitive pricing&quot;),1,0) +
+IF(INCLUDES( Select__c , &quot;Differentiation&quot;),1,0) +
+IF(INCLUDES( Select__c , &quot;Expertise &amp; knowledge&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Timeliness / Responsiveness&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Pursuit &amp; Sales team effectiveness&quot;),1,0) +
+IF(INCLUDES( Select__c , &quot;Delivery Team&quot;),1,0) + 
+IF(INCLUDES( Select__c , &quot;Executive engagement&quot;),1,0) &gt; 3</errorConditionFormula>
+        <errorMessage>Please select only 3 reasons</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Won_Lost_Reasons_Definitions</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>page</linkType>
+        <masterLabel>Detailed Won/Lost Definitions</masterLabel>
+        <openType>newWindow</openType>
+        <page>WonLostAnalysis_ReasonSelectionDetails</page>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+    </webLinks>
+</CustomObject>

@@ -1,0 +1,242 @@
+<apex:page standardController="Decision__c" extensions="oppcontactrole" showHeader="false" sidebar="false">
+<apex:includeScript value="{!$Resource.jquery172}" />
+
+<style>
+
+
+h2 {
+    color: #000000;
+    font-size: 18px;
+}
+
+body {
+
+    padding:10px;
+}   
+
+table {
+border-collapse:collapse;   
+}
+
+td {
+    border:1px;
+    border-style:solid;
+}
+.tdheaders {
+    font-weight:bold;
+    vertical-align:top;
+    background-color: #5ABBE8;
+    width:120px;
+    
+}
+
+.tdcontent {
+    vertical-align:top;
+    background-color:#f3f3f3;
+    
+}
+
+
+.emptytd {
+ border:0px;    
+}
+p{
+
+}
+</style>
+
+<script type="text/javascript">
+
+j$ = jQuery.noConflict();
+j$(document).ready(function() {
+opp_plan_name = j$('[id$="opp_plan_name_param"]').text();
+opp_id = j$('[id$="opp_id_param"]').text();
+opp_field = j$("[id$='opp_plan_name']");
+opp_field[0].value = opp_plan_name;
+oppcontactrole.getContacts(opp_id,createPicklist);
+
+});
+
+
+
+function createPicklist(result, event){
+    newoption='';
+    oldoption='';
+    try{
+    j$.each(result, function(){
+        try{
+            fname = this.FirstName;
+            if (fname == '' || fname == null){
+                fname = '-';
+            }
+        }catch(err){
+            fname = '-';
+        }
+        try{
+            lname = this.LastName;
+            if (lname == '' || lname == null){
+                lname = '';
+            }
+        }catch(err){
+            lname = '-';
+        }
+        try{
+            their_role = this.OpportunityContactRoles[0].Role;
+        }catch(err){
+            their_role = '';
+        }
+        try{
+            their_pp = '/' + this.Relationship_Suite__r[0].PP_Result__c;
+        }catch(err){
+            their_pp = '';
+        }
+
+        name = fname + ' ' + lname + ' (' + their_role + their_pp + ')';
+        
+        currentcontacts = j$("[id$='contactIdLookup']");
+        currentcontacts_string = currentcontacts[0].value;
+        currentcontacts_search = currentcontacts_string.indexOf(this.Id);
+        if (currentcontacts_search > -1){
+            oldoption = oldoption + '<option value="' + this.Id + '" label="' + name + '" >' + name + '</option>';
+        }
+        else{
+            newoption = newoption + '<option value="' + this.Id + '" label="' + name + '" >' + name + '</option>';
+        }
+        
+    });
+    }
+    catch(err){
+        
+    }
+    j$('#sel1').html(newoption);
+    j$('#sel2').html(oldoption);
+}
+
+function saveIds(){
+    id_string = '';
+    name_string = '';
+    ids = j$('#sel2 option');
+    for (i=0;i<ids.length;i++){
+        
+        id_string = id_string + ids[i].value + '; ';
+        name_string = name_string + ids[i].text + '; ';
+        }
+
+        contactIdInput = j$("[id$='contactIdLookup']");
+        contactIdInput[0].value = id_string;
+        whoInput = j$("[id$='wholist']");
+        whoInput[0].value = name_string;
+}
+
+
+
+function addOption(theSel, theText, theValue)
+{
+  var newOpt = new Option(theText, theValue);
+  var selLength = theSel.length;
+  theSel.options[selLength] = newOpt;
+}
+
+function deleteOption(theSel, theIndex)
+{ 
+  var selLength = theSel.length;
+  if(selLength>0)
+  {
+    theSel.options[theIndex] = null;
+  }
+}
+
+function moveOptions(theSelFrom, theSelTo)
+{
+  
+  var selLength = theSelFrom.length;
+  var selectedText = new Array();
+  var selectedValues = new Array();
+  var selectedCount = 0;
+  
+  var i;
+  
+  // Find the selected Options in reverse order
+  // and delete them from the 'from' Select.
+  for(i=selLength-1; i>=0; i--)
+  {
+    if(theSelFrom.options[i].selected)
+    {
+      selectedText[selectedCount] = theSelFrom.options[i].text;
+      selectedValues[selectedCount] = theSelFrom.options[i].value;
+      deleteOption(theSelFrom, i);
+      selectedCount++;
+    }
+  }
+  
+  // Add the selected text/values in reverse order.
+  // This will add the Options to the 'to' Select
+  // in the same order as they were in the 'from' Select.
+  for(i=selectedCount-1; i>=0; i--)
+  {
+    addOption(theSelTo, selectedText[i], selectedValues[i]);
+  }
+  
+}
+
+
+</script>
+
+<apex:form >
+
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px;">Customer Decision Grid Input</h1>
+<hr />
+<br />
+<apex:messages />
+<div style="width:300px;margin-left:auto;margin-right:auto;">
+<apex:commandButton action="{!saveAndGo}" value="Save" onClick="saveIds();" />
+<apex:commandButton action="{!cancel}" value="Cancel"/>
+</div>
+<br />
+<apex:outputtext value="{!OppPlanName}" id="opp_plan_name_param" style="display:none;" />
+<apex:outputtext value="{!oppId}" id="opp_id_param" style="display:none;" />
+<apex:inputField value="{!Decision__c.Opportunity_Plan__c}" id="opp_plan_name" style="display:none;"/>
+<apex:inputField value="{!Decision__c.contact_id__c}" id="contactIdLookup" style="display:none;" />
+<apex:inputField value="{!Decision__c.Who__c}" id="wholist" style="display:none;" />
+
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td  class="tdheaders">Step</td>
+    <td  class="tdcontent"><apex:inputfield value="{!Decision__c.Step__c}" style="width:80%;" /> </td>
+  </tr>
+  <tr>
+    <td class="tdheaders">Decision</td>
+    <td class="tdcontent"><apex:inputfield value="{!Decision__c.Decision__c}"  style="width:80%;" /></td>
+  </tr>
+  <tr>
+    <td height="168" class="tdheaders">Who</td><td class="tdcontent">
+    <div style="width:100%">
+    <div style="display:inline-block;">
+     <select name="sel1" size="10" multiple="multiple" id="sel1"></select>
+    </div>
+    <div style="display:inline-block;">
+     <input type="button" value="Add" onclick="moveOptions(this.form.sel1, this.form.sel2);" />
+     <br />
+     <input type="button" value="Remove" onclick="moveOptions(this.form.sel2, this.form.sel1);" />
+    </div>
+    <div style="display:inline-block;">
+     <select name="sel2" size="10" multiple="multiple" id="sel2"></select>
+    </div></div></td>
+  </tr>
+  <tr>
+    <td class="tdheaders">When</td>
+    <td class="tdcontent"><apex:inputfield value="{!Decision__c.When__c}" /></td>
+  </tr>
+  <tr>
+    <td class="tdheaders">Criteria</td>
+    <td class="tdcontent"><apex:inputfield value="{!Decision__c.Criteria__c}" style="width:80%;" /></td>
+  </tr>
+    <tr>
+    <td class="tdheaders">Status</td>
+    <td class="tdcontent"><apex:inputfield value="{!Decision__c.Status__c}" /></td>
+  </tr>
+</table>
+
+</apex:form><br/><br/>
+Copyright © 2006 FranklinCovey Co
+</apex:page>

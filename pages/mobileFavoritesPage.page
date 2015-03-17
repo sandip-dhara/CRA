@@ -1,0 +1,549 @@
+<apex:page controller="AthenaSocialLearning" extensions="mobileUserData" cache="false" docType="html-5.0"
+           sidebar="false" showheader="false" standardStylesheets="false">
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+        
+        
+        <style type="text/css" rel="stylesheet">
+            @font-face {
+                font-family:'HP Simplified';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot')}'); 
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/hpsimplified_w01_regular.ttf')}') format('truetype');
+                font-weight:normal;
+                font-style:normal;
+            }
+            body{
+                font-family:"HP Simplified",sans-serif;
+                color:#fff;
+            }
+            #startpage{
+                background:#404041 url({!URLFOR($Resource.mslp_pic, 'pic/11.png')}) no-repeat center top;
+                background-size:100% auto;
+            }
+            .ui-content{
+                padding-top: 30px;
+            }
+            .ui-page-theme-a .ui-panel-wrapper, .ui-page-theme-a{
+                /*background: -webkit-linear-gradient(#404040, #58595b);
+                background: linear-gradient(#404040, #58595b);*/
+            }
+            .hpFont{
+                font-family:"HP Simplified",sans-serif;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+            }
+            #custom-collapsible{
+                background-color:transparent !important;
+            }
+            .my-page .ui-listview li .ui-btn,
+            .my-page .ui-listview .ui-li-thumb{
+                border-top:none;
+                border-radius:0 !important;
+                background-color:transparent;
+                border-bottom: 0px !important; 
+            }
+            .ui-listview .ui-li-has-thumb h2{
+                text-align:center;
+                height: 50px;
+                line-height: 50px;
+                max-height:50px !important;
+                min-height:50px !important;
+            }
+            #pnl{
+                background-color:rgb(64,64,64);
+            }
+            .infoFld{
+                position:relative;
+            }
+                .infoFld .circular{
+                    position:absolute;
+                    bottom:6px;
+                    left:6px;
+                    border:4px solid #fff;
+                    border-radius:40px;
+                    width:40px;
+                    height:40px;
+                    z-index:3;
+                }
+                .infoFld .name{
+                    position:absolute;
+                    bottom:0;
+                    left:0;
+                    margin:0;
+                    padding:6px 0;
+                    width:100%;
+                    color:#fff;
+                    text-shadow:none;
+                    text-indent:60px;
+                    background-color:rgba(0,0,0,0.4);
+                }
+                .featureFld{
+                    padding:10px 0;
+                    background:#F9A006 url({!URLFOR($Resource.mslp_pic, 'pic/10.png')}) left 50% no-repeat;
+                    background-size:100% auto;
+                }
+                    .featureFld .text{
+                        text-indent:36px;
+                        color:#fff;
+                        text-shadow:none;
+                    }
+                #pnl .panel-list{
+                    
+                }
+                    #pnl .panel-list li{
+                        background-color:transparent;
+                    }
+                        #pnl .panel-list li a{
+                            border-color:#fff;
+                            background-color:transparent;
+                        }
+                .panel-searchFld{
+                    padding:0 10px;
+                }
+            @font-face {
+                font-family: 'ElegantIcons';
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot')}');
+                src:url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.eot?#iefix')}') format('embedded-opentype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.woff')}') format('woff'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.ttf')}') format('truetype'), 
+                    url('{!URLFOR($Resource.mslp_res, 'fonts/ElegantIcons.svg#ElegantIcons')}') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+            [data-hpa-icon]{
+                background:none;
+            }
+            [data-hpa-icon]:before{
+                font-family: 'ElegantIcons';
+                color:#fff;
+                font-size:30px;
+                speak: none;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            [data-hpa-icon=menu]{
+                text-decoration:none;
+            }
+            [data-hpa-icon=menu]:before{
+                content:'\0061';
+                font-size:39px;
+            }
+            .my-page .ui-listview li{
+                height:150px;
+            }
+            
+            @media all and (min-width: 420px) {
+                     .my-page .ui-listview li{
+                          height:200px;
+                     }
+            }
+            @media all and (min-width: 550px) {
+                   .my-page .ui-listview li{
+                          height:260px;
+                   }
+            }
+            @media all and (min-width: 650px) {
+                  .my-page .ui-listview li{
+                         height:350px;
+                 }
+            }
+            
+            .ui-panel.ui-panel-open {
+                position:fixed;
+            }
+            
+            .ui-panel .ui-panel-inner {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0px;
+                overflow:auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+        </style>
+    
+    <body>    
+    <div data-role="page" id="startpage">
+        <div data-role="panel" data-display="overlay" id="pnl">
+            <div class="infoFld">
+                <img style="width: 100%; height: 120px;vertical-align:bottom;" src="{!URLFOR($Resource.mslp_pic, 'pic/12.png')}" />
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular" alt="no_username" />
+                <p class="name"><apex:outputLabel value="{!LoggedinUserDtls.Name}"/></p>
+            </div>
+            <div class="ui-grid-c featureFld">
+                <div class="ui-block-a text">{!myBoardsCount}</div>
+                <div class="ui-block-b text">{!myBoardsContributedCount}</div>
+                <div class="ui-block-c text">{!followingCount}</div>
+                <div class="ui-block-d text">{!followersCount}</div>
+            </div>
+            <div class="panel-searchFld">
+                    <form data-ajax="false">
+                    <input class="search" type="search" placeholder="Search" id="search-basic"></input>
+                    </form>
+            </div>
+            <ul data-role="listview" style="margin: 0" data-theme="b" class="panel-list" id="listviewmenu">
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mSLPLanding0" class="hpFont">Home</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mLandingPageNewSkin" class="hpFont">Featured</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/apex/mobileExpertSearchNew" class="hpFont">Experts</a></li>
+                <li data-icon="false"><a href="#pnl" class="hpFont">Trending</a></li>
+                <li data-icon="false"><a data-ajax="false" href="https://{!getSfInstance}/secur/logout.jsp" class="hpFont">Sign Out</a></li>
+            </ul>
+        </div><!--panel-->
+    
+          <div data-role="header" style="background:rgb(64,64,64);border:none;" data-position="fixed" data-tap-toggle="false">
+              <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left" style="vertical-align:middle;margin-top:17px;"> 
+            <a href="#pnl" data-role="none" data-ajax="false" id="buttonMenu"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}" id="menuImage"/></a>
+        </div>
+        <h1 style="color: #fff; font-weight:normal;"><img src="{!URLFOR($Resource.mslp_pic, 'pic/9.png')}" style="width: 36px;" /></h1>
+        <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right" style="margin-top:17px;">  
+              <a href="#pnl" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}" id="searchImage"/></a> 
+        </div>
+              <style type="text/css">
+                  .titleCtn{
+                      margin:0;
+                      padding:6px 0;
+                      text-align:center;
+                      font-weight:normal;
+                      color:#fff;
+                      background-color:rgb(140,197,32);
+                  }
+              </style>
+              <div class="titleCtn">
+                  Favorites
+              </div>
+          </div>
+
+
+        <div data-role="content" class="ui-content">
+            <div data-role="collapsible-set" data-inset="false" id="custom-collapsible" class="my-page" style="margin-top:-17px;">
+                <div data-role="" id="fList">
+                    <div data-role="fieldcontain">
+                        <ul data-role="listview" data-inset="false" id="featuredList" class="lContainer"/>
+                    </div>
+                </div>
+            </div> <!-- collapsible_set-->
+        </div> <!-- content-->
+        
+     </div> <!-- page-->
+    </body>
+    
+    <script type="text/javascript">
+    
+    function LoadCommunities(category) {
+       /*  0: All
+        *  1: Featured
+        *  2: My Communities
+        *  3: My Boardsgory
+        *  4: Trending
+        */
+        CallAthenaSLFeatured(3, "8", 0, "-1");
+        CallAthenaSLFeatured(2, "8", 0, "-1");
+    }
+        
+    function CallAthenaSLFeatured(category, DisplayNoOfRecords, strNext, strPrev) {
+        if ( category === 0 ) {
+            // All
+            for (var r = 4; r > 0; r--) {
+                CallAthenaSLFeatured(r, "8", 0, "-1");
+            }
+        }
+        else if ( category === 1 ) {
+            // Featured
+            Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.AthenaSocialLearning.GetFeaturedLB}',
+              DisplayNoOfRecords,
+              strNext,
+              strPrev,
+              DisplayFeaturedLB
+            );
+        }
+        else if ( category === 2 ) {
+            // My communities
+            Visualforce.remoting.Manager.invokeAction(
+               '{!$RemoteAction.AthenaSocialLearning.GetMyCommunities}',
+                DisplayNoOfRecords,
+                strNext,
+                strPrev,
+                DisplayCommunity
+            );
+        }
+        else if ( category === 3 ) {
+            // My Boards
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.AthenaSocialLearning.GetMyBoards}',
+                DisplayNoOfRecords,
+                strNext,
+                strPrev,
+                DisplayPersonalizedLB
+            );
+        }
+        else if ( category === 4 ) {
+            // Trending
+            Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.AthenaSocialLearning.GetMostCommentedTrends}',
+              DisplayNoOfRecords,
+              strNext,
+              strPrev,
+              DisplayTrending
+          );
+        }
+    }
+    
+    function GetSelectedCommunityURL(comUrl) {
+        return "/apex/mobileCommunityMockup?id=" + comUrl;
+        //mobileLearningBoardMockup?id=a6tZ00000008S5lIAE
+    }
+    
+    function GetSelectedLearningBoardURL(comUrl) {
+        return "/apex/mobileLearningBoardMockup?id=" + comUrl;
+        //return "/apex/mobileLearningBoardCollaterals?id=" + comUrl;
+    }
+    
+    function GetListViewName(category) {
+        var mArr = ["#featuredList", "#myCommunitiesList", "myLearningBoards","trendingBoards"];
+        if ([1,2,3,4].indexOf(category)) {
+            return mArr[category];
+        }
+    }
+    
+    function GetTileColor(isCommunity) {
+        if (isCommunity) {
+            return "green";
+        }
+        else {
+            return "#0197d6";
+        }
+    }
+    
+    function DisplayFeaturedLB(result, event) {
+        var target;
+        var tileColor;
+        for (var i = 0; i < result.length; i++) {
+            if(result[i].IsCommunity == true){
+                target = GetSelectedCommunityURL(result[i].LBid);
+            }
+            else{
+                target = GetSelectedLearningBoardURL(result[i].LBid);
+            }
+            tileColor = GetTileColor(result[i].IsCommunity);           
+            $( '#featuredList' ).append(
+            '<li><a href="' + target + '" data-ajax="false">' +
+            '<img src="' + result[i].LBImgURL + '" class="ui-li-thumb"/>' +
+            
+            '<h2 class="hpFont">' + result[i].LBName + '</h2>' +
+            //'<p class="hpFont">' + result[i].LBOwnerName + '</p>' +
+            //'<p class="ui-li-aside" style="background:' + tileColor + ';">' + result[i].LBNoOfComments + '</p>' +
+            '</a></li>');
+            
+            if (result[i].IsCommunity) {
+                //$( '#featuredList li a' ).eq(i).append('<div class="starred starredY"></div>');
+            }
+            
+            $( '#featuredList' ).listview('refresh');
+        }
+        $.mobile.loading( "hide"); // Hide load spinner after load is complete
+   
+    }
+    function DisplayCommunity(result, event) {
+        var tileColor;
+        for (var i = 0; i < result.length; i++) { 
+            tileColor = GetTileColor(result[i].IsCommunity);  
+            console.log(tileColor);         
+            $( '#featuredList' ).append(
+            '<li><a href="' + GetSelectedCommunityURL(result[i].LBid) + ' " data-ajax="false">' +
+            '<img src="' + result[i].LBImgURL + '" class="ui-li-thumb"/>' +
+            '<h2>' + result[i].LBName + '</h2>' +
+            //'<p>' + result[i].LBOwnerName + '</p>' +
+            //'<p class="ui-li-aside" style="background:green;">' + result[i].LBNoOfComments + '</p>' +
+            '</a></li>').listview('refresh');
+        }
+    }
+    function DisplayPersonalizedLB(result, event) {
+        var target;
+        var tileColor;        
+        for (var i = 0; i < result.length; i++) {      
+            if(result[i].IsCommunity == true){
+                target = GetSelectedCommunityURL(result[i].LBid);
+            }
+            else{
+                target = GetSelectedLearningBoardURL(result[i].LBid);
+            } 
+            tileColor = GetTileColor(result[i].IsCommunity);                                  
+            $( '#featuredList' ).append(
+            '<li><a href="' + target + ' " data-ajax="false">' +
+            '<img src="' + result[i].LBImgURL + '" class="ui-li-thumb"/>' +
+            '<h2>' + result[i].LBName + '</h2>' +
+            //'<p>' + result[i].LBOwnerName + '</p>' +
+            //'<p class="ui-li-aside" style="background:' + tileColor + ';">' + result[i].LBNoOfComments + '</p>' +
+            '</a></li>').listview('refresh');
+        }
+    }
+    function DisplayTrending(result, event) {
+        var target;
+        var tileColor;        
+        for (var i = 0; i < result.length; i++) {      
+            if(result[i].IsCommunity == true){
+                target = GetSelectedCommunityURL(result[i].LBid);
+            }
+            else{
+                target = GetSelectedLearningBoardURL(result[i].LBid);
+            }
+            target = target.replace('mobileLearningBoardCollaterals','mobileLearningBoardMockup');
+            tileColor = GetTileColor(result[i].IsCommunity);           
+            $( '#featuredList' ).append(
+            '<li><a href="' + target + '" data-ajax="false">' +
+            '<img src="' + result[i].LBImgURL + '" class="ui-li-thumb"/>' +
+            '<h2 class="hpFont">' + result[i].LBName + '</h2>' +
+            //'<p class="hpFont">' + result[i].LBOwnerName + '</p>' +
+            //'<p class="ui-li-aside" style="background:' + tileColor + ';">' + result[i].LBNoOfComments + '</p>' +
+            '</a></li>');
+            
+            if (result[i].IsCommunity) {
+                //$( '#featuredList li a' ).eq(i).append('<div class="starred starredY"></div>');
+            }
+            
+            $( '#featuredList' ).listview('refresh');
+        }
+        $.mobile.loading( "hide"); // Hide load spinner after load is complete
+    }
+    
+    $(document).ready(function () {
+    
+         $('#seach-container').hide();
+         $("#startpage").trigger("create");
+         $('#buttonSearch').on('ontap click', function(e){
+            setTimeout(function(){
+                $('#search-basic').focus();
+            }, 200);
+        });
+         
+    
+        /* 0: All
+        *  1: Featured
+        *  2: My Communities
+        *  3: My Boards
+        *  4: Trending
+        */
+        LoadCommunities(4);
+        
+        $('#lList h3').find('a').css('background','#3a89aa');
+        $('#tList h3').find('a').css('background','#3a89aa');
+        
+        $('#fList').on('collapsibleexpand', '', function () {
+                                $('#fList h3').find('a').css('background','#f05332');
+                                var dataIsLoading = $('#fList li').length;
+                                if (dataIsLoading <= 0) {
+                                    $.mobile.loading( "show", {
+                                        text: "Loading...",
+                                        textVisible: true,
+                                        textOnly: false
+                                    } ); // Displays load spinner while loading
+                                }            
+        }).on('collapsiblecollapse', '', function () { $('#fList h3').find('a').css('background','#0197d6 ');});
+        
+        $('#cList').on('collapsibleexpand', '', function () {
+                                $('#cList h3').find('a').css('background','#f05332');
+                                    $('html, body').animate({
+                                        scrollTop: $('#cList').offset().top - 100
+                                    }, 500);
+
+        }).on('collapsiblecollapse', '', function () { $('#cList h3').find('a').css('background','#0197d6 ');});
+
+        $('#lList').on('collapsibleexpand', '', function () {
+                                $('#lList h3').find('a').css('background','#f05332');
+                                                                    $('html, body').animate({
+                                        scrollTop: $('#lList').offset().top - 100
+                                    }, 500);
+
+        }).on('collapsiblecollapse', '', function () { $('#lList h3').find('a').css('background','#3a89aa');});
+
+        $('#tList').on('collapsibleexpand', '', function () {
+                                $('#tList h3').find('a').css('background','#f05332');
+                                    $('html, body').animate({
+                                        scrollTop: $('#tList').offset().top - 100
+                                    }, 500);
+        }).on('collapsiblecollapse', '', function () { $('#tList h3').find('a').css('background','#3a89aa');
+        });
+
+        // JS to remove the left arrow
+        $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+            $(this).removeClass('ui-btn-icon-left');
+        });
+            
+            $('#search-basic').live("keypress", function(e) {
+            
+                /* ENTER PRESSED*/
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    var searchTerm= $('#search-basic').val();
+                    window.location = "/apex/mobileGlobalSearchNew?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+searchTerm;
+                    $.mobile.loading( "show", {
+                          text: "Loading...",
+                          textVisible: true,
+                          textOnly: false
+                    } ); // Displays load spinner while loading
+                }
+            });
+        });
+        
+         function highlightRow(elem){
+            $(elem).css({background: '#FF8800'});
+            setTimeout(function(){
+                 $(elem).css({background: 'transparent'});
+            }, 800);
+        }  
+        
+        $('#listviewmenu').on('click tap mousedown touchstart', 'li', function() {
+            highlightRow($(this));
+        });         
+        
+        $('#menuImage').on('click tap mousedown touchstart', '', function() {
+            $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu_Pressed.png')}");
+            setTimeout(function(){
+                 $("#menuImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Menu.png')}");
+            }, 300);
+        });  
+        
+        $('#searchImage').on('click tap mousedown touchstart', '', function() {
+            $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search_Pressed.png')}");
+            setTimeout(function(){
+                 $("#searchImage").attr('src',"{!URLFOR($Resource.iconassets, 'icons/Icon_Search.png')}");
+            }, 300);
+        });     
+                          
+    </script>
+    <style>
+        .ui-panel-inner{padding: 0}
+    </style>
+    <style type="text/css">
+        .starred {
+            display: block;
+            height: 35px;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 35px;
+            background: url(../img_athena/blue_star.png) no-repeat;
+        }
+        .starredY {
+            background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+        }
+    </style>
+
+</apex:page>

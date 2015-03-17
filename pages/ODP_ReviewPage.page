@@ -1,0 +1,351 @@
+<apex:page controller="ODP_ReviewPageController" sidebar="false">
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+<apex:stylesheet value="{!URLFOR($Resource.PLM_Athena_icomoon,'css/icomoon.min.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM_SelectMenu,'jquery-ui-selectmenu/jquery.ui.selectmenu.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM_SelectMenu,'jquery-ui-selectmenu/jquery.ui.selectmenu.css')}"/>
+
+<link href='https://fonts.googleapis.com/css?family=Voces' rel='stylesheet' type='text/css'/>
+<apex:form >
+
+    <style>
+        .pbSubheader {
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+        body .bPageBlock .pbBody .pbSubheader img {
+            height: 15px;
+            width: 15px;
+        }
+        .hotLink{color:blue !important; text-decoration:none;}
+        .hotLink:hover{color:red !important}
+        .nowrap{white-space:nowrap;}
+        
+        body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:'Voces', sans-serif; !important;
+            border-top:0px;
+        }
+        .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+            border-top: 0px solid #3044b5;
+         }
+         
+
+        .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+        .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+            padding: 2px 8px;
+            color: #333;
+            border-bottom: 1px solid #e3deb8;
+            font-family: 'Voces', sans-serif; !important;
+            font-size:13px !important;
+         }
+        /* table row highlight */     
+        body .pbBody table.list tr.dataRow.highlight td{
+        background-color:#ecf4f8;
+        }
+        body .pbBody table.list tr.headerRow th{
+            background:#0093d2 !important;
+            color:#fff !important;
+        }
+        /* for Header */
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 15px 8px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 20px;
+            font-weight: 300 !important;
+        }
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+            font-weight: 300;
+        }
+        /* done header */
+        .bPageBlock .detailList .data2Col{
+        padding-left:0px;
+        }
+        body .pbBody table.list tr.headerRow th{
+            padding: 8px 8px;
+        }
+        #buttons{position:absolute; top:34px; left:200px;}
+        #searchFilterDiv{position:absolute; top:34px; right:5%;}        
+        .CurBtn {
+            color: #D7410B !important;
+            background-image: none !important;
+            border: none !important;
+            font-weight: bold !important;
+            font-size: 13px !important;
+            background-color: #fff !important;
+            -moz-border-radius: 0 4px 0 4px !important;
+            -webkit-border-radius: 0 4px 0 4px !important;
+            border-radius: 0 4px 0 4px !important;
+        }
+        .CurBtn:hover {
+            background-color: #0096d6 !important;
+        }
+       
+       .btn-primary {
+            background-image: none !important;
+            border: none !important;
+            font-weight: bold !important;
+            font-size: 13px !important;
+            background-color: #fff !important;
+            -moz-border-radius: 0 4px 0 4px !important;
+            -webkit-border-radius: 0 4px 0 4px !important;
+            border-radius: 0 4px 0 4px !important;
+        }
+        .btn-primary:hover {
+            background-color: #0096d6 !important;
+        }
+
+.icon-filter{
+        color: hsl(0, 100%, 100%);
+        font-size: 20px;
+        }
+        
+        .auto-filter:hover {
+            text-decoration: none;
+        }
+        .auto-filter-span{
+            border: 1px solid hsl(180, 8%, 43%);
+            width: 170px;
+            display: inline;
+            position: absolute;
+            display:none;
+            margin: 30px 0px 0px -16px;
+            color: hsl(0, 0%, 0%);
+            background-color: hsl(0, 100%, 100%);
+        }
+        .search-filter-btn{
+            width: 80px;
+            font-size: 13px;
+            background-color: hsl(198, 100%, 41%)!important;
+            border: none;
+            color: hsl(0, 100%, 100%);
+        }
+        .icon-search {
+            position: absolute;
+            margin: 8px 0px 0px 4px;
+            color: hsl(0, 100%, 100%);
+        }      
+        
+    </style>
+    
+    <script type="text/javascript">
+        $j=$.noConflict();
+        $j(function(){
+            $j('#filter').click(function(){
+                $j('#filterSpan').toggle();
+            });
+            $j("input[id$=filterInput]").click(function(){
+                $j('#filterSpan').hide();
+            })
+            $j('.search-filter-btn').removeClass("btn");
+            $j('.search-filter-btn').mouseover(function(){
+                $j('.icon-search').css('color','hsl(16, 90%, 44%)');
+                $j('.search-filter-btn').css('color','hsl(16, 90%, 44%)');
+            });
+                $j('.search-filter-btn').mouseout(function(){
+                $j('.icon-search').css('color','hsl(0, 100%, 100%)');
+                $j('.search-filter-btn').css('color','hsl(0, 100%, 100%)');
+            });
+            $j('.icon-filter').mouseover(function(){
+                $j('.icon-filter').css('color','hsl(16, 90%, 44%)');
+            });
+            $j('.icon-filter').mouseout(function(){
+                $j('.icon-filter').css('color','hsl(0, 100%, 100%)');
+            });
+        });
+    
+    </script>
+
+  <apex:pageBlock >   
+
+    <div id="buttons">
+        <apex:commandButton value="In Progress" action="{!InProgress}" styleClass="{!IF(FilterStatus == 'In Progress','CurBtn','btn-primary')}"/>
+        <apex:commandButton value="Upcoming" action="{!upcoming}" styleClass="{!IF(FilterStatus == 'Upcoming','CurBtn','btn-primary')}"/>
+        <apex:commandButton value="History" action="{!history}" styleClass="{!IF(FilterStatus == 'History','CurBtn','btn-primary')}"/>
+        <apex:inputCheckbox >
+          <apex:actionSupport event="onchange" action="{!showCompleted}" rerender="RecordsList"/>
+        </apex:inputCheckbox>Show Done
+        
+    </div>
+    <div id="searchFilterDiv">
+        <a id='filter' class='auto-filter'><i class='icon-filter'></i></a>
+        <span id = 'filterSpan' class="auto-filter-span">
+            <apex:selectRadio value="{!selectItem}" layout="pageDirection">
+                <apex:selectOptions value="{!SearchItems}"></apex:selectOptions>
+            </apex:selectRadio>
+        </span>
+        <apex:inputText value="{!searchFilter}"  alt="Search Text" style="min-height: 20px;" id="filterInput" html-placeholder="Enter Search Filter"/>        
+        <!-- <apex:commandButton value="Search" action="{!searchActLoad}" styleclass="myButtons" rerender="conTable"/> -->
+        <apex:commandButton value="Search" action="{!searchActLoad}" styleclass="search-filter-btn" rerender="conTable"><i class="icon-search"></i></apex:commandButton>                    
+    </div>
+     
+    <apex:pageBlockSection collapsible="false" columns="1" id="RecordsList">
+        <div class="pbSubheader" style="margin-top:-5px;">
+            <h3>Reviews</h3>
+        </div>
+        <apex:pageBlockTable value="{!RevList}" var="reviewer" id="conTable">
+            <apex:column headerValue="Action">
+                <a href="/apex/ODP_ReviewerPage?id={!reviewer.Id}&mode={!IF(flag,'View','Open')}" target="_blank" title="{!reviewer.name}" class="hotLink">
+                    <apex:outputText value="Open" rendered="{!!flag}" />
+                    <apex:outputText value="View" rendered="{!flag}" />
+                </a>
+            </apex:column>
+<!--            
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!reviewInProgressInfo}" value="My Rating {!IF(sortDirection='ASC','▼','▲')}" id="ratingSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Rating__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Rating__c}</apex:outputText>
+            </apex:column>
+-->
+            <apex:column headerValue="I'm Done" value="{!reviewer.Complete__c}"/>
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink action="{!reviewInProgressInfo}" value="Status {!IF(sortDirection='ASC','▼','▲')}" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Status__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Stage_Work_Element__r.Status__c}</apex:outputText>
+            </apex:column>
+            <!--   Remove Reviewer Column--Tovid--4.14
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!reviewInProgressInfo}" value="Reviewer {!IF(sortDirection='ASC','▼','▲')}" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Team_Member_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText value="{!reviewer.Team_Member_Name__c}">
+                </apex:outputText>
+            </apex:column>
+            -->
+             <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!reviewInProgressInfo}" value="Due Date {!IF(sortDirection='ASC','▼','▲')}" id="dateSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.review_due_date__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText value="{0,date, MMM dd yyyy }">
+                        <apex:param value="{!reviewer.Stage_Work_Element__r.Review_Due_Date__c}" /> 
+                </apex:outputText>
+            </apex:column>
+             <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!reviewInProgressInfo}" value="Work Element Name {!IF(sortDirection='ASC','▼','▲')}" id="wSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Work_Element_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Stage_Work_Element__r.Work_Element_Name__c}</apex:outputText>
+            </apex:column>
+            
+            <apex:column >
+              <apex:facet name="header"> 
+                  <apex:commandLink action="{!reviewInProgressInfo}" value="Deliverables {!IF(sortDirection='ASC','▼','▲')}" id="dSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Deliverable_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Stage_Work_Element__r.Deliverable_Name__c}</apex:outputText>
+            </apex:column>
+           
+            <apex:column >
+              <apex:facet name="header"> 
+                  <apex:commandLink action="{!reviewInProgressInfo}" value="Opportunity {!IF(sortDirection='ASC','▼','▲')}" id="orSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Release_Stage_ID__r.Release_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Stage_Work_Element__r.Release_Stage_ID__r.Release_Name__c}</apex:outputText>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"> 
+                  <apex:commandLink action="{!reviewInProgressInfo}" value="Opportunity Status{!IF(sortDirection='ASC','▼','▲')}" id="PSSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Release_Stage_ID__r.Offering_Release_ID__r.Status__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Stage_Work_Element__r.Release_Stage_ID__r.Offering_Release_ID__r.Status__c}</apex:outputText>
+            </apex:column>
+
+                       <apex:column >
+              <apex:facet name="header"> 
+                  <apex:commandLink action="{!reviewInProgressInfo}" value="Stage {!IF(sortDirection='ASC','▼','▲')}" id="stSort" rerender="stTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Stage_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Stage_Work_Element__r.Stage_Name__c}</apex:outputText>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!reviewInProgressInfo}" value="Accountable Role {!IF(sortDirection='ASC','▼','▲')}" id="accountRoleSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Accountable_Process_Role_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Stage_Work_Element__r.Accountable_Process_Role_Name__c}</apex:outputText>
+            </apex:column>
+
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!reviewInProgressInfo}" value="Role {!IF(sortDirection='ASC','▼','▲')}" id="cmdSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Role_Name__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Role_Name__c}</apex:outputText>
+            </apex:column>
+
+            <!--<apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink action="{!reviewInProgressInfo}" value="Status {!IF(sortDirection='ASC','▼','▲')}" id="staSort" rerender="conTable" style="color:white;">
+                        <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                        <apex:param value="Stage_Work_Element__r.Status__c" assignTo="{!sortField}"></apex:param>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText >{!reviewer.Stage_Work_Element__r.Status__c}</apex:outputText>
+            </apex:column>-->
+
+            <!--<apex:column value="{!reviewer.Complete__c}"/>-->
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+        <apex:panelGrid id="nextLink" rendered="{!RevList.size>0}" columns="4">
+                        <apex:commandButton action="{!firstRevPage}" disabled="{!!hasRevPrevious}" reRender="RecordsList,nextLink" value="|<" title="{!$Label.First_Page}"/>
+                        <apex:commandButton action="{!previousRevPage}" disabled="{!!hasRevPrevious}" reRender="RecordsList,nextLink" value="<" title="{!$Label.Previous_Page}"/>
+                        <apex:commandButton action="{!nextRevPage}" disabled="{!!hasRevNext}" reRender="RecordsList,nextLink" value=">" title="{!$Label.Next_Page}"/>
+                        <apex:commandButton action="{!lastRevPage}" disabled="{!!hasRevNext}" reRender="RecordsList,nextLink" value=">|" title="{!$Label.Last_Page}"/>
+                        
+         </apex:panelGrid>
+  </apex:pageBlock>   
+   
+</apex:form>
+</apex:page>

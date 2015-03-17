@@ -1,0 +1,523 @@
+<!--
+* Class Name: ABPQualityScoreCardPage
+* Author: HP
+* Date:15/06/2013
+* Requirement # Request Id:6495 
+* Description: Quality Score card for the Account Plans.
+              
+-->
+<apex:page standardController="ABP_Scorecard__c" extensions="ABPQualityScoreCardController" tabstyle="Account_Plan__c" showHeader="false" sidebar="False">
+<apex:form >
+<h1>{!$CurrentPage.parameters.error}</h1> 
+<script>
+    function closeRefresh() 
+    {               
+        window.top.close();         
+    }
+</script>
+ <apex:pageblock >
+ <apex:panelgrid columns="5" style="text-align:left" border="0">
+    <apex:image url="{!URLFOR($Resource.Hp_logo)}" height="24" /><apex:OutputText value="Quality Score Card"  style="size:100%;color: #228B22; font-size: 12pt; width: 10%; font-weight:bold;text-align:left"/>
+ </apex:panelgrid>
+ <hr size="2"></hr>
+<!-- <apex:outputPanel id = "outpanel"> rerender="AJAXTest" status="AJAXStatus"
+<apex:pageMessage severity="warning" summary="helooooo"> </apex:pageMessage>
+  <apex:pagemessages ></apex:pagemessages> 
+</apex:outputPanel> -->
+<apex:pageBlockButtons ID="AJAXTest" > 
+     
+          <apex:commandButton value="Save" action="{!save}"/>
+          <apex:commandButton value="Cancel" onclick="closeRefresh();"/>
+          <apex:commandButton value="Close"  onclick="closeRefresh();"/>
+          <apex:actionStatus startText="(Saving...)" stopText=""
+                                    onStop="window.close();" ID="AJAXStatus"/> 
+  </apex:pageBlockButtons> 
+  
+<apex:pagemessages ></apex:pagemessages> 
+ <!--  Account Summary -->
+ 
+ 
+<apex:pageBlockSection title="Account Summary" id="Q1" collapsible="True" columns="2"   > 
+     
+   <apex:pageBlockSectionItem > 
+                   <apex:pageBlockSectionItem >   
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+                  </apex:pageBlockSectionItem>   
+                    
+ 
+                  
+          
+           <apex:pageBlockSectionItem >                    
+    <apex:panelGrid style="font-weight:bold"  >
+     <tr> 
+       <td>      
+           <label>{!$Label.ABP_Account_Summary_Q1}</label>
+           <!--  <ul>
+              <li><label>{!$Label.ABP_Account_Summary_Q1_1}</label></li>
+              <li><label>{!$Label.ABP_Account_Summary_Q1_2}</label></li>
+              <li><label>{!$Label.ABP_Account_Summary_Q1_3}</label></li>            
+             </ul>     -->  
+       </td>
+     </tr>
+    </apex:panelGrid>    
+    </apex:pageBlockSectionItem>    
+ </apex:pageBlockSectionItem>  
+          
+          <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+          
+     <apex:pageBlockSectionItem > 
+   <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"  / >
+    </apex:pageBlockSectionItem>
+   
+     <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Account_Summary_Answer__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!Types}"  >   </apex:selectoptions>
+          </apex:selectRadio>            
+          </apex:pageBlockSectionItem>
+          
+     </apex:pageBlockSectionItem> 
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem >
+       <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+                
+     <apex:pageBlockSectionItem >
+  
+          <apex:inputField label="Comments" value="{!ABP_Scorecard__c.Account_Summary_comments__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem>  
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+
+<!--  Innovation Agenda -->
+ <apex:pageBlockSectionItem >
+ <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+   
+    <apex:pageBlockSectionItem >                    
+          <apex:outputLabel style="font-weight:bold" value="{!$Label.Innovative_summary_Question}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem >
+    
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Innovation_Agenda_Answer__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!innagenda}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Innovation_Agenda_Comments__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem>  
+   </apex:pageBlockSectionItem>
+</apex:pageBlockSection>
+  
+  <!--  Customer Business Priorities  -->
+  
+<apex:pageBlockSection title="Customer Business Priorities " id="Q3" collapsible="True" columns="2"  > 
+      <apex:pageBlockSectionItem >
+      <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+   
+   
+    <apex:pageBlockSectionItem >            
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.Customer_Business_Priorities_Question}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+   <apex:pageBlockSectionItem >
+   
+   <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+       
+       <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Customer_Business_Priorities_Answer__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!cbp}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+     <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+     <apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+      </apex:pageBlockSectionItem>  
+       
+       
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Customer_Business_Priorities_comments__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem>  
+    </apex:pageBlockSectionItem>
+    
+    
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem> 
+    
+     <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >                    
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.ABP_Customer_rel_maps_Q4}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+
+    
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem> 
+    
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Customer_Relationship_Maps_Answer_4__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!CRMaps_4}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem> 
+    
+    <apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Customer_Relationship_Maps_Comments_4__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem>  
+    </apex:pageBlockSectionItem>
+    
+    <script>twistSection(document.getElementById("{!$Component.Q3}").childNodes[0].childNodes[0]); </script>
+</apex:pageBlockSection>
+
+  <!--  HP Strategic Initiatives  -->
+
+<apex:pageBlockSection title="HP Strategic Initiatives" id="Q45" collapsible="True" columns="2"  > 
+<apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >                    
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.HP_Strategic_Initiatives_Question_2}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+     <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+     
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.HP_Strategic_Initiatives_Answer_2__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!HPSI_1}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+     <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+     
+    
+    <apex:pageBlockSectionItem >
+   <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+             
+    
+     <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.HP_Strategic_Initiatives_comments_2__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem>  
+    </apex:pageBlockSectionItem> 
+
+   <apex:pageBlockSectionItem ></apex:pageBlockSectionItem> 
+    
+   <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>           
+    <apex:pageBlockSectionItem >             
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.HP_Strategic_Initiatives_Question_1}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+     <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>   
+    
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.HP_Strategic_Initiatives_Answer_1__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!HPSI_2}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    
+     <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>   
+     
+    <apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.HP_Strategic_Initiatives_Comments_1__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem>  
+    </apex:pageBlockSectionItem> 
+    <script>twistSection(document.getElementById("{!$Component.Q45}").childNodes[0].childNodes[0]); </script>
+</apex:pageBlockSection>
+
+   
+<!--  Business Unit Plans -->
+   
+<apex:pageBlockSection title="Business Unit Plans " id="Q6" collapsible="True" columns="2"  > 
+
+<apex:pageBlockSectionItem >
+   <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >                    
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.Business_Unit_Plans}"/>        
+    </apex:pageBlockSectionItem>
+     </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>    
+    
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Business_Unit_Plans_Answer__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!BUplans}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+     </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>    
+    
+    <apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Business_Unit_Plans_comments__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem> 
+ </apex:pageBlockSectionItem>
+ 
+    <script>twistSection(document.getElementById("{!$Component.Q6}").childNodes[0].childNodes[0]); </script>
+    </apex:pageBlockSection>
+    
+     <!-- Competitive Landscapes -->
+    
+    
+    <apex:pageBlockSection title="Competitive Landscapes " id="Q7" collapsible="True" columns="2"  > 
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >                    
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.ABP_Competitive_Landscapes}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Competitive_Landscapes_Answer__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!ComLand}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Competitive_Landscapes_Comments__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem> 
+    </apex:pageBlockSectionItem> 
+    <script>twistSection(document.getElementById("{!$Component.Q7}").childNodes[0].childNodes[0]); </script> 
+    </apex:pageBlockSection>
+    
+
+     <!-- Customer Relationship Maps  -->
+    
+     
+    <apex:pageBlockSection title="Customer Relationship Maps  " id="Q8910" collapsible="True" columns="2"  > 
+    
+    <apex:pageBlockSectionItem >
+    
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+   
+   
+    <apex:pageBlockSectionItem >                    
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.Customer_Relationship_Maps_Question_1}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+     <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Customer_Relationship_Maps_Answer_1__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!CRMaps_1}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Customer_Relationship_Maps_Comments_1__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem>  
+     </apex:pageBlockSectionItem>  
+    
+    <script>twistSection(document.getElementById("{!$Component.Q8910}").childNodes[0].childNodes[0]); </script>
+    
+    </apex:pageBlockSection>
+    
+    
+    
+         <!--  Partner Landscapes -->
+  
+<apex:pageBlockSection title="Partner Alliance " id="Q99" collapsible="True" columns="2"  > 
+<apex:pageBlockSectionItem >
+      <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+     <apex:pageBlockSectionItem >                    
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.Customer_Relationship_Maps_Question_2}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Customer_Relationship_Maps_Answer_2__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!CRMaps_2}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Customer_Relationship_Maps_Commets_2__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem>  
+    </apex:pageBlockSectionItem>
+    
+    <script>twistSection(document.getElementById("{!$Component.Q99}").childNodes[0].childNodes[0]); </script>
+</apex:pageBlockSection>
+
+    
+    
+    
+    
+    
+     <!--  TOTAL CUSTOMER EXPERIENCE -->
+  
+<apex:pageBlockSection title="Total Customer Experience " id="Q89" collapsible="True" columns="2"  > 
+<apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Question}"/ >
+   </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >                    
+          <apex:outputLabel style="font-weight:bold"  value="{!$Label.Customer_Relationship_Maps_Question_3}"/>        
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+    <apex:pageBlockSectionItem >
+    <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Answer}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:selectRadio id="radioValue"  value="{!ABP_Scorecard__c.Customer_Relationship_Maps_Answer_3__c}" layout="pageDirection" >
+          <apex:selectoptions value="{!CRMaps_3}"  >   </apex:selectoptions>
+          </apex:selectRadio>  
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+    
+     <apex:pageBlockSectionItem >
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style="font-weight:bold;text-align:center" value="{!$Label.ABP_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+          <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Customer_Relationship_Maps_Comments1_3__c}" style="width: 550px;Height : 75px"  />  
+    </apex:pageBlockSectionItem> 
+</apex:pageBlockSectionItem>    
+    
+    <script>twistSection(document.getElementById("{!$Component.Q89}").childNodes[0].childNodes[0]); </script>
+</apex:pageBlockSection>
+
+    
+   
+
+    
+<!--- Additional Comments -->
+<apex:pageBlockSection title="Additional Comments " id="comments" collapsible="True" columns="2"  > 
+  
+     <apex:pageBlockSectionItem >
+                <apex:outputLabel style=" font-weight:bold;text-align:center" value="{!$Label.ABP_Additional_Comments}"/ >
+       </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+    <apex:inputField label="Comments"  value="{!ABP_Scorecard__c.Additional_Comments__c}" style="width: 600px;Height : 125px"  />  
+    </apex:pageBlockSectionItem>  
+    <script>twistSection(document.getElementById("{!$Component.comments}").childNodes[0].childNodes[0]); </script>
+    </apex:pageBlockSection>
+
+
+ </apex:pageblock>      
+</apex:form>
+</apex:page>

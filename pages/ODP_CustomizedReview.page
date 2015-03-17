@@ -1,0 +1,240 @@
+<apex:page standardController="Review__c" extensions="ODP_Extention_ExtendedReview" id="p">
+<chatter:feed entityId="{!Review__c.Id}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+<!--Add by june 05/21/2014 for changing alert style-->
+<apex:includeScript value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.default.css')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.ODP_SR_Alertify,'ODP_Alertify/alertify.core.css')}"/>
+<!--end-->
+
+<style>
+    .pbSubheader {
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+        body .bPageBlock .pbBody .pbSubheader img {
+            height: 15px;
+            width: 15px;
+        }
+        .apexp .bPageBlock.apexDefaultPageBlock .pbBody 
+
+        .pbSubheader h3 {
+            font-weight: 300;
+            font-family: 'Voces', sans-serif; !important;
+            font-size:16px !important; /* this controls the blue bar font-sizes */
+        }
+    
+        .myButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: #007DBA  !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+          
+        .myDisabledButtons{
+            background: none  !important;
+            border: 0px  !important;
+            background-color: gray !important;
+            color: #fff !important;
+            font-size: 13px  !important;
+            border-radius: 0px  !important;
+            padding: 6px 6px 6px 6px  !important;
+            border-bottom-left-radius: 6px  !important;
+            border-top-right-radius: 6px  !important;
+          }
+       .myButtons:hover{
+           background-color: #D7410B !important;
+         }
+       .parentDisable{
+           width:58%;
+           float:left;
+           overflow:hidden;
+       }  
+   
+   /* Imp sytle */
+    body .bPageBlock, body #bodyCell .bResource .secondaryPalette, body .secondaryPalette.bPageBlock, body .individualPalette .secondaryPalette.bPageBlock, body .bodyDiv .genericTable, body .genericPageBlockTable, body .bodyDiv .bSubBlock, body .bComponentBlock .bPageBlock, body .bMyDashboard .bPageBlock, body.rlHoverFrame .bPageBlock, body.subjectSelectionPopup div.choicesBox, body.lookupTab .secondaryPalette.bPageBlock, body.popupTab .secondaryPalette.bPageBlock, body.UserTagStatsPage .secondaryPalette.bPageBlock {
+            background-color: transparent;
+            border-bottom: 0px solid #eaeaea;
+            border-left: 0px solid #eaeaea;
+            border-right: 0px solid #eaeaea;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            font-family:'Voces', sans-serif; !important;
+            border-top:0px;
+        }
+    .Custom72Tab .listViewport .subNav .linkBar, .Custom72Tab .mComponent .cHeader, .Custom72Tab .genericTable, .Custom72Tab .bSubBlock, .Custom72Tab .bPageBlock {
+        border-top: 0px solid #3044b5;
+     }
+     
+   <!--  .apexp .bPageBlock .detailList .list{
+     } -->
+    
+    .list table { border-collapse: collapse; text-align: left; width: 100%; } 
+    .apexp .detailList .list td, .apexp .detailList .list th, .apexp .editPage .bPageBlock .detailList .list tr td, .apexp .editPage .bPageBlock .detailList .list tr th {
+        padding: 2px 8px;
+        color: #333;
+        border-bottom: 1px solid #e3deb8;
+        font-family: 'Voces', sans-serif; !important;
+        font-size:13px !important;
+     }
+    /* table row highlight */     
+    body .pbBody table.list tr.dataRow.highlight td{
+    background-color:#ecf4f8;
+    }
+    body .pbBody table.list tr.headerRow th{
+        background:#fff !important;
+        color:#007DBA !important;
+        border:1px solid #ccc;
+    }
+    /* for Header */
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader {
+        border-top:0;
+        color: white;
+        background: #0093d2;
+        padding: 4px 4px 4px 10px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        font-size: 20px;
+        font-weight: 300 !important;
+    }
+    .apexp .bPageBlock.apexDefaultPageBlock .pbBody .pbSubheader h3 {
+        font-weight: 300;
+        font-family: 'Voces', sans-serif; !important;
+        font-size:14px !important; /* this controls the blue bar font-sizes */
+    }
+    /* done header */
+    .bPageBlock .detailList .data2Col{
+    padding-left:0px;
+    }
+    body .pbBody table.list tr.headerRow th{
+        padding: 4px 8px;
+    }
+    
+    /* Detail Table Style */
+    
+    .detailList td{
+        line-height:20px;
+    }
+    body .bPageBlock .pbBody .labelCol {
+        color: #4a4a56;
+        line-height: 20px;
+    }
+    .Custom64Tab .secondaryPalette, .individualPalette .Custom64Block .secondaryPalette{
+    border:0px;
+    }
+    
+    /* Textboxes, Textareas sytle */
+    
+    input,textarea{
+        border: 2px solid #CCCCCC;
+        background:#f2f2f2;
+    }
+   
+   /* upload button */
+   ::-webkit-file-upload-button {
+        background: none;
+        border: 0px;
+        background-color: #007DBA;
+        color: #fff !important;
+        font-size: 13px;
+        border-radius: 0px;
+        padding: 6px 6px 6px 6px;
+        border-bottom-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    ::-webkit-file-upload-button:hover {
+        background-color: #D7410B !important;
+    }
+    
+    .linkBtn {
+        background: none !important;
+        border: 0px !important;
+        background-color: #007DBA !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        border-radius: 0px !important;
+        padding: 8px 8px 8px 8px !important;
+        border-bottom-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+    }
+    .clear{clear:both}
+</style>
+<script>
+    $j=jQuery.noConflict();
+    $j(function(){
+        //add by june 05/21/2014 for checking deliverable include indicator
+                if({!!deliverableIncludeFlag}){
+            $j("input[id$=saveButton]").addClass("myDisabledButtons").removeClass("myButtons");
+            $j("input[id$=delButton]").addClass("myDisabledButtons").removeClass("myButtons");
+        }
+        
+        if('{!myEditStates}'=='New'){
+            $j("input[id$=delButton]").css("display","none");
+        }
+         $j("input[id$=delButton]").click(function(e){
+              if({!!deliverableIncludeFlag}){
+                 alertify.alert("<b>Notification</b><br/> - This work element can not be deleted. Because it is not included in this project.");
+                 e.preventDefault();
+              }
+         });
+        $j("input[id$=saveButton]").click(function(e){
+                if({!!deliverableIncludeFlag}){
+                     alertify.alert("<b>Notification</b><br/> - This Review can not be saved. Because it is not included in this project.");
+                     e.preventDefault();
+                }
+        });
+        //--end--
+    });
+</script>
+<apex:form >  
+        <apex:pageBlock title="{!myEditStates} Review">
+            <apex:pagemessages />
+            <apex:pageBlockSection title="Review Information" columns="1">
+                <apex:outputField value="{!Review__c.Stage_Work_Element__c}" />                           
+                <apex:selectList value="{!SelectRole}" multiselect="false" size="1" label="Role" id="role" required="true" >
+                    <apex:selectOptions value="{!items}"></apex:selectOptions>
+                    <apex:actionSupport event="onchange" action="{!changeRole}" reRender="TeamMember,warningPanel"/>                  
+                </apex:selectList> 
+                <apex:selectList value="{!SelectTeamMember}" multiselect="false" size="1" label="Team Member" id="TeamMember" >
+                    <apex:selectOptions value="{!teammenbers}"></apex:selectOptions>
+                    <apex:actionSupport event="onchange" action="{!changeTeamMember}" reRender="role"/>                    
+                </apex:selectList>                                
+                <apex:inputField value="{!Review__c.Rating__c}" id="rating" rendered="{!disableCom}"/>
+                <apex:inputtextarea value="{!Review__c.Comment__c}" id="comment" rendered="{!disableCom}" style="width:180px;height:80px;"/>                
+                <apex:inputField value="{!Review__c.Complete__c}" id="complete" rendered="{!disableCom}"/>
+                <apex:outputPanel style="display:{!waringMessageShow};" id="warningPanel">
+                        <apex:pageblockSection columns="1">
+                        <apex:outputText value="{!waringMessage}" Label="*" style="color:red;"></apex:outputText>
+                        </apex:pageblockSection>
+                </apex:outputPanel>
+               <!-- <apex:inputField value="{!Review__c.Is_Active__c}" id="active"/>   -->             
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Save" action="{!save}" styleClass="myButtons" id="saveButton"/>  
+                  <!--add by june 05/22/2014-->
+                <apex:commandButton value="Delete" action="{!DeleteWE}" styleClass="myButtons" id="delButton"/>
+                <!--end-->            
+                <apex:commandButton value="Cancel" action="{!cancel}" styleClass="myButtons"/>               
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

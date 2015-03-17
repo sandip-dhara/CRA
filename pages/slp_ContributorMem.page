@@ -1,0 +1,60 @@
+<apex:page controller="slp_ContributorMem" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false" showheader="false">
+
+        <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery.feedback_me.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}" />
+        <apex:includeScript value="{!$Resource.athena_canvas_controller}"/>
+
+<script>
+$(document).ready(function(){
+debugger;
+var listCM='{!ContributorMember}';
+//var data = JSON.parse(listCM); 
+var parse=$.parseJSON(listCM);
+
+for( var iCount=0;iCount<parse.length;iCount++)
+{
+var photo=parse[iCount]['Userphoto'];
+var image= "<img src= '+parse[iCount]['Userphoto']+' />"; 
+divContributorMem.append(image);
+}
+
+debugger;
+});
+  <head>
+  
+   <meta charset="utf-8" />
+        <title>View Community</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="hp" />
+        
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+      </head>
+       <body>
+    
+       <div id="container" class="row-fluid"> 
+             <div id="main-content"> 
+              <div class="container-fluid">
+          <div class="row-fluid">
+          
+          <div id="divContributorMem">
+          </div>
+          
+          </div>
+          </div>
+             </div>
+       </div>
+       </body>
+      
+</script>
+
+</apex:page>

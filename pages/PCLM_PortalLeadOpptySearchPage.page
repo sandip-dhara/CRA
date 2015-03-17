@@ -1,0 +1,185 @@
+<!-- *********************************************************
+* PageName: PCLM_PortalLeadOpptySearchPage
+* Author: HP  
+* Date: 08-JANUARY-2013 
+* Requirement #: 4042
+* Description:This is used by the PartnerPortalLeadOpptySearch page to search and display the appropriate Lead and Opportunity.
+              Only those records where the user is a owner or is part of the sales team are displayed in the result set.
+********************************************************* -->
+<apex:page controller="PCLM_PortalLeadOpptySearchController">
+   <script type="text/javascript" src="/resource/jQuery"></script>
+   <script type="text/javascript" src="/resource/jqueryBlockUi"></script>
+   <!--jQuery Script to gray out and to remove the gray out when during sorting and navigating to the next page-->
+   <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+        function grayOut(displayDivId, displayMessage){
+            j$("#"+displayDivId).block({ 
+                message: displayMessage, 
+                css: { border: '3px solid #a00' } 
+            }); 
+        }
+        
+        function removeGrayOut(removeDivId){
+            j$("#"+removeDivId).unblock();
+        }
+    </script>
+    <apex:form >
+        <!--This page blocks the error message-->
+        <apex:pageBlock rendered="{!insufficientCharLen}">
+            <b>{!$Label.leadAndOpptySearch}</b><br/><br/><br/>
+                <font style="color: #CC0000;">{!$Label.Error_message_partner_portal}</font>
+        </apex:PageBlock>
+            <apex:pageblock rendered="{!NOT(insufficientCharLen)}" >
+                <b>{!$Label.leadAndOpptySearch}</b><br/><br/><br/>
+                <b><apex:outputText value="{!$Label.There_are_no_matching} " rendered="{!IF(((leadList.size ==0) || (opptyList.size==0)), true, false)}"/></b>
+                <apex:outputText value="{!$Label.Leads}" rendered="{!leadList.size==0}"/>
+                <apex:outputText value="," rendered="{!IF(((leadList.size ==0) && (opptyList.size==0)), true, false)}"/>
+                <apex:outputText value="{!$Label.Opportunities}" rendered="{!opptyList.size==0}"/>
+            </apex:pageBlock>
+        <apex:outputText rendered="{!leadList.size>0}"><a href="#leadTablediv">{!$Label.Leads}[{!leadResultSize}]</a></apex:outputText>&nbsp;&nbsp;&nbsp;
+        <apex:outputText rendered="{!opptyList.size>0}"><a href="#opptyTableDiv">{!$Label.Opportunities}[{!opptyResultSize}]</a></apex:outputText>
+        <br/>
+        <br/>
+        <br/>
+        <apex:outputPanel id="leadTablePanel">
+            <div id="leadTablediv">
+            <apex:pageBlock title="{!$Label.Leads}({!leadResultSize})" id="leadTable" rendered="{!leadList.size>0}">
+            <apex:actionStatus id="LeadSorting" onStart="grayOut('leadTablediv','{!$Label.Sorting}');" onStop="removeGrayOut('leadTablediv');"/>
+                    <apex:pageBlockTable value="{!leadList}" var="lead">
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:commandLink value="{!$ObjectType.Lead.Fields.Name.Label}" status="LeadSorting" action="{!toggleSortLead}" reRender="leadTable">
+                                    <apex:param name="sortFieldLeadName" value="Name" assignTo="{!sortFieldLead}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <a href="/{!lead.id}" target="_self">{!lead.name}</a>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:commandLink value="{!$ObjectType.Lead.Fields.Title.Label}" status="LeadSorting" action="{!toggleSortLead}" reRender="leadTable">
+                                    <apex:param name="sortFieldLeadTitle" value="title" assignTo="{!sortFieldLead}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!lead.title}
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:commandLink value="{!$ObjectType.Lead.Fields.Phone.Label}" status="LeadSorting" action="{!toggleSortLead}" reRender="leadTable">
+                                    <apex:param name="sortFieldLeadPhone" value="phone" assignTo="{!sortFieldLead}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!lead.phone}
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:commandLink value="{!$ObjectType.Lead.Fields.Company.Label}" status="LeadSorting" action="{!toggleSortLead}" reRender="leadTable">
+                                    <apex:param name="sortFieldLeadCompany" value="company" assignTo="{!sortFieldLead}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!lead.company}
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:commandLink value="{!$ObjectType.Lead.Fields.email.Label}" status="LeadSorting" action="{!toggleSortLead}" reRender="leadTable">
+                                    <apex:param name="sortFieldLeadEmail" value="email" assignTo="{!sortFieldLead}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!lead.email}
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:commandLink value="{!$ObjectType.Lead.Fields.Status.Label}" status="LeadSorting" action="{!toggleSortLead}" reRender="leadTable">
+                                    <apex:param name="sortFieldLeadStatus" value="status" assignTo="{!sortFieldLead}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!lead.status}
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header"> 
+                                <apex:commandLink value="{!$Label.LeadOwner_Alias}" status="LeadSorting" action="{!toggleSortLead}" reRender="leadTable">
+                                    <apex:param name="sortFieldLeadOwner" value="owner.alias" assignTo="{!sortFieldLead}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!lead.owner.alias}
+                        </apex:column>
+                    </apex:pageBlockTable>
+                    <apex:panelGrid rendered="{!leadList.size>0}" columns="5">
+                        <apex:commandButton status="fetchLeadStatus" action="{!firstLeadPage}" reRender="leadTable" disabled="{!!hasLeadPrevious}" value="|<" title="{!$Label.First_Page}"/>
+                        <apex:commandButton status="fetchLeadStatus" action="{!previousLeadPage}" disabled="{!!hasLeadPrevious}" reRender="leadTable" value="<" title="{!$Label.Previous_Page}"/>
+                        <apex:commandButton status="fetchLeadStatus" action="{!nextLeadPage}" disabled="{!!hasLeadNext}" reRender="leadTable" value=">" title="{!$Label.Next_Page}"/>
+                        <apex:commandButton status="fetchLeadStatus" action="{!lastLeadPage}" reRender="leadTable" value=">|" disabled="{!!hasLeadNext}" title="{!$Label.Last_Page}"/>
+                        <apex:outputPanel style="color:Red;font-weight:bold">
+                            <apex:actionStatus id="fetchLeadStatus" onStart="grayOut('leadTablediv','{!$Label.Fetching}');" onStop="removeGrayOut('leadTablediv');"/>
+                        </apex:outputPanel>
+                    </apex:panelGrid>
+                </apex:pageBlock>
+            </div>
+        </apex:outputPanel><br/>
+        <apex:outputPanel id="opptyTablePanel">  
+            <div id="opptyTableDiv">
+            <apex:pageBlock title="{!$Label.Opportunities}({!opptyResultSize})" id="opptyTable" rendered="{!opptyList.size>0}">
+            <apex:actionStatus id="opptySorting" onStart="grayOut('opptyTableDiv','{!$Label.Sorting}');" onStop="removeGrayOut('opptyTableDiv');"/>
+                    <apex:pageBlockTable id="opptyTable1" value="{!opptyList}" var="oppty">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="{!$ObjectType.Opportunity.Fields.Name.Label}" status="opptySorting" action="{!toggleSortOppty}" reRender="opptyTable">
+                                    <apex:param name="sortFieldOpptyName" value="Name" assignTo="{!sortFieldOppty}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <a href="/{!oppty.id}" target="_self">{!oppty.Name}</a>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="{!$ObjectType.Account.Fields.Name.Label}" status="opptySorting" action="{!toggleSortOppty}" reRender="opptyTable">
+                                    <apex:param name="sortFieldOpptyAccName" value="account.name" assignTo="{!sortFieldOppty}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <a href="/{!oppty.accountid}" target="_self">{!oppty.account.name}</a>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="{!$ObjectType.Opportunity.Fields.StageName.Label}" status="opptySorting" action="{!toggleSortOppty}" reRender="opptyTable">
+                                    <apex:param name="sortFieldOpptyStage" value="stageName" assignTo="{!sortFieldOppty}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!oppty.stageName}
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="{!$ObjectType.Opportunity.Fields.closeDate.Label}" status="opptySorting" action="{!toggleSortOppty}" reRender="opptyTable">
+                                    <apex:param name="sortFieldOpptyClsDate" value="closeDate" assignTo="{!sortFieldOppty}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value=" {!oppty.closeDate}"/>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="{!$ObjectType.opportunity.Fields.Value__c.Label}" status="opptySorting" action="{!toggleSortOppty}" reRender="opptyTable">
+                                    <apex:param name="sortFieldOpptyValue" value="value__c" assignTo="{!sortFieldOppty}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!oppty.Value__c}
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="{!$Label.oppty_Opportunity_Owner_Alias}" status="opptySorting" action="{!toggleSortOppty}" reRender="opptyTable">
+                                    <apex:param name="sortFieldOpptyOwner" value="owner.alias" assignTo="{!sortFieldOppty}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            {!oppty.owner.alias}
+                        </apex:column>
+                    </apex:pageBlockTable>
+                    <apex:panelGrid id="nextLink" rendered="{!opptyList.size>0}" columns="5">
+                        <apex:commandButton status="fetchOpptyStatus" action="{!firstOpptyPage}" disabled="{!!hasOpptyPrevious}" reRender="opptyTable" value="|<" title="{!$Label.First_Page}"/>
+                        <apex:commandButton status="fetchOpptyStatus" action="{!previousOpptyPage}" disabled="{!!hasOpptyPrevious}" reRender="opptyTable" value="<" title="{!$Label.Previous_Page}"/>
+                        <apex:commandButton status="fetchOpptyStatus" action="{!nextOpptyPage}" disabled="{!!hasOpptyNext}" reRender="opptyTable" value=">" title="{!$Label.Next_Page}"/>
+                        <apex:commandButton status="fetchOpptyStatus" action="{!lastOpptyPage}" disabled="{!!hasOpptyNext}" reRender="opptyTable" value=">|" title="{!$Label.Last_Page}"/>
+                        <apex:outputPanel style="color:Red;font-weight:bold">
+                            <apex:actionStatus id="fetchOpptyStatus" onStart="grayOut('opptyTableDiv','{!$Label.Fetching}');" onStop="removeGrayOut('opptyTableDiv');"/>
+                        </apex:outputPanel>
+                    </apex:panelGrid>
+                </apex:pageBlock>
+            </div>
+        </apex:outputPanel>    
+    </apex:form>
+</apex:page>

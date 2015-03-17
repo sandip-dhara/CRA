@@ -1,0 +1,61 @@
+<apex:component controller="UpdateImageController" allowDML="true">
+   <!--<apex:stylesheet value="{!$Resource.CustomCss}"/>-->
+   <style>
+       .txtBox{
+            width : 600px;
+            height : 20px;
+        }
+        .lblText{
+            color: #4a4a56;
+            font-weight:bold;
+            margin-left: -50px;
+        }
+        .inputChkBox{
+            text-align:center;
+            vertical-align:middle;
+        }
+        .lblPreview{
+            color: #4a4a56;
+            font-weight:bold;
+            margin-left : 50px;
+        }
+        .imgProfile {
+           padding:0.5px;
+           border:2px ridge #ececec;
+        }
+        .warnMsg{
+            color: #4a4a56;
+        }
+   </style>
+    <apex:form id="updateImageForm">        
+        <apex:pageBlock title="Upload Image">
+            <apex:outputPanel id="msgPanel">
+                <apex:pageMessages />
+            </apex:outputPanel>    
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel styleClass="label">{!$Label.LBL_URL}</apex:outputLabel> 
+                    <apex:outputLabel >
+                    <apex:inputText id="photoURL" value="{!photeURL}" html-placeholder="{!$Label.URL_Placeholder}" styleClass="txtBox">
+                    </apex:inputText>
+                        <br/><br/>
+                        <apex:outputLabel styleClass="lblText">{!$Label.LBL_EXTERNAL_USER}</apex:outputLabel> 
+                        <apex:inputCheckbox value="{!isPublicalyVisible }" styleclass="inputChkBox"/>
+                    </apex:outputLabel>    
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel styleClass="lblPreview">
+                        {!$Label.LBL_IMAGE_PERVIEW}<br/><br/>
+                        <apex:outputPanel id="imagePanel" styleClass="imageBorder">    
+                            <apex:image url="{!photeURL}" height="200" width="200" styleClass="imgProfile"/>
+                        </apex:outputPanel>
+                    </apex:outputLabel>                                       
+                </apex:pageBlockSectionItem>               
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.LBL_BTN_UPLOAD}" reRender="imagePanel,msgPanel" action="{!getAndUpdateImage}" />
+                <apex:commandButton value="{!$Label.LBL_BTN_CHECK}" reRender="imagePanel,msgPanel" action="{!checkImage}"/> 
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:component>

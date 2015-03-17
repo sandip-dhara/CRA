@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Add_to_Compliance_Audit__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>if checked, any posts hitting a blacklist shall be added to an audit table indicating who made the post, the unscrubbed message, and the blacklisted word rule which triggered the compliance breach.</description>
+        <externalId>false</externalId>
+        <label>Add to Compliance Audit</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Custom_Expression__c</fullName>
+        <description>User entered regular expression.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Enter your own regular expression here. Setting this value to blank out the word field.
+Don&apos;t forget to add \b at the start and end if you want to match on a whole word!</inlineHelpText>
+        <label>Custom Expression</label>
+        <length>200</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Match_Whole_Words_Only__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>If checked, a match will only occur on a whole word. eg: bum vs. bummer</description>
+        <externalId>false</externalId>
+        <label>Match Whole Words Only</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Prevent_Post_on_Breach__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>If checked, a post which hits a blacklist will not be posted to the chatter feed at all. Checking this box automatically enables the visual warning flag</description>
+        <externalId>false</externalId>
+        <label>Prevent Post on Breach</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>RegexValue__c</fullName>
+        <externalId>false</externalId>
+        <label>RegexValue</label>
+        <length>200</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Short_Description__c</fullName>
+        <description>Enter a short description of the blacklist word, phrase or expression. Particularly useful add when describing a custom expression</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Enter a short description of the blacklist word, phrase or expression. Particularly useful add when describing a custom expression</inlineHelpText>
+        <label>Short Description</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Substitution__c</fullName>
+        <defaultValue>&quot;****&quot;</defaultValue>
+        <externalId>false</externalId>
+        <label>Substitution</label>
+        <length>200</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>UK Public Sector</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Word__c</fullName>
+        <externalId>false</externalId>
+        <label>Word or Phrase</label>
+        <length>200</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>is_Active__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>Checking this field will mean the word will not be checked as part of the filter</description>
+        <externalId>false</externalId>
+        <label>is Active</label>
+        <type>Checkbox</type>
+    </fields>
+    <label>Blacklisted Word</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>Word__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>BLW-{0000}</displayFormat>
+        <label>BlacklistedWord Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Blacklisted Words</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

@@ -1,0 +1,46 @@
+<apex:page standardController="Offering__c" extensions="ExtendedOfferingClass">
+<chatter:feed entityId="{!Offering__c.Id}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQuery)}"/>
+    <script>
+       $j = jQuery.noConflict();
+       $j(document).ready(function() {
+          $j("select[id$=inputUser_mlktp]").hide();
+          if({!disbledFiled})
+          {
+              $j("input[id$=servicelineid]").prop('disabled', true);
+              $j("a[id$=servicelineid_lkwgt]").hide();
+          }
+       });
+    </script> 
+    <apex:pageBlock rendered="{!disbledFiled}">
+        <apex:pageBlockSection >
+            <a href="/{!CurServiceLineIDID}">Service Line [{!CurServiceLineName}]</a>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <apex:form >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock title="Offering Information">
+            <apex:pageBlockSection title="Offering" columns="1">
+                <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Service Line ID" 
+                        for="stage"/>
+                <apex:actionRegion >
+                    <apex:inputField value="{!Offering__c.Service_Line_Name__c}" id="servicelineid">
+                        <apex:actionSupport event="onchange" action="{!DynamicSLName}" reRender="id_servicelinename"/>
+                    </apex:inputField>
+                </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:outputText label="Service Line Name" id="id_servicelinename" value="{!CurServiceLineName}" />                
+                <apex:inputField value="{!Offering__c.Name__c}"/>
+                <apex:inputField value="{!Offering__c.Description__c}" style="width:35%; height:120px;"/>
+                <apex:inputField value="{!Offering__c.Manager_User__c}" id="inputUser"/>                
+                <apex:inputField value="{!Offering__c.Is_Active__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Save & New" action="{!DoSaveNew}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

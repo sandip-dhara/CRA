@@ -1,0 +1,32 @@
+<apex:page controller="sampleCon">
+
+<script type="text/javascript">
+     
+    function getActive(selectedValue) 
+    {  
+    if( selectedValue == 'YES')
+    {
+    var ele=document.getElementById('{!$Component.form1.dropdown}');
+      ele.disabled =false;
+    }else if(selectedValue == 'NO')
+    {
+         var ele=document.getElementById('{!$Component.form1.dropdown}');
+      ele.disabled =true;
+    }
+      
+            
+    } 
+    </script>
+    <apex:form id="form1">
+        <apex:selectRadio value="{!selectedValue}" layout="pageDirection" onchange="getActive(this.value);">
+            <apex:selectOption itemValue="YES" itemLabel="YES"/>
+            <apex:selectOption itemValue="NO" itemLabel="No"/>
+            </apex:selectRadio><p/>
+            
+            <apex:selectList id="dropdown" size="1">
+               <apex:selectOption itemValue="YES" itemLabel="YES"/>
+            <apex:selectOption itemValue="NO" itemLabel="No"/>
+            </apex:selectList>
+            
+  </apex:form>
+</apex:page>

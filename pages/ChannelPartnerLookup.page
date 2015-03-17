@@ -1,0 +1,86 @@
+<!-- 
+/**********************************************************
+* Page Name: ChannelPartnerLookup
+* Author: Accenture
+* Date: 27-MAR-2012 
+* Requirement # Request Id :
+* Description: To display Partner Account According to the region & BG of the logged in User
+***********************************************************/
+-->
+<apex:page controller="ChannelPartnerController" showHeader="false" sideBar="false" tabStyle="Account">
+<!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+<body class="lookupTab  LookupSearchFrame, marginCls">
+    <apex:form >
+        <apex:sectionHeader title="{!$Label.Account_Search}" />
+            <apex:actionRegion >  
+                <!-- Output Panel for showing search options -->
+                <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">
+                    <!--<apex:outputLabel value="{!$Label.Search_By_Options}" styleClass="searchLabelCls" for="searchByKeyWord"/>
+                    <apex:selectRadio label="{!$Label.Search_Options}" id="searchByKeyWord" value="{!searchByKeyWord}" layout="pageDirection">
+                        <apex:selectOption itemValue="Name" itemLabel="{!$ObjectType.account.fields.name.label}"/>
+                        <apex:selectOption itemValue="Location_ID__c" itemLabel="{!$ObjectType.account.fields.Location_ID__c.label}"/>
+                    </apex:selectRadio>-->
+                    <apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>
+                    <apex:inputText id="txtSearch" value="{!searchString}" onkeypress="return searchAccountOnEnter(event,this);"/>
+                        <span Class="searchspanCls"><apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!Search}" rerender="searchResults"></apex:commandButton></span>
+                </apex:outputPanel>
+                <p><b>Help</b>&nbsp;&nbsp; {!$Label.Channelpartner_search}</p>
+                
+                <!-- Page block for showing search result -->
+                <apex:pageBlock id="searchResults">
+                <apex:outputpanel styleClass="resultPanelCls" layout="block"> 
+                    <apex:pageBlockTable value="{!results}" var="a" id="tblResults">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputPanel >{!$ObjectType.Location__c.fields.name.label}</apex:outputPanel>
+                            </apex:facet>
+                           <!--<apex:outputLink value="javascript:testFunction('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!a.account.Id}','{!a.account.Name}', false)" rendered="{!NOT(ISNULL(a.account.Id))}">{!a.account.Name}</apex:outputLink>-->
+                            <apex:outputLink onclick="backpopulate('{!a.id}','{!JSENCODE(a.name)}','{!a.account__r.id}','{!JSENCODE(a.account__r.Name)}','{!JSENCODE(a.account__r.MDCP_Business_Relationship__c)}')">{!a.name}</apex:outputLink>
+                        </apex:column>
+                        <!--<apex:column headerValue="{!$ObjectType.account.fields.Location_ID__c.label}" value="{!a.account.Location_ID__c}" />-->
+                        <apex:column headerValue="Account" value="{!a.account__r.name}" />
+                        <apex:column headerValue="{!$ObjectType.account.fields.Alternate_Name__c.label}" value="{!a.Account__r.Alternate_Name__c}" /> 
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.Business_Relationship__c.label}" value="{!a.Business_Relationship__c}" />                       
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.Location_Name__c.label}" value="{!a.Location_Name__c}" />
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.Street__c.label}" value="{!a.Street__c}" />
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.City__c.label}" value="{!a.City__c}" />
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.State__c.label}" value="{!a.State__c}" />
+                        <apex:column headerValue="{!$ObjectType.Location__c.fields.Country__c.label}" value="{!a.Country__c}" />
+                      <!--<apex:column headerValue="{!$ObjectType.Location__c.fields.Business_Relationship__c.label}" value="{!a.Business_Relationship__c}" />-->
+                        <apex:column headerValue="{!$ObjectType.account.fields.HP_SFDC_Access__c.label}" value="{!a.HP_SFDC_Access__c}" />
+                    </apex:pageBlockTable>
+                    
+                    <apex:outputLabel rendered="{!isResultEmpty}">
+                        <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+                    </apex:outputLabel>
+                    </apex:outputpanel>
+                </apex:pageBlock>
+            </apex:actionRegion>
+        <!-- defining action function for searching accounts -->
+        <apex:actionFunction action="{!Search}" name="searchAccountOnEnterKey" rerender="searchResults">
+           <apex:param name="firstParam" assignTo="{!searchString}" value="" />
+        </apex:actionFunction>
+    </apex:form>
+</body>
+  <script>
+    function searchAccountOnEnter(ev,searchTextObj)  {
+        var searchTextValue=searchTextObj.value;
+        if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+            searchAccountOnEnterKey(searchTextValue);  
+            return false;           
+         } 
+     }
+     function backpopulate(locationID,locatorID,partnerAccountID, PartnerAccountName,BusinessRelationship){
+         
+         
+         window.parent.opener.backPopulateMain(locationID,locatorID,partnerAccountID,PartnerAccountName,BusinessRelationship,{!TextBox});
+        
+         
+         
+         
+    }
+         
+     
+  </script>
+</apex:page>

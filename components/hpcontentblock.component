@@ -1,0 +1,30 @@
+<!--
+// -------------------------------------------------------------------------------------------
+// This Component is used to display the content of Page and Template (Page Items & Template Items)
+// Version#     Date            Author                Description
+// -------------------------------------------------------------------------------------------
+// 1.0       9-Aug-2012     Rajit Kapoor           Initial Version
+// -------------------------------------------------------------------------------------------
+-->
+<apex:component controller="hpContentblockcomponentController">
+  
+    <apex:attribute name="PTname" description="Parent Temp content block component" type="string" required="false" assignTo="{!strPTname}"/>
+        
+    <apex:attribute name="Name" description="content block component" type="string" required="false" assignTo="{!strName}"/>
+    
+    <apex:repeat value="{!lstItems}" var="item" rendered="{!strobjName == null || strobjName == ''}"> 
+        
+        <!-- Regular HTML output-->
+        <apex:outputText escape="false" value="{!item.Content__c}" rendered="{!item.Type__c != 'WebForm'}"/>
+       
+        <!-- Render a Web Form -->
+        <!-- <c:cmsRenderForm formId="{!item.cmsSite_Web_Form__c}" rendered="{!item.cmsType__c == 'WebForm'}"/> -->
+    </apex:repeat>
+    <apex:repeat value="{!lstItemsSTG}" var="item" rendered="{!strobjName == 'Staging'}"> 
+        
+        <!-- Regular HTML output-->
+         <apex:outputText escape="false" value="{!item.Content__c}" rendered="{!item.Type__c != 'WebForm'}"/>
+        
+    </apex:repeat> 
+    
+</apex:component>

@@ -1,0 +1,325 @@
+<apex:page controller="SLP_GlobalSearch" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+<apex:includeScript value="{!$Resource.jquery172}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+
+<style type="text/css">
+    .starred {
+        display: block;
+        height: 35px;
+        position: absolute;
+        left: 0;
+        top: 0px;
+        width: 35px;
+        background: url(../img_athena/blue_star.png) no-repeat;
+    }
+    .starredY {
+        background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+    }
+    
+    .filterLogo{
+        display: block;
+        height: 35px;
+        position: absolute;
+        left: 0;
+        top: 0px;
+        width: 35px;
+        background: url(../img_athena/blue_star.png) no-repeat;
+    }
+    .filterLogoY {
+        background: url({!URLFOR($Resource.mobileassests, 'images/yellow_star.png')}) no-repeat;
+    }
+</style>
+
+<script type="text/javascript">
+         var listTopicIds = new Array();
+         var memberList = new Array();
+         console.log('{!URLFOR($Resource.css_athena, 'css_athena/style.css')}');
+</script>
+<body>    
+    <div data-role="page" id="startpage">
+        <div data-role="header" style="padding:5px 0px 10px 0px; background:#ffffff;" data-position="fixed" data-tap-toggle="false">
+            <img src="/resource/1396857212000/img_athena/img_athena/HP_Blue_Logo.png" class="circular ui-btn-left" alt="HP Logo"/>
+            <h1 style="text-align:left; margin-left:55px;padding:0px;">Social Learning Platform</h1>
+            <h1 style="text-align:left; margin-left:55px;padding:0px;color:#888888;">Learning on your terms</h1>
+            <apex:image url="{!LoggedinUserDtls.SmallPhotoUrl}" styleClass="circular ui-btn-right" alt="no_username"/>
+            <div data-role="header" style="padding:2px 0px 2px 0px;background:#0099CC;">
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left"> 
+            <a href="/apex/mLandingPage" data-role="none" data-ajax="false" id="buttonHome"><img src="{!URLFOR($Resource.mobileassests, 'images/home.png')}" id="headerImage" class="navIcons"/></a>
+            </div>
+            <h1></h1>
+            <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+              <a href="#" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.mobileassests, 'images/search.png')}" id="searchImage" class="navIcons"/></a> 
+              <a href="/apex/mLandingPage" data-role="none" data-ajax="false"><img src="{!URLFOR($Resource.mobileassests, 'images/questionmark.png')}" id="headerImage" class="navIcons"/></a>
+            </div>
+             <div data-role="content" class="ui-content" id="seach-container"> 
+           <input type="search" name="search" id="search-basic" data-mini="true" value="{!searchText}"  />
+           </div>
+     </div>    
+     </div>
+            <div data-role="collapsible" id="custom-collapsible" data-inset="true" data-iconpos="right" data-collapsed-icon="arrow-d" data-expanded-icon="arrow-u">
+            <h3><span id="MyHeaderID">No results found - '{!searchText}'</span><img src="{!URLFOR($Resource.mobileassests, 'images/filter.png')}" id="filterImage" style="float:left; max-height:20px; max-width:20px;"/></h3>
+                    <ul data-role="listview" data-inset="false" class="tablist-left" data-icon="false" id="filterList">
+                        <li><a href="#CommResult" onclick="showResult(0);">Communities <span class="ui-li-count">{!CommunityResultCount}</span></a></li>
+                        <li><a href="#BoardResult" onclick="showResult(1);">Boards <span class="ui-li-count">{!LBResultCount}</span></a></li>
+                        <li><a href="#TopicResult" onclick="showResult(2);">Topics <span class="ui-li-count">{!TopicResultCount}</span></a></li>
+                        <li><a href="#PeopleResult" onclick="showResult(3);">People <span class="ui-li-count">{!PeopleResultCount}</span></a></li>
+                    </ul>
+            </div>
+
+            <div data-role="content" class="ui-content">
+                <div id="CommResult" class="my-page">
+                    <ul data-role="listview">
+                        <apex:repeat value="{!CommunityResult}" var="brdRslt">
+                            <!-- FIXME sort out the hardcoded URL to image-->
+                            <li><a href="/apex/mobileCommunityActivity?id={!brdRslt.Id}" data-ajax="false"><img src="https://hp--esit--c.cs11.content.force.com/servlet/servlet.FileDownload?retURL=https://hp--ESIT--c.cs11.visual.force.com/apex/SLP_GlobalSearch&SearchVal={!strSearchValue}&file={!brdRslt.AttachmentId}" onError="this.onerror=null;this.src='{!brdRslt.DefaultImageName}';" class="ui-li-thumb"/><h2>{!brdRslt.LBName}</h2><p class="ui-li-aside" style="background:green">{!brdRslt.LBNoOfComments}</p><div class='starred starredY'></div></a></li>
+                        </apex:repeat>
+                    </ul>
+                </div> <!-- CommResult -->
+                <div id="CollResult">
+                    <ul data-role="listview">
+                        <apex:repeat value="{!CollResult}" var="brdRslt">
+                            <li>
+                                <a href="/apex/mobileCommunityCollaterals?id={!brdRslt.LBid}&docId={!brdRslt.TopicId}" data-ajax="false">
+                                    <h2 style="background-color:rgba(0, 0, 0, 0.0);">{!brdRslt.LBName}</h2>
+                                    <p style="background-color:rgba(0, 0, 0, 0.0);">{!brdRslt.TopicName}</p>
+                                    <script>
+                                        var Id = '{!brdRslt.TopicId}';
+                                        var lBid = '{!brdRslt.LBid}';
+                                        var RatingNbr = '{!brdRslt.AvgRating}';
+                                        listTopicIds.push({ "ID": Id, "LBID":lBid, "RatingNbr": RatingNbr });
+                                    </script>
+                                    <div id='ratingTopic_{!brdRslt.TopicId}_{!brdRslt.LBid}'></div>
+                                </a>
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                </div> <!-- collResult -->
+                <div id="BoardResult" class="my-page">
+                    <ul data-role="listview">
+                        <apex:repeat value="{!BoardResult}" var="brdRslt">
+                            <!-- FIXME sort out the hardcoded URL to image-->                        
+                            <li><a href="#" data-ajax="false"><img src="https://hp--esit--c.cs11.content.force.com/servlet/servlet.FileDownload?retURL=https://hp--ESIT--c.cs11.visual.force.com/apex/SLP_GlobalSearch&SearchVal={!strSearchValue}&file={!brdRslt.AttachmentId}" onError="this.onerror=null;this.src='{!brdRslt.DefaultImageName}';" class="ui-li-thumb"/><h2>{!brdRslt.LBName}</h2><p class="ui-li-aside" style="background:#0197d6;">{!brdRslt.LBNoOfComments}</p></a></li>
+                        </apex:repeat>
+                    </ul>
+                </div> <!-- BoardResult-->
+                <div id="TopicResult">
+                    <ul data-role="listview" id="boardList">
+                        <apex:repeat value="{!TopicsResult}" var="brdRslt">
+                            <li>
+                                <a href="#">
+                                    <img src="https://hp--esit--c.cs11.content.force.com/servlet/servlet.FileDownload?retURL=https://hp--ESIT--c.cs11.visual.force.com/apex/SLP_GlobalSearch&SearchVal={!strSearchValue}&file={!brdRslt.AttachmentId}" onError="this.onerror=null;this.src='{!brdRslt.DefaultImageName}';" style="height:100%;"/>
+                                    <h2 style="background-color:rgba(0, 0, 0, 0.0);">{!brdRslt.LBName}</h2>
+                                    <p style="background-color:rgba(0, 0, 0, 0.0);">{!brdRslt.TopicName}</p>
+                                    <script>
+                                        var Id = '{!brdRslt.TopicId}';
+                                        var lBid = '{!brdRslt.LBid}';
+                                        var RatingNbr = '{!brdRslt.AvgRating}';
+                                        listTopicIds.push({ "ID": Id, "LBID":lBid, "RatingNbr": RatingNbr});
+                                    </script>
+                                    <div id='ratingTopic_{!brdRslt.TopicId}_{!brdRslt.LBid}'></div>
+                                </a>
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                </div> <!-- TopicResult-->
+                <div id="PeopleResult">
+                    <ul data-role="listview" data-inset="true" id="memberList">
+                        <apex:repeat value="{!PeopleResult}" var="brdRslt">
+                            <li>
+                                <!--<a href="/apex/mobileProfilePage?id={!brdRslt.Id}" data-ajax="false">-->
+                                <a href="#popupBasic" data-rel="popup">
+                                    <img src='{!brdRslt.SmallImageName}' class="circular-image-container"/>
+                                    <h3 class="blue-font">{!brdRslt.name}</h3>
+                                    <p style="background:rgba(0,0,0,0.0); color:grey; width:100%;"><b>{!brdRslt.Title}</b></p>
+                                        <apex:outputPanel rendered="{!brdRslt.IsSecondaryIndImg}">
+                                            <fieldset class="ui-grid-a" style="width 100%;">
+                                                <div class="ui-block-a" style="width:10%"><apex:image url="{!brdRslt.SecondaryIndImage}" alt="Expertise" title="Expertise"/></div>
+                                                <div class="ui-block-b" style="width: 90%"><p style="background:rgba(0,0,0,0.0); color:grey; width:100%;"><b>{!brdRslt.ExpertUserRole}</b></p></div>     
+                                            </fieldset>
+                                        </apex:outputPanel>
+                                    <script>memberList.push({'id':'{!brdRslt.Id}'});</script>
+                                </a>
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                </div> <!-- PeopleResult-->
+            <!--</div>  tabs -->
+        </div> <!-- content-->
+      <div data-role="popup" id="popupBasic" data-overlay-theme="b" data-dismissible="false" data-transition="pop" data-position-to="window">
+              <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" data-theme="a" class="ui-btn-right">Close</a>
+      </div>
+    </div> <!-- page-->
+</body>        
+    
+<style type="text/css">
+    .circular-image-container {
+        margin: 5px;
+        padding: 1px;
+        border-radius: 50px;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-top-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        border-bottom-left-radius: 50px !important;  /* !important is used to overide this css property which is inherited from the jquery mobile css file. */
+        background-color: #000000;
+    }
+    
+    .blue-font {
+        color: #0096D6; /* HP blue font */
+    }
+        
+    .ui-listview .ui-li-has-thumb>img:first-child, .ui-listview .ui-li-has-thumb>.ui-btn>img:first-child, .ui-listview .ui-li-has-thumb .ui-li-thumb {
+        max-height:none !important;
+    }
+    
+    .ui-collapsible {
+        margin: 0.3em;
+    }
+    #custom-collapsible h3 a {
+        border-bottom-width: 0px !important;
+    }
+    .STpersonsEx {
+        clear: both;
+        float: left;
+        width: 155px;
+        color: #9E9999 !important;
+    }
+    .STpersonsEx img {
+        border-radius: 0 7px;
+        margin-right: 5px;
+        border: 2px solid #fff;
+        box-shadow: 1px 1px 5px rgba(188, 186, 186, 0.5);
+    }
+ </style>
+
+<script>
+    $(document).ready(function(){
+        $('#seach-container').hide();
+        $("#startpage").trigger("create");
+        
+        // Displaying Topic Result's Rating
+        for (var i = 0; i < listTopicIds.length; i++) {
+            $('#ratingTopic_' + listTopicIds[i].ID + '_' + listTopicIds[i].LBID).raty({
+                cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                readOnly: true,
+                score: listTopicIds[i].RatingNbr,        
+            });
+        }
+        $('#boardList').listview('refresh');
+        showResult(-1);
+        $('#custom-collapsible h3').find('a').css('background','#3a89aa');
+    });
+
+    $('#memberList').delegate('li', 'tap', function () {
+        var index = $(this).index();
+        $("#popupBasic #memberFrame").remove();
+        $("#popupBasic").append( '<iframe src="/apex/mobileProfilePage?id=' + memberList[index].id + '" height="400px" width="100%" id="memberFrame"></iframe>' );
+    });
+    
+    $('#custom-collapsible').on('collapsibleexpand', '', function () {
+                        $('#custom-collapsible h3').find('a').css('background','#f05332');
+                            $('html, body').animate({
+                                scrollTop: $('#tList').offset().top - 100
+                            }, 500);
+    }).on('collapsiblecollapse', '', function () { $('#custom-collapsible h3').find('a').css('background','#3a89aa');});
+    
+    
+
+    function showResult(index) {
+        var ar = [{'tag':'#CommResult','title':'Communities','count':{!CommunityResultCount}},
+                    {'tag':'#BoardResult','title':'Boards','count':{!LBResultCount}},
+                    {'tag':'#TopicResult','title':'Topics','count':{!TopicResultCount}},
+                    {'tag':'#PeopleResult','title':'People','count':{!PeopleResultCount}}
+                    ];
+        
+        styleEmptySearchHeaders(ar);
+        
+        if ( index === -1 ) {        // Initial load of page. Show first populated result.
+            for ( var v in ar ) {
+                if ( ar[v].count >= 1 ) {
+                    hideAllResults();
+                    $(''+ar[v].tag).show();
+                    $("#custom-collapsible h3 #MyHeaderID").text(''+ar[v].title);
+                    $('#custom-collapsible').collapsible('collapse');
+                    return;
+                }
+            }
+        }
+        else {                      // Show selected search filter
+            if (ar[index].count !== 0) {
+                hideAllResults();
+                $(''+ar[index].tag).show();
+                $("#custom-collapsible h3 #MyHeaderID").text(''+ar[index].title);
+                $('#custom-collapsible').collapsible('collapse');
+            }
+        }
+    }        
+    
+    function hideAllResults() {
+        $('#CommResult').hide();
+        $('#CollResult').hide();
+        $('#BoardResult').hide();
+        $('#TopicResult').hide();
+        $('#PeopleResult').hide();
+    }    
+    
+    function styleEmptySearchHeaders(a) {
+        for (var x in a) {
+            if ( a[x].count <= 0 ) {
+                $('#custom-collapsible #filterList li .ui-btn').eq(x).css('color', 'rgba(0,0,0,0.2)');
+                $('#custom-collapsible #filterList li .ui-btn .ui-li-count').eq(x).css('color', 'rgba(0,0,0,0.2)');
+            }
+        }
+    }
+            
+     $('#buttonHome').on('ontap mousedown', '', function () {
+                $('#buttonHome img').css('background','#33B5E5');
+                setTimeout(function(){ $('#buttonHome img').css('background','transparent');},500)
+            });
+            
+        $('#buttonSearch').on('ontap mousedown', '', function () {
+               
+               if (!$('#seach-container').is(':visible')) {
+                  $('#seach-container').slideDown("fast",function(){
+                    $("#startpage").trigger("create");
+                });
+               }
+               else{
+                  $('#seach-container').slideUp("fast",function(){
+                     
+                    $("#startpage").trigger("create");
+                });
+               }
+               
+                
+                $('#buttonSearch img').css('background','#33B5E5');
+                setTimeout(function(){ $('#buttonSearch img').css('background','transparent');},200);
+
+            });
+            
+            $('#search-basic').live("keypress", function(e) {
+            /* ENTER PRESSED*/
+            if (e.keyCode == 13) {
+                var searchTerm= $('#search-basic').val();
+                window.location = "/apex/mobileGlobalSearch?SearchOptions=multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+searchTerm;
+                $.mobile.loading( "show", {
+                      text: "Loading...",
+                      textVisible: true,
+                      textOnly: false
+                } ); // Displays load spinner while loading
+            }
+        });
+                  
+</script>
+</apex:page>

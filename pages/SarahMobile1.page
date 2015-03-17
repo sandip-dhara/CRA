@@ -1,0 +1,110 @@
+<apex:page docType="html-5.0"
+           showHeader="false" 
+           sidebar="false"
+           standardStylesheets="false"
+           standardController="User" 
+           extensions="SarahMobile1">
+   <head>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1, 
+                                  minimum-scale=1, maximum-scale=1, user-scalable=no"/> 
+      <apex:stylesheet value="{!URLFOR($Resource.Mobile_Design_Templates, 
+                'Mobile-Design-Templates-master/common/css/app.min.css')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.Mobile_Design_Templates, 
+                'Mobile-Design-Templates-master/common/js/jQuery2.0.2.min.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.Mobile_Design_Templates, 
+                'Mobile-Design-Templates-master/common/js/jquery.touchwipe.min.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.Mobile_Design_Templates, 
+                'Mobile-Design-Templates-master/common/js/main.min.js')}"/>
+       
+       
+       
+     <apex:includeScript value="{!$Resource.lodash_min}"/>
+     <apex:includeScript value="{!$Resource.underscore_min}"/>
+       
+   </head>
+   <body>
+      <div id="mainContainer"/>
+ <script type="text/html" id='listView'>
+   <div class="app-wrapper">
+
+    <!-- <nav class="main-menu">
+        <a href="#">Accounts</a>
+        <a href="#">Opportunities</a>
+     </nav> -->
+
+     <header>
+       <!-- <div class="main-menu-button main-menu-button-left"><a class="menu">&nbsp;</a></div> -->
+        <h1>Social Learning Producers</h1>
+     </header>
+
+     <div class="app-content">
+        <ul id="cList" class="list-view with-swipe left-thumbs right-one-icons">
+           <% for(var i = 0; i < users.length; i++){ %>
+             <li>
+               <div class="thumbs">
+                   <% if (typeof(users[i].Phone) != "undefined") { %>
+                    <a href="tel:<%= users[i].Phone %>" class="thumb thumb-1"> 
+                        <img class="thumb" src="{!URLFOR($Resource.Mobile_Design_Templates, 
+                        'Mobile-Design-Templates-master/common/images/icons/tile-phone.png')}"/>
+                   </a> 
+                  <% } %> 
+
+                  <% if (typeof(users[i].Email) != "undefined") {%>
+                    <a href="mailto:<%= users[i].Email %>" class="thumb thumb-2"> 
+                       <img class="thumb" src="{!URLFOR($Resource.Mobile_Design_Templates, 
+                       'Mobile-Design-Templates-master/common/images/icons/tile-email.png')}"/>
+                   </a>
+                 <% } %>               
+                 <img class="thumb thumb-3" src="<%= users[i].SmallPhotoUrl %>"/>
+               </div>
+               <a href="#/contact/<%= users[i].Id %>" class="content">
+                   <h2><%= users[i].Name %></h2>
+                   <%= users[i].Title %>
+                   <div class="list-view-icons">
+                      <span class="icon-right-arrow">&nbsp;</span>
+                   </div>
+               </a>
+             </li>
+           <% } %> 
+        </ul> 
+     </div>
+   </div>
+</script>
+
+   <script type="text/javascript">
+           
+    var userRecs = new Array();
+    var compiledListViewTempl = _.template($("#listView").html());
+
+    $(document).ready(function() {
+        getAllUsers();
+    });
+
+    function getAllUsers(){
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.SarahMobile1.GetUsers}',
+            'ES_Social_Learning_Producer',
+            function(records, e) { 
+                //alert(JSON.stringify(records));  // works
+                showUsers(records);}, 
+                {escape:false}); 
+    }
+
+    function showUsers(records) {   
+        // userRecs.length = 0;                                
+        // for(var i = 0; i < records.SLPUsers.length; i++) { 
+            // alert(records.SLPUsers[i].Id);
+            //userRecs[records.SLPUsers[i].Id] = records.SLPUsers[i]; 
+        // }
+
+        $('#mainContainer').empty();
+        $('#mainContainer').append(compiledListViewTempl({users : records.ListUsers}));
+        $(document).trigger('onTemplateReady');               
+    }
+</script>
+
+
+
+</body>
+</apex:page>

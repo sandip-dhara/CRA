@@ -1,0 +1,38 @@
+<!-- 
+/**********************************************************
+* Page Name: AddSalesProcessLinkage
+* Author: Accenture
+* Date: 26-MAR-2012 
+* Requirement # Request Id :
+* Description: To add multiple Sales Process Linkages
+***********************************************************/
+-->
+<apex:page standardController="Sales_Process_Linkage__c" extensions="AddSalesLinkageController"  action="{!checkOptyEditAccess}" tabStyle="Opportunity" id="page">
+    <apex:form >
+        <apex:sectionHeader title="{!$ObjectType.Sales_Process_Linkage__c.label} {!$Label.Edit}" subtitle="{!$Label.New} {!$ObjectType.Sales_Process_Linkage__c.label}" />
+        <apex:pageMessages />
+        <!-- Page block for adding Sales Process Linkage -->
+        <apex:pageBlock title="{!$ObjectType.Sales_Process_Linkage__c.label} {!$Label.Edit}" >
+            <apex:pageblockButtons >
+                <apex:commandButton value="{!$Label.Add_Row}" action="{!AddNewRow}" rendered="{!hasEditAccess}" reRender="dataTable"/>
+                <apex:commandButton value="{!$Label.Save}" action="{!Save}" rendered="{!hasEditAccess}"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!Cancel}"/>
+            </apex:pageblockButtons>
+            <!-- Page block section for adding Sales Process Linkage -->
+            <apex:pageBlockSection title="{!$Label.Information}" collapsible="false" rendered="{!hasEditAccess}">
+                <apex:DataTable value="{!externalIDsList}" var="exId" cellspacing="5" id="dataTable">
+                    <apex:column headerValue="{!$ObjectType.Sales_Process_Linkage__c.fields.Opportunity__c.label}" id="opptyCol">                        
+                        <apex:outputField id="oppty" value="{!exId.externalID.Opportunity__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.Sales_Process_Linkage__c.fields.ID_Type__c.label}" id="idTypeCol">                        
+                        <apex:inputField id="idType" value="{!exId.externalID.ID_Type__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="{!$ObjectType.Sales_Process_Linkage__c.fields.ID__c.label}" id="exIdCol">                        
+                        <apex:inputText id="exId" value="{!exId.externalID.ID__c}" />
+                    </apex:column>
+                </apex:DataTable>
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

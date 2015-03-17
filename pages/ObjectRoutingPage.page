@@ -1,0 +1,27 @@
+<apex:page Controller="RetrieveObjectURL" action="{!RedirectURL}" showHeader="false" sidebar="false">
+    <script>
+        function redirectPage(func){
+            var oldonload = window.onload;
+            if(typeof window.onload != 'function'){
+                window.onload = func;
+            }
+            else{
+                window.onload = function(){
+                    if(oldonload){
+                        oldonload();
+                    }
+                    func();
+                }
+            }
+        }
+        
+        redirectPage(function () {
+            try {
+                if('{!redirectPageUrl}' != '')
+                    window.parent.parent.location.href = '{!redirectPageUrl}';
+            } catch (err) {}
+        })
+    
+    </script>
+    <apex:pageMessages escape="false"/>
+ </apex:page>

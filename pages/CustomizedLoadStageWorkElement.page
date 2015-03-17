@@ -1,0 +1,21 @@
+<apex:page controller="ExtendedLoadStageWorkElementClass">
+
+<apex:form >
+    <div style="font-size:24px; font-weight:bold; color: blue; padding:10px;">{!RSC.Offering_Release_ID__r.Flight_Plan_Name__c}</div>
+    <apex:pageblock title="Select Work Element For {!RSC.Stage_Name__c} Stage">
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!save}" value="Save"/> 
+            <apex:commandButton action="{!cancel}" value="Cancel"/>
+        </apex:pageBlockButtons>
+      
+        <apex:pageblockTable value="{!WEC}" var="u">
+            <apex:column headerValue="Select"><input type="checkbox" /></apex:column>
+            <apex:column value="{!u.Name__c}" headerValue="Work Element Name"/>
+            <apex:column value="{!u.Deliverable_Name__c}" headerValue="Deliverable Name"/>
+            <apex:column value="{!u.Stage_Name__c}" headerValue="Stage Name"/>
+            <apex:column value="{!u.Review_Required__c}" headerValue="Review Required"/>
+        </apex:pageblockTable>
+    </apex:pageblock>
+
+</apex:form> 
+</apex:page>

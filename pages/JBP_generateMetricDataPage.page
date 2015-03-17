@@ -1,0 +1,203 @@
+<!-- 
+/**********************************************************
+* Page Name: JBP_generateMetricDataPage
+* Author:  HP
+* Date: 10-APRIL-2013
+* Requirement # Request Id: 5365
+* Description: This page displays the metrics records on the sub-plan record. Only the metrics with Sales,
+               Partner Compensation, HP Share Of Business %, Attach%, Market Development Fund are displayed. 
+**********************************************************/
+-->
+<apex:page standardController="GBU_Specialization_Plans__c" extensions="JBP_generateMetricDataController">
+    <apex:repeat value="{!recordTypeArray}" var="recType">
+    <apex:outputPanel rendered="{!IF(isResellerRecType && recType!='Weeks of Inventory' && recType != 'Aged Inventory', true, false) || IF(!isResellerRecType && recType!='Attach %', true, false)}">
+
+    <div style="background-color: #EEEEF1;border-color: #EEEEF1;height:22px;"><font color="black"><h3>
+        <apex:outputText value="{!$Label.sales}" rendered="{!IF(recType=='Sales',true,false)}"/>
+        <apex:outputText value="{!$Label.AttachPercent}" rendered="{!IF(recType=='Attach %',true,false)}"/>
+        <apex:outputText value="{!$Label.HP_SOB}" rendered="{!IF(recType=='HP Share of Business %',true,false)}"/>
+        <apex:outputText value="{!$Label.Sales_Goal_Attainment}" rendered="{!IF(recType=='Partner Compensation',true,false)}"/>
+        <apex:outputText value="{!$Label.Market_Development_Fund}" rendered="{!IF(recType=='Market Development Fund',true,false)}"/>           
+        <apex:outputText value="{!$Label.JBP_Weeks_of_Inventory}" rendered="{!IF(recType=='Weeks of Inventory',true,false)}"/>
+        <apex:outputText value="{!$Label.JBP_Aged_Inventory}" rendered="{!IF(recType=='Aged Inventory',true,false)}"/>
+     </h3></font>
+        <apex:outputLink rendered="{!(IF(metricsMap[recType].id=='',false,true)) && (If($Profile.Name == 'Partner Sales Rep',false,true))}" title="{!$Label.Edit_jbp}" value="javascript:window.top.location.href='/{!metricsMap[recType].id}/e?retURL=%2F{!metricsMap[recType].GbuSpecializationPlan__c}'">[{!$Label.Edit_jbp}]</apex:outputLink>
+    </div><br/>
+        <table border="1" cellPadding="1" width="100%">
+            <tr>
+                <td width="16.66%"><apex:outputLabel ><b>{!$Label.Timeframe_HP_FY}</b></apex:outputLabel></td> 
+                <td width="16.66%"><apex:outputLabel ><b>{!$Label.FY_Q1}</b></apex:outputLabel></td>
+                <td width="16.66%"><apex:outputLabel ><b>{!$Label.FY_Q2}</b></apex:outputLabel></td>
+                <td width="16.66%"><apex:outputLabel ><b>{!$Label.FY_Q3}</b></apex:outputLabel></td>
+                <td width="16.66%"><apex:outputLabel ><b>{!$Label.FY_Q4}</b></apex:outputLabel></td>
+                <td width="16.66%"><apex:outputLabel ><b>{!$Label.FY_Total}</b></apex:outputLabel></td>
+            </tr>
+            <apex:outputPanel rendered="{!IF(recType=='Market Development Fund', false, true)}">
+                <apex:outputPanel rendered="{!IF(recType=='Sales' || recType=='Partner Compensation',true,false)}">
+                <tr>
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Previous_FY_Actual}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Total__c}" label=""></apex:outputField></td>
+                </tr>
+                <tr>
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Current_FY_Planned}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Total__c}" label=""></apex:outputField></td>
+                </tr>
+                </apex:outputPanel>  
+                <apex:outputPanel rendered="{!IF(recType=='Aged Inventory' || recType=='Weeks of Inventory',true,false)}">
+                    <tr>                
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Previous_FY_Actual}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q1_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q2_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q3_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q4_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Total_Days__c}" label=""></apex:outputField></td>
+                </tr>
+            
+               <tr>                
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Current_FY_Planned}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q1_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q2_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q3_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q4_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Total_Days__c}" label=""></apex:outputField></td>
+                </tr>   
+                </apex:outputPanel> 
+                <apex:outputPanel rendered="{!IF(recType=='Attach %' || recType=='HP Share of Business %',true,false)}">
+                <tr>
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Previous_FY_Actual}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q1_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q2_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q3_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Q4_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_FY_Actual_Total_percent__c}" label=""></apex:outputField></td>
+                </tr>
+                <tr>
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Current_FY_Planned}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q1_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q2_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q3_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Q4_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Planned_Total_percent__c}" label=""></apex:outputField></td>
+                </tr>
+                </apex:outputPanel>             
+                <!-- <apex:outputPanel rendered="{!IF(recType=={!'Sales'} || recType=={!$Label.attachPercent} || recType == {!'Partner Compensation'},true,false)}"> -->
+                    <tr>                    
+                        <td width="16.66%"><apex:outputLabel ><b>{!$Label.YoY_Planned_Growth}</b></apex:outputLabel></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Q1__c}" label=""></apex:outputField></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Q2__c}" label=""></apex:outputField></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Q3__c}" label=""></apex:outputField></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Q4__c}" label=""></apex:outputField></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Total__c}" label=""></apex:outputField></td>
+                    </tr>
+                <!-- </apex:outputPanel> -->
+               <apex:outputPanel rendered="{!IF(recType=='Sales' || recType=='Partner Compensation',true,false)}">
+               <tr>                
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Current_FY_Actual}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Total__c}" label=""></apex:outputField></td>
+                </tr>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!IF(recType=='Attach %' || recType=='HP Share of Business %',true,false)}">
+               <tr>                
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Current_FY_Actual}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q1_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q2_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q3_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q4_percent__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Total_percent__c}" label=""></apex:outputField></td>
+                </tr>
+                </apex:outputPanel>   
+                <apex:outputPanel rendered="{!IF(recType=='Aged Inventory' || recType=='Weeks of Inventory',true,false)}">
+               <tr>                
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Current_FY_Actual}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q1_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q2_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q3_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Q4_Days__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Actual_Total_Days__c}" label=""></apex:outputField></td>
+                </tr>
+                </apex:outputPanel>                 
+                <!-- <apex:outputPanel rendered="{!IF(recType=={!'Sales'} || recType=={!$Label.attachPercent} || recType == {!'Partner Compensation'},true,false)}"> -->
+                    <tr>                    
+                        <td width="16.66%"><apex:outputLabel ><b>{!$Label.YoY_Actual_Growth}</b></apex:outputLabel></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_Actual_Growth_Q1__c}" label=""></apex:outputField></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_Actual_Growth_Q2__c}" label=""></apex:outputField></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_Actual_Growth_Q3__c}" label=""></apex:outputField></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_Actual_Growth_Q4__c}" label=""></apex:outputField></td>
+                        <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Total_YoY_Actual_Growth__c}" label=""></apex:outputField></td>
+                    </tr>
+                <!-- </apex:outputPanel> -->
+                <tr>                    
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Achievement}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Achievement_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Achievement_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Achievement_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Achievement_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Current_FY_Achievement_Total__c}" label=""></apex:outputField></td>
+                </tr>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(recType=='Market Development Fund', true, false)}">
+                <tr>
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Previous_FY_Spent}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_Year_MDF_Spent_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_Year_MDF_Spent_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_Year_MDF_Spent_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_Year_MDF_Spent_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Previous_Year_MDF_Spent_Total__c}" label=""></apex:outputField></td>
+                </tr>
+                <tr>
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Allocated}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Allocated_MDF_Amount_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Allocated_MDF_Amount_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Allocated_MDF_Amount_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Allocated_MDF_Amount_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Total_Allocated_MDFAmount__c}" label=""></apex:outputField></td>
+                </tr>
+                <tr>                    
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.YoY_Planned_Growth}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_gr_Comparision_Plan_Total__c}" label=""></apex:outputField></td>
+                </tr>
+                <tr>                
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Spent}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].MDF_Spent_Amount_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].MDF_Spent_Amount_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].MDF_Spent_Amount_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].MDF_Spent_Amount_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Total_MDF_Spent_Amount__c}" label=""></apex:outputField></td>
+                </tr>
+                <tr>                    
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.YoY_Actual_Growth}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_Actual_Growth_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_Actual_Growth_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_Actual_Growth_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].YoY_Actual_Growth_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Total_YoY_Actual_Growth__c}" label=""></apex:outputField></td>
+                </tr>
+                <tr>                    
+                    <td width="16.66%"><apex:outputLabel ><b>{!$Label.Utilization}</b></apex:outputLabel></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].MDF_Utilization_Rate_Q1__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].MDF_Utilization_Rate_Q2__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].MDF_Utilization_Rate_Q3__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].MDF_Utilization_Rate_Q4__c}" label=""></apex:outputField></td>
+                    <td width="16.66%"><apex:outputField value="{!metricsMap[recType].Total_MDF_Utilization_Rate__c}" label=""></apex:outputField></td>
+                </tr>
+            </apex:outputPanel>
+        </table><br/>
+    </apex:outputPanel>
+    </apex:repeat>
+</apex:page>

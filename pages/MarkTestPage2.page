@@ -1,0 +1,81 @@
+<apex:page sidebar="false" controller="MarkApex" showheader="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<apex:includeScript value="{!$Resource.jquery172}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/landing-page.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+<meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+
+<input type="text" name="name" id="basic" value=""  />
+<a href="#" data-role="button" onclick="sendMyRequest()">Render</a>
+
+<ul data-role="listview" id="myList" data-theme="g">
+    <li><a href="#" onclick="populate('https://ensv.hp.com/sales/sam/docs/sam-1-2944/en/c03905835.docx');">https://ensv.hp.com/sales/sam/docs/sam-1-2944/en/c03905835.docx</a></li>
+    <li><a href="#" onclick="populate('http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rNBIAY/ESIT%20FY14%20Q1%20Mobility%20Campaign%20-%20Scrum.pptx');">http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rNBIAY/ESIT%20FY14%20Q1%20Mobility%20Campaign%20-%20Scrum.pptx</a></li>
+    <li><a href="#" onclick="populate('http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rEEIAY/Canvas.docx');">http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rEEIAY/Canvas.docx</a></li>
+    <li><a href="#" onclick="populate('http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a8CZ0000000Cbp2MAC/Value%20Driven%20Delivery.pdf');">http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a8CZ0000000Cbp2MAC/Value%20Driven%20Delivery.pdf</a></li>
+    <li><a href="#" onclick="populate('http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rMwIAI/Debugger.txt');">http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rMwIAI/Debugger.txt</a></li>
+    <li><a href="#" onclick="populate('http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rQZIAY/Find%20an%20Expert.xlsx');">http://prime31.sharepoint.hp.com/teams/social%20learning/FileRepoWS/Uploads/a6wZ00000008rQZIAY/Find%20an%20Expert.xlsx</a></li>
+    <li><a href="#" onclick="populate('https://it-services-gw-itg.external.hp.com/gw/hpit/llba/exo/document/preview/collaboration/SLP_REPO/a8CZ0000000Cc6DMAS/Canvas.docx');">https://it-services-gw-itg.external.hp.com/gw/hpit/llba/exo/document/preview/collaboration/SLP_REPO/a8CZ0000000Cc6DMAS/Canvas.docx</a></li>
+</ul>
+
+<script>
+
+function populate(url) {
+    $('#basic').val(url);
+}
+
+$( document ).ready(function() {
+    window.domainSP = 'prime31.sharepoint.hp.com';
+    window.domainWWS = 'ensv.hp.com';
+});
+
+function sendMyRequest() {
+    var sDomain = getDomainName($('#basic').val());
+    var endpoint = '';
+    if (sDomain == window.domainWWS) {
+        endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&printfields=drefilename&databasematch=SLP&matchreference=" + $('#basic').val();
+    }
+    else if (sDomain == window.domainSP) {
+        endpoint = "https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/a=query&text=*&databasematch=sharepoint&printFIELDS=drefilename&maxresults=1&fieldtext=MATCH%7b" + $('#basic').val() + "%7d:FILEURL";
+    }
+    else {
+        // handle unknown case
+    }
+    
+    $.ajax({
+        url: endpoint,
+        dataType:'xml',
+        type: 'GET',
+        crossDomain: true,
+        xhrFields: {
+           withCredentials: true
+        },
+        success: function(xml) {
+        console.dirxml(xml);
+            $(xml).find('autnresponse').each(function(){
+                $(this).find("responsedata").each(function(){
+                    $(this).find("hit").each(function(){
+                        $(this).find("content").each(function(){
+                            var link = $(this).text();
+                            renderDoc(link);
+                        });
+                    });
+                });
+            });
+        }
+    });
+}
+
+function getDomainName(url) {
+    var r = /:\/\/(.[^/]+)/;
+    return $('#basic').val().match(r)[1];
+}
+
+function renderDoc(url) {
+    window.location = 'https://it-services-gw-itg.external.hp.com/gw/esit/sfdc/idol.dev/A=view&noaci=true&outputtype=html&EmbedImages=true&reference=' + url
+}
+
+</script>
+</apex:page>

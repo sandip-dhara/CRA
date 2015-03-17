@@ -1,0 +1,94 @@
+<!--------------------------------------------------------
+VF Page Name: ContactCenterInteractionLog
+Author: Deepak Saxena(Hewlett Packard)
+Date: 22-JUL-2013
+Requirement: Custom Interaction Log for Agent Console
+Description: This VF Page provides Layout to Custom Interaction Log for Agent Console
+-------------------------------------------------------->
+<apex:page standardController="Task" extensions="ContactCenterInteractionLogController" id="page" >
+    
+    <script language="JavaScript1.2" src="/js/functions.js"></script>
+    <script src="/soap/ajax/26.0/connection.js" type="text/javascript"></script>
+        
+        <apex:includeScript value="/support/console/26.0/integration.js"/>
+        
+        <script type="text/javascript">
+            
+            sforce.connection.sessionId = '{!$Api.Session_ID}';
+            
+            function testGetFocusedPrimaryTabObjectId() {
+                //alert(sforce.console.getFocusedSubtabObjectId());
+                //sforce.console.getFocusedPrimaryTabObjectId(showObjectId);
+                sforce.console.getFocusedSubtabObjectId(showObjectId);
+            }            
+            
+            var showObjectId = function showObjectId(result) {
+                //alert('0'+result.id);
+                //Display the object ID
+                //alert(document.getElementById("page:form:pageBlock:ObjectId"));
+                document.getElementById("page:form:pageBlock:ObjectId").value = result.id;
+                
+                SaveAndNew();
+                //alert('1');
+
+                //window.parent.frames[3].postMessage("message", "*");
+                //sforce.console.getFocusedSubtabId(refresh);
+                
+             
+
+                
+            };
+            var refreshPage = function(){
+            sforce.console.getFocusedSubtabId(refresh);
+            }    
+            var refresh = function(result){
+               /* if(result.success == true){
+                    alert(result.id);
+                 }
+                
+                else {
+                    alert('It failed');
+                } */
+                
+                sforce.console.refreshSubtabById(result.id, true);
+            };
+            
+            function disableComponent(){
+                document.getElementById("page:form:pageBlock:ObjectId").readOnly = true;
+            }
+        </script>
+    
+    <apex:form id="form">
+
+    <apex:actionFunction action="{!saveAndNew}" name="SaveAndNew" status="WorkingStatus"  reRender="form" oncomplete="refreshPage();" />
+    
+    <center>
+        <apex:commandButton onClick="testGetFocusedPrimaryTabObjectId(); return false" value="Save & New Log" status="WorkingStatus"/>
+        <apex:actionStatus id="WorkingStatus">
+            <apex:facet name="start">
+                    <img src="{!$Resource.AjaxAnimation}" />
+            </apex:facet>
+        </apex:actionStatus>
+        
+    </center>
+        <apex:pageBlock id="pageBlock">
+            <apex:pageblockSection id="pageBlockSection">
+                <apex:inputField value="{!t.Subject}" required="true"/>
+                <apex:inputField value="{!t.Type}" required="true"/>
+                <apex:inputField value="{!t.Status}"/>
+                <!-- <apex:inputField value="{!t.WhoId}"/> -->
+                <apex:inputField value="{!t.ActivityDate}"/>
+                <apex:inputField value="{!t.Completion_Date__c}"/>
+                <apex:inputField value="{!t.Outcome__c}"/>
+                <!-- <apex:inputField value="{!t.WhatId}"/> -->
+                <apex:inputField value="{!t.Description}"/>
+                
+                
+            </apex:pageblockSection>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>            
+            <center> <font size="1"> SFDC Key : <apex:inputText value="{!objectId}" id="ObjectId" onclick="disableComponent();return false"/> </font> </center>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

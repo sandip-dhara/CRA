@@ -1,0 +1,38 @@
+<apex:page controller="OAE_Skills_LevelCtlr">
+<apex:sectionheader title="Object Parameter Selection" subTitle="Level Picklist"/>
+  <apex:form >
+    <apex:pageBlock tabstyle="Contact" id="existingPanel">
+        <apex:pageBlockSection title="Current Levels" collapsible="false" rendered="{!showExisting}"/>
+        <apex:dataTable value="{!existingList}" var="strLevel" id="tblInUse" cellpadding="2">
+          <apex:column width="200">
+            <apex:facet name="header">Level</apex:facet>
+            <apex:outputText value="{!strLevel}"/>
+          </apex:column>
+          <apex:column width="250">
+            <apex:facet name="header"></apex:facet>
+            <apex:outputPanel id="rend" onclick="removeFn('{!strLevel}')" 
+                styleClass="btn">Remove Level</apex:outputPanel>
+          </apex:column>    
+          </apex:dataTable>
+    </apex:pageBlock>
+    <apex:pageBlock tabstyle="Contact">
+      <apex:pageBlockSection title="Add Levels to Level Picklist" collapsible="false" />
+<br/><br/>
+<table>
+<tr>
+<td>
+<apex:inputtextarea id="pickvals" rows="10" cols="60" value="{!inputVals}"/>
+</td>
+</tr>
+<tr>
+<td align="right">
+<apex:commandButton value="Submit" action="{!setVals}"/>
+</td>
+</tr>
+</table>
+    </apex:pageBlock>
+        <apex:actionFunction action="{!fieldRemove}" name="removeFn" rerender="existingPanel">
+          <apex:param name="firstParam" assignTo="{!strToRemove}" value="" />
+        </apex:actionFunction>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,53 @@
+<apex:page sidebar="false" pageStyle="{ width: 600px; }" showheader="false" standardStylesheets="true" standardController="Account" extensions="MDCPSyncController">
+       <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+    <body class="campaignTab  LookupSearchFrame, marginCls">
+    <apex:sectionHeader title="Trigger Synchronization" />
+    <apex:form >
+        <apex:pageBlock mode="read" id="block">
+      <!--  <apex:outputPanel id="alert" styleClass="requiredInput"></apex:outputPanel>-->
+        <br/>
+        <!----<apex:outputLabel value="MDCP Organization ID" styleClass="searchLabelCls"/>--->
+        <apex:outputLabel value="MDCP Id"  title="MDCP Id is MDCP Organization Id for Competitor / Customer type. MDCP Id is Business Relationship Id for Partner type." styleClass="searchLabelCls"/>
+        <apex:inputText value="{!MDCP_ID}" Maxlength="15" required="true" onkeypress="return searchAccountOnEnter(event,this);"/> 
+        <apex:outputLabel value="Account Type" styleClass="searchLabelCls"/>
+         <apex:selectList value="{!selectedRecordType}" size="1" >
+            <apex:selectOptions value="{!RecordTypeOptions}" />
+        </apex:selectList> <p/>
+        <apex:inputHidden value="{!account.MDCP_Organization_ID__c}"/>
+        <apex:outputText value="{!queryResult}"  style="color:#E38030" rendered="{!NOT(Ispartnerrecord)}"/>
+        
+        <!-- Using commandlink to display error detail link.....added render since we don't want this link to showup if record has no error -->
+        <apex:commandlink value="Click to see details" target="_blank" action="{!processLinkClick}" rendered="{!queryResult<>null}"/>
+        <br/><br/>
+        <apex:outputText value="{!message}" style="color:green" />
+        <p/>
+        <apex:commandButton value="Continue" action="{!getSync}" disabled="{!continueRequired}"/>  
+        
+        <apex:commandButton onclick="window.close()" value="Close"/>
+        
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+        function searchAccountOnEnter(ev,searchTextObj)  {
+            var searchTextValue=searchTextObj.value;
+            if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+                return false;           
+             } 
+         }
+    </script> 
+    <style type="text/css"><!--
+ .boxpopup {
+   font-family:Arial,sans-serif; /*TEXT FONT*/
+   font-size:90%;       /*TEXT SIZE*/
+   color:black; background:#FFFF99; /*COLOURS*/
+   width:200px;         /*BOX WIDTH*/
+   text-align:center;       /*ALIGNMENT*/
+   padding:4px 5px 4px 5px;     /*SPACING*/
+   font-weight:bold;        /*BOLD TEXT*/
+   border:1px solid gray;   /*BORDER STYLE*/
+   }
+  #pdqbox {position:absolute; visibility:hidden; z-index:200;}
+-->
+</style>    
+</body>
+</apex:page>

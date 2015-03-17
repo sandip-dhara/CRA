@@ -1,0 +1,71 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<apex:page id="page" standardController="PageToItem__c" extensions="PageItemEditExtension" action="{!checkType}" showheader="{!IF($CurrentPage.Parameters.console == 'true', false, true)}">
+
+
+	<apex:form id="contentform">
+
+	<script type="text/javascript" src="{!URLFOR($Resource.CMSForce, '/FCKEditor/fckeditor.js')}"/>
+	<script type="text/javascript">
+		window.onload = function()
+		{
+			var sBasePath = "{!URLFOR($Resource.CMSForce, '/FCKEditor/')}" ;
+		
+			var oFCKeditor = new FCKeditor( '{!$Component.page.contentform.contentblock.contentsection.content}' ) ;
+			oFCKeditor.BasePath	= sBasePath ;
+			oFCKeditor.Config["CustomConfigurationsPath"] = sBasePath + "cmsforcefckconfig.js"  ;
+			oFCKeditor.Config['SkinPath'] = sBasePath + 'editor/skins/silver/' ;
+			oFCKeditor.Config['ImageBrowserURL'] = '/apex/DocumentManager' ;
+			oFCKeditor.Config['LinkBrowserURL'] = '/apex/PageBrowser' ;
+			oFCKeditor.Config['FlashBrowser'] = false;
+			oFCKeditor.Config['FlashUpload'] = false;
+			oFCKeditor.Config['ImageUpload'] = false;
+			oFCKeditor.Config['LinkUpload'] = false;
+			oFCKeditor.Config['ImageLink'] = false;
+			oFCKeditor.Height = '{!IF($CurrentPage.Parameters.console == 'true', '500', '350')}' ;
+			oFCKeditor.ReplaceTextarea();
+			
+		}
+	</script>
+	
+	<apex:pageMessages />
+	
+	<apex:pageBlock title="Content Block" id="contentblock">
+		<apex:pageBlockButtons >
+			<apex:commandButton value="Save" action="{!save}"/>
+			<apex:commandButton value="Cancel" action="{!cancel}"/>
+		</apex:pageBlockButtons>
+		<apex:pageBlockSection title="Information" columns="2">
+			<apex:inputField value="{!contentblock.Name}"/>
+			<apex:inputField value="{!pagetoitem.Page__c}"/>
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="Display in Content Block" for="blocks"/>
+				<apex:selectList id="blocks" value="{!pagetoitem.Display_in_Contentblock__c}" size="1">
+					<apex:SelectOptions value="{!blocknameselect}"/>
+				</apex:selectList>
+			</apex:pageBlockSectionItem>
+			<apex:inputField value="{!pagetoitem.Order__c}"/>
+		</apex:pageBlockSection>
+		<apex:pageBlockSection title="HTML Content" columns="1" id="contentsection">
+			<apex:inputTextArea id="content" value="{!contentblock.Content__c}"/>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+
+	</apex:form>
+
+</apex:page>

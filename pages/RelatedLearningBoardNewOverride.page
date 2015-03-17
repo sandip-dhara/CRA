@@ -1,0 +1,54 @@
+<apex:page standardController="Related_Learning_Board__c" extensions="RelatedLearningBoardNewOverride,AthenaLearnings"  id="page">
+    <apex:form >
+    <apex:pageBlock Title="Learning Board Details">
+        
+        <apex:outputField value="{!Related_Learning_Board__c.Learning_Board_ID__c}"/><br></br>
+        <apex:Outputfield value="{!Related_Learning_Board__c.Learning_Board_ID__r.Name__c}"  label="Learning Board Name" />
+                 
+        
+    </apex:pageblock>
+    <apex:pageBlock title="Available Learning Boards for Associating">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" value="Save"/>
+                <apex:commandButton action="{!saveandnew}" value="Save & New"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1">
+                <apex:OutputField value="{!Related_Learning_Board__c.Learning_Board_ID__c}" />
+                <apex:Outputfield value="{!Related_Learning_Board__c.Learning_Board_ID__r.Name__c}"  label="Learning Board Name" />
+                
+                <apex:selectList value="{!Sv}" size="1" label="Avialable Learning Boards" multiselect="true">                    
+                    <apex:selectOptions value="{!Values}"/>
+                </apex:selectList>
+               
+              <c:ListUpandDown rightLabel="Related Learning Board Ordering"
+                rightOptions1="{!NonRelatedLearningBoard }"
+                size="10"
+                width="250px"
+                />
+               
+                <c:MultiselectPicklist leftLabel="Available Learning Boards"
+                leftOptions1="{!NonRelatedLearningBoard }"
+                rightLabel="Selected Learning Boards"
+                rightOptions1="{!RelatedLearningBoard}"
+                size="10"
+                width="150px"/>
+                
+                
+                <!-- <apex:Outputtext value="{!Related_Learning_Board__c.Related_Learning_Board_ID__r.Name__c}" />                                             -->
+                <!--<apex:inputField value="{!Related_Learning_Board__c.Related_Learning_Board_ID__c}"/> -->
+                <apex:inputField value="{!Related_Learning_Board__c.Display_Sequence_Nbr__c}"/> 
+            </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+        <apex:pageblock >
+        <apex:pageBlockTable value="{!RelatedLearningBoard}" var="LBL">        
+               <!--<apex:column value="{!LBL.name}"/>
+               <apex:column value="{!LBL.Related_Learning_Board_ID__c}"/>
+               <apex:column value="{!LBL.Related_Learning_Board_ID__r.Name__c}"/>
+               <apex:column value="{!LBL.Learning_Board_ID__c}"/> -->
+               
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+    </apex:form>    
+</apex:page>

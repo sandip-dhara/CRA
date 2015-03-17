@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>ODP_Page_WorkElement</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>ODP_Page_WorkElement</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>ODP_Page_WorkElementDetail</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>true</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Accountable_Process_Role_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Accountable_Role__r.Role_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Accountable Process Role Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Accountable_Role__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Accountable Process Role Id</label>
+        <referenceTo>Role__c</referenceTo>
+        <relationshipLabel>Work Elements</relationshipLabel>
+        <relationshipName>Stage_Work_Elements</relationshipName>
+        <required>true</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Accountable_Team_Member__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Accountable Team Member</label>
+        <referenceTo>Core_Team_Member__c</referenceTo>
+        <relationshipName>Stage_Work_Elements</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Accountable_User__c</fullName>
+        <externalId>false</externalId>
+        <formula>Accountable_Team_Member__r.User__r.Last_First_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Accountable User</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Contribute_Due_Date__c</fullName>
+        <description>The Contribute Due Date formula calculates the data all contributions should be completed by</description>
+        <externalId>false</externalId>
+        <formula>IF( Review_Required__c = TRUE,  Review_Due_Date__c -  Days_To_Review__c ,  Release_Stage_ID__r.Current_Baseline_End_Date__c - 1)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Contribute Due Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Days_To_Review__c</fullName>
+        <externalId>false</externalId>
+        <label>Days To Review</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Deliverable_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Release_Deliverable_ID__r.Deliverable_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Deliverable Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Description_Text_Area__c</fullName>
+        <externalId>false</externalId>
+        <label>Description</label>
+        <length>10000</length>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Help_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Help Description</label>
+        <length>32768</length>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Html</type>
+        <visibleLines>15</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Include__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(Release_Stage_ID__r.Include__c  = TRUE &amp;&amp;  Release_Deliverable_ID__r.Include__c = TRUE ,TRUE,FALSE)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Include</label>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Name</label>
+        <length>255</length>
+        <required>true</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Optional__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Optional</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Release_Deliverable_ID__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Deliverable ID</label>
+        <referenceTo>Release_Deliverable__c</referenceTo>
+        <relationshipLabel>Work Elements</relationshipLabel>
+        <relationshipName>Stage_Work_Elements</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Release_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Release_Stage_ID__r.Release_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Opportunity Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Release_Stage_ID__c</fullName>
+        <externalId>false</externalId>
+        <label>Stage ID</label>
+        <referenceTo>Release_Stage__c</referenceTo>
+        <relationshipName>Stage_Work_Elements</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>true</reparentableMasterDetail>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Review_Due_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Review Due Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Review_Required__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Review Required</label>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Stage_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Release_Stage_ID__r.Stage_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Stage Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Not Started</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Ready for Review</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Under Review</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Review Complete</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Complete</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Successor_Work_Element__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Successor Work Element</label>
+        <referenceTo>Stage_Work_Element__c</referenceTo>
+        <relationshipLabel>Work Elements</relationshipLabel>
+        <relationshipName>Work_Elements</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Text__c</fullName>
+        <externalId>false</externalId>
+        <label>Text</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Work_Element_ID__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Process Work Element ID</label>
+        <referenceTo>Work_Element__c</referenceTo>
+        <relationshipLabel>Work Elements</relationshipLabel>
+        <relationshipName>Stage_Work_Elements</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Work_Element_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>Work_Element_ID__r.Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Process Work Element Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Work_Instructions__c</fullName>
+        <externalId>false</externalId>
+        <label>Work Instructions</label>
+        <length>32768</length>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Html</type>
+        <visibleLines>15</visibleLines>
+    </fields>
+    <label>Work Element</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>WE-{0000000000}</displayFormat>
+        <label>Work Element ID</label>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Work Elements</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Stage_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Status__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Include__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Review_Required__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Stage_Name__c</lookupDialogsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>ODP_VR_AccountableTM_SameOF</fullName>
+        <active>true</active>
+        <description>accountable team member must come from the current offering release</description>
+        <errorConditionFormula>AND( ISNULL(Accountable_Team_Member__c), Release_Stage_ID__r.Offering_Release_ID__c   &lt;&gt; Accountable_Team_Member__r.Release_Role__r.Offering_Release__c )</errorConditionFormula>
+        <errorDisplayField>Accountable_Team_Member__c</errorDisplayField>
+        <errorMessage>the accountable team member is not from the current offering release</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ODP_VR_AccountableTM_SameRule</fullName>
+        <active>true</active>
+        <description>accountable team member must follow the accountable role</description>
+        <errorConditionFormula>AND( ISNULL(Accountable_Team_Member__c), Accountable_Team_Member__r.Release_Role__r.Role_ID__c &lt;&gt;   Accountable_Role__c )</errorConditionFormula>
+        <errorDisplayField>Accountable_Team_Member__c</errorDisplayField>
+        <errorMessage>the accountable team member&apos;s role must follow the accountable role</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>ODP_VR_Deliverable_MustActive</fullName>
+        <active>false</active>
+        <description>the deliverable must have be include</description>
+        <errorConditionFormula>Release_Deliverable_ID__r.Include__c  = False</errorConditionFormula>
+        <errorMessage>for create or update work element, its deliverable must be included in the project.</errorMessage>
+    </validationRules>
+</CustomObject>

@@ -1,0 +1,153 @@
+<!-- 
+/**********************************************************
+* Page Name: OpportunitySalesTeamList
+* Author: Accenture
+* Date: 27-MAR-2012 
+* Requirement # Request Id :
+* Description: To show opportunity related sales team with Business Group 
+***********************************************************/
+-->
+<apex:page standardController="Opportunity" extensions="OpportunitySalesTeamListController">
+    <script>
+    </script>
+    <apex:outputPanel id="OptyPanelId">
+    <script>
+        function renderOpty() {
+            var errorMsg = '{!errormessage}';
+            if (errorMsg == null || errorMsg == '') {
+                window.parent.location = '/{!opportunityId}';
+            }
+        }       
+    </script>
+    </apex:outputPanel>
+    <apex:form >
+        <apex:inputHidden value="{!opportunity.owner.id}"/>
+        <input type="hidden" id="opty_name" value="{!Opportunity.Name}" />
+        <apex:pageBlock >
+           
+            <center> <b> {!$Label.Select_Business_Group_sales}</b>
+                 <apex:selectList id="bgs" value="{!groupName}" multiselect="false" size="1" onchange="refreshTeamList();">
+                         <apex:selectOptions value="{!businessGroups}"/>
+                 </apex:selectList>
+            </center>
+        </apex:pageBlock>
+        <apex:actionStatus startText="{!$Label.Processing}" id="status" />
+        <center><b><apex:outputText value="{!message}" id="message" /></b></center>
+    <center><b><apex:outputText value="{!errormessage}" id="defaultSalesTeamMsgId" /></b></center>        
+        <apex:pageBlock id="teamMemberspb">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="{!$Label.Add}" onclick="AddTeamMember();" rendered="{!showAddButton}" />
+                <!--
+                /**************
+                Author : Abrar/18-07-2013
+                Request to Sales Team button added as a part of R6
+                ***************/
+                -->
+                 <apex:commandButton value="{!$Label.Add_Me_To_Sales_Team}" onclick="RequestTeamMember()" rendered="{!if(Partnermembercheck == true ,false,true)}"/>
+                 <apex:commandButton value="{!$Label.Add_Default_Team}" action="{!addDefaultSalesTeam}" reRender="teamMemberspb,OptyPanelId,defaultSalesTeamMsgId" oncomplete="renderOpty();" rendered="{!showAddDefaultListButton}"/>
+                 <apex:commandButton value="{!$Label.Delete_All_sales}" onClick="return deleteAllTeamMembers();" rendered="{!if(showDeleteAllListButton && !isOpportunityTeamMembersListEmpty,true,false) && groupName =='All'}"/>
+            </apex:pageBlockButtons>  
+           
+            <!--
+            /********************************
+            * Author: Accenture
+            * Modified: 09-AUG-2012
+            * Update: Changed number of columns from 6 to 8
+            * CR#: CR-0123
+            *********************************/
+            -->
+            
+            <apex:pageBlockTable value="{!opportunityTeamMembers}" var="teamMember" columns="8" rendered="{!Not(isOpportunityTeamMembersListEmpty)}">
+                <apex:column width="10%" style="text-align: left;" headerValue="{!$Label.actions}" rendered="{!showEditDelteLinkButton}">           
+                   <apex:commandLink styleClass="actionLink" title="edit" value="{!$Label.Edit}" onclick="window.parent.location.href='/apex/OpportunityTeamMemberEdit?id={!teamMember.id}&optyId={!Opportunity.id}&retURL=/{!Opportunity.id}'">                                                 
+                   </apex:commandLink> 
+                   &nbsp;|&nbsp;     
+                   <apex:commandLink styleClass="actionLink" title="delete" value="{!$Label.Del}" onClick="return confirmDelete('{!teamMember.id}');">
+                   </apex:commandLink>  
+                </apex:column>
+                <apex:column value="{!teamMember.User.Name}">
+                    <apex:facet name="header">
+                        <apex:commandLink action="{!ViewData}" value="{!$ObjectType.user.fields.Name.label}{!IF(sortExpression=='user.Name',IF(sortDirection='ASC','▼','▲'),'')}">
+                        <apex:param value="user.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                        </apex:commandLink>
+                    </apex:facet>
+                </apex:column>
+                <apex:column value="{!teamMember.TeamMemberRole}"/>
+                <apex:column value="{!teamMember.User.Business_Group__c}"/>
+                <apex:column value="{!teamMember.User.Global_Business_Unit__c}"/>
+                <apex:column value="{!teamMember.OpportunityAccessLevel}"/>
+                
+                <!--
+                /********************************
+                * Author: Accenture
+                * Modified: 09-AUG-2012
+                * Update: Added columns for user's email ID and user type
+                * CR#: CR-0123
+                *********************************/
+                 -->
+                
+                <apex:column value="{!teamMember.User.Email}"/>
+                <apex:column >
+                    <apex:facet name="header">{!$Label.Part_collab_Portal_Enabled}</apex:facet>
+                        <apex:inputCheckbox value="{!teamMember.User.IsPortalEnabled}" disabled="true"/>
+                </apex:column>
+                
+           </apex:pageBlockTable> 
+           <apex:outputLabel rendered="{!isOpportunityTeamMembersListEmpty}">
+            {!$Label.No_sales_team_members}
+            </apex:outputLabel>
+        </apex:pageBlock>
+        <apex:actionFunction action="{!fetchOpportunityTeamMembers}" name="refreshTeamList" rerender="teamMemberspb,message" oncomplete="" status="status" />
+    </apex:form>
+    <script>
+        function AddTeamMember(){
+            window.parent.location = '/apex/AddOpportunitySalesTeam?id={!Opportunity.Id}&retURL=/{!Opportunity.Id}';
+        }
+        function confirmDelete(teamMemberId){
+            var value = confirm('{!$Label.Delete_confirm_sales}');
+            if(value==true){
+                window.parent.location = '/apex/OpportunityTeamMemberDelete?teamMemberID='+teamMemberId+'&optyid={!Opportunity.Id}&retURL=/{!Opportunity.Id}';
+                return true;
+            }else{
+                return false;
+            }
+        }
+        function deleteAllTeamMembers(){
+            var value = confirm('{!$Label.Delete_all_confirm}');
+            if(value==true){
+                window.parent.location = '/apex/OpportunityTeamMemberDelete?optyid={!Opportunity.Id}&retURL=/{!Opportunity.Id}';
+                return true;
+            }else{
+                return false;
+            }
+        }
+        
+        function RequestTeamMember(){
+          
+           if({!memberCheck})
+           alert('You are already part of Sales Team of this Opportunity');
+           else if({!memberCheckHPFS})
+           alert('Only HPFS users can be part of HPFS Opportunity');
+           else if({!isOwner})
+           alert('You are already Opportunity Owner');
+           else if({!isClosed})
+           alert('Request to be added to team on closed Opportunities is not permitted.');
+           else{
+               var str = document.getElementById('opty_name').value;
+               //alert(str);
+              var optyname = str.replace(/\"/g,"\\\"");
+             // alert(optyname);
+               newWin = window.open("/apex/AddRequestortoSalesTeam?id={!Opportunity.Id}&Name="+optyname,"Popup","height=300,width=400,left=500,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no");
+           }
+          }
+           
+           
+        
+        
+        function RequestTeamMemberClose(){
+        alert('Back to Parent');
+        newWin.Close();
+        }              
+        
+    </script>
+</apex:page>

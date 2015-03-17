@@ -1,0 +1,431 @@
+<apex:page controller="AthenaLearningBoardDtls" cache="false"
+            docType="html-5.0" sidebar="false" showheader="false" standardStylesheets="false">
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Community Details</title>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+        <meta content="" name="description" />
+        <meta content="" name="hp" />
+        
+        <apex:includeScript value="{!$Resource.jquery172}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+<!--        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/listview-grid.css')}" /> -->
+        <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+    </head>
+
+    <body>
+    
+<!-- Main page displaying list of collaterals -->
+
+        <div data-role="page" id="mobileCommunityCollaterals">
+            <div data-role="header" style="padding:5px 0px 0px 0px; background:#ffffff;" data-position="fixed" data-tap-toggle="false">
+                <img src="/resource/1396857212000/img_athena/img_athena/HP_Blue_Logo.png" class="circular ui-btn-left" alt="HP Logo"/>
+                <h1 style="text-align:left; margin-left:55px;padding:0px;">Social Learning Platform</h1>
+                <h1 style="text-align:left; margin-left:55px;padding:0px;color:#888888;">Learning on your terms</h1>
+                <apex:image url="{!LoggedinUserDtls.FullPhotoUrl}" styleClass="circular ui-btn-right" alt="no_username"/>
+                <div data-role="header" style="padding:2px 0px 2px 0px;background:#0099CC;">
+                    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left"> 
+                        <a href="/apex/mLandingPage" data-role="none" data-ajax="false" id="buttonHome"><img src="{!URLFOR($Resource.mobileassests, 'images/home.png')}" id="headerImage" class="navIcons"/></a>
+                    </div>
+                    <h1></h1>
+                    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+                      <a href="#" data-role="none" data-ajax="false" id="buttonSearch"><img src="{!URLFOR($Resource.mobileassests, 'images/search.png')}" id="searchImage" class="navIcons"/></a> 
+                      <a href="/apex/mLandingPage" data-role="none" data-ajax="false"><img src="{!URLFOR($Resource.mobileassests, 'images/questionmark.png')}" id="headerImage" class="navIcons"/></a>
+                    </div>
+                     <div data-role="content" class="ui-content" id="seach-container"> 
+                        <input type="search" name="search" id="search-basic" data-mini="true" value="" style="border:0px solid transparent !Important;"  />
+                    </div>
+                </div>    
+            </div> <!-- header -->
+         
+            <div data-role="content" id="mobileCommunityCollateralsContent" data-scroll="true">
+                <div>
+                    <div style="display:table-cell; padding-left: 5px; float:right;" align="center">
+                        <div>
+                            <!-- <apex:image styleClass="communityOwnerImg" url="{!LearningBoardOwnerDtls.FullPhotoUrl}" />  -->
+                            <img src="{!LearningBoardOwnerDtls.FullPhotoUrl}" class="communityOwnerImg"/>
+                        </div>
+                        <div>
+                            <p style="padding:0px;font-weight:bold;margin:0px">{!LearningBoardOwnerDtls.Name}</p>
+<!--                            <p style="padding:0px;margin:0px;">{!LearningBoardOwnerDtls.Title}</p> -->
+                        </div>
+                    </div>
+                    <div style="display:table-cell;">
+                        <apex:outputPanel rendered="{!!LearningBoardDtls.StaticImage}"> 
+                            <img src="{!URLFOR($Action.Attachment.Download, LearningBoardDtls.AttachmentId)}" style="float:left; max-width: 100%; height:auto; max-height:150px; border-top-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px; background: #888888;" />
+                            <!--
+                            <apex:image url="{!URLFOR($Action.Attachment.Download, LearningBoardDtls.AttachmentId)}" styleClass="communityImage" />
+                            -->
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!LearningBoardDtls.StaticImage}">
+                            <img src="{!LearningBoardDtls.DefaultImageName}" style="float:left; max-width: 100%; height:auto; max-height:150px; border-top-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px; background: #888888;" />
+                            <!--
+                            <apex:image url="{!LearningBoardDtls.DefaultImageName}" styleClass="communityImage" />
+                            -->
+                        </apex:outputPanel>
+                    </div>
+                    <div style="clear:both;">
+                    </div>
+                </div>
+
+                <!-- The tab content (list of collaterals) will go here -->
+                <div data-role="collapsibleset" data-content-theme="a" data-inset="false" data-iconpos="left" id="collateralList" >
+                </div> <!-- collapsibleset -->
+                
+            </div> <!-- Content -->
+        
+            <div data-role="footer" data-position="fixed" class="communityFooter">
+
+            <div data-role="navbar">
+                    <ul>
+                    <li><a href="/apex/mobileLearningBoardCollaterals?id={!LearningBoardDtls.LbId}" data-role="tab" class="ui-btn-active" data-ajax="false">Topic</a></li>
+                    <li><a href="/apex/mobileLearningBoardActivity?id={!LearningBoardDtls.LbId}" data-role="tab" data-ajax="false">Chat</a></li>
+                    <li><a href="/apex/mobileLearningBoardMembers?id={!LearningBoardDtls.LbId}" data-ajax="false">Members</a></li>
+                    <li><a href="/apex/mobileLearningBoardBoards?id={!LearningBoardDtls.LbId}" data-role="tab" data-ajax="false">More</a></li>
+                    </ul>
+                </div> 
+            </div> <!-- footer -->
+    </div> <!-- mobileCommunityCollaterals page -->
+
+<!-- Collateral details page -->
+
+    <div data-role="page" id="mobileCommunityCollateralsDetails">
+        <div data-role="header" class="ui-corner-top">
+            <a href="#" data-role="button" data-icon="back" data-inline="true" data-rel="back" >Back</a>
+            <h1 id="popupDocLNameHeader">Unknown name</h1>
+            <a href="#" data-role="button" id="popupDownloadButton" data-icon="arrow-r" rel="external" style="visibility:visible">Open</a>
+        </div>
+
+        <div data-role="content">
+            <!-- Document information -->
+            <div style="float: left"><img id="popupDocOwnerPhoto" src="{!LearningBoardOwnerDtls.FullPhotoUrl}" class="communityOwnerImg"/></div>
+            <div id="popupDocLName">Unknown name</div>
+            <div id="popupDocLOwnerName" style="font-weight:bold;">Unknown owner</div>
+            <div style="clear:both"></div>
+            <div id="popupDocLDescription" style="white-space: normal;">No description</div>
+            
+        </div>
+    </div> <!-- mobileCommunityCollateralsDetails -->
+<!-- Scripts -->
+        
+    <script>
+        $(document).ready( function () {
+        
+            $('#seach-container').hide();
+            $("#mobileCommunityCollaterals").trigger("create");
+            console.log("document.ready");
+            //Get community id from query string and use it to load community data
+            var LearningBoardId = getParameterByName('id'); // Id of current community
+            var docId = getParameterByName('docId'); // Id of topic (document) to set display focus on
+            LoadCommunity(LearningBoardId, docId);
+        });
+
+        // Read parameter from query string
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        ////////////////////////////////////////
+        // LoadCommunity
+        //
+        // Main function reading the list of collateral from a community and display it
+        //
+        function LoadCommunity(LearningBoardId, docId) {
+            console.log("LoadCommunity("+LearningBoardId+"): Entry");
+            
+            $.mobile.loading( "show", {
+                text: "Loading...",
+                textVisible: true,
+                textOnly: false
+            } ); // Displays load spinner while loading
+            
+            var APEXAction = '{!$RemoteAction.AthenaLearningBoardDtls.getLrngWithCat}';
+           // Call existing APEX controller action to get data about community
+            Visualforce.remoting.Manager.invokeAction(
+                APEXAction,
+                LearningBoardId,
+                function(result, event) { // callback function receiving result of call with list of category and collaterals
+                    $.mobile.loading( "hide"); // Hide load spinner after load is complete
+                    
+                    // Iterate through the list of all categories returned
+                    for (var catCount = 0; catCount < result.length; catCount++) {
+                        var currentCat = result[catCount];
+                        if (currentCat) {
+                            // Prepare display of content of each category as a list of collapsible content
+                            var catContent = "";
+                            var focusOnCat = false; // Will set to true in category contains a document we need to focus on
+                            if (currentCat.lstlrngs && currentCat.lstlrngs.length > 0) {
+                                for (var docCount = 0; docCount < currentCat.lstlrngs.length; docCount++) {
+                                    // For each collateral, add it to the list
+                                    var currentDoc = result[catCount].lstlrngs[docCount];
+                                    if (currentDoc) {
+                                        catContent += renderDoc(currentDoc);
+                                        // If this is a document we have to focus on, remember it
+                                        if (currentDoc.Lid === docId) {
+                                            focusOnCat = true;
+                                        }
+                                    }
+                                }
+                                // Display Category
+                                catContent = 
+                                    // Category header definition (including expanding it if we need to focus on a collateral) = collapsible containing a listview
+                                    '<div data-role="collapsible"'+(focusOnCat ? 'data-collapsed="false"' : '')+'><h2>'+currentCat.CategoryName+
+                                    '<span class="ui-li-count">'+currentCat.lstlrngs.length+'</span></h2><ul data-role="listview">'+
+                                    // Category content (list of collaterals)
+                                    catContent + 
+                                    // Category footer definition
+                                    '</ul></div>';
+                                $("#collateralList").append(catContent);
+                            }
+                        }
+                    }
+                    $("#collateralList").collapsibleset().trigger("create");
+                    
+                    if (docId) { // If we need to focus on a specific collateral
+                        // Scroll by the number of pixels required to display focused document (document position - beginning of scroll area)
+                        $.mobile.silentScroll($('#docID_'+docId).offset().top - $('#mobileCommunityCollateralsContent').offset().top);
+//                            $('#docLink_'+docId).click(); // call click to display popup with details
+                    }
+                }
+            );
+        };
+        
+        ///////////////////////////////////////////////////////
+        // Render a listview line item on a specific collateral
+        //
+        function renderDoc(currentDoc) {
+            // href to linked document, if any
+            var docHRef = "";
+            // Direct URL to document, if any
+            var docURL = "";
+            
+            // List of icons to display (document classification...)
+            var iconSet = "";
+            
+            // Replaces backslashes, single quotes and end of lines
+            var escapedLDescription = currentDoc.LDescription.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+            var escapedLOwnerName = currentDoc.LOwnerName.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+            var escapedLName = currentDoc.LName.replace(/\\/g,'/').replace(/'/g, '\\\'').replace(/\n/g,' ');
+
+            // Prepare icons displaying the type of document (client facing, practice approved, publish)
+            if (currentDoc.ClientFacing) {
+                iconSet += renderIcon(currentDoc.hpsharedIcon, 'Client Facing');
+            }
+            if (currentDoc.PracticeApprv) {
+                iconSet += renderIcon(currentDoc.HPCertification, 'Practice Approved');
+            }
+            
+            // Depending on the type of collateral, prepare its display
+            if (currentDoc.LType == 'Text') {
+                // Nothing else to do
+            } else if (currentDoc.LType == 'Link or Document' || currentDoc.LType === 'Upload Document') {
+                docURL = currentDoc.LURL;
+                if (currentDoc.DocType == 'PDF') {
+                    iconSet += renderIcon(currentDoc.filePDFUpload, 'PDF');
+                } else if (currentDoc.DocType == 'PPT') {
+                    iconSet += renderIcon(currentDoc.filePPTUpload, 'PowerPoint');
+                } else if (currentDoc.DocType == 'DOC') {
+                    iconSet += renderIcon(currentDoc.fileWordUpload, 'Word');
+                } else if (currentDoc.DocType == 'XLS') {
+                    iconSet += renderIcon(currentDoc.fileExcelUpload, 'Excel');
+                } else if (currentDoc.DocType == 'TXT') {
+                    iconSet += renderIcon(currentDoc.fileTextUpload, 'Text');
+                } else if (currentDoc.DocType == 'OTHER') {
+                    iconSet += renderIcon(currentDoc.fileURLUpload, 'Link');
+                };
+            } else if (currentDoc.LType == 'Video') {
+                iconSet += renderIcon(currentDoc.fileVideoUpload,'Video');
+                docURL = currentDoc.LURL;
+                if (currentDoc.LURL.indexOf('http') != 0) {
+                    docURL = 'http://'+docURL; // Video links don't seem to have a protocol (http://) defined, so add it if needed
+                }
+            };
+            
+            // Create list entry. If there is no URL to a collateral, don't display data icon on the right
+            var content = "";
+            content += '<li id="docID_'+currentDoc.Lid+'"' + (docURL ? '' : ' data-icon="false"')+'>';
+
+            // The default link displays a popup with more information about the collateral + a way to rate it
+            docHRef = '<a href="#" id="docLink_'+currentDoc.Lid+'" onclick="displayDocDetails(\''
+                    +currentDoc.Lid+'\',\''
+                    +currentDoc.LType+'\',\''
+                    +currentDoc.DocType+'\',\''
+                    +escapedLName+'\',\''
+                    +escapedLDescription+'\',\''
+                    +escapedLOwnerName+'\',\''
+                    +currentDoc.OwnerPhoto+'\',\''
+                    +docURL+'\',\''
+                    +currentDoc.AvgRating+'\',\''
+                    +currentDoc.RatersCount
+                    +'\')";>';
+
+            if (docHRef) {
+                content += docHRef; // Note: this includes the starting <a> tag
+            }
+
+            // Add document name
+            content += '<div>'+escapedLName;
+            // content += ' ('+currentDoc.LType+'/'+currentDoc.DocType+')';
+            content += '</div>';                                    
+            
+            // Add document description
+            // style="white-space: normal;" allows text to be wrapped on several lines
+            content += '<p style="white-space: normal;">'+currentDoc.LShortDescription+'</p>';
+            
+            content += '<span>' + iconSet + '</span>';
+            content += '<span style="vertical-align:bottom;">';
+            
+            // Display current rating as stars ("on" or "off" to display the current rating)
+            var avgRatingImg = renderRating(currentDoc.AvgRating);
+            content += avgRatingImg;
+
+            if (currentDoc.RatersCount > 0) {
+                content += '<p style="display:inline;">rated by '+ currentDoc.RatersCount + ' user'+((currentDoc.RatersCount > 1)?'s':'')+'</p>';
+            }
+            content += '</span>';
+                
+            // Closes the <a> tag if required
+            if (docHRef) {
+                content += '</a>';
+            }
+            
+            // In case there is a URL to the document content, display an additional link icon on the right-hand side
+            if (docURL) {
+                content += '<a href="' + docURL + '" rel="external">';
+            }
+            content += '</li>';
+            
+            return content;
+        };
+        
+        // 
+        function renderIcon(iconURL, description) {
+            return '<span class="detailDoc"><img src="' + iconURL + '" '+(description?'title="'+description+'" ':' ')+'class="pull-right mrl"/></span>'
+        };
+        
+        // Returns HTML content with star images rendering a given rating
+        function renderRating(avgRating) {
+            // Used to display rating stars
+            var myStarOff = "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}";
+            var myStarOn = "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}";
+            var myStarHalf = "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}";
+
+            var ratingStarImgs = "";
+            for (var i=1; i<=5; i++) {
+                if (i <= avgRating) {
+                    ratingStarImgs += '<img src="'+myStarOn+'">';
+                } else if ((i - avgRating) <= 0.5){
+                    ratingStarImgs += '<img src="'+myStarHalf+'">';
+                } else {
+                    ratingStarImgs += '<img src="'+myStarOff+'">';
+                }
+            }
+            
+            return ratingStarImgs;
+        }
+        
+        // Display details about a document as a popup
+        function displayDocDetails(id, docLType, docDocType, docLName, docLDescription, docLOwnerName, docOwnerPhoto, docURL, avgRating, ratersCount) {
+            var txtCommunityTopicID = $('[id$=txtCommunityTopicID]');
+            txtCommunityTopicID.val(id);
+            
+            var ratingStarImgs = renderRating(avgRating);
+            $('#popupRatingimages').html(ratingStarImgs);
+            
+            var ratersCountTxt = "";
+            if (ratersCount > 0) {
+                ratersCountTxt = 'Rated by '+ ratersCount + ' user'+((ratersCount > 1)?'s':'');
+            }
+            $('#popupRatersCount').text(ratersCountTxt)
+            
+            $('#popupDocLOwnerName').text(docLOwnerName);
+            $('#popupDocOwnerPhoto').attr("src", docOwnerPhoto);
+            $('#popupDocLName').text(docLName);
+            $('#popupDocLNameHeader').text(docLName);
+            $('#popupDocLDescription').text(docLDescription);
+            
+            if (docURL) {
+                $("#popupDownloadButton").attr("href", docURL).css("visibility", "visible");
+             } else {
+                $("#popupDownloadButton").attr("href", "#").css("visibility", "hidden");
+            }
+            
+            $.mobile.pageContainer.pagecontainer('change', '#mobileCommunityCollateralsDetails');
+
+            return false;
+        };
+        
+        // Function called when rating a document: copy jQM form values into SF form anf submit SF form
+        function rateDocument() {
+            // Get values from jQM form
+            var rating = $("#ratingSlider").val();
+            var ratingComments = $("#ratingComments").val();
+            
+            // Copy values into SF form (use "[id$=" to find element based on id suffix as SF adds prefix to it)
+            $("[id$=txtUserTopicRatingComment]").text(ratingComments);
+            $("[id$=txtTopicScore]").val(rating) /*.selectmenu('refresh') */;
+            
+            // Simulate click on SF submit button
+            $("[id$=btnUserRating]").click();
+            return false;
+        }
+        
+        // Home Button tap callback
+        $('#buttonHome').on('ontap mousedown', '', function () {
+            $('#buttonHome img').css('background','#33B5E5');
+            setTimeout(function(){ $('#buttonHome img').css('background','transparent');},500)
+        });
+        
+        // Search button tap callback
+        $('#buttonSearch').on('ontap mousedown', '', function () {
+           if (!$('#seach-container').is(':visible')) {
+              $('#seach-container').slideDown("fast",function(){
+                $("#mobileCommunityCollaterals").trigger("create");
+                // JS to remove the left arrow
+                $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+                    $(this).removeClass('ui-btn-icon-left');
+                });
+            });
+           }
+           else{
+              $('#seach-container').slideUp("fast",function(){
+                 
+                $("#mobileCommunityCollaterals").trigger("create");
+                // JS to remove the left arrow
+                $('#fList,#cList,#lList,#tList').find('a.ui-collapsible-heading-toggle').each(function() {
+                    $(this).removeClass('ui-btn-icon-left');
+                });
+            });
+           }
+            
+            $('#buttonSearch img').css('background','#33B5E5');
+            setTimeout(function(){ $('#buttonSearch img').css('background','transparent');},200);
+        });
+        
+        $('#search-basic').live("keypress", function(e) {
+            /* ENTER PRESSED*/
+            if (e.keyCode == 13) {
+                var searchTerm= $('#search-basic').val();
+                window.location = "/apex/mobileGlobalSearch?SearchOptions=Select+all&multiselect-all&Boards&Topics&Community&Collateral&People&&SearchVal="+searchTerm;
+                $.mobile.loading( "show", {
+                      text: "Loading...",
+                      textVisible: true,
+                      textOnly: false
+                } ); // Displays load spinner while loading
+            }
+        });
+    </script>
+        
+    <style type="text/css">  
+
+    </style>
+    </body>
+</html>
+</apex:page>

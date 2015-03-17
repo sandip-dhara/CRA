@@ -1,0 +1,121 @@
+<apex:page standardController="Release_Deliverable_Contributor__c" extensions="ExtendedRelDelCont" id="p"><br />
+<!--<chatter:feed entityId="{!Release_Deliverable_Contributor__c.Id}"/>
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'js/jquery-1.9.1.js')}"  />
+<apex:includeScript value="{!URLFOR($Resource.JQueryUI_PLM,'jquery-ui-1.10.3.custom.min.js')}"  />
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUI_PLM,'css/smoothness/jquery-ui-1.10.3.custom.min.css')}"/>
+
+<apex:pageBlock rendered="{!DisableRelease}">
+        <apex:pageBlockSection columns="1">
+            <a href="/{!CurServiceLineId}">Service Line [{!CurServiceLine}]</a> > 
+            <a href="/{!CurOfferingId}">Offering [{!CurOffering}]</a> > 
+            <a href="/{!CurReleaseId}">Offering Release [{!CurRelease}]</a> >
+            <a href="/{!CurOfferingReleaseStageId}">Offering Release Stage[{!CurOfferingReleaseStage}]</a> >
+            <a href="/{!CurReleaseDeliverableId}">Release Deliverable[{!CurReleaseDeliverable}]</a>             
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+ 
+<apex:form style="display:none;"> 
+    <apex:inputText value="{!RDCSearchText}"/>
+    <apex:commandButton value="Search" action="{!ShowAll}"/>       
+</apex:form>
+
+<br />
+<apex:form id="f">
+    <apex:pagemessages ></apex:pagemessages>
+    <apex:pageBlock id="b" title="{!myEditStates} Release Deliverable Contributor">
+        <apex:pageBlockSection id="s" title="Release Deliverable Contributor" columns="1">
+             <apex:outputField value="{!Release_Deliverable_Contributor__c.Release_Deliverable_ID__c}">
+                <apex:actionSupport event="onchange" action="{!ShowByID}" rerender="tables"/>
+             </apex:outputField>
+             <apex:outputText label="Release Deliverable Name" value="{!rdName}"/>             
+              
+             <apex:inputField value="{!Release_Deliverable_Contributor__c.Contributor__c}" id="inputUser"/>                        
+             <apex:inputField value="{!Release_Deliverable_Contributor__c.Team_Member_ID__c}"/>
+                         
+             <apex:selectList label="Contributor" value="{!SelectTeamMember}"  size="1">
+                  <apex:selectOptions value="{!teammember}"/>
+             </apex:selectList>                     
+            <script>
+               $j = jQuery.noConflict();
+               $j(document).ready(function() {
+                  $j("select[id$=inputUser_mlktp]").hide();
+               });
+            </script>
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons location="top">
+             <apex:commandButton value="Save" Action="{!save}"/>
+             
+             <apex:commandButton value="Save & New" Action="{!doSaveAndNew}" rendered="{!!DisableRule}" /> 
+                         
+             <apex:commandButton value="Cancel" Action="{!cancel}"/>             
+        </apex:pageBlockButtons>                
+    </apex:pageBlock>
+</apex:form>
+<apex:form id="l">
+    <apex:pageBlock >
+    <apex:pageblockSection title="Current Release Deliverable Contributor" id="tables">
+            <apex:image url="https://hp--esit--c.cs11.content.force.com/profilephoto/729Z0000000ChYA/F" style="width:40px;height:40px;"/> 
+            <apex:tabPanel id="theTabPanel" switchType="client" selectedTab="TabTable">
+                <apex:tab label="By Contributor" name="TabTable" id="tabOne">
+                    <apex:pageBlockTable value="{!rdc_u_list}" var="list" id="list">
+               
+                <apex:column headerValue="Contributor">
+                    {!key}  
+                </apex:column> 
+                         
+                <apex:column colspan="1"> 
+                    <apex:facet name="header">   
+                       <apex:commandLink action="{!ShowByID}" value="Contributor{!IF(sortDirection='ASC','▼','▲')}" id="cmdSort" rerender="tables">
+                            <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                       </apex:commandLink>
+                    </apex:facet>
+                    <apex:image url="{!list.userImgUrl}" style="width:30px;high:30px;"></apex:image>
+                    <br></br>                
+                    <apex:outputLink type="text/html" value="{!list.userLink}">{!list.username}</apex:outputLink>                    
+                </apex:column>                
+               <apex:column headerValue="Release Deliverable Name/Release Deliverable ID">                    
+                    <apex:pageblockTable value="{!list.rdc}" var="dn">
+                         <apex:column value="{!dn.Release_Deliverable_Name__c}" headerClass="deliverabletd" style="border: 0px solid blue;"/>                     
+                        <apex:column value="{!dn.Release_Deliverable_ID__c}" headerClass="deliverabletd" style="border: 0px;text-align:right;width:100px;"/>               
+                    </apex:pageblockTable>
+               </apex:column>
+          </apex:pageBlockTable>
+                </apex:tab>
+                <apex:tab label="By Release_Deliverable_Name" name="TabTree" id="tabTwo">
+                    <apex:pageBlockTable value="{!rn_Rdc_list }" var="r_list" id="relnamekey">
+              
+                <apex:column headerValue="Contributor">
+                    {!key}  
+                </apex:column> 
+                           
+                <apex:column > 
+                    <apex:facet name="header">   
+                       <apex:commandLink action="{!ShowByID}" value="Release Deliverable Name{!IF(sortDirection='ASC','▼','▲')}" id="relSort" rerender="tables">
+                            <apex:param value="DESC" assignTo="{!sortDirection}"></apex:param>
+                       </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputText >{!r_list.rd_name}</apex:outputText>
+                                      
+                    <apex:outputLink >{!r_list.rdc_relname.Release_Deliverable_ID__c}</apex:outputLink>                   
+                </apex:column>                            
+               <apex:column headerValue="Contributor">                    
+                    <apex:pageblockTable value="{!r_list.rdc_relname}" var="rdcname">
+                         <apex:column value="{!rdcname.Team_Member_Name__c}" headerClass="deliverabletd" style="border: 0px solid blue;"/>                                                      
+                    </apex:pageblockTable>
+               </apex:column>
+          </apex:pageBlockTable>
+                </apex:tab>
+            </apex:tabPanel>
+        </apex:pageblockSection>
+    </apex:pageBlock>        
+</apex:form>
+<style>
+     .deliverabletd
+      {
+        display:none;
+      }
+     .table th td{
+         border: 1px solid blue;
+     }     
+</style>-->
+</apex:page>

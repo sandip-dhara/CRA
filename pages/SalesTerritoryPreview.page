@@ -1,0 +1,37 @@
+<apex:page StandardController="Sales_Territory__c" extensions="SalesTerritoryPreview" readOnly="True" tabStyle="Account">
+    <apex:sectionHeader subtitle="{!Sales_Territory__c.Name}" title="Sales Territory Account Assignment Preview"/>
+
+<apex:pageBlock >   
+   <apex:pageBlockButtons location="top" >
+   <apex:outputPanel id="myButtons">
+   <apex:form >
+        <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>
+        <apex:commandButton action="{!previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>        
+        <apex:commandButton action="{!next}" title="Next" value=">" disabled="{!disableNext}" reRender="myPanel,myButtons"/>
+        <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="myPanel,myButtons"/>        
+   </apex:form>
+   </apex:outputPanel>
+   </apex:pageBlockButtons>
+
+<apex:pageBlockSection columns="1" title="Accounts (Total List Size: {!total_size})" collapsible="false">
+   <apex:outputPanel id="myPanel">
+   <apex:pageMessages id="theMessages" />
+   
+                 <apex:pageblockTable value="{!accounts}" var="acct" >
+                    <apex:column value="{!acct.name}" />
+                    <apex:column value="{!acct.AMID_L2__c}"/>
+                    <apex:column value="{!acct.Confidential_Account__c}"/>
+                    <apex:column value="{!acct.Industry_Vertical__c}" />
+                    <apex:column value="{!acct.ShippingState}" />
+                    <apex:column value="{!acct.ShippingCountry}" />
+                    <apex:column value="{!acct.ShippingPostalCode}" />
+
+                    
+                    <apex:facet name="footer">Showing Page # {!pageNumber} of {!totalPages}</apex:facet>
+                </apex:pageBlockTable>
+                </apex:outputPanel>
+   </apex:pageBlockSection>
+
+</apex:pageBlock>
+
+</apex:page>

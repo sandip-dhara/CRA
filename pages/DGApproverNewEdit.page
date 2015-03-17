@@ -1,0 +1,53 @@
+<apex:page standardController="WS_Approver__c"  EXtensions="DGApproverNewEdit">
+
+<style>
+.warning_text{
+font-size: 14px;
+color: red;
+font-weight:bold;
+}
+</style>
+<!--{!If(AND($CurrentPage.parameters.id != null,AND(WS_Approver__c.Approver__c != $User.Id)), true,false)}-->
+  <apex:form >
+ 
+ <apex:outputPanel rendered="{!AND(var==False,ApprovalId!=null)}"><p class="warning_text">You are not the assigned Approver for this record. Please click 'Cancel' to return to the previous page.</p></apex:outputPanel>
+  <br />
+   <apex:pageblock title="Approver Information" mode="edit">
+  <apex:pageblockbuttons location="both">
+  
+  <apex:commandButton value="Approve" action="{!Approve}" rendered="{!AND(var==True,ApprovalId!=null,WS_Approver__c.Approval_Status__c =='Pending')}" />
+  <apex:commandButton action="{!saveApprove}" value="Save" rendered="{!approvalid == null}" />
+    <apex:commandButton action="{!cancel}" value="Cancel" />    
+    <apex:commandButton value="Reject" action="{!Reject}" rendered="{!AND(var==True,ApprovalId!=null,WS_Approver__c.Approval_Status__c =='Pending')}" />
+  </apex:pageblockbuttons>
+  <apex:pagemessages ></apex:pagemessages>
+  <apex:pageblocksection collapsible="false" columns="2"
+  title="Information" showHeader="true">
+ 
+  <apex:inputfield rendered="{!If($CurrentPage.parameters.id == null, true,false)}" value="{!WS_Approver__c.Approver__c}"/>
+  <apex:outputfield rendered="{!If($CurrentPage.parameters.id == null, false,true)}" label="Approver" value="{!WS_Approver__c.Approver__c}">
+  </apex:outputfield>
+  
+  <apex:inputfield rendered="{!If($CurrentPage.parameters.id == null, false,false)}" value="{!WS_Approver__c.Reviewer_Workspace__c}" />
+  <apex:outputfield rendered="{!If($CurrentPage.parameters.id != null, true,false)}" value="{!WS_Approver__c.Reviewer_Workspace__c}" />
+ 
+ <apex:inputfield rendered="{!If($CurrentPage.parameters.id == null, true,false)}" value="{!WS_Approver__c.Subject_Matter_Expertise__c}" />
+  <apex:outputfield rendered="{!If($CurrentPage.parameters.id == null, false,true)}" value="{!WS_Approver__c.Subject_Matter_Expertise__c}" />
+ 
+   
+  <apex:inputfield rendered="{!If($CurrentPage.parameters.id == null, true,false)}" value="{!WS_Approver__c.Do_not_email__c}" />
+  <apex:outputfield rendered="{!If($CurrentPage.parameters.id == null, false,true)}" value="{!WS_Approver__c.Do_not_email__c}" />
+  
+  
+  <apex:inputfield style="width:100%;" rendered="{!If($CurrentPage.parameters.id == null, true,false)}" value="{!WS_Approver__c.Comment__c}" />
+  <apex:outputfield style="width:100%;" rendered="{!If($CurrentPage.parameters.id == null, false,true)}" value="{!WS_Approver__c.Comment__c}" />
+  
+
+ <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+  <apex:inputfield style="width:100%;" rendered="{!If($CurrentPage.parameters.id == null, false,true)}" value="{!WS_Approver__c.Comments__c}" />
+  
+  </apex:pageblocksection>
+  </apex:pageblock>
+  </apex:form>
+  
+</apex:page>

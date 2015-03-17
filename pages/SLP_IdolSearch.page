@@ -1,0 +1,185 @@
+<apex:page showheader="false" controller="SLP_IdolSearch" standardstylesheets="false" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Edit</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />    
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+    <style type="text/css">
+        [id*=linkTitle] { font-weight: bold; }
+    </style>
+
+    <!-- check box, radio button -->
+    <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/css/uniform.default.css')}" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+    <!-- BEGIN HEADER -->
+    <header>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="HpLogo">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/>
+                    </a>
+                    <div class="nav mtop10">
+                        <h1>Social Learning Platform</h1>
+                        <h3>Learning on your terms!</h3>
+                    </div>
+                    <div class="top-nav">
+                        <ul class="nav pull-right top-menu mtop16">
+                            <!-- BEGIN USER LOGIN DROPDOWN -->
+                            <li class="dropdown open">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="username">Welcome {!LoggedinUserDetails.Name}</span>
+                                    <i class="icon-user"></i>
+                                </a>
+                                <ul class="dropdown-menu extended logout">
+                                    <li><a href="https://{!SfInstance}/secur/logout.jsp">Log Out</a></li>
+                                </ul>
+                            </li>
+                            <!-- END USER LOGIN DROPDOWN -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid menunavBar">
+                    <a href="https://{!SfInstance}/apex/AthenaSocialLearning">
+                        <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Home.png')}" alt="Icon_Home"/>
+                        </a>
+                    <div class="btn-group">
+                        <a href="#" data-toggle="dropdown">
+                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/Icon_Menu.png')}" alt="Icon_Menu"/>
+                            </a>
+                        <ul class="dropdown-menu">                            
+                            <li><a href="https://{!SfInstance}">Salesforce Home</a></li>
+                          <li><a href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank">Help &amp; Support</a></li>
+                          <hr/>
+                          <li><a href="http://amp.corp.hp.com/" target="_blank">Account Management Portal(AMP)</a></li>
+                          <li><a href="http://ent241.sharepoint.hp.com/teams/GSCDC/es/ITO.aspx" target="_blank">Portfolio Accrediation</a></li>
+                          <li><a href="http://intranet.hp.com/enterpriseservices/ww/site/market/index.html" target="_blank">What We Sell</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+    <!-- BEGIN CONTAINER -->
+    <div id="container" class="row-fluid">    
+        <span class="err_msg hpit_error" id="err_msg"></span>
+        <!-- BEGIN PAGE -->
+        <div id="main-content">
+            <!-- BEGIN PAGE CONTAINER-->
+            <div class="container-fluid">
+                <!-- BEGIN PAGE HEADER-->
+                <div class="row-fluid">
+                    <div class="span12">
+                        <!-- BEGIN PAGE TITLE -->
+                        <div class="breadcrumb">
+                            <h2>Search</h2>
+                        </div>
+                        <!-- END PAGE TITLE & BREADCRUMB-->
+                    </div>
+                </div>
+                <!-- END PAGE HEADER-->
+                <!-- SEARCH BTN -->
+                <div class="row-fluid">
+                    <div class="span8">
+                        <div class="span12">
+                            <apex:form id="searchForm">
+                                <apex:inputText id="searchText" value="{!SearchValue}" styleClass="span7 mtop10" title="IDOL search: keywords, AND, OR, and double-quotes allowed"/>
+                                <br/>
+                                <apex:commandButton id="searchButton" action="{!search}" value="Search" styleClass="btnAthena btn-primary"  title="Search"/>&nbsp;&nbsp;
+                                <apex:commandButton id="nextButton" action="{!next}" value="Next" styleClass="btnAthena btn-primary"  title="Next"/>&nbsp;&nbsp;
+                                <br/>
+                                <br/>
+                              <apex:outputPanel id="searchOk" rendered="{!Hits > 0}">
+                                {!Hits} hit{!IF((Hits > 1), 's', '')} found:<br/>
+                                
+                                 found:<br/>
+                                
+                                </apex:outputPanel>
+                                <apex:outputPanel id="searchEmpty" rendered="{!Hits == 0}">
+                                    Your search did not match any documents.<br/><br/>
+                                    Suggestions:<br/>
+                                    <ul>
+                                        <li>Make sure all words are spelled correctly.</li>
+                                        <li>Try different keywords.</li>
+                                        <li>Try more general keywords.</li>
+                                   </ul>
+                                </apex:outputPanel>
+                                <apex:outputPanel id="searchFailed" rendered="{!Hits == -1 && ErrorText != ''}">
+                                    Error.<br/><br/>
+                                    {!ErrorText}
+                                    <br/><br/>
+                                    <apex:outputPanel rendered="{!CONTAINS(ErrorText, 'No valid query text supplied')}">
+                                        Try different or more specific keywords.
+                                    </apex:outputPanel>
+                                </apex:outputPanel>
+                                <br/>
+                                <apex:repeat value="{!SearchResults}" var="hit" id="hitRepeater">
+                                    <apex:outputLink id="linkTitle" value="{!hit.Url}">{!hit.Title}</apex:outputLink><br/>
+                                    <apex:outputText id="weight" value="{!hit.Weight}"/>%&nbsp;                                    
+                                    <apex:outputLink id="linkUrl" value="{!hit.Url}">{!hit.Url}</apex:outputLink><br/>
+                                    <apex:outputText id="summary" value="{!hit.summary}" escape="false"/><br/>
+                                    <br/>
+                                </apex:repeat>
+                           </apex:form>                            
+                        </div>
+                    </div>
+                </div>
+                <!-- END PAGE CONTENT-->
+            </div>
+            <!-- END PAGE CONTAINER-->
+        </div>
+        <!-- END PAGE -->
+    </div>
+    <!-- END CONTAINER -->
+
+    <!-- BEGIN FOOTER -->
+    <div id="footer">
+        © Hewlett-Packard Development Company, L.P.     |     HP Restricted
+    </div>
+    <!-- END FOOTER -->
+
+    <!-- BEGIN JAVASCRIPTS -->
+    <!-- Load javascripts at bottom, this will reduce page load time -->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/tag-it.js')}"/>
+
+    <!-- pagination js files -->
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap-paginator.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/qunit-1.11.0.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/uniform/jquery.uniform.min.js')}"/>
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+    <!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

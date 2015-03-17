@@ -1,0 +1,96 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the?salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   
+-->
+
+<apex:page controller="pageController" title="HP Device Customization" showHeader="false" standardStylesheets="false"  action="{!RedirectURL}" sidebar="false"  cache="false" expires="{!expires}" id="pageid" >
+    <apex:outputText rendered="{!$CurrentPage.parameters.console=='true'}" id="outtextid">
+        <div style="position:absolute; z-index:100; left:3px; top: 3px;">
+            <a href="#" onclick="$('.toolbarleft').toggle();$('.toolbarright').toggle();"><apex:image style="border-style: none;" url="{!URLFOR($Resource.CMSForce, '/JSTree/novisible.png')}" title="Toggle Toolbars On/Off"/></a>
+        </div>
+        <style>
+            div.contentblock:hover {
+                padding:0px;
+                border:2px dotted red;
+                position: relative;
+                min-height:16px;            
+            }
+            div.contentblock {
+                padding:0px;
+                position: relative;
+                min-height:16px;
+            }
+            div.toolbarleft {
+                z-index:100;
+                position: absolute;
+                left: 0px; top: 0px;
+            }
+            div.toolbarright {
+                z-index:100;
+                position: absolute;
+                right: 0px;
+            }
+        </style>
+        <script type="text/javascript" src="{!URLFOR($Resource.CMSForce, '/JSTree/jquery.js')}"></script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+            //if viewed in console mode, append console = true to all cmsforce links, this will allow surfing through the site in 'edit' mode
+            //also carry over the fullscreen param
+            $("a[href*='pageid=']").each(function(){ 
+                      this.href = this.href + '&console=true&pod={!instance}&fullscreen={!JSENCODE($CurrentPage.parameters.fullscreen)}';
+                   });
+        });
+        </script>
+        <script type="text/javascript" language="javascript" src="{!$resource.extpagesjs1}"></script>
+        <script src="{!$resource.extpagesjs2}" type="text/javascript"></script>
+            <script type="text/javascript">
+             var j$ = jQuery.noConflict();
+                j$(document).ready(function() {j$("#slider").nivoSlider({
+                    effect:'fold',
+                    animSpeed:300,
+                    pauseTime:5000
+            
+                });
+                
+                var mode = '{!$Site.Name}';
+                ChangeURLOnChangeInSiteOrSFUser(j$,mode);   
+            });
+            
+            function ChangeURLOnChangeInSiteOrSFUser(jqueryInstance,mode){
+                var j$ = jqueryInstance ;
+                j$.each(j$('a'),function(index,value){
+                       var customLink =  j$(this).attr('href') ;
+                       if(customLink!=undefined){
+                            var links= customLink.split('||');
+                            if(links!=undefined && links.length>1 ){
+                               // alert(links[1]);
+                                if(mode !=null && mode !='')
+                                {
+                                    j$(this).attr('href',links[1]);
+                                }
+                                else{
+                                    j$(this).attr('href',links[0]);
+                                }
+                            }
+                       }
+                    });
+            }
+            </script>
+    </apex:outputText>
+  
+   <apex:include pageName="{!pagetemplatename}" id="pagetemplateid"/> 
+
+</apex:page>

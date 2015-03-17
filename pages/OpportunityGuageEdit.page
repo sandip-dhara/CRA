@@ -1,0 +1,335 @@
+<apex:page standardController="Opportunity_Plan__c" tabstyle="Opportunity_Plan__c" showHeader="false" sidebar="false">
+<apex:includeScript value="{!$Resource.jquery172}" />
+
+<style>
+
+body {
+    padding:10px;
+}
+
+</style>
+
+<script>
+j$ = jQuery.noConflict();
+
+function lastModified(){
+    var dateobject = new Date();
+    var themonth = dateobject.getMonth();
+    var theday = dateobject.getDate();
+    var theyear = dateobject.getFullYear();
+    last_modified = j$('[id$="last_modified"]');
+    last_modified[0].value = '{!$User.LastName}, ' + '{!$User.FirstName} ' + themonth + '/' + theday + '/' + theyear;
+}
+
+function alertMe(){
+    alert('Test alert');
+}
+
+
+</script>   
+
+<div><apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<h1 style="font-size:28px;color:#5ABBE8;">Opportunity Gauge Edit</h1></div>
+<hr size="1"></hr>
+<apex:messages />
+    <apex:form >
+
+        <apex:pageblock mode="maindetail" >
+
+            <apex:panelGrid columns="1" id="OG_Instructions_h"
+                style="width:100% ;background-color: #66CCFF;border:1px Solid Black">
+                <apex:outputLabel value="Instructions"
+                    style="color: #000000; font-size: 12pt; width: 300px; font-weight:bold" />
+            </apex:panelGrid>
+
+            <apex:panelGrid columns="1" id="OC_Instructions"
+                style="width:100% ; border:2px Solid Black">
+                <apex:panelgroup >
+                    <apex:outputText value="1. Evaluate each Statement below and select a score." />
+                    <BR></BR>
+                    <apex:outputText value="2. For each Statements you score 3 or below, create a list of activities to raise these scores to 4 or above." />
+                    <BR></BR>
+                    <apex:outputText value="3. For statements you score 4 or above, create a list of activites to maintain or improve these scores." />
+                    <BR></BR>
+                </apex:panelgroup>
+            </apex:panelGrid>
+
+            <BR></BR>
+            <div style="margin-left:auto;margin-right:auto;width:200px;text-align:center;">
+                <apex:commandButton action="{!save}" value="Save"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+                <input type="button" class="btn" value="Help" title="Help" onclick="window.open('/apex/OGHelp','OG_Help','width=600,height=400')"/>
+            </div>
+            <br />
+            
+
+            <apex:panelGrid columns="2" id="OG_WTB_Questions_h"
+                style="width:100% ;background-color: #66CCFF;border:1px Solid Black">
+
+                <apex:panelgroup id="Q_1C_1R" >
+                    <b><apex:Outputlabel value="Will They Buy?"
+                        style="color: #000000; font-size: 12pt; width: 300px" /></b><BR></BR>
+                    <apex:OutputLabel value="Directions:   Select from the drop-down list how strongly you agree or disagree with each of the following statements." />    
+                    
+                </apex:panelgroup>
+            </apex:panelGrid>
+
+            <style type="text/css">
+               .col1 {
+                
+                text-align: left;                
+                border:1px Solid Black;
+    
+                  }               
+             </style>
+            <apex:panelGrid columns="2" id="OG_WTB_Questions"
+                style="width:100% ;border:2px Solid Black" columnClasses="col1" rules="all">
+                
+               
+
+                <apex:panelgroup id="Q_1C_2R" style="border:2x">
+                    <apex:Outputlabel value="1. A Strong Business Case Exists:"
+                        style="width:300px;font-weight: bold" />
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTB_Q1__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+                
+                
+                <apex:panelgroup id="Q_2C_2R" >
+
+<ul>
+  <lh><b>Confirmed with Client:</b></lh>
+  <li>Has client stakeholder articulated and verified clear prioritized business issues/opportunities with quantifiable evidence?</li>
+  <li>Can the client articulate specific monetary gain or loss associated with the issues/opportunities?</li>
+  <li>Are the monetary gains or losses significant to the organization?</li>
+  <li> Are there constraints to addressing the issues/opportunities that might prevent the client from acting?</li>
+</ul></apex:panelgroup>
+
+
+                <apex:panelgroup id="Q_1C_3R">
+                    <b><apex:Outputlabel value="2. Adequate Time, Human & Financial Resources Exist:"
+                        style="width:300px" /></b>
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTB_Q2__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+
+
+                <apex:panelgroup id="Q_2C_3R">
+
+<ul>
+  <lh><b>Confirmed with Client:</b></lh>
+  <li>  Are there reasonable attitudes and commitments regarding division of labor?</li>
+  <li>Do HP and the client share thinking about the range of investment required to achieve the results?</li>
+  <li>Does the client have adequate funding and resources available?</li>
+  <li>Does client have a reasonable expectation of the time required to complete the pursuit?
+  </li>
+</ul></apex:panelgroup>
+
+
+                <apex:panelgroup id="Q_1C_4R">
+                    <b><apex:Outputlabel value="3. Client has a Defined Decision Making Process and Criteria:"
+                        style="width:300px" /></b>
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTB_Q3__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+
+
+                <apex:panelgroup id="Q_2C_4R">
+
+<ul>
+  <lh><b>Confirmed with Client:</b></lh>
+  <li>Does the client have clarity on their decision making process?</li>
+  <li>Have we mapped the complete Steps, Decisions, When, Who, and Criteria?</li>
+  <li>Are the Decision Process and Criteria reasonable?</li>
+</ul></apex:panelgroup>
+
+
+                <apex:panelgroup id="Q_1C_5R">
+                    <b><apex:Outputlabel value="4. Client Urgency & Commitment to Drive to Completion Exists:"
+                        style="width:300px" /></b>
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTB_Q4__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+
+
+
+                <apex:panelgroup id="Q_2C_5R">
+
+<ul>
+  <lh><b>Confirmed with Client:</b></lh>
+  <li>Is this initiative in the decision-maker's performance objectives?</li>
+  <li>Does client express urgency and a drive to complete the engagement?</li>
+  <li>How important is this initiative to key stakeholders and decision-makers?</li>
+  <li>Do powerful people in the client organization have something significant to gain by implementing the solution?</li>
+  <li>Is momentum building in multiple departments/business units to support the change?</li>
+</ul></apex:panelgroup>
+
+
+                <apex:panelgroup id="Q_1C_6R">
+                    <b><apex:Outputlabel value="5. Relationships with Key Decision-makers & Influencers Exist:"
+                        style="width:300px" /></b>
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTB_Q5__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+
+
+
+                <apex:panelgroup id="Q_2C_6R">
+
+<ul>
+  <lh><b>Confirmed with Client:</b></lh>
+  <li>Have we developed at least one Partner Ally relationship in the Power Base?</li>
+  <li>Is access to key decision-makers and influencers, including 3rd parties, open 1and unrestricted?</li>
+  <li>Do we have executive sponsorship?</li>
+  <li>Are we receiving coaching from key decision-makers and influencers?</li>
+</ul></apex:panelgroup>
+            </apex:panelGrid>
+            <BR></BR>
+          
+
+            <apex:panelGrid columns="2" id="OG_WTBO_Questions_h"
+                style="width:100%; background-color: #66CCFF; border:1px Solid Black" >
+                <apex:panelgroup id="Q_3C_1R">
+                    <b><apex:Outputlabel value="Will They Buy Ours?"
+                        style="color: #000000; font-size: 12pt; width: 300px" /></b><BR></BR>
+                        <apex:OutputLabel value="Directions:   Select from the drop-down list your perceived level of advantage or disadvantage relative to the competition." />
+                    <apex:Outputlabel value="" />
+                </apex:panelgroup>
+
+            </apex:panelGrid>
+
+            <apex:panelGrid columns="2" id="OG_WTBO_Questions"
+                style="width:100% ;border:2px Solid grey" columnClasses="col1" rules="rows">
+                <apex:panelgroup id="Q_3C_2R">
+                    <apex:Outputlabel value="" style="width:300px" />
+                    <b><apex:Outputlabel value="1. Our Technical Solution Relative to Competitor's:"
+                        style="width:300px" /></b>
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTBO_Q1__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+
+
+
+                <apex:panelgroup id="Q_4C_2R">
+
+<ul>
+  <LH><b>From the client's perspective/best intelligence:</b></LH>
+  <li>Is our solution innovative/creative?</li>
+  <li>Does our solution offer relative ease and favorable timing of implementation?</li>
+  <li>Is our solution aligned with the client's buying criteria?</li>
+  <li>Does our solution offer added value beyond base requirements?</li>
+  <li>Is our solution a good fit for this client's risk profile?</li>
+  <li>Do our alliance partners bring us a technical advantage?</li>
+  <li>Does our solution reflect a demonstrated HP capability?</li>
+</ul>
+                </apex:panelgroup>
+
+                <apex:panelgroup id="Q_3C_3R">
+                    <apex:Outputlabel value="" style="width:300px" />
+                    <b><apex:Outputlabel value="2. Our Business Solution Relative to Competitor's:"
+                        style="width:300px" /></b>
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTBO_Q2__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+
+
+
+                <apex:panelgroup id="Q_4C_3R">
+<ul>
+  <LH><b>From the client's perspective/best intelligence:</b></LH>
+  <li>  Do we know and can we meet the Price to Win?</li>
+  <li>Are we providing the business value the client expects and needs for HP to be successful?</li>
+  <li>Are we bringing thought leadership that differentiates us from competitors?</li>
+  <li>Are we offering creative pricing 1and risk sharing?</li>
+  <li>Do our alliance partners bring us a business advantage?
+  </li>
+</ul>
+                </apex:panelgroup>
+
+                <apex:panelgroup id="Q_3C_4R">
+                    <apex:Outputlabel value="" style="width:300px" />
+                    <b><apex:Outputlabel value="3. Our Relationship Strength Relative to Competitor's:"
+                        style="width:300px" /></b>
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTBO_Q3__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+
+
+
+                <apex:panelgroup id="Q_4C_4R">
+
+<ul>
+  <LH><b>From the client's perspective/best intelligence:</b></LH>
+  <li>Do we have superior relationship connection?</li>
+  <li>Do we have broad political alignment and support?</li>
+  <li>Can our relationships with key decision makers and influencers overcome those of our competitors?</li>
+  <li>Are HP and the client's executives aligned?</li>
+  <li>Do our alliance partners bring us relationship advantages?
+  </li>
+</ul>
+                </apex:panelgroup>
+
+                <apex:panelgroup id="Q_3C_5R">
+                    <apex:Outputlabel value="" style="width:300px" />
+                    <b><apex:Outputlabel value="4. Our 'Point of Preference' Relative to Competitor's:"
+                        style="width:300px" /></b>
+                    <BR></BR>
+                    <BR></BR>
+                    <apex:InputField value="{!Opportunity_Plan__c.OG_WTBO_Q4__c}"
+                        style="width:250px" />
+                </apex:panelgroup>
+
+
+
+                <apex:panelgroup id="Q_4C_5R">
+
+<ul>
+  <LH><b>From the client's perspective/best intelligence:</b></LH>
+  <li>Are we aligned with the client's strategic agenda?</li>
+  <li>Does the client perceive HP as reputable and capable?</li>
+  <li>Does HP demonstrate industry/business expertise?</li>
+  <li>Does HP's brand or market reputation provide an advantage?</li>
+  <li>Are our references compelling?</li>
+  <li>Does the client perceive the HP culture as compatible with their own?</li>
+  <li>Do our alliance partners bring us an extra advantage? </li>
+</ul>
+                </apex:panelgroup>
+
+
+
+            </apex:panelGrid>
+
+
+
+            <div style="margin-left:auto;margin-right:auto;width:200px;text-align:center;">
+                <apex:commandButton action="{!save}" value="Save"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+                <input type="button" class="btn" value="Help" title="Help" onclick="window.open('/apex/OGHelp','OG_Help','width=600,height=400')"/>
+            </div>
+
+            <!--<apex:pageBlockSection title="Overview">
+          </apex:pageBlockSection>
+          <apex:pageBlockSection title="Description">
+          </apex:pageBlockSection>-->
+        </apex:pageblock>
+        <apex:inputhidden value="{!Opportunity_Plan__c.OP_Last_Modified__c}" id="last_modified"/>
+    </apex:form>
+   Copyright © 2001–2013 Revenue Storm Corporation. All rights reserved <br></br>
+   Copyright © 2006 FranklinCovey Co
+</apex:page>

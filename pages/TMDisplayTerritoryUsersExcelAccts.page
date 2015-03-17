@@ -1,0 +1,71 @@
+<!-- 
+/**********************************************************
+* Page Name: TMDisplayTerritoryUsersExcelAccts
+* Author:  Sunder Singh Tanwar
+* Date: July 1, 2013
+* Requirement # US-2489 / R6.0
+* Description: Display Territory user's button will display a AF page report which will have sorting option on most of the fields and option to export the report in excel.
+**********************************************************/
+-->
+<apex:page showHeader="false" standardController="Account" extensions="TMDisplayTerritoryUsersControllerAccts" sidebar="false" contentType="application/vnd.ms-excel#TMDisplayTerritoryUsersDataAccts.xls" cache="true">
+                    
+                    <apex:dataTable value="{!salesTerritoryLocAssign}" var="a" rendered="{!NOT(ISNULL(salesTerritoryLocAssign))}">
+                       <apex:column headerValue="User">
+                         <apex:outputtext >{!a.User__r.Name}</apex:outputText>
+                       </apex:column>                      
+                       <apex:column headerValue="Territory Name">
+                           <apex:outputtext >{!a.Sales_Territory__r.MyComp_Sales_Territory_Name__c}</apex:outputText>
+                       </apex:column>
+                       <apex:column headerValue="Territory Region">
+                         <apex:outputtext >{!a.Sales_Territory__r.MyComp_Territory_Region__c}</apex:outputtext>
+                       </apex:column>
+                       <apex:column headerValue="Territory Country">
+                         <apex:outputtext >{!a.Sales_Territory__r.MyComp_Territory_Country__c}</apex:outputtext>
+                       </apex:column> 
+                       <apex:column headerValue="Territory Id">
+                           <apex:outputtext >{!a.Sales_Territory__r.Id}</apex:outputText>
+                       </apex:column>
+                       <apex:column headerValue="Role">
+                           <apex:outputtext >{!a.User__r.UserRole.Name}</apex:outputtext>
+                       </apex:column>
+                    
+                       <apex:column headerValue="Add to Account Team">
+                           <apex:outputtext >{!a.Add_to_Account_Team__c}</apex:outputtext>
+                       </apex:column>
+                       
+                    <apex:column headerValue="User Role Type">
+                         <apex:outputtext >{!a.Team_Role__c}</apex:outputtext>
+                       </apex:column>
+                       
+                       <apex:column headerValue="STUA Active">
+                         <apex:outputtext >{!a.IsActive__c}</apex:outputtext>
+                       </apex:column>
+                       
+                       <apex:column headerValue="Speciality">
+                         <!--<apex:outputLink target="_top" value="/{!a.Specialty__c}" title="{!a.User__r.Proudct_speciality__c}">{!a.User__r.Proudct_speciality__c}</apex:outputLink>-->
+                         <apex:outputtext >{!a.User__r.Proudct_speciality__c}</apex:outputtext>
+                       </apex:column>    
+                       
+                       <apex:column headerValue="Email">
+                         <apex:outputtext >{!a.User__r.Email}</apex:outputtext>
+                       </apex:column>                                                                                      
+                    
+                   <apex:column headerValue="Lead Eligibility Flag">
+                         <apex:outputtext >{!a.User__r.Lead_Eligibility_Flag__c}</apex:outputtext>
+                       </apex:column>                    
+                    
+                       <apex:column headerValue="Renewal Eligible Status">
+                         <apex:outputtext >{!a.User__r.Renewal_Eligible_Status__c}</apex:outputtext>
+                       </apex:column>                                                                                      
+                    
+                   <apex:column headerValue="User Active">
+                         <apex:outputtext >{!a.User__r.IsActive}</apex:outputtext>
+                       </apex:column>  
+                       
+                   <apex:column headerValue="18 Digit STUA Record Id">
+                         <apex:outputtext >{!a.Id}</apex:outputtext>
+                       </apex:column>                                   
+                    </apex:dataTable>
+
+
+</apex:page>

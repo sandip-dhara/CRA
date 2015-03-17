@@ -1,0 +1,26 @@
+<apex:page Controller="AthenaAddVideoLearningController" showHeader="false">
+   <apex:form >
+     <apex:pageBlock title="Create new video-based learning"> 
+         <apex:pageblockButtons >
+             <apex:commandButton value="Save" action="{!Upload}"/>
+             <apex:commandButton value="Cancel" action="{!cancel}"/>
+         </apex:pageblockButtons>
+          
+         <apex:pageblockSection columns="1"  collapsible="true">
+              <apex:outputLabel value="Name" />
+              <apex:inputText value="{!Title}"/>
+
+              <apex:outputLabel value="Description"/>
+              <apex:inputTextarea value="{!Descrip}"/>
+           
+              <apex:outputLabel value="URL"/>
+              <apex:inputText value="{!urlatvideoinput}"/>
+            
+              <apex:commandButton value="Test Or Preview" action="{!testOrPreview}" id="a"/>
+              <apex:inputCheckbox label="Add to Current Learning Board" selected="false" value="{!IsChecked}"/>
+         </apex:pageblockSection>
+         <div>{!urlatvideoinput}</div>
+         <apex:iframe src="{!urlatvideoinput}" height="240" width="240" rendered="true" id="a"/>
+     </apex:pageBlock>
+   </apex:form>
+</apex:page>

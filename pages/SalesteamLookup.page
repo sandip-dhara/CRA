@@ -1,0 +1,66 @@
+<!-- 
+/**********************************************************
+* Page Name: SalesteamLookup
+* Author: 
+* Date: 
+* Requirement # Request Id :
+* Description: 
+***********************************************************/
+-->
+<apex:page controller="SalesTeamLookupController" showHeader="false" sideBar="false" tabStyle="Account">
+<!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+<body class="lookupTab  LookupSearchFrame, marginCls">
+    <apex:form >
+        <apex:sectionHeader title="{!$Label.Look_Up}" />
+            <apex:actionRegion >  
+                <!-- Output Panel for showing search options -->
+                <apex:outputPanel id="top" layout="block" styleClass="searchPanelCls">
+                    
+                    <apex:outputLabel value="{!$Label.Search}" styleClass="searchLabelCls" for="txtSearch"/>
+                    <apex:inputText id="txtSearch" value="{!searchString}" onkeypress="return searchUserOnEnter(event,this);"/>
+                        <span Class="searchspanCls"><apex:commandButton id="btnGo" value="{!$Label.Go}" action="{!Search}" rerender="searchResults"></apex:commandButton></span>
+                </apex:outputPanel>
+                <p>{!$Label.Wildcard_Usage}</p>
+                
+                <!-- Page block for showing search result -->
+                <apex:pageBlock id="searchResults">
+                <apex:outputpanel styleClass="resultPanelCls" layout="block"> 
+                    <apex:pageBlockTable value="{!results}" var="a" id="tblResults">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputPanel >{!$ObjectType.User.fields.name.label}</apex:outputPanel>
+                            </apex:facet>
+                           <!--<apex:outputLink value="javascript:testFunction('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!a.Id}','{!a.Name}', false)" rendered="{!NOT(ISNULL(a.u.Id))}">{!a.Name}</apex:outputLink>-->
+                            <!--apex:outputLink value="javascript:top.window.opener.lookupPick('{!FormTag}','{!TextBox}_lkid','{!TextBox}','','{!a.u.id}','{!a.Name}','null','')">{!a.u.name}</apex:outputLink-->
+                            <a href="#" class="dataCell" onclick="top.window.opener.lookupPick('{!FormTag}','{!TextBox}_lkid','{!TextBox}','','{!a.u.id}','{!a.Name}','null','')">{!a.u.Name}</a>
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.User.fields.Email.label}" value="{!a.u.Email}" />
+                        <apex:column headerValue="{!$ObjectType.User.fields.Business_Group__c.label}" value="{!a.u.Business_Group__c}" />
+                        <apex:column headerValue="{!$ObjectType.User.fields.Global_Business_Unit__c.label}" value="{!a.u.Global_Business_Unit__c}" />
+                        <apex:column headerValue="{!$Label.UserRole}" value="{!a.u.UserRoleid}" />
+                        <!-- {!$ObjectType.User.fields.UserRole.label}  -->
+                    </apex:pageBlockTable>
+                    
+                    <apex:outputLabel rendered="{!isResultEmpty}">
+                        <apex:outputText escape="false" value="{!$Label.No_Records_Found}" />
+                    </apex:outputLabel>
+                    </apex:outputpanel>
+                </apex:pageBlock>
+            </apex:actionRegion>
+        <!-- defining action function for searching users -->
+        <apex:actionFunction action="{!Search}" name="searchUserOnEnterKey" rerender="searchResults">
+           <apex:param name="firstParam" assignTo="{!searchString}" value="" />
+        </apex:actionFunction>
+    </apex:form>
+</body>
+  <script>
+    function searchUserOnEnter(ev,searchTextObj)  {
+        var searchTextValue=searchTextObj.value;
+        if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+            searchUserOnEnterKey(searchTextValue);  
+            return false;           
+         } 
+     }
+  </script>
+</apex:page>

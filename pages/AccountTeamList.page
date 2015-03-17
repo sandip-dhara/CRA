@@ -1,0 +1,121 @@
+<!-- 
+/**********************************************************
+* Page Name: AccountTeamList
+* Author: Accenture
+* Date: 30-MAR-2012 
+* Requirement # Request Id :317/304/307 
+* Description: To display Account Team Members (Related List)
+***********************************************************/
+-->
+
+<apex:page standardController="Account" extensions="AccountTeamListController" sidebar="true" >
+    <!-- Adding Common CSS file -->
+    <apex:stylesheet value="{!$Resource.CommonStyleSheet}" />
+    <apex:form id="AccountTeamformId">
+        <!-- Action function to update team list depending on selected business group -->
+        <apex:actionFunction action="{!filterTeamList}" name="refreshTeamList" rerender="membersTable,message" oncomplete="" status="pStatus" />        
+        
+        <!-- Action function to delete one team member on click of delete link -->
+        <apex:actionFunction action="{!deleteMembers}" name="deleteMember" onComplete="renderAccount();" >
+            <apex:param name="MemberId" value="selectedMemberId" assignTo="{!selectedMemberId}" /> 
+        </apex:actionFunction>
+        
+        <!-- Action function to delete team all team mebers on click of delete all button -->  
+        <apex:actionFunction action="{!deleteMembers}" name="deleteMembers" onComplete="renderAccount();">
+        </apex:actionFunction>               
+        
+        <apex:actionFunction action="{!checkForOpenOptys}" name="deleteSelectedMember" onComplete="checkForOpty();" rerender="teamPanelId" >
+            <apex:param name="selectedMemberId" value="selectedMemberId" assignTo="{!selectedMemberId}" /> 
+        </apex:actionFunction>
+        
+        <!-- Page black for business group selection to sort the team members -->
+        <apex:pageBlock id="membersPbId" tabstyle="Account">
+            <center>
+                <b> {!$Label.SelectBG} </b>
+                <apex:selectList id="bgs" value="{!groupName}" multiselect="false" size="1" onchange="refreshTeamList();">
+                    <apex:selectOptions value="{!businessGroups}"/>
+                </apex:selectList>
+            </center>
+        </apex:pageBlock>
+        <!-- Action Status -->
+        <apex:actionStatus startText="{!$Label.Processing}" id="pStatus" />
+        
+        <!-- Page black to display account team members -->
+        <apex:pageBlock id="membersTable" tabstyle="Account">
+            <!-- Action buttons will be displayed depending on the permissions -->
+            <apex:pageBlockButtons location="top" id="memberPbId">                          
+              <!--  <apex:commandButton value="{!$Label.Add}" onclick="AddTeamMember();" rendered="{!addAccess}"/>
+                <apex:commandButton id="addDefaultBtnId" rendered="{!addAccess}" action="{!addDefaultTeam}" value="{!$Label.Add_Default_Team}" oncomplete="renderAccount();" reRender="teamPanelId,defaultAccountTeamMsgId"/> 
+                <apex:commandButton rendered="{!isAccountTeamExists}" value="{!$Label.Delete_All}" action="{!checkForOpenOptys}" id="deleteTeamBtnId" onComplete="checkForOpty();" rerender="teamPanelId" /> -->
+            </apex:pageBlockButtons> 
+            <center><b><apex:outputText value="{!errormessage}" id="defaultAccountTeamMsgId" /></b></center>          
+            <apex:pageBlockTable value="{!accountTeamMembers}" var="a" columns="7" rendered="{!Not(isAccountTeamMembersListEmpty)}">
+                <apex:column width="7%" style="text-align: left;" headerValue="{!$Label.Action}" rendered="{!editAccess}">                                                 
+                    <apex:commandLink styleClass="actionLink,linkCls"  title="{!$Label.Edit}" value="{!$Label.Edit}" onclick="window.parent.location.href='/apex/EditAccountTeamMember?id={!accountId}&memberId={!a.id}&teamMember={!isTeamMember}'">                                                 
+                    </apex:commandLink> 
+                    &nbsp;|&nbsp;     
+                    <apex:commandLink styleClass="actionLink,linkCls" title="{!$Label.Delete}" value="{!$Label.Del}" onclick="deleteSelectedMember('{!a.UserId}');" oncomplete="">
+                    </apex:commandLink>  
+                </apex:column>
+                <apex:column value="{!a.User.Name}" headerValue="{!$Label.Team_Member}">
+                    <apex:facet name="header">
+                        <apex:commandLink action="{!filterTeamList}" value="{!$ObjectType.user.fields.Name.label}{!IF(sortExpression=='user.Name',IF(sortDirection='ASC','▼','▲'),'')}">
+                        <apex:param value="user.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                    </apex:commandLink>
+                    </apex:facet>
+                </apex:column>
+                <apex:column value="{!a.TeamMemberRole}"/> 
+                <apex:column value="{!a.User.Business_Group__c}"/>
+                <apex:column value="{!a.User.Employee_Country__c}"/>
+                <apex:column value="{!a.User.Proudct_speciality__c}"/>
+                <apex:column value="{!a.AccountAccessLevel}"/>
+            </apex:pageBlockTable>
+             
+            <!-- Display error message if team members are not available in selected business group  --> 
+            <apex:outputLabel rendered="{!isAccountTeamMembersListEmpty}">
+            {!$Label.Error_Team_Members}
+            </apex:outputLabel>
+        </apex:pageBlock>
+    </apex:form>
+    <!-- Including Scripts --> 
+    <apex:outputPanel id="teamPanelId">        
+        <script>
+            /* Redirect to add new team members page*/
+            function AddTeamMember(){
+        
+                window.parent.location = '/apex/NewAccountTeamMembers?id={!accountId}&name={!accountName}&teamMember={!isTeamMember}';
+            }
+            /* Render to account page */    
+            function renderAccount() {
+                var errorMsg = '{!errormessage}';
+                if (errorMsg == null || errorMsg == ''){
+                    window.parent.location = '/{!accountId}';
+                } 
+            }
+            /* Cheching available related opportunities before delete member */
+            function checkForOpty() {
+                var optyFlag = '{!isOpenOpty}';
+                var memberId = '{!selectedMemberId}';
+                
+                if(optyFlag == 'true') {
+                    if (memberId == '' || memberId == null) {
+                        window.parent.location = '/apex/DeleteAllAccountTeam?id={!accountId}';
+                    } else {
+                        window.parent.location = '/apex/DeleteAllAccountTeam?id={!accountId}&memberId='+memberId;
+                    }
+                } else {
+                    var result = confirm("Are you sure?");
+                    if (result==true) {
+                        if(memberId != '' || memberId != null) {
+                            deleteMember(memberId);
+                        } else {
+                            deleteMembers();
+                        }
+                    } else {
+                      return false;
+                    } 
+                }
+            }        
+        </script> 
+    </apex:outputPanel>       
+</apex:page>

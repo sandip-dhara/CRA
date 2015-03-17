@@ -1,0 +1,67 @@
+<!-- 
+/**********************************************************
+* Page Name: LeadsMassUpdate
+* Author: Accenture
+* Date: 4-JULY-2012 
+* Requirement # Request Id: 1767 
+* Description: To edit the selected lead records
+***********************************************************/
+-->
+
+<apex:page standardController="Lead" recordSetVar="LeadsRecord" sidebar="false" id="massLeadEditPage">
+	<apex:sectionHeader title="Edit Leads"/>
+	<!-- Form to edit the selected records of lead -->
+	<apex:form id="massLeadEditForm">
+		<div id="errorDiv">
+			<apex:pageBlock id="errorPageBlock">
+	        	<h2 style="font-size: 16px; font-weight: bold; color: red;">{!$Label.SELECT_RECORD_MESSAGE}</h2>
+				<div><apex:commandButton value="Back" action="{!cancel}"/></div>
+			</apex:pageBlock>
+        </div>
+        <div id="editPageDiv">
+		    <apex:pageBlock id="editPageBlock">
+		        <apex:pageMessages />
+		        <!-- Command buttons to perform actions -->
+		        <apex:pageblockButtons >
+		            <apex:commandButton value="Save" action="{!save}"/>
+		            <apex:commandButton value="Cancel" action="{!cancel}"/>
+		        </apex:pageblockButtons>
+		        <apex:pageBlockTable value="{!selected}" var="editleads">
+		            <apex:column value="{!editleads.name}"/>
+		            <apex:column headerValue="{!$ObjectType.Lead.fields.Status.label}">
+		            	<apex:inputField value="{!editleads.Status}"/>
+		            </apex:column>
+		            <apex:column headerValue="{!$ObjectType.Lead.fields.Closed_Reason__c.label}">
+		            	<apex:inputField value="{!editleads.Closed_Reason__c}"/>
+		            </apex:column>
+		            <apex:column headerValue="{!$ObjectType.Lead.fields.Lead_State__c.label}">
+		            	<apex:inputField value="{!editleads.Lead_State__c}"/>
+		            </apex:column>
+		            <apex:column headerValue="{!$ObjectType.Lead.fields.Company.label}">
+		            	<apex:inputField value="{!editleads.Company}"/>
+		            </apex:column>
+		             <apex:column headerValue="{!$ObjectType.Lead.fields.Account_Name__c.label}">
+		            	<apex:inputField value="{!editleads.Account_Name__c}"/>
+		            </apex:column>
+		            <apex:column headerValue="{!$ObjectType.Lead.fields.OwnerId.label}">
+		            	<apex:inputField value="{!editleads.OwnerId}"/>
+		            </apex:column>
+		        </apex:pageBlockTable>
+		        <apex:panelGrid columns="2">
+		            <apex:commandLink action="{!previous}">Previous</apex:commandLink>   
+		            <apex:commandLink action="{!next}">Next</apex:commandLink>
+		        </apex:panelGrid>
+		    </apex:pageBlock>
+        </div>
+	    <Script>
+	    	var selectedRecords = '{!selected}';
+	    	if (selectedRecords =! null && selectedRecords != '') {
+		    	document.getElementById('errorDiv').style.visibility = 'hidden';
+		    	document.getElementById('editPageDiv').style.visibility = 'visible';
+	    	} else {
+	    		document.getElementById('errorDiv').style.visibility = 'visible';
+		    	document.getElementById('editPageDiv').style.visibility = 'hidden';
+	    	}
+	    </Script>
+	</apex:form> 
+</apex:page>

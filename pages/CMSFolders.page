@@ -1,0 +1,88 @@
+<!--
+    Copyright (c)2010, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<apex:page showheader="false" sidebar="false" contenttype="application/json" action="{!dispatchOperation}" controller="CMSFoldersController">
+<apex:outputText rendered="{!squarebrackets}">[</apex:outputText>
+	<apex:outputText rendered="{!AND($CurrentPage.parameters.operation == 'get_children', $CurrentPage.parameters.id == '1') }">
+		<apex:repeat value="{!sitesinfo}" var="s" rendered="{!sitesinfo != null}">
+	    	{
+				"attr":{
+					"id":"{!s.Id}",
+					"rel":"site",
+					"sfdcnodetype":"site",
+					"previewurl":"{!s.previewurl}",
+					"instance":"{!instance}"
+				},
+				"data":"Site : {!s.name}",
+				"state":"closed"
+			}
+			,
+    	</apex:repeat>
+		{
+			"attr":{"id":"pagetemplates","rel":"templates","sfdcnodetype":"pagetemplatesroot"},
+			"data":"Page Templates",
+			"state":"closed"
+		},
+		{
+			"attr":{"id":"webforms","rel":"webforms","sfdcnodetype":"webformsroot"},
+			"data":"Web Forms",
+			"state":"closed"
+		}
+		,
+		{
+			"attr":{"id":"setup","rel":"setup","sfdcnodetype":"setup"},
+			"data":"Setup",
+			"state":""
+		}
+	</apex:outputText>
+	<apex:repeat value="{!folders}" var="f" rendered="{!folders != null}">
+		{
+			"attr":{"id":"{!f.Id}","rel":"folder","sfdcnodetype":"{!sfdcnodetype}"},
+			"data":"{!f.Name}",
+			"state":"closed"
+		}
+		<apex:outputText value="," rendered="{!f.Id != lastid}"/>
+    </apex:repeat>
+    <apex:repeat value="{!pages}" var="p" rendered="{!pages != null}">
+    	{
+			"attr":{"id":"{!p.Id}","rel":"default","sfdcnodetype":"page"},
+			"data":"{!p.Name}",
+			"state":""
+		}
+		<apex:outputText value="," rendered="{!p.Id != lastid}"/>
+    </apex:repeat>
+    <apex:repeat value="{!pagetemplates}" var="p" rendered="{!pagetemplates != null}">
+    	{
+			"attr":{"id":"{!p.Id}","rel":"default","sfdcnodetype":"pagetemplate","vfpage":"{!p.VisualForce_Page_Name__c}"},
+			"data":"{!p.Name}",
+			"state":""
+		}
+		<apex:outputText value="," rendered="{!p.Id != lastid}"/>
+    </apex:repeat>
+    <apex:repeat value="{!webforms}" var="w" rendered="{!webforms != null}">
+    	{
+			"attr":{"id":"{!w.Id}","rel":"default","sfdcnodetype":"webform"},
+			"data":"{!w.Name}",
+			"state":""
+		}
+		<apex:outputText value="," rendered="{!w.Id != lastid}"/>
+    </apex:repeat>
+    <apex:outputText rendered="{!NOT(squarebrackets)}">
+    	{!operationresponse}
+    </apex:outputText>
+<apex:outputText rendered="{!squarebrackets}">]</apex:outputText>
+</apex:page>

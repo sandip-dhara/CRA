@@ -1,0 +1,138 @@
+<apex:page standardController="Opportunity_Plan__c" showHeader="false" sidebar="false">
+<style type="text/css">
+table {
+    border-collapse:collapse;
+    border-width: 0px;
+    border: 0px;
+}
+
+body {
+    padding:10px; 
+}
+
+
+h2 {
+    color: #000000;
+    font-size: 20px;
+}
+
+.trquestion {
+    background-color: #5ABBE8;
+    font-weight: bold;
+    border: 1px solid #000;
+}
+
+.trresponse {
+    border: 1px solid #000;
+}
+
+.trfooter {
+    border: 0px;    
+}
+
+textarea {
+    width:95%;
+}
+
+</style>
+
+<body onload="window.print();">
+<apex:form >
+<br />
+<apex:image url="{!URLFOR($Resource.OPBar, 'hp.jpg')}" height="28" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 style="color: #5ABBE8;font-size:28px;">Value Proposition Print Summary</h1>
+<hr />
+
+<apex:iframe src="apex/oppheader?id={!Opportunity_Plan__c.Id}" height="102" width="100%"/>
+<br />
+
+<table width="100%" border="1" cellpadding="5">
+  <tr>
+    <td class="trfooter"><h2>Value Proposition:</h2></td>
+  </tr>
+  <tr>
+    <td class="trfooter"><apex:outputfield value="{!Opportunity_Plan__c.VP_value_proposition__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">1. What are or could be the client’s most important problems to solve and/or results to achieve? (Business Issues/Initiatives)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_01_clients_most_important_problems__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">2. How do or would they show up in the organization? (Evidence)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_02_how_do_they_show_up__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">3. What is or could be the effect of these issues? (Impact in $$$ or on a scale of 1-10)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_03_effects_of_issues__c }"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">4. Who is or could be affected? How does this align with the strategy of the organization or individual? (Context)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_04_who_is_affected__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">5. What constraints do or may exist that would prevent the customer from addressing the problem or achieving the result? (Constraints)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_05_constraints__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">6. What alternatives does or might the customer have to address these issues/initiatives? (Options in addition to HP’s solutions: e.g., HP’s competitors, internal options, do nothing, etc.)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_06_alternatives__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">7. What are we offering to address this situation? (HP’s solution)  What are the reasons adopting your solution makes sense?</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_07_what_are_we_offering__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">8. What will it or could it take to implement our solution? (Resources – Time, People and Money)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_08_what_will_it_take__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trquestion">9. What criteria would a solution like this need to meet? (Highest level decision criteria)</td>
+  </tr>
+  <tr>
+    <td class="trresponse"><apex:outputfield value="{!Opportunity_Plan__c.VP_09_criteria__c}"/></td>
+  </tr>
+  <tr>
+    <td class="trfooter" style="text-align:center;"></td>
+  </tr>
+
+  
+</table>
+<br /><br />
+<!--<table width="100%" border="1" cellpadding="5">
+  <tr>
+    <td class="trfooter" width="150px">Last Updated By:</td>
+    <td class="trfooter" width="auto"><apex:outputfield value="{!Opportunity_Plan__c.VP_last_updated_by__c}"/></td>
+    <td class="trfooter" width="150px">&nbsp;</td>
+    <td class="trfooter" width="100px">&nbsp;</td>
+    <td class="trfooter" width="100px">&nbsp;</td>
+    <td class="trfooter" width="auto">&nbsp;</td>
+  </tr>
+</table>-->
+
+<apex:panelgrid columns="2" border="0" style="width:100%;table-layout:fixed;background-color:#FFFFFF">
+<apex:panelGrid columns="1">
+<apex:panelGroup >
+<B>Last Modified By: </b><apex:outputfield value="{!Opportunity_Plan__c.VP_last_updated_by__c}"/>
+</apex:panelGroup>
+</apex:panelGrid>
+</apex:panelGrid>
+</apex:form>
+</body><br/>
+Copyright © 2006 FranklinCovey Co
+
+</apex:page>

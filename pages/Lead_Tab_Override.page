@@ -1,0 +1,56 @@
+<!-- 
+/**********************************************************
+* Page Name: Lead tab Override
+* Author: HP
+* Date: 17-Sep-2012 
+* Requirement # Request Id :1818
+* Description: To Update the Lead landing page to remove other links
+***********************************************************/
+-->
+   <apex:page standardController="Lead" recordSetvar="leads">
+   
+   <!-- styling to hide mass edit/update functionality from partner users -->
+    <style>
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "add_to_campaign", "aw9sh2hud92")}] {
+display: none;
+}
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "edit_selected_records", "aw9sh2hud92")}] {
+display: none;
+}
+input[name={!IF(CONTAINS($Profile.Name, 'Partner'), "assign_leads", "aw9sh2hud92")}] {
+display: none;
+}
+</style>
+   <script src="/resource/jQuery"></script>
+    <script>
+    var j$ = jQuery.noConflict();
+    var isPartner = '{!$Profile.Name}';
+    var recentlyViewLeadsId = '{!$Label.Partner_Recently_Viewed_Leads_Id}';
+    j$(function(){
+        if(j$("select[name$='fcf']").children('option').length == 1 && j$("select[name$='fcf']").children("option:first").attr('value')==recentlyViewLeadsId){
+            j$(".pbBody").children("table.list").children("tbody").children("tr.dataRow").hide();
+            j$("div.fewerMore").hide();
+        }else{
+             j$('select[name$="fcf"]').children('option').each(function(){
+                 if(j$(this).attr('value')== recentlyViewLeadsId  && j$(this).attr('selected')=='selected' && isPartner.indexOf('Partner')!=-1){
+                     var nextOption;
+                     if(j$(this).prev('option').attr('value') != undefined || j$(this).prev('option').attr('value') != '' || j$(this).prev('option').attr('value') != null){
+                         nextOption = j$(this).prev('option').attr('value');
+                     }else{
+                        nextOption = j$(this).next('option').attr('value');
+                     }     
+                     j$(this).parent('select').val(nextOption).trigger('change');
+                     j$(this).remove();
+                 }
+                 if(j$(this).attr('value')== recentlyViewLeadsId && isPartner.indexOf('Partner')!=-1){
+                     j$(this).remove();
+                 }
+                 
+             });
+         }
+    });
+    </script>
+       <apex:sectionHeader title="{!$ObjectType.Lead.LabelPlural}" subtitle="Home" />
+        <apex:listViews type="Lead" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),True, False)}"/>
+    <apex:enhancedList type="Lead" height="750" rowsPerPage="200" rendered="{!IF(CONTAINS($Profile.Name, 'Partner'),False, True)}"></apex:enhancedList>
+   </apex:page>

@@ -1,0 +1,1330 @@
+<apex:page controller="AthenaUserProfile" showheader="false" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+  <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+  <!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+  <!--[if !IE]><!-->
+  
+  <html lang="en">
+  <!--<![endif]-->
+  <!-- BEGIN HEAD -->
+  <head>
+  <meta charset="utf-8" />
+  <title>User Profile</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta content="" name="description" />
+  <meta content="" name="hp" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/css/bootstrap-responsive.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/font-awesome/css/font-awesome.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.assets_athena, 'assets_athena/icomoon/iconMoon.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-responsive.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.css_athena, 'css_athena/style-default.css')}" />
+  <script type="text/javascript">
+
+      function FindBrowserVersion() {
+          debugger
+          var nVer = navigator.appVersion;
+          var nAgt = navigator.userAgent;
+          var browserName = navigator.appName;
+          var fullVersion = '' + parseFloat(navigator.appVersion);
+          var majorVersion = parseInt(navigator.appVersion, 10);
+          var nameOffset, verOffset, ix;
+          if ((verOffset = nAgt.indexOf("Opera")) != -1) {
+              browserName = "Opera";
+              fullVersion = nAgt.substring(verOffset + 6);
+              if ((verOffset = nAgt.indexOf("Version")) != -1)
+                  fullVersion = nAgt.substring(verOffset + 8);
+          }
+              // In MSIE, the true version is after "MSIE" in userAgent
+          else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
+              browserName = "Microsoft Internet Explorer";
+              fullVersion = nAgt.substring(verOffset + 5);
+          }
+              // In Chrome, the true version is after "Chrome" 
+          else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
+              browserName = "Chrome";
+              fullVersion = nAgt.substring(verOffset + 7);
+          }
+              // In Safari, the true version is after "Safari" or after "Version" 
+          else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
+              browserName = "Safari";
+              fullVersion = nAgt.substring(verOffset + 7);
+              if ((verOffset = nAgt.indexOf("Version")) != -1)
+                  fullVersion = nAgt.substring(verOffset + 8);
+          }
+              // In Firefox, the true version is after "Firefox" 
+          else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
+              browserName = "Firefox";
+              fullVersion = nAgt.substring(verOffset + 8);
+          }
+              // In most other browsers, "name/version" is at the end of userAgent 
+          else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) < (verOffset = nAgt.lastIndexOf('/'))) {
+              browserName = nAgt.substring(nameOffset, verOffset);
+              fullVersion = nAgt.substring(verOffset + 1);
+              if (browserName.toLowerCase() == browserName.toUpperCase()) {
+                  browserName = navigator.appName;
+              }
+          }
+          else {
+              browserName = nAgt;
+              fullVersion = "None";
+          }
+          // trim the fullVersion string at semicolon/space if present
+          if ((ix = fullVersion.indexOf(";")) != -1)
+              fullVersion = fullVersion.substring(0, ix);
+          if ((ix = fullVersion.indexOf(" ")) != -1)
+              fullVersion = fullVersion.substring(0, ix);
+
+          majorVersion = parseInt('' + fullVersion, 10);
+          if (isNaN(majorVersion)) {
+              fullVersion = '' + parseFloat(navigator.appVersion);
+              majorVersion = parseInt(navigator.appVersion, 10);
+          }
+          var BrowserVer = '';
+          if (fullVersion == 'None') {
+              BrowserVer = browserName;
+          }
+          else {
+              BrowserVer = browserName + ' ' + fullVersion;
+          }
+          return BrowserVer;
+      }
+
+      function GetOSName(data) {
+          debugger;
+          if (data.indexOf('Windows 95') != -1) return 'Windows 95';
+
+          else if (data.indexOf('Windows 98') != -1) return 'Windows 98';
+
+          else if (data.indexOf('Windows NT 5.0') != -1 || data.indexOf('Windows 2000') != -1) return 'Windows 2000';
+
+          else if (data.indexOf('Windows NT 5.1') != -1 || data.indexOf('Windows XP') != -1) return 'Windows XP';
+
+          else if (data.indexOf('Windows NT 5.2') != -1) return 'Windows Server 2003';
+
+          else if (data.indexOf('Windows NT 6.0') != -1) return 'Windows Vista';
+
+          else if (data.indexOf('Windows NT 6.1') != -1) return 'Windows 7';
+          else if (data.indexOf('Windows NT 6.2') != -1) return 'Windows 8';
+
+          else if (data.indexOf('Windows NT 4.0') != -1 || data.indexOf('WinNT4.0') != -1 || data.indexOf('WinNT') != -1) return 'Windows NT 4.0';
+
+          else if (data.indexOf('Windows ME') != -1) return 'Windows ME';
+
+          else if (data.indexOf('OpenBSD') != -1) return 'Open BSD';
+
+          else if (data.indexOf('SunOS') != -1) return 'Sun OS';
+
+          else if (data.indexOf('Linux') != -1 || data.indexOf('X11') != -1) return 'Linux';
+
+          else if (data.indexOf('Mac_PowerPC') != -1 || data.indexOf('Macintosh') != -1) return 'Mac OS';
+
+          else if (data.indexOf('QNX') != -1) return 'QNX';
+
+          else if (data.indexOf('BeOS') != -1) return 'BeOS';
+
+          else if (data.indexOf('OS/2') != -1) return 'OS/2';
+          else return navigator.userAgent;
+
+      }
+
+      $(document).ready(function () {
+          var operatingSystem = navigator.appVersion;
+          operatingSystem = operatingSystem.substring(0, operatingSystem.indexOf("\)") + 1);
+          var OperatingSys = GetOSName(operatingSystem);
+          $('[id$=hdnOperatingSystem]').val(OperatingSys);
+
+          $('[id$=hdnBrowser]').val(FindBrowserVersion());
+          $('[id$=hdnDeviceType]').val("Desktop");
+      });
+
+      //Array for Borad Ids
+      var listBoardIds = new Array();
+      var listBoardContributeIds = new Array();
+      var listBoardFollowIds = new Array();
+      var listCommunityIds = new Array();
+      var listCommunityContributeIds = new Array();
+      var listAllBoards = new Array();
+      var listAllCommunity = new Array();
+
+      function SubmitSearchForm(event) {
+          if (event.keyCode == 13) {
+              var txtSearch = document.getElementById('{!$Component.UPForm.searchText}');
+              if (txtSearch.value.trim().length == 0) {
+                  document.getElementById('err_msg').innerHTML = "Enter Value For Search";
+                  document.getElementById('err_msg').style.display = 'block';
+                  event.preventDefault();
+                  event.stopPropagation();
+                  return false;
+              }
+              else {
+                  document.getElementById('err_msg').style.display = 'none';
+                  var button = document.getElementById("{!$Component.UPForm.searchButton}");
+                  button.click();
+              }
+              return true;
+          }
+      }
+
+      function OpenLinkedInLink() {
+          window.open("https://" + document.getElementById("linkedinurl").value, "_blank");
+      }
+      function OpenTwitterLink() {
+          window.open("https://" + document.getElementById("twitterurl").value, "_blank");
+      }
+</script>
+  </head>
+  <!-- END HEAD -->
+  <!-- BEGIN BODY -->
+  <body>
+  
+  <!-- BEGIN HEADER -->
+  <header>
+<input type="hidden" id="hdnHost" value="{!getSfInstance}"/>
+<apex:form id="redirectform">
+<apex:inputhidden id="hdnRedirectUrl" value="{!RedirectUrl}" />
+<apex:commandButton action="{!RedirectToPage}" id="btnRedirectUrl" style="display:none;"/>
+</apex:form>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-fluid"> <a class="HpLogo">
+ <!--<apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/insight_web_logo.png')}" style="width:220px" alt="HP Logo"/></a>    --> 
+          <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/>
+          </a>
+          <div class="nav mtop20">
+            <h1 class="h1fontS">insight</h1>
+            <h3>Information - on your terms</h3>
+          </div>
+          <ul class="nav pull-right top-menu">
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Welcome <span class="username colorBlue">{!LoggedinUserDtls.Name}</span> <span>
+              <apex:image value="{!LoggedinUserDtls.SmallPhotoUrl}" styleClass="userImage" alt="no_username"/>
+              </span> 
+              <!--<b class="caret"></b>--> 
+              </a>
+              <ul class="dropdown-menu extended logout">
+                <apex:OutputPanel rendered="{!!isuser}">
+                  <li><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!LoggedinUserDtls.id}">My Profile</a></li>
+                </apex:OutputPanel>
+                <!--<li style="{!IF((IsLoggedInUser),"display:block","display:none")}}"><a href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!LoggedinUserDtls.id}">Edit Profile</a></li>-->
+                <li><a href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!LoggedinUserDtls.id}">Edit Profile</a></li>
+                <li><a href="https://{!getSfInstance}/secur/logout.jsp">Log Out</a></li>
+              </ul>
+            </li>
+            <!-- END USER LOGIN DROPDOWN -->
+          </ul>
+          <c:SLP_SearchCustomComponent InputString="{!UserDtls.name} Profile Page"/>
+          <div class="alert alert-error topSearchEr" style="display:none;" id="err_msg"> </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-fluid menunavBar"> <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/slp_activity" title="Home"></a> <a class="icon-book topNavIcon"  href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Library"></a>
+          <apex:OutputPanel rendered="{!IsLearningBoardCreator}"> <a class="icon-file-text-alt topNavIconC" href="https://{!getSfInstance}/apex/AthenacreatelearningBoard" title="Create Board"><span class="icon-plus NaviconPlus"></span></a> <a class="icon-group topNavIconCom" href="https://{!getSfInstance}/apex/SLP_createcommunity" title="Create Community"><span class="icon-plus NaviconPlus"></span></a> </apex:OutputPanel>
+          <apex:outputPanel rendered="{!IsUserRoleMappingVisible}"> <a class="topNavRoll topNavIconCom" href="https://{!getSfInstance}/apex/SLP_UserRoleAndExpertiseMapping" title="User Role & Expert Mapping"><span class="NaviconPlus"></span></a> </apex:outputPanel>
+          <!-- <a class="icon-question-sign topNavIcon pull-right" href="https://ea2013.sharepoint.hp.com/teams/esplm/SitePages/Social Learning.aspx" target="_blank" title="Help"></a> --> 
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- END HEADER --> 
+  
+  <!-- BEGIN CONTAINER -->
+  <div id="container" class="row-fluid"> 
+    <!-- BEGIN PAGE -->
+    <div id="main-content"> 
+      <!-- BEGIN PAGE CONTAINER-->
+      <div class="container-fluid"> 
+        <!-- SEARCH BTN -->
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="profile_leftDiv">
+              <apex:image url="{!UserDtls.FullPhotoUrl}" styleClass="pofilimgS" alt="no_profileImage"/>
+            </div>
+            <div class="profile_rightDiv mtop10">
+              <div class="span12 mbot10">
+                <div class="span5">
+                  <h3>{!UserDtls.name}</h3>
+                  
+                  <!--<apex:form >
+                  <apex:OutputPanel >        
+                       <apex:commandbutton value="Edit" style="{!IF((IsLoggedInUser),"display:block","display:none")}" id="btnedit" styleClass="btnAthena btn-primary" title="Click To Edit Your Profile"/>
+                  </apex:OutputPanel>
+                </apex:form>-->
+                  <div style="width:100px; float:left">
+                    <apex:form >
+                      <apex:outputPanel > 
+                        <!--  <a id="btnEditor" style="{!IF((IsLoggedInUser),"display:block","display:none")}" class="btnAthena btn-primary" href="https://{!getSfInstance}/apex/SLP_EditUserProfile?id={!AthenaUserId}" >Edit Profile</a>--> 
+                      </apex:outputPanel>
+                    </apex:form>
+                  </div>
+                  <h4>{!UserDtls.Title}{!IF((UserDtls.Department==null),"",",")}&nbsp;{!UserDtls.Department}</h4>
+                </div>
+                <div class="span7">
+                  <div class="span12">
+                    <div class="span3 pull-right" style="width:20%">
+                      <div class="clearfix">
+                        <div class="badgesRead">{!FollowersCount}</div>
+                        <div class="pull-left"> <span class="icon-mail-reply"></span> <br />
+                          <span>Followers </span> </div>
+                      </div>
+                    </div>
+                    <div class="span3 pull-right">
+                      <div class="clearfix">
+                        <div class="badgesRead">{!PeopleFollowingCount}</div>
+                        <div class="pull-left"> <span class="icon-mail-forward"></span> <br />
+                          <span>Following </span> </div>
+                      </div>
+                    </div>
+                    <div class="span3 pull-right">
+                      <div class="clearfix">
+                        <div class="badgesRead">{!BoardsContributedCount}</div>
+                        <div class="pull-left"> <span class="icon-group"></span> <br />
+                          <span>Boards Contributed</span> </div>
+                      </div>
+                    </div>
+                    <div class="span3 pull-right">
+                      <div class="clearfix">
+                        <div class="badgesRead">{!BoardsCount}</div>
+                        <div class="pull-left"> <span class="icon-edit"></span> <br />
+                          <span>Boards Created</span> </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="{!IF((UserDtls.AboutMe==""),"","hpit_athena_rightDiv clearB")}"> {!UserDtls.AboutMe}</div>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="linkedinurl" value="{!linkedinurl}"/>
+        <input type="hidden" id="twitterurl" value="{!twitterurl}"/>
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="span3">
+              <div class="mbot10 mtop10 followForm clearfix">
+                  <div>
+                <apex:form id="flwForm">
+                  <apex:OutputPanel >
+                    <apex:inputhidden id="hdnOperatingSystem" value="{!OperatingSystem}"/>
+                    <apex:inputhidden id="hdnBrowser" value="{!Browser}"/>
+                    <apex:inputhidden id="hdnDeviceType" value="{!DeviceType}"/>
+                    <apex:inputhidden id="hdnUserName" value="{!UserName}"/>
+                    <apex:commandbutton value="Follow" style="{!IF((IsLoggedInUser),"display:none","display:block")}" action="{!followOwner}" id="btnFollow" styleClass="btnAthena followBtn" rendered="{!!IsFollowOwner}"> </apex:commandbutton>
+                    <apex:commandbutton value="Unfollow" style="{!IF((IsLoggedInUser),"display:none","display:block")}" action="{!unfollowOwner}" id="Commandbutton1" styleClass="btnAthena followBtn" rendered="{!IsFollowOwner}"> </apex:commandbutton>
+                  </apex:OutputPanel>
+                </apex:form>
+                      </div>
+                <!--              <a class="{!IF((IsLoggedInUser),"","btnAthena")}" > {!IF((IsLoggedInUser),"","Message")}</a> --> 
+                <!--              <a class="btnAthena btn-primary" href="mailto:?Subject={!LoggedinUserDtls.Name} Suggests Profile of Your Interest&Body=Hi,%0D%0A{!LoggedinUserDtls.Name} thought that you might be interested in {!profileUser.Name}'s profile!%0D%0A {!profileUser.Name}%0D%0A https://{!getSfInstance}/apex/AthenaUserProfile?id={!AthenaUserId}"><span class="icon-share"></span> Share</a>-->
+                <div class="clearfix floatL mtop5">
+                  <form>
+                      <div class="clearfix">
+                  <a class="btnAthena share_a" id="lrngBoardShare" onClick="OpenProfileShare()" title="Share" > <span class="icon-share"> </span></a>
+                          </div>
+                </form>
+                <apex:outputPanel rendered="{!!IsLoggedInUser}"> <a href="mailto:{!UserDtls.Email}">
+                  <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/MailImg.png')}"  alt="MailImg" width="32" height="20" title="{!UserDtls.Email}"/>
+                  </a> </apex:OutputPanel>
+
+                    </div>
+              </div>
+              <!--Sree Start -->
+              <div id="DivShareModelPopup" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                <apex:form id="formShareHeader">
+                  <div class="modal-header">
+                    <h3>Share</h3>
+                  </div>
+                  <div class="modal-body">
+                    <div class="span5 ml0">
+                      <label>User Email</label>
+                    </div>
+                    <div class="span5"> <span>
+                      <apex:inputText id="txtEmailinputUser" value="{!HeaderShareEmail}" />
+                      </span> </div>
+                    <div class="alert alert-error span4 pull-right mr30" style="display:none" id="EmailValidate"> </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btnAthena EbtnLess" data-dismiss="modal" aria-hidden="true"  onclick="funcClearShareEamil()" >Cancel</button>
+                    <input type="button" class="btnAthena btn-primary btnAthenaPopP"  value="Send"  id="SendEmail"  onclick="ValidateShareEmail(this)"/>
+                    <apex:commandLink Styleclass="btnAthena btn-primary btnAthenaPopP"  style="display:none" action="{!ShareProfile}" value="Send" id="SendSharedEmail">
+                      <apex:param name="q" value="{!AthenaUserId}" assignTo="{!ShareProfileId}"/>
+                    </apex:commandLink>
+                  </div>
+                </apex:form>
+              </div>
+              <!--Sree End -->
+              <apex:OutputPanel rendered="{!IF((linkedinurl==null && twitterurl == null && locationcom == null),'false','true')}">
+                <div class="hpit_athena_rightDiv">
+                  <ul class="sidebar-menu">
+                    <li> <i class="{!IF((locationcom=="null,null,null"),"","icon-location-arrow")}"></i> <span>{!IF((locationcom=="null,null,null"),"",locationcom)}</span> </li>
+                    <li style="{!IF((twitterurl==null),"display:none","display:block")}"> <a href="javascript:void(0);" onClick="OpenTwitterLink();"> <i class="icon-twitter"></i> <span>Twitter</span> </a> </li>
+                    <li style="{!IF((linkedinurl==null),"display:none","display:block")}"> <a  href="javascript:void(0);" target="_blank" onClick="OpenLinkedInLink();"> <i class="icon-linkedin-sign"></i> <span>LinkedIn</span> </a> </li>
+                    <li><i class="icon-star"></i> <span>Average Content Rating {!TotalRating}</span></li>
+                  </ul>
+                </div>
+              </apex:OutputPanel>
+              <!-- <apex:outputpanel rendered="{!IF((IsLoggedInUser),"true","false")}">
+                <div class="hpit_athena_rightDiv">
+                  <apex:form >
+                    <h3>My Notifications</h3>
+                    <span class="p05">Notify Me When:</span>
+                    <hr />
+                    <div>
+                      <apex:inputcheckbox value="{!LBRate}" disabled="true"></apex:inputcheckbox>
+                      Learning Board is Rated<br/>
+                      <apex:inputcheckbox value="{!LBShare}" disabled="true"></apex:inputcheckbox>
+                      Learning Board is shared<br/>
+                      <apex:inputcheckbox value="{!TRate}" disabled="true"></apex:inputcheckbox>
+                      Topic is Rated<br/>
+                      <apex:inputcheckbox value="{!TShare}" disabled="true"></apex:inputcheckbox>
+                      Topic is shared<br/>
+                      <apex:inputcheckbox value="{!UFollow}" disabled="true"></apex:inputcheckbox>
+                      User started following<br/>
+                    </div>
+                  </apex:form>
+                </div>
+              </apex:outputpanel> -->
+              <div class="hpit_athena_rightDiv">
+                <h3>Role</h3>
+                <hr />
+                <div class="roleView" style="word-wrap: break-word;">{!RoleName}</div>
+              </div>
+              <div class="hpit_athena_rightDiv">
+                <h3>Areas of Focus </h3>
+                <hr />
+                <ol class="circles-list">
+                  <apex:repeat value="{!Expert}" var="exp" >
+                    <li class="bgEX" style="word-wrap: break-word;">{!exp.SLP_Secondary_Industry_ID__r.Secondary_Industry_Name__c}
+                      <apex:outputPanel rendered="{!exp.Is_Expert__c}"> <span class="DivEx">Expert</span> </apex:outputPanel>
+                    </li>
+                    <!-- <li class="bgEX">{!exp.SLP_Secondary_Industry_ID__r.Secondary_Industry_Name__c} ({!exp.SLP_Secondary_Industry_ID__r.Industry_Name__c})</li> --> 
+                    <!--<li class="bgEX" >{!exp.Name__c}</li>--> 
+                  </apex:repeat>
+                </ol>
+              </div>
+              <div class="hpit_athena_rightDiv" style="display:none">
+                <h3>Projects(Coming Soon)</h3>
+                <hr />
+                <apex:repeat value="{!project}" var="pro" >
+                  <h4>{!pro.Name__c}</h4>
+                  <h5><span class="icon-calendar"> </span> {!pro.Timeframe__c}</h5>
+                  <p>{!pro.Description__c}</p>
+                </apex:repeat>
+              </div>
+            </div>
+            <div class="span9">
+              <div class="TABclass profileTab">
+                <ul class="nav nav-tabs" id="myTab">
+                  <li class="active"><a data-toggle="tab" href="#8" onclick="return LogTabMetrics('Community');">Communities</a></li>
+                  <li><a data-toggle="tab" href="#1" onclick="return LogTabMetrics('Boards');">Boards </a></li>
+                  <li><a data-toggle="tab" href="#PeopleTab" onclick="return LogTabMetrics('People');">People</a></li>                
+                  <li style="display:none"><a data-toggle="tab" href="#2" onclick="return LogTabMetrics('Activity');">Activity</a></li>
+                  <li style="display:none"><a data-toggle="tab" href="#3" onclick="return LogTabMetrics('Boards Followed');">Board's Followed ({!BoardFollowingCount})</a></li>
+                  <!--<li><a data-toggle="tab" href="#4" onclick="return LogTabMetrics('People Following');">People Following ({!PeopleFollowingCount})</a></li>
+                  <li><a data-toggle="tab" href="#5" onclick="return LogTabMetrics('Followers');">Followers ({!FollowersCount})</a></li>               -->
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                  <div id="1" class="tab-pane fade"> 
+                    <!--<p class="searchResult">Search result (2)</p>-->
+                    <div>
+                      <div class="TABclass profileTab profileTabInner">
+                        <ul class="nav nav-tabs" id="Ul1">
+                          <li class="active"><a data-toggle="tab" href="#allBoards" onclick="return LogTabMetrics('All Learning Boards');">All <span>({!BoardsTotalCount})</span></a></li>
+                          <li><a data-toggle="tab" href="#6" onclick="return LogTabMetrics('Learning Board Created');">Created <span>({!BoardsCount})</span></a></li>
+                          <li><a data-toggle="tab" href="#7" onclick="return LogTabMetrics('Learning Board Contributed');">Contributed <span>({!BoardsContributedCount})</span></a></li>
+                          <li><a data-toggle="tab" href="#boardMember" onclick="return LogTabMetrics('Learning Board Member Of');">Member Of <span>({!LearningBoardsCount})</span></a></li>
+                        </ul>
+                        <div class="tab-content" id="Div1">
+                          <div id="allBoards" class="tab-pane fade active in">
+                            <div>
+                              <apex:repeat value="{!UserMembers}" var="userMmbrs"> 
+                                <script>
+                                    var Id = '{!userMmbrs.Id}';
+                                    var RatingNbr = '{!userMmbrs.AvgRating}';
+                                    listAllBoards.push({ "ID": Id, "RatingNbr": RatingNbr });
+                                </script>
+                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                  <div class="hpit_athena_ca-item-main">
+                                    <div class="hpit_athena_ca-item-firstHalf">
+                                      <div class="{!IF((userMmbrs.IsActive==true),"hpit_athena_ca-item-topBar","hpit_athena_ca-item-topBarInactive")}">
+                                        <div class="hpit_athena_ca-item-topBarDateComStar">
+                                          <apex:OutputText value="{0,date,MMM dd}">
+                                            <apex:param value="{!userMmbrs.LBCrtDate}"/>
+                                          </apex:outputtext>
+                                        </div>
+                                        <div class='ratingDispalyL' id='RateAllBoards_{!userMmbrs.Id}' style="display:none;"></div>
+                                        <div class="hpit_athena_ca-item-topBarChat">
+                                          <div class="hpit_athena_ca-item-topBarChatImg">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                          </div>
+                                          <div class="hpit_athena_ca-item-topBarChatValue">{!userMmbrs.LBNoOfComments}</div>
+                                        </div>
+                                      </div>
+                                      <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/AthenaLearningBoardDtls?id={!userMmbrs.Id}" id="A1"  data-boardLBid = 'RateAllBoards_{!userMmbrs.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                      <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!userMmbrs.Id}','{!userMmbrs.LBName}','/apex/AthenaLearningBoardDtls?id={!userMmbrs.Id}','All Learning Boards Image Click');" id="A1"  data-boardLBid = 'RateAllBoards_{!userMmbrs.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                        <apex:outputPanel rendered="{!!userMmbrs.StaticImage}">
+                                          <apex:image url="{!URLFOR($Action.Attachment.Download, userMmbrs.AttachmentId)}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!userMmbrs.StaticImage}"> <img src='{!userMmbrs.DefaultImageName}'/> </apex:outputPanel>
+                                        </a> </div>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!userMmbrs.Id}"> -->
+                                    <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" onclick="LogMetrics('{!userMmbrs.Id}','{!userMmbrs.LBName}','/apex/AthenaLearningBoardDtls?id={!userMmbrs.Id}','All Learning Boards Tab');">
+                                      <h3>{!userMmbrs.LBName}</h3>
+                                      </a> </div>
+                                    </a>
+                                    <div class="hpit_athena_ca-item-SecondHalf">
+                                      <div class="hpit_athena_ca-item-person cf">
+                                        <div class="hpit_athena_ca-item-personPhoto">
+                                          <apex:image value="{!userMmbrs.LBOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                        </div>
+                                        <a class="a_underNone">
+                                        <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!userMmbrs.LBOwnerID}"> {!userMmbrs.LBOwnerName}</a> </div> -->
+                                        <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!userMmbrs.LBOwnerID}','{!userMmbrs.LBOwnerName}','/apex/AthenaUserProfile?id={!userMmbrs.LBOwnerID}','All Learning Boards Tab');"> {!userMmbrs.LBOwnerName}</a> </div>
+                                        </a>
+                                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((userMmbrs.LBOwnerTitle == null),'',userMmbrs.LBOwnerTitle)} </div>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-PersonPost">
+                                        <p>{!userMmbrs.LBDescription}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </apex:repeat>
+                            </div>
+                          </div>
+                          <div id="boardMember" class="tab-pane fade">
+                            <div>
+                              <apex:repeat value="{!myBoardMembers}" var="userMmbrs"> 
+                                <script>
+                                    var Id = '{!userMmbrs.Id}';
+                                    var RatingNbr = '{!userMmbrs.AvgRating}';
+                                    listAllBoards.push({ "ID": Id, "RatingNbr": RatingNbr });
+                                </script>
+                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                  <div class="hpit_athena_ca-item-main">
+                                    <div class="hpit_athena_ca-item-firstHalf">
+                                      <div class="{!IF((userMmbrs.IsActive==true),"hpit_athena_ca-item-topBar","hpit_athena_ca-item-topBarInactive")}">
+                                        <div class="hpit_athena_ca-item-topBarDateComStar">
+                                          <apex:OutputText value="{0,date,MMM dd}">
+                                            <apex:param value="{!userMmbrs.LBCrtDate}"/>
+                                          </apex:outputtext>
+                                        </div>
+                                        <div class='ratingDispalyL' id='RateAllBoards_{!userMmbrs.Id}' style="display:none;"></div>
+                                        <div class="hpit_athena_ca-item-topBarChat">
+                                          <div class="hpit_athena_ca-item-topBarChatImg">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                          </div>
+                                          <div class="hpit_athena_ca-item-topBarChatValue">{!userMmbrs.LBNoOfComments}</div>
+                                        </div>
+                                      </div>
+                                      <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/AthenaLearningBoardDtls?id={!userMmbrs.Id}" id="A1"  data-boardLBid = 'RateAllBoards_{!userMmbrs.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                      <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!userMmbrs.Id}','{!userMmbrs.LBName}','/apex/AthenaLearningBoardDtls?id={!userMmbrs.Id}','Learning Boards Member Of Image Click');" id="A1"  data-boardLBid = 'RateAllBoards_{!userMmbrs.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                        <apex:outputPanel rendered="{!!userMmbrs.StaticImage}">
+                                          <apex:image url="{!URLFOR($Action.Attachment.Download, userMmbrs.AttachmentId)}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!userMmbrs.StaticImage}"> <img src='{!userMmbrs.DefaultImageName}'/> </apex:outputPanel>
+                                        </a> </div>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!userMmbrs.Id}"> -->
+                                    <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" onclick="LogMetrics('{!userMmbrs.Id}','{!userMmbrs.LBName}','/apex/AthenaLearningBoardDtls?id={!userMmbrs.Id}','Learning Boards Member Of Tab');">
+                                      <h3>{!userMmbrs.LBName}</h3>
+                                      </a> </div>
+                                    </a>
+                                    <div class="hpit_athena_ca-item-SecondHalf">
+                                      <div class="hpit_athena_ca-item-person cf">
+                                        <div class="hpit_athena_ca-item-personPhoto">
+                                          <apex:image value="{!userMmbrs.LBOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                        </div>
+                                        <a class="a_underNone">
+                                        <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!userMmbrs.LBOwnerID}"> {!userMmbrs.LBOwnerName}</a> </div> -->
+                                        <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!userMmbrs.LBOwnerID}','{!userMmbrs.LBOwnerName}','/apex/AthenaUserProfile?id={!userMmbrs.LBOwnerID}','Learning Boards Member Of Tab');"> {!userMmbrs.LBOwnerName}</a> </div>
+                                        </a>
+                                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((userMmbrs.LBOwnerTitle == null),'',userMmbrs.LBOwnerTitle)} </div>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-PersonPost">
+                                        <p>{!userMmbrs.LBDescription}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </apex:repeat>
+                            </div>
+                          </div>
+                          <div id="6" class="tab-pane fade">
+                            <div>
+                              <apex:repeat value="{!UserOwnedLBList}" var="uOwndlb"> 
+                                <script>
+                                    var Id = '{!uOwndlb.Id}';
+                                    var RatingNbr = '{!uOwndlb.AvgRating}';
+                                    listBoardIds.push({ "ID": Id, "RatingNbr": RatingNbr });
+                       </script>
+                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                  <div class="hpit_athena_ca-item-main">
+                                    <div class="hpit_athena_ca-item-firstHalf">
+                                      <div class="{!IF((uOwndlb.IsActive==true),"hpit_athena_ca-item-topBar","hpit_athena_ca-item-topBarInactive")}">
+                                        <div class="hpit_athena_ca-item-topBarDateComStar">
+                                          <apex:OutputText value="{0,date,MMM dd}">
+                                            <apex:param value="{!uOwndlb.LBCrtDate}"/>
+                                          </apex:outputtext>
+                                        </div>
+                                        <div class='ratingDispalyL' id='ratingBoard_{!uOwndlb.Id}' style="display:none;"></div>
+                                        <div class="hpit_athena_ca-item-topBarChat">
+                                          <div class="hpit_athena_ca-item-topBarChatImg">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                          </div>
+                                          <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndlb.LBNoOfComments}</div>
+                                        </div>
+                                      </div>
+                                      <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}" id="boardsCreated_{!uOwndlb.Id}"  data-boardLBid = 'ratingBoard_{!uOwndlb.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                      <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!uOwndlb.Id}','{!uOwndlb.LBName}','/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}','Learning Board Created Image Click');"  data-boardLBid = 'ratingBoard_{!uOwndlb.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                        <apex:outputPanel rendered="{!!uOwndlb.StaticImage}"> 
+                                          <!-- <img src="data:{!uOwndlb.AttContentType};base64,{!uOwndlb.Attbody}" /> -->
+                                          <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndlb.AttachmentId)}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!uOwndlb.StaticImage}"> <img src='{!uOwndlb.DefaultImageName}'/> 
+                                          <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}"/>--> 
+                                        </apex:outputPanel>
+                                        </a> </div>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}"> -->
+                                    <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" onclick="LogMetrics('{!uOwndlb.Id}','{!uOwndlb.LBName}','/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}','Learning Board Created Tab');">
+                                      <h3>{!uOwndlb.LBName}</h3>
+                                      </a> </div>
+                                    </a>
+                                    <div class="hpit_athena_ca-item-SecondHalf">
+                                      <div class="hpit_athena_ca-item-person cf">
+                                        <div class="hpit_athena_ca-item-personPhoto">
+                                          <apex:image value="{!uOwndlb.LBOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                        </div>
+                                        <a class="a_underNone">
+                                        <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!uOwndlb.LBOwnerID}"> {!uOwndlb.LBOwnerName}</a> </div> -->
+                                        <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!uOwndlb.LBOwnerID}','{!uOwndlb.LBOwnerName}','/apex/AthenaUserProfile?id={!uOwndlb.LBOwnerID}','Learning Board Created Tab');"> {!uOwndlb.LBOwnerName}</a> </div>
+                                        </a>
+                                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((uOwndlb.LBOwnerTitle == null),'',uOwndlb.LBOwnerTitle)} </div>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-PersonPost">
+                                        <p>{!uOwndlb.LBDescription}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </apex:repeat>
+                            </div>
+                          </div>
+                          <div id="7" class="tab-pane fade ">
+                            <div>
+                              <apex:repeat value="{!UserContLbList}" var="uOwndlb"> 
+                                <script>
+
+                                    var Id = '{!uOwndlb.Id}';
+                                    var RatingNbr = '{!uOwndlb.AvgRating}';
+                                    listBoardContributeIds.push({ "ID": Id, "RatingNbr": RatingNbr });
+                           </script>
+                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                  <div class="hpit_athena_ca-item-main">
+                                    <div class="hpit_athena_ca-item-firstHalf"> 
+                                      <!--                              <div class="hpit_athena_ca-item-topBar">-->
+                                      <div class="{!IF((uOwndlb.IsActive==true),"hpit_athena_ca-item-topBar","hpit_athena_ca-item-topBarInactive")}">
+                                        <div class="hpit_athena_ca-item-topBarDateComStar">
+                                          <apex:OutputText value="{0,date,MMM dd}">
+                                            <apex:param value="{!uOwndlb.LBCrtDate}"/>
+                                          </apex:outputtext>
+                                        </div>
+                                        <div class='ratingDispalyL' id='ratingBoardContribute_{!uOwndlb.Id}' style="display:none;"></div>
+                                        <div class="hpit_athena_ca-item-topBarChat">
+                                          <div class="hpit_athena_ca-item-topBarChatImg">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                          </div>
+                                          <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndlb.LBNoOfComments}</div>
+                                        </div>
+                                      </div>
+                                      <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}" id="boardsContribute_{!uOwndlb.Id}" data-boardLBid = 'ratingBoardContribute_{!uOwndlb.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                      <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!uOwndlb.Id}','{!uOwndlb.LBName}','/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}','Learning Board Contributed Image Click');" id="boardsContribute_{!uOwndlb.Id}" data-boardLBid = 'ratingBoardContribute_{!uOwndlb.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                        <apex:outputPanel rendered="{!!uOwndlb.StaticImage}"> 
+                                          <!-- <img src="data:{!uOwndlb.AttContentType};base64,{!uOwndlb.Attbody}" /> -->
+                                          <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndlb.AttachmentId)}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!uOwndlb.StaticImage}"> <img src='{!uOwndlb.DefaultImageName}'/> 
+                                          <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}"/>--> 
+                                        </apex:outputPanel>
+                                        </a> </div>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}"> -->
+                                    <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" onclick="LogMetrics('{!uOwndlb.Id}','{!uOwndlb.LBName}','/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}','Learning Board Contributed Tab');">
+                                      <h3>{!uOwndlb.LBName}</h3>
+                                      </a> </div>
+                                    </a>
+                                    <div class="hpit_athena_ca-item-SecondHalf">
+                                      <div class="hpit_athena_ca-item-person cf">
+                                        <div class="hpit_athena_ca-item-personPhoto">
+                                          <apex:image value="{!uOwndlb.LBOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                        </div>
+                                        <a class="a_underNone">
+                                        <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!uOwndlb.LBOwnerID}"> {!uOwndlb.LBOwnerName}</a> </div> -->
+                                        <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!uOwndlb.LBOwnerID}','{!uOwndlb.LBOwnerName}','/apex/AthenaUserProfile?id={!uOwndlb.LBOwnerID}','Learning Board Contributed Tab');"> {!uOwndlb.LBOwnerName}</a> </div>
+                                        </a>
+                                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((uOwndlb.LBOwnerTitle == null),'',uOwndlb.LBOwnerTitle)} </div>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-PersonPost">
+                                        <p>{!uOwndlb.LBDescription}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </apex:repeat>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="2" class="tab-pane fade ">
+                    <div>
+                      <chatter:feed entityid="{!UserDtls.id}" />
+                    </div>
+                  </div>
+                  <div id="8" class="tab-pane fade active in">
+                    <div>
+                      <div class="TABclass profileTab profileTabInner">
+                        <ul class="nav nav-tabs" id="CM1">
+                          <li class="active"><a data-toggle="tab" href="#allCommunity" onclick="return LogTabMetrics('All Communities');">All <span>({!communityViewTotalCount})</span></a></li>
+                          <li><a data-toggle="tab" href="#imran" onclick="return LogTabMetrics('Communities Created');">Created <span>({!communityCount})</span></a></li>
+                          <li><a data-toggle="tab" href="#commContr" onclick="return LogTabMetrics('Communities Contributed');">Contributed <span>({!communityContributeCount})</span></a></li>
+                          <li><a data-toggle="tab" href="#commMember" onclick="return LogTabMetrics('Communities Member Of');">Member Of <span>({!CommunityMemberCount})</span></a></li>
+                        </ul>
+                        <div class="tab-content">
+                          <div id="allCommunity" class="tab-pane fade active in">
+                            <div>
+                              <apex:repeat value="{!communityMembers}" var="userMmbrs"> 
+                                <script>
+                                    var Id = '{!userMmbrs.Id}';
+                                    var RatingNbr = '{!userMmbrs.AvgRating}';
+                                    listAllCommunity.push({ "ID": Id, "RatingNbr": RatingNbr });
+                                        </script>
+                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                  <div class="hpit_athena_ca-item-main">
+                                    <div class="hpit_athena_ca-item-firstHalf"> 
+                                      <!--<div class="hpit_athena_ca-item-topBar">-->
+                                      <div class="{!IF((userMmbrs.IsActive==true),"hpit_athena_ca-item-topBar hpit_athena_ca-item-topBarG","hpit_athena_ca-item-topBarInactive")}">
+                                        <div class="hpit_athena_ca-item-topBarDateComStar">
+                                          <apex:OutputText value="{0,date,MMM dd}">
+                                            <apex:param value="{!userMmbrs.CMCrtDate}"/>
+                                          </apex:outputtext>
+                                          <div class="starred starredY"></div>
+                                        </div>
+                                        <div class='ratingDispalyL' id='Div2' style="display:none;"></div>
+                                        <div class="hpit_athena_ca-item-topBarChat">
+                                          <div class="hpit_athena_ca-item-topBarChatImg">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                          </div>
+                                          <div class="hpit_athena_ca-item-topBarChatValue">{!userMmbrs.CMNoOfComments}</div>
+                                        </div>
+                                      </div>
+                                      <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/SLP_ViewCommunity?id={!userMmbrs.Id}" id="A2"  data-boardLBid = 'RateAllBoards_{!userMmbrs.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                      <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!userMmbrs.Id}','{!userMmbrs.CMName}','/apex/SLP_ViewCommunity?id={!userMmbrs.Id}','All Communities Image Click');" id="A2"  data-boardLBid = 'RateAllBoards_{!userMmbrs.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                        <apex:outputPanel rendered="{!!userMmbrs.StaticImage}">
+                                          <apex:image url="{!URLFOR($Action.Attachment.Download, userMmbrs.AttachmentId)}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!userMmbrs.StaticImage}"> <img src='{!userMmbrs.DefaultImageName}'/> </apex:outputPanel>
+                                        </a> </div>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/SLP_ViewCommunity?id={!userMmbrs.Id}"> -->
+                                    <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" onclick="LogMetrics('{!userMmbrs.Id}','{!userMmbrs.CMName}','/apex/SLP_ViewCommunity?id={!userMmbrs.Id}','All Communities Tab');">
+                                      <h3>{!userMmbrs.CMName}</h3>
+                                      </a> </div>
+                                    </a>
+                                    <div class="hpit_athena_ca-item-SecondHalf">
+                                      <div class="hpit_athena_ca-item-person cf">
+                                        <div class="hpit_athena_ca-item-personPhoto">
+                                          <apex:image value="{!userMmbrs.CMOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                        </div>
+                                        <a class="a_underNone">
+                                        <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!userMmbrs.CMOwnerID}"> {!userMmbrs.CMOwnerName}</a> </div> -->
+                                        <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!userMmbrs.CMOwnerID}','{!userMmbrs.CMOwnerName}','/apex/AthenaUserProfile?id={!userMmbrs.CMOwnerID}','All Communities Tab');"> {!userMmbrs.CMOwnerName}</a> </div>
+                                        </a>
+                                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((userMmbrs.CMOwnerTitle == null),'',userMmbrs.CMOwnerTitle)} </div>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-PersonPost">
+                                        <p>{!userMmbrs.CMDescription}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </apex:repeat>
+                            </div>
+                          </div>
+                          <div id="imran" class="tab-pane fade">
+                            <div>
+                              <apex:repeat value="{!UserOwnedCmList}" var="uOwndcm"> 
+                                <script>
+                                    var Id = '{!uOwndcm.Id}';
+                                    var RatingNbr = '{!uOwndcm.AvgRating}';
+                                    listCommunityIds.push({ "ID": Id, "RatingNbr": RatingNbr });
+                                    console.log('listCommunityIds---------------' + JSON.stringify(listCommunityIds));
+                                    </script>
+                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                  <div class="hpit_athena_ca-item-main">
+                                    <div class="hpit_athena_ca-item-firstHalf"> 
+                                      <!--<div class="hpit_athena_ca-item-topBar">-->
+                                      <div class="{!IF((uOwndcm.IsActive==true),"hpit_athena_ca-item-topBar hpit_athena_ca-item-topBarG","hpit_athena_ca-item-topBarInactive")}">
+                                        <div class="hpit_athena_ca-item-topBarDateComStar">
+                                          <apex:OutputText value="{0,date,MMM dd}">
+                                            <apex:param value="{!uOwndcm.CMCrtDate}"/>
+                                          </apex:outputtext>
+                                          <div class="starred starredY"></div>
+                                        </div>
+                                        <div class='ratingDispalyL' id='ratingBoard_{!uOwndcm.Id}' style="display:none;"></div>
+                                        <div class="hpit_athena_ca-item-topBarChat">
+                                          <div class="hpit_athena_ca-item-topBarChatImg">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                          </div>
+                                          <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndcm.CMNoOfComments}</div>
+                                        </div>
+                                      </div>
+                                      <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/SLP_ViewCommunity?id={!uOwndcm.Id}" id="boardsCreated_{!uOwndcm.Id}"  data-boardLBid = 'ratingBoard_{!uOwndcm.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                        <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!uOwndcm.Id}','{!uOwndcm.CMName}','/apex/SLP_ViewCommunity?id={!uOwndcm.Id}','Communities Created Image Click');" id="boardsCreated_{!uOwndcm.Id}"  data-boardLBid = 'ratingBoard_{!uOwndcm.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                        <apex:outputPanel rendered="{!!uOwndcm.StaticImage}">
+                                          <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndcm.AttachmentId)}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!uOwndcm.StaticImage}"> <img src='{!uOwndcm.DefaultImageName}'/> </apex:outputPanel>
+                                        </a> </div>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/SLP_ViewCommunity?id={!uOwndcm.Id}"> -->
+                                    <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px;width:180px" onclick="LogMetrics('{!uOwndcm.Id}','{!uOwndcm.CMName}','/apex/SLP_ViewCommunity?id={!uOwndcm.Id}','Communities Created Tab');">
+                                      <h3>{!uOwndcm.CMName}</h3>
+                                      </a> </div>
+                                    </a>
+                                    <div class="hpit_athena_ca-item-SecondHalf">
+                                      <div class="hpit_athena_ca-item-person cf">
+                                        <div class="hpit_athena_ca-item-personPhoto">
+                                          <apex:image value="{!uOwndcm.CMOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                        </div>
+                                        <a class="a_underNone">
+                                        <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/SLP_ViewCommunity?id={!uOwndcm.CMOwnerID}"> {!uOwndcm.CMOwnerName}</a> </div> -->
+                                        <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!uOwndcm.CMOwnerID}','{!uOwndcm.CMOwnerName}','/apex/AthenaUserProfile?id={!uOwndcm.CMOwnerID}','Communities Created Tab');"> {!uOwndcm.CMOwnerName}</a> </div>
+                                        </a>
+                                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((uOwndcm.CMOwnerTitle == null),'',uOwndcm.CMOwnerTitle)} </div>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-PersonPost">
+                                        <p>{!uOwndcm.CMDescription}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </apex:repeat>
+                            </div>
+                          </div>
+                          <div id="commMember" class="tab-pane fade">
+                            <div>
+                              <apex:repeat value="{!myCommunityMembers}" var="userMmbrs"> 
+                                <script>
+                                    var Id = '{!userMmbrs.Id}';
+                                    var RatingNbr = '{!userMmbrs.AvgRating}';
+                                    listAllCommunity.push({ "ID": Id, "RatingNbr": RatingNbr });
+                                        </script>
+                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                  <div class="hpit_athena_ca-item-main">
+                                    <div class="hpit_athena_ca-item-firstHalf"> 
+                                      <!--<div class="hpit_athena_ca-item-topBar">-->
+                                      <div class="{!IF((userMmbrs.IsActive==true),"hpit_athena_ca-item-topBar hpit_athena_ca-item-topBarG","hpit_athena_ca-item-topBarInactive")}">
+                                        <div class="hpit_athena_ca-item-topBarDateComStar">
+                                          <apex:OutputText value="{0,date,MMM dd}">
+                                            <apex:param value="{!userMmbrs.CMCrtDate}"/>
+                                          </apex:outputtext>
+                                          <div class="starred starredY"></div>
+                                        </div>
+                                        <div class='ratingDispalyL' id='Div2' style="display:none;"></div>
+                                        <div class="hpit_athena_ca-item-topBarChat">
+                                          <div class="hpit_athena_ca-item-topBarChatImg">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                          </div>
+                                          <div class="hpit_athena_ca-item-topBarChatValue">{!userMmbrs.CMNoOfComments}</div>
+                                        </div>
+                                      </div>
+                                      <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/SLP_ViewCommunity?id={!userMmbrs.Id}" id="A2"  data-boardLBid = 'RateAllBoards_{!userMmbrs.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                      <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!userMmbrs.Id}','{!userMmbrs.CMName}','/apex/SLP_ViewCommunity?id={!userMmbrs.Id}','Communities Member Of Image Click');" id="A2"  data-boardLBid = 'RateAllBoards_{!userMmbrs.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                        <apex:outputPanel rendered="{!!userMmbrs.StaticImage}">
+                                          <apex:image url="{!URLFOR($Action.Attachment.Download, userMmbrs.AttachmentId)}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!userMmbrs.StaticImage}"> <img src='{!userMmbrs.DefaultImageName}'/> </apex:outputPanel>
+                                        </a> </div>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/SLP_ViewCommunity?id={!userMmbrs.Id}"> -->
+                                    <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" onclick="LogMetrics('{!userMmbrs.Id}','{!userMmbrs.CMName}','/apex/SLP_ViewCommunity?id={!userMmbrs.Id}','Communities Member Of Tab');">
+                                      <h3>{!userMmbrs.CMName}</h3>
+                                      </a> </div>
+                                    </a>
+                                    <div class="hpit_athena_ca-item-SecondHalf">
+                                      <div class="hpit_athena_ca-item-person cf">
+                                        <div class="hpit_athena_ca-item-personPhoto">
+                                          <apex:image value="{!userMmbrs.CMOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                        </div>
+                                        <a class="a_underNone">
+                                        <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!userMmbrs.CMOwnerID}"> {!userMmbrs.CMOwnerName}</a> </div> -->
+                                        <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!userMmbrs.CMOwnerID}','{!userMmbrs.CMOwnerName}','/apex/AthenaUserProfile?id={!userMmbrs.CMOwnerID}','Communities Member Of Tab');"> {!userMmbrs.CMOwnerName}</a> </div>
+                                        </a>
+                                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((userMmbrs.CMOwnerTitle == null),'',userMmbrs.CMOwnerTitle)} </div>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-PersonPost">
+                                        <p>{!userMmbrs.CMDescription}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </apex:repeat>
+                            </div>
+                          </div>
+                          <div id="commContr" class="tab-pane fade ">
+                            <div>
+                              <apex:repeat value="{!UserContCmList}" var="uOwndcm"> 
+                                <script>
+                                    var Id = '{!uOwndcm.Id}';
+                                    var RatingNbr = '{!uOwndcm.AvgRating}';
+                                    listCommunityContributeIds.push({ "ID": Id, "RatingNbr": RatingNbr });
+                                            </script>
+                                <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                                  <div class="hpit_athena_ca-item-main">
+                                    <div class="hpit_athena_ca-item-firstHalf"> 
+                                      <!--<div class="hpit_athena_ca-item-topBar">-->
+                                      <div class="{!IF((uOwndcm.IsActive==true),"hpit_athena_ca-item-topBar hpit_athena_ca-item-topBarG","hpit_athena_ca-item-topBarInactive")}">
+                                        <div class="hpit_athena_ca-item-topBarDateComStar">
+                                          <apex:OutputText value="{0,date,MMM dd}">
+                                            <apex:param value="{!uOwndcm.CMCrtDate}"/>
+                                          </apex:outputtext>
+                                          <div class="starred starredY"></div>
+                                        </div>
+                                        <div class='ratingDispalyL' id='ratingBoardContribute_{!uOwndcm.Id}' style="display:none;"></div>
+                                        <div class="hpit_athena_ca-item-topBarChat">
+                                          <div class="hpit_athena_ca-item-topBarChatImg">
+                                            <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                          </div>
+                                          <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndcm.CMNoOfComments}</div>
+                                        </div>
+                                      </div>
+                                      <!-- Commented By Komala <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/SLP_ViewCommunity?id={!uOwndcm.Id}" id="boardsContribute_{!uOwndcm.Id}" data-boardLBid = 'ratingBoardContribute_{!uOwndcm.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'> -->
+                                      <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" onclick="LogMetrics('{!uOwndcm.Id}','{!uOwndcm.CMName}','/apex/SLP_ViewCommunity?id={!uOwndcm.Id}','Communities Contributed Image Click');" id="boardsContribute_{!uOwndcm.Id}" data-boardLBid = 'ratingBoardContribute_{!uOwndcm.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                        <apex:outputPanel rendered="{!!uOwndcm.StaticImage}">
+                                          <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndcm.AttachmentId)}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!uOwndcm.StaticImage}"> <img src='{!uOwndcm.DefaultImageName}'/></apex:outputPanel>
+                                        </a> </div>
+                                    </div>
+                                    <a class="a_underNone">
+                                    <!-- Commented By Komala <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/SLP_ViewCommunity?id={!uOwndcm.Id}"> -->
+                                    <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" onclick="LogMetrics('{!uOwndcm.Id}','{!uOwndcm.CMName}','/apex/SLP_ViewCommunity?id={!uOwndcm.Id}','Communities Contributed Tab');">
+                                      <h3>{!uOwndcm.CMName}</h3>
+                                      </a> </div>
+                                    </a>
+                                    <div class="hpit_athena_ca-item-SecondHalf">
+                                      <div class="hpit_athena_ca-item-person cf">
+                                        <div class="hpit_athena_ca-item-personPhoto">
+                                          <apex:image value="{!uOwndcm.CMOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                        </div>
+                                        <a class="a_underNone">
+                                        <!-- Commented By Komala <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/SLP_ViewCommunity?id={!uOwndcm.CMOwnerID}"> {!uOwndcm.CMOwnerName}</a> </div> -->
+                                        <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" onclick="LogMetrics('{!uOwndcm.CMOwnerID}','{!uOwndcm.CMOwnerName}','/apex/AthenaUserProfile?id={!uOwndcm.CMOwnerID}','Communities Contributed Tab');"> {!uOwndcm.CMOwnerName}</a> </div>
+                                        </a>
+                                        <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((uOwndcm.CMOwnerTitle == null),'',uOwndcm.CMOwnerTitle)} </div>
+                                      </div>
+                                      <div class="hpit_athena_ca-item-PersonPost">
+                                        <p>{!uOwndcm.CMDescription}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </apex:repeat>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="3" class="tab-pane fade"> 
+                    <!--<p class="searchResult">Search result (2)</p>-->
+                    
+                    <div>
+                      <apex:repeat value="{!boardfollowg}" var="uOwndlb"> 
+                        <script>
+                            var Id = '{!uOwndlb.Id}';
+                            var RatingNbr = '{!uOwndlb.AvgRating}';
+                            listBoardFollowIds.push({ "ID": Id, "RatingNbr": RatingNbr });
+                           </script>
+                        <div class="hpit_athena_ca-item hpit_athena_ca-item-2">
+                          <div class="hpit_athena_ca-item-main">
+                            <div class="hpit_athena_ca-item-firstHalf"> 
+                              <!-- <div class="hpit_athena_ca-item-topBar">-->
+                              <div class="{!IF((uOwndlb.IsActive==true),"hpit_athena_ca-item-topBar","hpit_athena_ca-item-topBarInactive")}">
+                                <div class="hpit_athena_ca-item-topBarDateComStar">
+                                  <apex:OutputText value="{0,date,MMM dd}">
+                                    <apex:param value="{!uOwndlb.LBCrtDate}"/>
+                                  </apex:outputtext>
+                                </div>
+                                <div class='ratingDispalyL' id='ratingBoardfollow_{!uOwndlb.Id}' style="display:none;"></div>
+                                <div class="hpit_athena_ca-item-topBarChat">
+                                  <div class="hpit_athena_ca-item-topBarChatImg">
+                                    <apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/hpit_athena_chatIcon.png')}" width="14" height="14" alt="hpit_athena_chatIcon"/>
+                                  </div>
+                                  <div class="hpit_athena_ca-item-topBarChatValue">{!uOwndlb.LBNoOfComments}</div>
+                                </div>
+                              </div>
+                              <div class="ca-icon"> <a class="hpit_athena_ca_itemLink ratingMouseOver" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}" id="boardfollow_{!uOwndlb.Id}"  data-boardLBid = 'ratingBoardfollow_{!uOwndlb.Id}' onmouseover='ShowBoardRating(this)' onmouseleave = 'HideBoardRating(this)'>
+                                <apex:outputPanel rendered="{!!uOwndlb.StaticImage}"> 
+                                  <!-- <img src="data:{!uOwndlb.AttContentType};base64,{!uOwndlb.Attbody}"/> -->
+                                  <apex:image url="{!URLFOR($Action.Attachment.Download, uOwndlb.AttachmentId)}" />
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!uOwndlb.StaticImage}"> <img src='{!uOwndlb.DefaultImageName}'/> 
+                                  <!-- <apex:image url="{!URLFOR($Resource.athena_images, 'images/antena_defaultImgLearning.png')}"/>--> 
+                                </apex:outputPanel>
+                                </a> </div>
+                            </div>
+                            <a class="a_underNone">
+                            <div class="hpit_athena_ca-item-BottomBar"> <a class="hpit_athena_ca_itemA" style="height:180px; width:180px" href="/apex/AthenaLearningBoardDtls?id={!uOwndlb.Id}">
+                              <h3>{!uOwndlb.LBName}</h3>
+                              </a> </div>
+                            </a>
+                            <div class="hpit_athena_ca-item-SecondHalf">
+                              <div class="hpit_athena_ca-item-person cf">
+                                <div class="hpit_athena_ca-item-personPhoto">
+                                  <apex:image value="{!uOwndlb.LBOwnerURL}" width="35" height="35" alt="no_username_small"/>
+                                </div>
+                                <a class="a_underNone">
+                                <div class="hpit_athena_ca-item-personName"> <a class="hpit_athena_ca_itemLink" href="/apex/AthenaUserProfile?id={!uOwndlb.LBOwnerID}"> {!uOwndlb.LBOwnerName}</a> </div>
+                                </a>
+                                <div class='hpit_athena_ca-item-personName hpit_athena_ca-item-personD hpit_athena_ca-item-personNameS'> {!IF((uOwndlb.LBOwnerTitle == null),'',uOwndlb.LBOwnerTitle)} </div>
+                              </div>
+                              <div class="hpit_athena_ca-item-PersonPost">
+                                <p>{!uOwndlb.LBDescription}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </apex:repeat>
+                    </div>
+                  </div>
+                  <!-- <div id="4" class="tab-pane fade"> 
+                    <div>
+                      <div class="row-fluid">
+                        <div class="span12">
+                          <apex:repeat value="{!followg}" var="fol" >
+                            <div class="span4 PFspace">
+                              <div class="span2 PFimg">
+                                <apex:image Url="{!fol.SmallPhotoUrl}" />
+                              </div>
+                              <div class="span9"> 
+                                <li class="mt2"><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!fol.id}">{!fol.Name}</a></li>
+                                <li>{!IF((fol.title == null || fol.title == 'null'),'',fol.title)}</li>
+                              </div>
+                            </div>
+                          </apex:repeat>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="5" class="tab-pane fade"> 
+                    <div>
+                      <div class="row-fluid">
+                        <div class="span12">
+                          <apex:repeat value="{!Followers}" var="fol" >
+                            <div class="span4 PFspace">
+                              <div class="span2 PFimg">
+                                <apex:image Url="{!fol.SmallPhotoUrl}" />
+                              </div>
+                              <div class="span9"> 
+                                <li class="mt2"><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!fol.id}">{!fol.Name}</a></li>
+                                <li>{!IF((fol.title == null),'',fol.title)}</li>
+                              </div>
+                            </div>
+                          </apex:repeat>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>      
+                    
+                 --> 
+                  
+                  <!--START PEOPLE-->
+                  <div id="PeopleTab" class="tab-pane fade">
+                    <div>
+                      <div class="TABclass profileTab profileTabInner">
+                        <ul class="nav nav-tabs" id="Ul2">
+                          <li><a data-toggle="tab" href="#PeopleFollowingTab" onclick="return LogTabMetrics('People Following');">People Following ({!PeopleFollowingCount})</a></li>
+                          <li><a data-toggle="tab" href="#followersTab" onclick="return LogTabMetrics('People Followers');">Followers ({!FollowersCount})</a></li>
+                        </ul>
+                        <div class="tab-content">
+                          <div id="PeopleFollowingTab" class="tab-pane fade active in">
+                            <div>
+                              <div class="row-fluid">
+                                <div class="span12">
+                                  <apex:repeat value="{!followg}" var="fol" >
+                                    <div class="span4 PFspace">
+                                      <div class="span2 PFimg">
+                                        <apex:image Url="{!fol.SmallPhotoUrl}" />
+                                      </div>
+                                      <div class="span9">
+                                        <!-- Commented By Komala <li class="mt2"><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!fol.id}">{!fol.Name}</a></li> -->
+                                        <li class="mt2"><a onclick="LogMetrics('{!fol.id}','{!fol.Name}','/apex/AthenaUserProfile?id={!fol.id}','People Following Tab');">{!fol.Name}</a></li>
+                                        <li>{!IF((fol.title == null || fol.title == 'null'),'',fol.title)}</li>
+                                      </div>
+                                    </div>
+                                  </apex:repeat>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div id="followersTab" class="tab-pane fade">
+                            <div>
+                              <div class="row-fluid">
+                                <div class="span12">
+                                  <apex:repeat value="{!Followers}" var="fol" >
+                                    <div class="span4 PFspace">
+                                      <div class="span2 PFimg">
+                                        <apex:image Url="{!fol.SmallPhotoUrl}" />
+                                      </div>
+                                      <div class="span9">
+                                        <!-- Commented By Komala <li class="mt2"><a href="https://{!getSfInstance}/apex/AthenaUserProfile?id={!fol.id}">{!fol.Name}</a></li> -->
+                                        <li class="mt2"><a onclick="LogMetrics('{!fol.id}','{!fol.Name}','/apex/AthenaUserProfile?id={!fol.id}','People Followers Tab');">{!fol.Name}</a></li>
+                                        <li>{!IF((fol.title == null),'',fol.title)}</li>
+                                      </div>
+                                    </div>
+                                  </apex:repeat>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!--END PEOPLE--> 
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END PAGE CONTENT--> 
+      </div>
+      <!-- END PAGE CONTAINER--> 
+    </div>
+    <!-- END PAGE --> 
+    
+  </div>
+  <!-- END CONTAINER --> 
+  
+  <!-- BEGIN FOOTER -->
+  <div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+  <!-- END FOOTER --> 
+  
+  <!-- BEGIN JAVASCRIPTS --> 
+  <!-- Load javascripts at bottom, this will reduce page load time
+         -->
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/bootstrap/js/bootstrap.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/typeahead.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.assets_athena, 'assets_athena/raty/ratyViewJs.js')}"/>
+  <!-- ie8 fixes --> 
+  <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]--> 
+  
+  <!--common script for all pages-->
+  <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+  
+  <!-- END JAVASCRIPTS --> 
+  <script>
+      $(document).ready(function () {
+          $('input.typeahead-devs').typeahead({
+              name: 'accounts',
+              local: ['']
+          });
+
+          $('#publishersharebutton').val('Post');
+
+          // Displaying Board Result's Rating
+          for (var i = 0; i < listBoardIds.length; i++) {
+
+              $('#ratingBoard_' + listBoardIds[i].ID).raty({
+                  cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                  cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                  starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                  starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                  starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                  readOnly: true,
+                  score: listBoardIds[i].RatingNbr,
+
+              });
+          }
+
+          for (var i = 0; i < listBoardContributeIds.length; i++) {
+
+              $('#ratingBoardContribute_' + listBoardContributeIds[i].ID).raty({
+                  cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                  cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                  starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                  starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                  starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                  readOnly: true,
+                  score: listBoardContributeIds[i].RatingNbr,
+
+              });
+          }
+
+          for (var i = 0; i < listBoardFollowIds.length; i++) {
+
+              $('#ratingBoardfollow_' + listBoardFollowIds[i].ID).raty({
+                  cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                  cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                  starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                  starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                  starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                  readOnly: true,
+                  score: listBoardFollowIds[i].RatingNbr,
+
+              });
+          }
+
+          for (var i = 0; i < listAllBoards.length; i++) {
+
+              $('#RateAllBoards_' + listAllBoards[i].ID).raty({
+                  cancelOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-off.png')}",
+                  cancelOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/cancel-on.png')}",
+                  starHalf: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-half.png')}",
+                  starOff: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-off.png')}",
+                  starOn: "{!URLFOR($Resource.assets_athena, 'assets_athena/raty/img/star-on.png')}",
+                  readOnly: true,
+                  score: listAllBoards[i].RatingNbr,
+
+              });
+          }
+
+      })
+
+      document.getElementById('publisherDropdown').style.display = 'none';
+      document.getElementById('publisherAttachRypplePost').style.display = 'none';
+
+
+
+      // document.getElementById('publishersharebutton').value = 'Post';
+
+      //$('[id$=publishersharebutton]').val('Post');
+
+      // function updateInput(Post) {
+      //    document.getElementById("publishersharebutton").value = Post;
+      //    onchange = "updateInput(this.value)"
+      // }
+
+
+
+      //$('#publishersharebutton').val("Post")
+      //document.getElementById('topicContainer').style.display = 'none'; By Komala
+
+      //Sree start        
+      function funcClearShareEamil() {
+          document.getElementById('{!$Component.formShareHeader.txtEmailinputUser}').value = "";
+          document.getElementById('{!$Component.formTopic.txtInputEmailTopic}').value = "";
+      }
+      function OpenProfileShare() {
+          $('#DivShareModelPopup').modal('show');
+      }
+      //Sree End
+
+      function ShowBoardRating(data) {
+
+          var BoardID = $(data).attr('data-boardLBid');
+
+          //$('#' + data.id).css("cursor", "default");
+
+          $('#' + BoardID).show();
+      }
+
+      function HideBoardRating(data) {
+          var BoardID = $(data).attr('data-boardLBid');
+
+          $('#' + BoardID).hide();
+      }
+
+      function ValidateShareEmail(data) {
+
+          $('#EmailValidate').empty();
+          var RegularExpression = new RegExp(/^[0-9A-Za-z\.\-\_]*[@][Hh][Pp][.][Cc][Oo][Mm]$/);
+          var userEmailId = $('[id$=txtEmailinputUser]').val();
+          if (userEmailId.search(RegularExpression) == -1) {
+              var ErrorMessage = "Please enter User Email in the format - john.doe@hp.com";
+              $('#EmailValidate').append(ErrorMessage);
+              $('#EmailValidate').append('<br/>');
+              $('#EmailValidate').show();
+          }
+          else {
+              $('#EmailValidate').hide();
+              $('[id$=SendSharedEmail]').click();
+          }
+      }
+
+      function LogMetrics(boardId, boardName, link, tabSection) {
+          debugger;
+          var operatingSystem = navigator.appVersion;
+          operatingSystem = operatingSystem.substring(0, operatingSystem.indexOf("\)") + 1);
+          var browserVersion = FindBrowserVersion();
+          var url = $('#hdnHost').val() + link;
+          Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.AthenaUserProfile.LogMetrics}',
+                          boardId,
+                          boardName,
+                          url,
+                          tabSection,
+                          GetOSName(operatingSystem),
+                          browserVersion,
+                          'Desktop',
+                          DoNothingWithResult
+                      );
+      }
+
+      function DoNothingWithResult(result, event) {
+          debugger;
+          $('[id$=hdnRedirectUrl]').val(result);
+          $('[id$=btnRedirectUrl]').click();
+      }
+
+      function LogTabMetrics(tabName) {
+          var operatingSystem = navigator.appVersion;
+          operatingSystem = operatingSystem.substring(0, operatingSystem.indexOf("\)") + 1);
+          var browserVersion = FindBrowserVersion();
+          Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.AthenaUserProfile.LogTabMetrics}',
+                    tabName,
+                    GetOSName(operatingSystem),
+                    browserVersion,
+                    'Desktop',
+                    DoNothing
+                );
+      }
+
+      function DoNothingWithIdolSearchResult(result, event) {
+          debugger;
+
+      }
+
+      function DoNothing() {
+          //return true;
+          return false;
+      }
+
+    </script>
+  </body>
+  <!-- END BODY -->
+  </html>
+</apex:page>

@@ -1,0 +1,58 @@
+<!-- 
+/**********************************************************
+* Page Name: PartnerCollabContactRolesPage
+* Author: Accenture
+* Date: 27-JULY-2012
+* Requirement # Request Id :
+* Description: Display list of opportunities assigned to partner on the partner portal home page
+***********************************************************/
+-->
+
+<!--
+/********************************
+* Author: Accenture
+* Modified: 09-AUG-2012
+* Update: Set commandlink for Contact, Account and email which the user can click to view more details
+* CR#: CR-0124
+*********************************/
+ -->
+
+<apex:page standardcontroller="Opportunity" extensions="ContactRoleRelatedListController">
+    <apex:form >
+    <apex:pageBlock title="">
+    <apex:pageBlockTable value="{!list_cont}" var="con">
+    
+    <apex:column >
+        <apex:facet name="header">{!$Label.Part_collab_Contact_Name}</apex:facet>
+        <apex:commandLink title="{!con.Contact.Name}" value="{!con.Contact.Name}" onclick="window.parent.location.href='/{!con.ContactId}'"></apex:commandLink>  
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.Part_collab_Account_Name}</apex:facet>
+        <apex:commandLink title="{!con.Contact.Account.Name}" value="{!con.Contact.Account.Name}" onclick="window.parent.location.href='/{!con.Contact.AccountId}'"></apex:commandLink>  
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.Part_collab_Email}</apex:facet>
+        <a href="mailto:{!con.Contact.Email}">{!con.Contact.Email}</a>
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.Part_collab_Phone}</apex:facet>
+        <apex:outputText value="{!con.Contact.Phone}"/>
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.Part_collab_Role}</apex:facet>
+        <apex:outputText value="{!con.Role}"/>
+    </apex:column>
+    
+    <apex:column >
+    <apex:facet name="header">{!$Label.Part_collab_Primary}</apex:facet>
+        <apex:inputCheckbox value="{!con.IsPrimary}" disabled="true"/>
+    </apex:column>
+    
+    </apex:pageBlockTable> 
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

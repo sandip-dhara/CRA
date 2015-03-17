@@ -1,0 +1,472 @@
+<apex:page standardController="Apttus__APTS_Agreement__c"
+    recordSetVar="Apttus__APTS_Agreements__c" title="Agreements Home"
+    extensions="AptsAgmtHomeController" wizard="false" sidebar="true"
+    tabStyle="Apttus__APTS_Agreement__c" readOnly="false" cache="false">
+    <style type="text/css">
+td {
+    vertical-align: top;  
+    text-align: left;
+}
+
+.buttons {
+    background-color: 0000FF; 
+    background-image: none;
+}
+
+
+.listView {
+    font-size: 9pt
+}
+</style>
+
+
+    <script type="text/javascript">          
+        function activeEnter(e)
+        {               
+            if(window.event)
+            {                    
+                key = window.event.keyCode;     //IE               
+            } 
+            else
+            {                    
+                key = e.which;     //firefox               
+            }               
+            if(key == 13) 
+            {                    
+                //var ele=document.getElementById('page:crit:gobutton');                                                             
+                //ele.click(); 
+                refreshSearchResult();                    
+                return false;               
+            }
+            else
+            {                    
+                return true;              
+            }          
+        }     
+    </script>
+    
+    <apex:outputpanel id="idMainPanel">
+        <apex:outputpanel id="idSearchPanel">
+            <apex:form >
+                <apex:pageMessages />
+                <apex:pageBlock id="idSearchTitle">
+                    <apex:outputPanel layout="inline"
+                        style="text-align: right; width: 100%;">
+                        <table width="100%">
+                            <tr>                                  
+                                <td style="text-align: left; vertical-align: middle;">
+                                    <b><apex:actionStatus id="processstatus" startStyle="font-style:italic;" startText="Processing request..." /></b>
+                                </td>   
+                                <td style="text-align: right; vertical-align: middle;">
+                                    <apex:outputPanel id="ShowRecentPanel" rendered="{!(!showRecentResult)}">
+                                        <apex:commandLink value="Show Recent" rerender="idMainPanel"
+                                            action="{!doShowRecent}" rendered="{!(!showRecentResult)}" />
+                                            &nbsp;&nbsp;
+                                     </apex:outputPanel>       
+                                </td>
+                            </tr>
+                        </table>    
+                    </apex:outputPanel>
+                    
+                    <apex:pageBlockSection columns="1" id="idSearchCriteria">
+                        <apex:panelGroup >
+                           <apex:outputLabel for="idDocSrchCriteria" value="Full Text Search: " />
+                            &nbsp;
+                            <apex:inputText id="idDocSrchCriteria" value="{!docTxtSrchCriteria}" />
+                            &nbsp;&nbsp;
+                            <apex:outputLabel for="idAgmtSrchCriteria" value="Search Agreements: " />
+                            &nbsp;
+                            <apex:inputText id="idAgmtSrchCriteria" value="{!agmtTxtSrchCriteria}" />
+                            &nbsp;
+                            <apex:commandButton value="Search" action="{!doSearch}"
+                                id="submitButtonId" reRender="idMainPanel" status="processstatus" />
+                            &nbsp;
+                            <apex:commandButton value="Clear" action="{!doClearSearchCriteria}"
+                                reRender="idSearchPanelFields,idSearchCriteria"
+                                status="processstatus"  />
+                        </apex:panelGroup>
+                    </apex:pageBlockSection>
+                    <br />
+                    <apex:pageBlockSection columns="1">
+                    <apex:outputPanel id="idSearchPanel">
+                        <apex:commandLink value="Show Agreement Fields"
+                            rerender="idSearchPanel,idMainPanel" action="{!doShowFilters}"
+                            rendered="{!NOT(showFilters)}" />
+                        <apex:commandLink value="Hide Agreement Fields"
+                            rerender="idSearchPanel,idMainPanel" action="{!doHideFilters}"
+                            rendered="{!showFilters}" />
+                        
+                        
+                        <apex:outputpanel id="idSearchPanelFields">
+                            <apex:pageBlockSection columns="3" rendered="{!showFilters}">
+                                <apex:repeat value="{!cwSearchFieldsList}" var="cwEl">
+                                    <apex:pageBlockSectionItem labelStyle="font-weight:bold;width: 12%; max-width: 12%; font-size: 8pt"
+                                        dataStyle="text-align:left; width: 22%; max-width: 22%; font-size: 8pt">
+                                        <apex:outputPanel style="font-weight:bold;font-size: 8pt">
+                                            <apex:outputLabel value="{!cwEl.fieldLabel}" for="txtFields" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel >
+                                            <apex:inputField value="{!agreementFromDate[cwEl.fieldName]}"
+                                                rendered="{!NOT(OR(cwEl.isDate,cwEl.isReference,cwEl.isBoolean))}" />
+
+                                            <apex:outputPanel rendered="{!cwEl.isDate}">
+                                                <apex:inputField value="{!agreementFromDate[cwEl.fieldName]}" id="fDate" />
+                                                <apex:outputText value=" to " />
+                                                <apex:inputField value="{!agreementToDate[cwEl.fieldName]}"
+                                                    id="tDate" />
+                                            </apex:outputPanel>
+
+                                            <apex:inputText value="{!cwEl.fieldValueInput}"
+                                                id="tReference" rendered="{!cwEl.isReference}" />
+                                                
+                                            <apex:outputPanel rendered="{!cwEl.isBoolean}">
+                                                <apex:selectList id="chooseYesNo" value="{!cwEl.fieldValueInput}" size="1">
+                                                    <apex:selectOption itemValue="NONE" itemLabel="Select One"/>
+                                                    <apex:selectOption itemValue="True" itemLabel="True"/>
+                                                    <apex:selectOption itemValue="False" itemLabel="False"/>
+                                                </apex:selectList> 
+                                            </apex:outputPanel>
+
+                                        </apex:outputPanel>
+                                    </apex:pageBlockSectionItem>
+                                </apex:repeat>
+                                
+                            </apex:pageBlockSection>
+                        </apex:outputpanel>
+                        
+                        <apex:outputPanel id="idSelectionPanel" rendered="{!showFilters}">
+
+                            <apex:commandLink value="Show Add/Remove Search Parameters"
+                                rerender="idSearchPanel" action="{!doshowHideSelectionFilter}"
+                                rendered="{!NOT(showSelectionFilter)}" immediate="true" status="processstatus2"/>
+                            <apex:commandLink value="Hide Add/Remove Search Parameters"
+                                rerender="idSearchPanel" action="{!doshowHideSelectionFilter}"
+                                rendered="{!showSelectionFilter}" immediate="true" status="processstatus2"/>
+                            
+                            &nbsp;
+                            <b><apex:actionStatus id="processstatus2" startStyle="font-style:italic;" startText="Processing request..." /></b>
+                        
+                            <apex:pageBlockSection columns="2"
+                                rendered="{!showSelectionFilter}">
+                                <apex:pageBlockSection title="Search Fields" columns="1">
+                                    <apex:panelGrid columns="3" id="SearchFields">
+                                        <apex:outputText value="Available Fields"
+                                            style="font-style:bold" />
+                                        <apex:outputText />
+                                        <apex:outputText value="Selected Fields"
+                                            style="font-style:bold" />
+
+                                        <apex:selectList id="sel1" value="{!leftSelectedSearchFields}"
+                                            multiselect="true" style="width:200px" size="8">
+                                            <apex:selectOptions value="{!unSelectedSearchValues}" />
+                                        </apex:selectList>
+                                        <!-- The Left and Right Buttons -->
+                                        <apex:panelGroup layout="block"
+                                            style="text-align: center; padding:10px;">
+                            Add<br />
+                                            <apex:image value="/s.gif" styleClass="rightArrowIcon"
+                                                title="Select">
+                                                <apex:actionSupport event="onclick"
+                                                    action="{!selectSearchClick}" status="processstatus2"
+                                                    reRender="SearchFields,idSearchPanelFields" />
+                                            </apex:image>
+                                            <br />
+                                            <apex:image value="/s.gif" styleClass="leftArrowIcon"
+                                                title="Unselect">
+                                                <apex:actionSupport event="onclick" status="processstatus2"
+                                                    action="{!unSelectSearchClick}"
+                                                    reRender="SearchFields,idSearchPanelFields" />
+                                            </apex:image>
+                                            <br />
+                            Remove<br />
+                                        </apex:panelGroup>
+                                        <apex:selectList id="sel2"
+                                            value="{!rightSelectedSearchFields}" multiselect="true"
+                                            style="width:200px" size="8">
+                                            <apex:selectOptions value="{!selectedSearchValues}" />
+                                        </apex:selectList>
+                                    </apex:panelGrid>
+                                </apex:pageBlockSection>
+                            </apex:pageBlockSection>
+
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:form>
+        </apex:outputpanel>
+
+        <apex:outputpanel id="RecentPanel" rendered="{!showRecentResult}">
+            <apex:outputpanel >
+                <apex:form >
+                    <apex:outputLabel >
+                        <!-- 
+                <b>{!$Label.View}: </b>
+                 -->
+                        <b>View: </b>
+                    </apex:outputLabel>
+                    <apex:selectList styleClass="listView" value="{!filterid}" size="1">
+                        <apex:selectOptions value="{!listviewoptions}" />
+                    </apex:selectList>
+                    <apex:commandButton value="Go" action="{!list}" />
+                </apex:form>
+                <apex:form >
+                    <p></p>
+                </apex:form>
+
+                <apex:pageBlock >
+
+                    <apex:facet name="header">
+                        <apex:form >
+                            <apex:panelGrid styleClass="list"
+                                columnClasses="pbTitle,pbButton,pbHelp" columns="3" border="0"
+                                cellpadding="0" cellspacing="0">
+                                <apex:outputLabel >
+                                    <h3>Recent Agreements</h3>
+                                </apex:outputLabel>
+                                <!-- 
+                                <apex:commandButton value="New Agreement" action="{!newRecord}"
+                                     id="NewAgreement" />
+                                      -->
+                                <apex:selectList id="recent" size="1">
+                                    <apex:actionSupport event="onchange" action="{!changeRt}"
+                                        reRender="recentmodify"></apex:actionSupport>
+                                    <apex:selectOption itemLabel="Recently Created" itemValue="cre"></apex:selectOption>
+                                    <apex:selectOption itemLabel="Recently Modified"
+                                        itemValue="mod"></apex:selectOption>
+                                </apex:selectList>
+                            </apex:panelGrid>
+                        </apex:form>
+                    </apex:facet>
+
+                    <!-- main record type data table -->
+                    <apex:actionStatus >
+                        <apex:facet name="start">
+                            <h1>Requesting...</h1>
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <!--bgcolor="#F3F3EC -->
+
+                            <apex:pageBlockTable id="recentmodify"
+                                value="{!RecentAgreementsList}" var="agmt" rules="rows"
+                                styleClass="list" rowClasses="dataRow"
+                                onRowMouseOver="hiOn(this);" onRowMouseOut="hiOff(this);">
+                                <apex:column headerValue="Agreement Number">
+                                    <a href="/{!agmt.Id}" id="{!agmt.Id}"
+                                        onblur="LookupHoverDetail.getHover('{!agmt.Id}').hide();"
+                                        onfocus="LookupHoverDetail.getHover('{!agmt.Id}', '/{!agmt.Id}/m?retURL=%2F{!agmt.Id}&isAjaxRequest=1').show();"
+                                        onmouseout="LookupHoverDetail.getHover('{!agmt.Id}').hide();"
+                                        onmouseover="LookupHoverDetail.getHover('{!agmt.Id}', '/{!agmt.Id}/m?retURL=%2F{!agmt.Id}&isAjaxRequest=1').show();">{!agmt.Apttus__FF_Agreement_Number__c}
+                                    </a>
+                                </apex:column>
+                                <apex:column headerValue="Name">
+                                    <a href="/{!agmt.Id}" id="{!agmt.Id}"> {!agmt.Name} </a>
+                                </apex:column>
+
+                                <apex:repeat var="f" value="{!searchResultFieldsList}">
+                                    <apex:column value="{!agmt[f]}" />
+                                </apex:repeat>
+                            </apex:pageBlockTable>
+
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlock>
+            </apex:outputpanel>
+        </apex:outputpanel>
+
+        <apex:form id="idHome">
+
+            <apex:outputPanel id="idResultsSection"
+                rendered="{!(!showRecentResult)}">
+                <apex:pageBlock >
+                    <apex:pageBlockSection columns="1">
+                    <apex:outputPanel id="columnSelectionPanel">
+                        <apex:commandLink value="Show Column Selection"
+                            rerender="columnSelectionPanel"
+                            action="{!doshowHideSelectionColumns}"
+                            rendered="{!NOT(showSelectionColumns)}"  status="processstatus3"/>
+                        <apex:commandLink value="Hide Column Selection"
+                            rerender="columnSelectionPanel"
+                            action="{!doshowHideSelectionColumns}"
+                            rendered="{!showSelectionColumns}"  status="processstatus3"/>
+
+                            &nbsp;
+                            <b><apex:actionStatus id="processstatus3" startStyle="font-style:italic;" startText="Processing request..." /></b>
+                            
+                        <apex:pageBlockSection columns="2"
+                            rendered="{!showSelectionColumns}">
+                            <apex:pageBlockSection title="My Columns" columns="1">
+                                <apex:panelGrid columns="4" id="ResultFields">
+                                    <apex:outputText value="Available Fields"
+                                        style="font-style:bold" />
+                                    <apex:outputText />
+                                    <apex:outputText value="Selected Fields"
+                                        style="font-style:bold" />
+                                    <apex:outputText />
+                                    <apex:selectList id="sel1" value="{!leftSelectedResultFields}"
+                                        multiselect="true" style="width:200px" size="8">
+                                        <apex:selectOptions value="{!unSelectedResultValues}" />
+                                    </apex:selectList>
+
+                                    <!-- The Left and Right Buttons -->
+                                    <apex:panelGroup layout="block"
+                                        style="text-align: center; padding:10px;">
+                                Add<br />
+                                        <apex:image value="/s.gif" styleClass="rightArrowIcon"
+                                            title="Select">
+                                            <apex:actionSupport event="onclick"
+                                                action="{!selectResultClick}" status="processstatus3"
+                                                reRender="ResultFields,idResultsSection" />
+                                        </apex:image>
+                                        <br />
+                                        <apex:image value="/s.gif" styleClass="leftArrowIcon"
+                                            title="Unselect">
+                                            <apex:actionSupport event="onclick"
+                                                action="{!unSelectResultClick}" status="processstatus3"
+                                                reRender="ResultFields,idResultsSection" />
+                                        </apex:image>
+                                        <br />
+                                Remove<br />
+                                    </apex:panelGroup>
+
+                                    <apex:selectList id="sel2" value="{!rightSelectedResultFields}"
+                                        multiselect="true" style="width:200px" size="8">
+                                        <apex:selectOptions value="{!selectedResultValues}" />
+                                    </apex:selectList>
+
+                                </apex:panelGrid>
+                            </apex:pageBlockSection>
+                        </apex:pageBlockSection>
+                    </apex:outputPanel>
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageBlockSection columns="1" id="idResultsSection" title="Search Results">                    
+                        <apex:outputPanel layout="inline"
+                            style="text-align: right; width: 100%;" rendered="{!hasResults}">
+                            <table width="100%">
+                                <tr>
+
+                                    <td style="text-align: left; vertical-align: middle;">
+                                            
+                                        <apex:commandButton value="Export" onClick="openExportWindow()"
+                                            onkeypress="return activeEnter(event)" id="expButton"
+                                            style="width:30" rendered="{!hasResults}" />
+                
+                                        <script>
+                                            function openExportWindow()
+                                            {
+                                                
+                                                //window.open("{!$Page.ApttusExportSearch}?searchQuery={!searchQuery}&resultFields={!resultFieldsString}&reqDocMap={!expReqDocMapStr}");
+                                                window.open("{!$Page.ApttusExportSearch}?searchStringExp={!agmtTxtSrchCriteria}&resultFieldsString={!resultFieldsString}&advSearchWhereClauseExp={!advSearchWhereClauseExport}&queryFieldsStrExp={!queryFieldsStrExp}");
+                                                
+                                            }
+                                            </script>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <b><apex:actionStatus id="processstatus4" startStyle="font-style:italic;" startText="Processing request..." /></b>
+                                    </td>   
+                                    
+                                    
+                                    <!-- 
+                                    <td style="text-align: right; vertical-align: middle;"><apex:outputText value="{!pageStartIndex}-{!pageEndIndex} out of {!totalRowCount}" />
+                                        &nbsp; <apex:outputPanel rendered="{!NOT(hasPreviousPage)}">&lt;</apex:outputPanel>
+                                        <apex:commandLink action="{!previousPage}" status="processstatus4"
+                                            rendered="{!hasPreviousPage}" reRender="idResultsSection">&lt;Previous</apex:commandLink>
+                                        <span> | </span> <apex:outputPanel layout="inline"
+                                            style="text-align: right; width: 100%;">
+                                            <apex:outputText value="Page " />
+                                            <apex:inputText value="{!currentPageNumber}"
+                                                style="width:20px">
+                                                <apex:actionSupport event="onchange" status="processstatus4"
+                                                    action="{!loadCurrentPage}" rerender="idResultsSection" />
+                                            </apex:inputText>
+                                            <apex:outputText value=" out of {!totalPages}" />
+                                        </apex:outputPanel> <span> | </span> <apex:outputPanel rendered="{!NOT(hasNextPage)}">&gt;</apex:outputPanel> 
+                                        <apex:commandLink action="{!nextPage}" rendered="{!hasNextPage}" status="processstatus4"
+                                            reRender="idResultsSection">Next&gt;</apex:commandLink>
+                                      </td>
+                                    -->
+                                    <!-- 
+                                    <td style="text-align: right; vertical-align: middle;"><apex:outputText value="{!pageStartIndex}-{!pageEndIndex} out of {!totalRowCount}" />
+                                        &nbsp; <apex:outputPanel rendered="{!NOT(hasPreviousPage)}">&lt;</apex:outputPanel>
+                                        <apex:commandButton action="{!firstPage}" title="firstPage" value="<<First Page" 
+                                            disabled="{!(!hasPreviousPage)}" reRender="myButtons,idResultsSection" status="processstatus4"/>
+                                        <apex:commandButton action="{!previousPage}" title="previousPage" value="<Previous Page" 
+                                            disabled="{!(!hasPreviousPage)}" reRender="myButtons,idResultsSection" status="processstatus4"/>
+                                                                                
+                                            <apex:outputText value="Page " />
+                                            <apex:inputText value="{!currentPageNumber}"
+                                                style="width:20px">
+                                                <apex:actionSupport event="onchange" status="processstatus4"
+                                                    action="{!loadCurrentPage}" rerender="idResultsSection" />
+                                            </apex:inputText>
+                                            <apex:outputText value=" out of {!totalPages}" />
+                                        
+                                        <apex:commandButton action="{!nextPage}" title="nextPage" value="Next Page>"
+                                            disabled="{!NOT(hasNextPage)}" reRender="myButtons,idResultsSection" status="processstatus4"/>
+                                        <apex:commandButton action="{!lastPage}" title="lastPage" value="Last Page>>"
+                                            disabled="{!NOT(hasNextPage)}" reRender="myButtons,idResultsSection" status="processstatus4"/>
+                                      </td>
+                                      -->
+                                </tr>
+                            </table>
+                        </apex:outputPanel>
+
+                    <apex:pageBlock >
+                        <apex:pageBlockTable value="{!resultList}" var="resultWrapper"  columns="{!totalColumns}">
+                        
+                            <apex:column headerValue="Agreement Number">
+                                <apex:outputLink value="/{!resultWrapper.agmt.Id}">{!resultWrapper.agmt.Apttus__FF_Agreement_Number__c} </apex:outputLink>
+                            </apex:column>
+
+                            <apex:column headerValue="Document">
+                                <apex:outputLink target="_blank"
+                                    value="/{!resultWrapper.docId}" type="image/png"
+                                    style="padding-Left:15px;" rendered="{!(resultWrapper.docId != null)}">
+                                    <apex:image value="{!$Resource.ApttusPdfIcon}" rendered="{!(resultWrapper.docId != null)}"/>
+                                </apex:outputLink>
+                            </apex:column>
+
+                            <apex:column headerValue="Agreement Name" value="{!resultWrapper.agmt.Name}" />
+                            
+                            <apex:repeat var="f" value="{!searchResultFieldsList}">
+                                <apex:column value="{!resultWrapper.agmt[f]}" />
+                            </apex:repeat>
+
+                        </apex:pageBlockTable>
+
+                        <apex:outputText value="No agreements to display"
+                            rendered="{!NOT(hasResults)}" style="font-style:bold" />
+                            
+                    
+                    <apex:pageBlockButtons >
+                        <apex:outputPanel id="myButtons">
+                            <apex:outputText value="({!pageStartIndex}-{!pageEndIndex} out of {!totalRowCount}) " />
+                            <apex:commandButton action="{!firstPage}" title="firstPage" value="<<First Page" 
+                                disabled="{!(!hasPreviousPage)}" reRender="myButtons,idResultsSection" status="processstatus4"/>
+                            <apex:commandButton action="{!previousPage}" title="previousPage" value="<Previous Page" 
+                                disabled="{!(!hasPreviousPage)}" reRender="myButtons,idResultsSection" status="processstatus4"/>
+                            <!--    
+                            <apex:outputText value="Page " />
+                                <apex:inputText value="{!currentPageNumber}" style="width:20px">
+                                    <apex:actionSupport event="onchange" status="processstatus4" action="{!loadCurrentPage}" rerender="idResultsSection" />
+                                </apex:inputText>
+                            <apex:outputText value=" out of {!totalPages}" />
+                             -->
+                            <apex:outputText value=" (Page {!PageNumber} out of {!TotalPages}) " style="font-style:bold"/>
+                                
+                            <apex:commandButton action="{!nextPage}" title="nextPage" value="Next Page>"
+                                disabled="{!NOT(hasNextPage)}" reRender="myButtons,idResultsSection" status="processstatus4"/>
+                            <apex:commandButton action="{!lastPage}" title="lastPage" value="Last Page>>"
+                                disabled="{!NOT(hasNextPage)}" reRender="myButtons,idResultsSection" status="processstatus4"/>                                 
+                        </apex:outputPanel>                              
+                    </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                    </apex:pageBlockSection>
+                    
+                </apex:pageBlock>
+
+            </apex:outputPanel>
+        </apex:form>
+    </apex:outputpanel>
+</apex:page>

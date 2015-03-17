@@ -1,0 +1,30 @@
+<!-- 
+Author: Praveen Kumar Reddy N
+Relese : R6
+Date: 11/July/2013
+This for showing the different versions of the the attachment
+-->
+<apex:page controller="DGAttachmentVersionHistoryPageController" sidebar="false" showHeader="false">
+    <apex:form >
+        <apex:pageblock title="Version History"> 
+            <!--<apex:pageblockButtons >
+                    <apex:commandButton value="Go To Previous Page" action="{!gotoPreviousPage}"/>
+                </apex:pageblockButtons>  -->        
+            <apex:pageBlockTable value="{!Attachments}" var="att" id="at" width="100%" columns="7">
+                
+                <apex:column headerValue="Version Number" style="width:100px">
+                     <apex:outputText value="{!att.versionNumber}"/>
+                </apex:column>
+                
+                <apex:column headerValue="FileName" style="widht:100px">
+                    <apex:outputLink value="{!URLFOR($Action.Attachment.Download, att.at.id)}" target="_blank">{!att.at.name}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Comments" style="widht:100px">
+                     <apex:outputText value="{!att.Comments}"/>
+                </apex:column>
+                        
+             </apex:pageBlockTable>
+        </apex:pageblock>    
+    </apex:form>      
+</apex:page>

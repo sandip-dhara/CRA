@@ -1,0 +1,229 @@
+<apex:page id="SLHomePage" controller="ODP_Class_RSSFeedReader" showheader="false" standardstylesheets="false" doctype="html-5.0" applybodytag="true" applyhtmltag="false">
+<script type="text/javascript">
+        $j = jQuery.noConflict();
+        $j(document).ready(function() {
+          $j("span.add-on.topSearchIcon").hide();
+         });
+ </script>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">    
+<!--<![endif]-->
+
+
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>HP CO-Development Platform</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+
+    <apex:stylesheet value="{!URLFOR($Resource.CODP_Assets, 'CODP_Assets/bootstrap/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CODP_Assets, 'CODP_Assets/bootstrap/css/bootstrap-responsive.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CODP_Assets, 'CODP_Assets/font-awesome/css/font-awesome.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CODP_CSS, 'CODP_CSS/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CODP_CSS, 'CODP_CSS/style-responsive.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CODP_CSS, 'CODP_CSS/style-default.css')}" />
+    
+    <style>
+            .HPDIV {
+            border-top:0;
+            color: white;
+            background: lightblue;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 6px;
+            -moz-border-radius: 6px; 
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 300 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+        .HPDIVHeader {
+            width:91%;
+            border-top:0;
+            color: white;
+            background: #0093d2;
+            padding: 4px 4px 4px 10px;
+            -webkit-border-radius: 6px;
+            -moz-border-radius: 6px; 
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500 !important;
+            border-radius: 0px  !important;
+            border-bottom-left-radius:6px !important;
+            border-top-right-radius: 6px !important;
+        }
+    </style>
+  
+
+</head>
+<!-- END HEAD -->
+
+
+<!-- BEGIN BODY -->
+<body>
+<!-- BEGIN HEADER -->
+<header>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container-fluid"> 
+        <a class="HpLogo"><apex:image url="{!URLFOR($Resource.img_athena, 'img_athena/HP_Blue_Logo.png')}" alt="HP Logo"/></a>
+        <div class="nav mtop10">
+          <h1>Co-Development Platform</h1>
+          <h3>Co-Development with Customers</h3>
+        </div>
+        
+        <c:SLP_SearchCustomComponent />
+        <div class="alert alert-error topSearchEr" style="display:none;" id="err_msg"></div>  
+      </div>
+    </div>
+  </div>
+  <div class="navbar" style="background: #f2f2f2;">
+    <div class="navbar-inner HPDIV" style=" margin-left: 2% !important; margin-right: 4% !important; background:#0093d2">
+      <div class="container-fluid menunavBar"> 
+       <!-- <a class="icon-home topNavIcon" href="https://{!getSfInstance}/apex/AthenaSocialLearning" title="Home"></a> -->
+        <a class="icon-screenshot topNavIcon" style="display:none;"></a>
+              <apex:OutputPanel > 
+                    <a class="icon-screenshot topNavIconC" href="#" title="Create Ideal"><span class="NaviconPlus"></span></a> 
+                    <a class="icon-heart topNavIconCom" href="#" title="Review Ideal"><span class="NaviconPlus"></span></a>
+                    <a class="icon-star topNavIconCom" href="#" title="Review Ideal"><span class="NaviconPlus"></span></a>
+                    <a class="icon-cog topNavIconCom" href="#" title="Review Ideal"><span class="NaviconPlus"></span></a>
+                    <a class="icon-home topNavIconCom" href="#" title="Review Ideal"><span class="NaviconPlus"></span></a>
+                    <a class="icon-tags topNavIconCom" href="#" title="Review Ideal"><span class="NaviconPlus"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="float:right;color:white;margin-top:10px;"> Welcome <span>Guest</span></a>
+              </apex:OutputPanel> 
+            </div>
+    </div>
+  </div>
+</header>
+<!-- END HEADER --> 
+  
+<!-- BEGIN CONTAINER -->
+<div id="container" class="row-fluid"> 
+  <!-- BEGIN PAGE -->
+  <div id="main-content"> 
+    <!-- BEGIN PAGE CONTAINER-->
+    <div class="container-fluid"> 
+      <!-- SEARCH BTN -->
+      <div class="row-fluid">
+        <div class="span12">
+            <!-- Athena Body Content Starts -->
+
+                <div class="hpit_Athena_container mtop20" > <!-- margin-right: 50% !important;-->
+                  <div class="hpit_Athena_contRow1 " style="background-color:#f2f2f2;width:100%;">
+                    <div class="HPDIVHeader" style="width:97%;">
+                        <div><span><b>Ideal Wall</b></span><a class="icon-flag topNavIconCom" href="#" title="Review Ideal" style="margin-top:-10px;"></a></div>
+                    </div>
+                    <div id="Div1" class="hpit_athena_ca-container HPDIV" style="overflow:auto;margin-left: 5% !important;">
+                      <div class="HPDIV"  id="RepeaterDiv">
+                              <apex:pageBlock id="rssBlock"> 
+                                 <apex:pageBlockSection columns="1">  
+                                 <apex:pageBlockTable value="{!RSSFeed.items}" var="i">
+                                     
+                                     <apex:column headerValue="Title" style="width: 40%;">       
+                                         <apex:outputLink value="{!i.link}" target="_blank">{!i.title}</apex:outputLink>     
+                                     </apex:column>  
+                                     
+                                      <apex:column headerValue="Description"  style="width: 40%;">       
+                                          <apex:outputPanel id="theDesc">{!i.description}</apex:outputPanel> 
+                                     </apex:column>              
+                                     <apex:column headerValue="Date Published" style="width: 20%;">              
+                                         <apex:outputText value="{!i.pubDate}" ></apex:outputText>   
+                                     </apex:column> 
+                                 </apex:pageBlockTable>      
+                             </apex:pageBlockSection> 
+                           </apex:pageBlock>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hpit_Athena_container mtop20" > <!-- margin-right: 50% !important;-->
+                  <div class="hpit_Athena_contRow1 " style="background-color:#f2f2f2;width:100%;">
+                    <div class="HPDIVHeader" style="width:97%;">
+                        <div><span><b>Ideal Featured</b></span><a class="icon-heart topNavIconCom" href="#" title="Review Ideal" style="margin-top:-10px;"></a></div>
+                    </div>
+                    <div id="Div2" class="hpit_athena_ca-container" style="overflow:auto;margin-left: 5% !important;background:white;">
+                      <div class="hpit_athena_ca-wrapper HPDIV"  id="RepeaterDiv2" name="RepeaterDiv2" style="background: white;"> 
+                          <!--<apex:iframe src="https://www.salesforce.com" scrolling="true" id="theIframe"/>
+                            <iframe src='http://hpnn.hp.com/?iframe=true' scrolling="no" frameBorder="0"  height='1440' id='iframe_hp' style='border:0; border: medium none; background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 0 0 0 10px; width: 990px;'></iframe>
+-->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+    <script type="text/javascript" >
+        function prepareFrame() { 
+            ifrm = document.createElement("IFRAME"); 
+            ifrm.setAttribute("src", "https://it-services-gw-itg.external.hp.com/sec-gw/selectidp"); 
+            ifrm.style.width = 640+"px"; 
+            ifrm.style.height = 480+"px";
+            //document.body.appendChild(ifrm);
+            
+            document.getElementById("RepeaterDiv2").appendChild(ifrm);
+        }
+        prepareFrame();
+    </script>
+
+            <!-- Athena Body Content Ends --> 
+        </div>
+      </div>
+      
+      <!-- END PAGE CONTENT--> 
+    </div>
+    <!-- END PAGE CONTAINER--> 
+  </div>
+  <!-- END PAGE --> 
+</div>
+<!-- END CONTAINER --> 
+
+
+
+<!-- BEGIN JAVASCRIPTS --> 
+<!-- Load javascripts at bottom, this will reduce page load time
+         --> 
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CODP_Assets, 'CODP_Assets/bootstrap/js/bootstrap.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CODP_Assets, 'CODP_Assets/jquery-ui/jQuery_UI_1_10_3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CODP_Assets, 'CODP_Assets/raty/ratyViewJs.js')}"/>    
+    <!-- ie8 fixes -->
+    <!--[if lt IE 9]>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/excanvas.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/respond.js')}"/>
+   <![endif]-->
+
+    <!--common script for all pages-->
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/common-scripts.js')}"/>
+    <script type="text/javascript">
+            $j = jQuery.noConflict();
+            $j(document).ready(function() {
+              $j("span.add-on.topSearchIcon").hide();
+             });
+            renderMe(); 
+            function renderMe() {
+                $j('[id$=theDesc]').each(function(){
+                    var thistxt = $j(this).text();
+                    $j(this).html(thistxt);
+                    }
+                );
+            }
+     </script>
+    <!-- END JAVASCRIPTS -->  
+
+
+
+
+
+<!-- BEGIN FOOTER -->
+<div id="footer"> © Hewlett-Packard Development Company, L.P.     |     HP Restricted </div>
+<!-- END FOOTER -->
+ 
+</body>
+<!-- END BODY -->
+</html>
+</apex:page>

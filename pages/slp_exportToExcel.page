@@ -1,0 +1,56 @@
+<apex:page controller="SLP_ExportToExcels">
+  <!-- Begin Default Content REMOVE THIS -->
+   <!-- End Default Content REMOVE THIS -->
+ <apex:form >
+<!--  <input type="button" onclick="RemoteComm()" /> -->
+<a href="#" id="ExportToExcel"  onclick="RemoteComm()">Export To Excel</a>
+ 
+  <div id="dvData">
+  </div>
+    <apex:includeScript value="{!URLFOR($Resource.js_athena, 'js_athena/jquery-1.8.3.min.js')}"/>
+    </apex:form>
+    <script type="text/javascript">
+        function RemoteComm()
+        {
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.SLP_ExportToExcels.GetCommunity}',
+             handleResult
+        );
+        }
+        function handleResult(result,event)
+        {
+        debugger
+        var tabla='<html  xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Community Name </x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml></head> <body> <table id="tblExport"><tr>';
+        tabla+='<th>FirstName</th><th>LastName </th><th>Name</th><th>Email</th><th>Role</th><th>Business Group</th><th>Region</th><th> Community Role</th> </tr>';
+        for(var iCnt=0;iCnt<result.length;iCnt++)
+        {
+          tabla+='<tr>';
+          tabla+='<td> '+result[iCnt].FirstName+' </td>';
+          tabla+='<td> '+result[iCnt].LastName+' </td>';
+          tabla+='<td> '+result[iCnt].Name+' </td>';
+          tabla+='<td> '+result[iCnt].Email+' </td>';
+          tabla+='<td> '+result[iCnt].Role+' </td>';
+          tabla+='<td> '+result[iCnt].BusinessGrp+' </td>';
+          tabla+='<td> '+result[iCnt].Region+' </td>';
+          tabla+='<td> '+result[iCnt].ContributororMem+' </td>';
+          tabla+='</tr>';
+        }
+    
+        tabla+='</table></body></html>';
+        var filename='Community Name.xls';
+          
+       var link=document.createElement('a');
+       var  mimeType= 'application/xls';
+
+        var blob=new Blob([tabla],{type:mimeType});
+        var url=URL.createObjectURL(blob);
+        link.href=url;
+
+        link.setAttribute('download', filename);
+        link.click();
+           
+        }
+        
+    </script>
+  
+</apex:page>

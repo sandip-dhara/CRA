@@ -1,0 +1,57 @@
+<!-- 
+/**********************************************************
+* Page Name: CampaignMemberPage
+* Author: HP
+* Date: 29-OCT-2012 
+* Requirement # Request Id: 
+* Description: VF page for Customized CampaignMemberPage
+**********************************************************/
+-->
+
+<apex:page standardController="Lead" title="Campaign Member Edit" extensions="CampaignMemberController" id="page">
+    <!-- Form to add products on lead -->
+    <apex:form id="form">
+        <apex:sectionHeader title="New Campaign Member"/>
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock title="Campaign Member Edit" id="pageBlock">
+            <!-- Command buttons to perform actions -->
+            <table>
+            <td></td>
+            <td></td>            
+               <td> <apex:pageBlockButtons >
+                <b><apex:commandButton value="Save" action="{!Save}"/></b>
+                <b><apex:commandButton value="Cancel" action="{!Cancel}"/></b>
+               </apex:pageBlockButtons>
+               </td>
+             </table>   
+            <apex:pageBlockSection collapsible="false" columns="1" id="pageBlockSection" title="Campaign Member Information">
+                    <apex:pageBlockSectionItem id="pageBlockSectionItem">
+                    <apex:outputLabel >Campaign </apex:outputLabel>
+                    <apex:inputField value="{!Lead.Campaign__c}" id="camp" required="true" onchange="LeadUpd"/>                 
+                    </apex:pageBlockSectionItem>
+                    <apex:actionFunction action="{!Save}" name="LeadUpd"/>
+                   <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Lead </apex:outputLabel>
+                    <apex:outputText value="{!lead.Name}"/>
+                    </apex:pageBlockSectionItem>                    
+                    <apex:inputCheckbox label="Primary" value="{!primary}"/>
+                    
+            </apex:pageBlockSection>                        
+        </apex:pageBlock>    
+    </apex:form>
+    
+    <!-- JavaScript -->
+    <script>
+        window.onload = function(){
+            var campaignId = 'page:form:pageBlock:pageBlockSection:pageBlockSectionItem:camp';
+            var lookupId = campaignId + '_lkwgt';
+            var lookupComp = document.getElementById(lookupId);   
+            /* Setting lookup url*/
+            if (lookupComp != null) {
+                lookupComp.href = "javascript: openLookup('/apex/CampaignMemberLookupPage?lkfm=page%3Afrm&lknm="+campaignId+"&lktp=' + getElementByIdCS('"+campaignId+"_lktp').value,1000,'1','&lksrch=' + escapeUTF(getElementByIdCS('"+campaignId+"').value.substring(0, 80)))";    
+            }           
+        }         
+    </script>
+    
+    
+</apex:page>

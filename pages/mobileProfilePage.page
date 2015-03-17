@@ -1,0 +1,71 @@
+<apex:page controller="AthenaUserProfile" showheader="false" standardstylesheets="true" doctype="html-5.0" applybodytag="false" applyhtmltag="false">
+  <apex:includeScript value="{!$Resource.jquery172}"/>
+    <apex:includeScript value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryMobile, 'jquery.mobile-1.4.2/jquery.mobile-1.4.2.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mobile_css, 'css/mobiletemplate.css')}" />
+    
+    <head>
+        <!-- Scale the content for mobile.-->
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+    </head>
+    
+   <div data-role="page" id="startpage">
+     <div data-role="content" data-scroll="true">
+     <div class="ui-grid-a" style="margin-top:1%;">
+    <div class="ui-block-a"><apex:image url="{!UserDtls.FullPhotoUrl}" styleClass="image-container"/></div>
+    <div class="ui-block-b"><div style="margin-top:5px;">
+         <h2>{!UserDtls.name}</h2>
+         <label>{!UserDtls.Title}</label>
+         <label>{!UserDtls.Department}</label>
+         <label>Average content rating: {!TotalRating}</label>
+     </div></div>
+    </div><!-- /grid-b -->
+     <div class="ui-grid-solo">
+            <div class="ui-block-a"><a href="mailto:{!UserDtls.Email}" data-role="button" data-icon="info" data-mini="false">Email {!UserDtls.name}</a></div>
+        </div>
+     <div id="spacer" style="height:20px;"></div>
+    
+     <div id="spacer" style="height:20px;"></div>
+     <ul data-role="listview">
+                 <li data-role="list-divider" role="heading">Expertise:</li>
+                <apex:repeat value="{!Expertise}" var="exp" >
+                <li style="list-style-type:disc">{!exp.Name__c}</li>
+                </apex:repeat>
+                </ul>
+     </div> <!--Content-->
+     </div> <!--Page-->
+     
+     
+     <script type="text/javascript">
+        // Javascript Main function        
+        $(document).ready(function () {
+            
+            //$("#startpage").trigger("create");
+             
+        });
+        
+        $('#buttonHome').on('ontap mousedown', '', function () {
+                $('#buttonHome img').css('background','#33B5E5');
+                setTimeout(function(){ $('#buttonHome img').css('background','transparent');},500)
+            });
+            
+            $("a[href^='mailto:']").on("click",function() {
+            window.top.location = $(this).prop("href");
+            return false;
+            });
+            
+
+    </script>
+     
+     <style>
+     .image-container {
+            margin: 1px;
+            padding: 1px;
+            width:120px;
+            height:120px;
+            background-color: #000000;
+        }
+     
+     </style>
+     
+</apex:page>

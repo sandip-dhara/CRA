@@ -1,0 +1,47 @@
+<apex:component Controller="SupReqOptyProdComponentController" access="global">
+    <apex:attribute name="SupportRequestId" assignTo="{!SupportRequestId}" type="String" description="S"/>
+        <apex:dataTable border="2" value="{!OptyProducts}" var="SPL">
+                <apex:facet name="caption">Opportunity Products</apex:facet>
+                <apex:column >
+                     <apex:facet name="header">Product Name</apex:facet>
+                        {!SPL.PricebookEntry.Product2.Name}
+                </apex:column>
+                <apex:column >
+                     <apex:facet name="header">BG</apex:facet>
+                        {!SPL.Business_Group__c}
+                </apex:column>
+                <apex:column >
+                     <apex:facet name="header">GBU</apex:facet>
+                        {!SPL.GBU__c}
+                </apex:column>
+                <apex:column value="{!SPL.UnitPrice}" >
+                     <apex:facet name="header">Unit Price</apex:facet>
+                        
+                </apex:column>
+                <apex:column >
+                     <apex:facet name="header">Quantity</apex:facet>
+                        {!SPL.Quantity}
+                </apex:column>
+                <apex:column >
+                     <apex:facet name="header">Schedule</apex:facet>
+                        {!SPL.HasSchedule}
+                </apex:column>
+                <apex:column value="{!SPL.Subtotal}" >
+                     <apex:facet name="header">SubTotal</apex:facet>
+                </apex:column>
+                <apex:column >
+                     <apex:facet name="header">Book/Ship Date</apex:facet>
+                     <apex:OutputText value="{0,date,MM/dd/yyyy}">
+ <apex:Param value="{!SPL.ServiceDate}" />
+   </apex:OutputText>
+   
+                </apex:column>
+                <!--<apex:column value="{!SPL.Quantity}"/>
+                <apex:column value="{!SPL.HasSchedule}"/>
+                <apex:column value="{!SPL.Subtotal}"/>
+                <apex:column value="{!SPL.ServiceDate}"/> -->
+        </apex:dataTable>
+        <apex:outputLabel rendered="{!isOpportunityProductsListEmpty}">
+                {!$Label.No_records_to_display}
+        </apex:outputLabel>
+</apex:component>
