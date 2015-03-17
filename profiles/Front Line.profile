@@ -36,6 +36,11 @@
         <visible>false</visible>
     </applicationVisibilities>
     <applicationVisibilities>
+        <application>DOS_LLBA_App</application>
+        <default>false</default>
+        <visible>false</visible>
+    </applicationVisibilities>
+    <applicationVisibilities>
         <application>HP_Account_Support_Console</application>
         <default>false</default>
         <visible>false</visible>
@@ -1019,6 +1024,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>CPQcloneBMIQuoteWithHPQuoteTest</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>CRA_SearchAccount</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -4939,6 +4948,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>WebFormEditorController</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>WebServiceMockImplLdap</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>WebSvcLdapTest</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -25848,6 +25865,9 @@
         <layout>Macro-Macro Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Master_Data__c-Master Data Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>MetricsAction__c-Metrics Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -26667,6 +26687,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>User-User Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>UserAlt-User Profile Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>UserBitz__c-UserBitz Layout</layout>
@@ -27830,6 +27853,15 @@
         <allowRead>false</allowRead>
         <modifyAllRecords>false</modifyAllRecords>
         <object>MN_Opportunities_Information__c</object>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>false</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>Master_Data__c</object>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
     <objectPermissions>
@@ -30091,6 +30123,10 @@
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>CRA_yammer_embed</apexPage>
+        <enabled>false</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>CSPHelp</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
@@ -30628,6 +30664,10 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>LBSAVE</apexPage>
+        <enabled>false</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>LLBA_yammer_emded</apexPage>
         <enabled>false</enabled>
     </pageAccesses>
     <pageAccesses>
